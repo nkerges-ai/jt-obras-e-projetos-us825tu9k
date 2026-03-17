@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, HardHat } from 'lucide-react'
+import { Menu, HardHat } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { name: 'Início', href: '/#inicio' },
-  { name: 'Sobre Nós', href: '/#sobre' },
-  { name: 'Serviços', href: '/#servicos' },
-  { name: 'Segurança', href: '/#seguranca' },
+  { name: 'Projetos', href: '/portfolio' },
   { name: 'Clientes', href: '/#clientes' },
-  { name: 'Portfólio', href: '/portfolio' },
+  { name: 'Sobre', href: '/#sobre' },
+  { name: 'Contato', href: '/#contato' },
 ]
 
 export function Header() {
@@ -30,8 +29,12 @@ export function Header() {
       const id = location.hash.replace('#', '')
       const element = document.getElementById(id)
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
       }
+    } else if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [location])
 
@@ -48,10 +51,24 @@ export function Header() {
             <HardHat size={28} />
           </div>
           <div className="flex flex-col">
-            <span className="text-heading text-lg leading-tight group-hover:text-secondary transition-colors">
+            <span
+              className={cn(
+                'text-heading text-lg leading-tight transition-colors',
+                isScrolled
+                  ? 'text-primary group-hover:text-secondary'
+                  : 'text-white group-hover:text-secondary',
+              )}
+            >
               JT OBRAS E
             </span>
-            <span className="text-heading text-sm text-accent leading-tight group-hover:text-primary transition-colors">
+            <span
+              className={cn(
+                'text-heading text-sm leading-tight transition-colors',
+                isScrolled
+                  ? 'text-accent group-hover:text-primary'
+                  : 'text-secondary group-hover:text-white',
+              )}
+            >
               MANUTENÇÕES
             </span>
           </div>
@@ -64,7 +81,10 @@ export function Header() {
               <li key={link.name}>
                 <Link
                   to={link.href}
-                  className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors hover:underline underline-offset-4"
+                  className={cn(
+                    'text-sm font-medium transition-colors hover:text-secondary hover:underline underline-offset-4',
+                    isScrolled ? 'text-foreground/80' : 'text-white/90 hover:text-white',
+                  )}
                 >
                   {link.name}
                 </Link>
@@ -73,16 +93,20 @@ export function Header() {
           </ul>
           <Button
             asChild
-            className="bg-secondary hover:bg-primary text-white shadow-soft hover:shadow-hover hover:-translate-y-0.5 transition-all duration-300"
+            className="bg-accent hover:bg-primary text-white shadow-soft hover:shadow-hover hover:-translate-y-0.5 transition-all duration-300"
           >
-            <a href="#contato">Solicitar Orçamento</a>
+            <a href="/#contato">Solicitar Orçamento</a>
           </Button>
         </nav>
 
         {/* Mobile Nav */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={isScrolled ? 'text-foreground' : 'text-white'}
+            >
               <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle Menu</span>
             </Button>
@@ -100,8 +124,8 @@ export function Header() {
                   {link.name}
                 </Link>
               ))}
-              <Button asChild className="mt-4 bg-secondary w-full" onClick={() => setIsOpen(false)}>
-                <a href="#contato">Solicitar Orçamento</a>
+              <Button asChild className="mt-4 bg-accent w-full" onClick={() => setIsOpen(false)}>
+                <a href="/#contato">Solicitar Orçamento</a>
               </Button>
             </nav>
           </SheetContent>

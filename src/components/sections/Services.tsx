@@ -64,7 +64,7 @@ export function Services() {
                       <div className="bg-primary/5 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors">
                         <Icon className="text-primary group-hover:text-white" size={24} />
                       </div>
-                      <h3 className="font-montserrat font-bold text-xl mb-3 text-primary group-hover:text-white">
+                      <h3 className="font-poppins font-bold text-xl mb-3 text-primary group-hover:text-white">
                         {service.title}
                       </h3>
                       <p className="text-muted-foreground group-hover:text-white/80 text-sm leading-relaxed">

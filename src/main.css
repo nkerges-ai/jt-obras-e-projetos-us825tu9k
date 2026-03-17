@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,36 +6,36 @@
 
 @layer base {
   :root {
-    --background: 210 33% 99%; /* #F8FAFC equivalent */
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%;
+    --foreground: 206 52% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 206 52% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 206 52% 10%;
 
-    --primary: 212 100% 18%; /* #002B5B */
-    --primary-foreground: 210 40% 98%;
+    --primary: 206 52% 21%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 204 100% 29%; /* #005B96 */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 204 70% 53%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 7% 96%;
+    --muted-foreground: 210 7% 45%;
 
-    --accent: 191 100% 40%; /* #00A8CC */
-    --accent-foreground: 210 40% 98%;
+    --accent: 28 80% 52%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --warning: 48 96% 53%; /* #FACC15 */
+    --warning: 48 96% 53%;
     --warning-foreground: 222.2 84% 4.9%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 212 100% 18%;
+    --border: 210 7% 90%;
+    --input: 210 7% 90%;
+    --ring: 206 52% 21%;
 
     --radius: 0.5rem;
   }
@@ -62,6 +62,10 @@
     --ring: 214.3 31.8% 91.4%;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   section[aria-label='Notifications alt+T'] {
     padding: 0 !important;
     margin: 0 !important;
@@ -70,11 +74,11 @@
 
 @layer utilities {
   .text-heading {
-    @apply font-montserrat font-bold tracking-tight text-primary;
+    @apply font-poppins font-bold tracking-tight text-primary;
   }
 
   .glassmorphism {
-    @apply bg-background/80 backdrop-blur-md border-b border-border;
+    @apply bg-background/90 backdrop-blur-md border-b border-border;
   }
 
   @keyframes fade-in-up {

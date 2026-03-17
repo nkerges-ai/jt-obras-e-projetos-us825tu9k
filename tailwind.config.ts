@@ -26,8 +26,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        montserrat: ['Montserrat', 'system-ui', 'sans-serif'],
+        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        montserrat: ['Poppins', 'system-ui', 'sans-serif'],
+        poppins: ['Poppins', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -74,8 +75,8 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        soft: '0 10px 40px -10px rgba(0,43,91,0.08)',
-        hover: '0 20px 40px -10px rgba(0,43,91,0.15)',
+        soft: '0 10px 40px -10px rgba(26,58,82,0.08)',
+        hover: '0 20px 40px -10px rgba(26,58,82,0.15)',
       },
     },
   },
