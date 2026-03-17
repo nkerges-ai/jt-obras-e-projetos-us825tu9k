@@ -1,6 +1,21 @@
 import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook, MessageCircle } from 'lucide-react'
 import logo from '@/assets/logotipo-c129e.jpg'
 
+const TikTokIcon = ({ size = 20 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+)
+
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
@@ -10,20 +25,39 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold mb-4 text-brand-light">JT Obras e Projetos</h3>
+            <h3 className="text-xl font-bold mb-4 text-brand-light">JT Obras e manutenções ltda</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               Especialistas em obras complexas, reformas comerciais e manutenções com rígido padrão
               de segurança e excelência.
             </p>
             <div className="flex gap-4 pt-2">
-              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-brand-orange transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-brand-orange transition-colors"
+                aria-label="Facebook"
+              >
                 <Facebook size={20} />
+              </a>
+              <a
+                href="#"
+                className="text-gray-300 hover:text-brand-orange transition-colors"
+                aria-label="TikTok"
+              >
+                <TikTokIcon size={20} />
+              </a>
+              <a
+                href="#"
+                className="text-gray-300 hover:text-brand-orange transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={20} />
               </a>
             </div>
           </div>
@@ -94,7 +128,9 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="text-brand-orange shrink-0 mt-0.5" size={18} />
                 <span className="text-gray-300 text-sm">
-                  São Paulo, SP - Atendimento em todo Brasil
+                  Rua Tommaso Giordani, 371, Vila Guacuri
+                  <br />
+                  São Paulo – SP, CEP 04.475-210
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -110,7 +146,7 @@ export function Footer() {
                       size={14}
                       className="text-brand-light group-hover:text-brand-orange"
                     />
-                    <span>Joel: (11) 94003-7575</span>
+                    <span>Joel Nascimento: (11) 94003-7575</span>
                   </a>
                   <a
                     href="https://wa.me/5511947069293"
@@ -128,25 +164,29 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-brand-orange shrink-0" size={18} />
-                <span className="text-gray-300 text-sm">contato@jtobras.com.br</span>
+                <span className="text-gray-300 text-sm">jt.obrasemanutencao@gmail.com</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar with Logo and CNPJ */}
+        {/* Bottom Bar with Logo and Legal Data */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4 flex-col md:flex-row text-center md:text-left">
             <div className="bg-white p-2 rounded shadow-sm">
               <img
                 src={logo}
-                alt="Logo JT Obras e Manutenções"
+                alt="Logo JT Obras e manutenções ltda"
                 className="h-10 w-auto object-contain"
               />
             </div>
             <div>
-              <p className="text-sm text-gray-400 font-medium">JT Obras e Manutenções LTDA</p>
-              <p className="text-xs text-gray-500 mt-1">CNPJ: 63.243.791/0001-09</p>
+              <p className="text-sm text-gray-400 font-medium">JT Obras e manutenções ltda</p>
+              <p className="text-xs text-gray-500 mt-1">
+                CNPJ: 63.243.791/0001-09 | IE: 156.392.261.116
+                <br />
+                Regime: Simples Nacional | Diretor: Joel Nascimento de Paula
+              </p>
             </div>
           </div>
 

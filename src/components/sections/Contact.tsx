@@ -36,7 +36,7 @@ export function Contact() {
                         <MessageCircle className="h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0" />
                         <div>
                           <span className="font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5">
-                            Joel
+                            Joel Nascimento (Diretor)
                           </span>
                           <span>+55 11 94003-7575</span>
                         </div>
@@ -65,7 +65,7 @@ export function Contact() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-lg">E-mail</h4>
-                    <p className="text-gray-300 text-sm mt-1">contato@jtobras.com.br</p>
+                    <p className="text-gray-300 text-sm mt-1">jt.obrasemanutencao@gmail.com</p>
                   </div>
                 </div>
 
@@ -76,9 +76,9 @@ export function Contact() {
                   <div>
                     <h4 className="font-semibold text-lg">Escritório</h4>
                     <p className="text-gray-300 text-sm mt-1">
-                      Av. Paulista, 1000 - Bela Vista
+                      Rua Tommaso Giordani, 371 - Vila Guacuri
                       <br />
-                      São Paulo - SP, 01310-100
+                      São Paulo – SP, CEP 04.475-210
                     </p>
                   </div>
                 </div>
