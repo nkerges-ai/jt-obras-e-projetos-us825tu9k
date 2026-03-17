@@ -15986,7 +15986,7 @@ function useLocation() {
 	return import_react.useContext(LocationContext).location;
 }
 var navigateEffectWarning = `You should call navigate() in a React.useEffect(), not when your component is first rendered.`;
-function useIsomorphicLayoutEffect$2(cb) {
+function useIsomorphicLayoutEffect(cb) {
 	if (!import_react.useContext(NavigationContext).static) import_react.useLayoutEffect(cb);
 }
 function useNavigate() {
@@ -16001,7 +16001,7 @@ function useNavigateUnstable() {
 	let { pathname: locationPathname } = useLocation();
 	let routePathnamesJson = JSON.stringify(getResolveToMatches(matches));
 	let activeRef = import_react.useRef(false);
-	useIsomorphicLayoutEffect$2(() => {
+	useIsomorphicLayoutEffect(() => {
 		activeRef.current = true;
 	});
 	return import_react.useCallback((to, options = {}) => {
@@ -16321,7 +16321,7 @@ function useNavigateStable() {
 	let { router } = useDataRouterContext("useNavigate");
 	let id = useCurrentRouteId("useNavigate");
 	let activeRef = import_react.useRef(false);
-	useIsomorphicLayoutEffect$2(() => {
+	useIsomorphicLayoutEffect(() => {
 		activeRef.current = true;
 	});
 	return import_react.useCallback(async (to, options = {}) => {
@@ -16987,7 +16987,7 @@ var NavLink = import_react.forwardRef(function NavLinkWithRef({ "aria-current": 
 	}, typeof children === "function" ? children(renderProps) : children);
 });
 NavLink.displayName = "NavLink";
-var Form$1 = import_react.forwardRef(({ discover = "render", fetcherKey, navigate, reloadDocument, replace: replace2, state, method = defaultMethod, action, onSubmit, relative, preventScrollReset, viewTransition, unstable_defaultShouldRevalidate, ...props }, forwardedRef) => {
+var Form = import_react.forwardRef(({ discover = "render", fetcherKey, navigate, reloadDocument, replace: replace2, state, method = defaultMethod, action, onSubmit, relative, preventScrollReset, viewTransition, unstable_defaultShouldRevalidate, ...props }, forwardedRef) => {
 	let { unstable_useTransitions } = import_react.useContext(NavigationContext);
 	let submit = useSubmit();
 	let formAction = useFormAction(action, { relative });
@@ -17022,7 +17022,7 @@ var Form$1 = import_react.forwardRef(({ discover = "render", fetcherKey, navigat
 		"data-discover": !isAbsolute && discover === "render" ? "true" : void 0
 	});
 });
-Form$1.displayName = "Form";
+Form.displayName = "Form";
 function ScrollRestoration({ getKey, storageKey, ...props }) {
 	let remixContext = import_react.useContext(FrameworkContext);
 	let { basename } = import_react.useContext(NavigationContext);
@@ -17278,10 +17278,10 @@ function useViewTransitionState(to, { relative } = {}) {
 var import_client = require_client();
 var TOAST_LIMIT = 1;
 var TOAST_REMOVE_DELAY = 1e6;
-var count$2 = 0;
+var count$1 = 0;
 function genId() {
-	count$2 = (count$2 + 1) % Number.MAX_SAFE_INTEGER;
-	return count$2.toString();
+	count$1 = (count$1 + 1) % Number.MAX_SAFE_INTEGER;
+	return count$1.toString();
 }
 var toastTimeouts = /* @__PURE__ */ new Map();
 var addToRemoveQueue = (toastId) => {
@@ -17629,25 +17629,6 @@ var require_react_jsx_runtime_development = /* @__PURE__ */ __commonJSMin(((expo
 var import_jsx_runtime = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_jsx_runtime_development();
 })))();
-function createContext2(rootComponentName, defaultContext) {
-	const Context = import_react.createContext(defaultContext);
-	const Provider = (props) => {
-		const { children, ...context } = props;
-		const value = import_react.useMemo(() => context, Object.values(context));
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Context.Provider, {
-			value,
-			children
-		});
-	};
-	Provider.displayName = rootComponentName + "Provider";
-	function useContext2(consumerName) {
-		const context = import_react.useContext(Context);
-		if (context) return context;
-		if (defaultContext !== void 0) return defaultContext;
-		throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
-	}
-	return [Provider, useContext2];
-}
 function createContextScope(scopeName, createContextScopeDeps = []) {
 	let defaultContexts = [];
 	function createContext3(rootComponentName, defaultContext) {
@@ -17916,7 +17897,7 @@ function dispatchDiscreteCustomEvent(target, event) {
 }
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-use-callback-ref@1.1.1_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-use-callback-ref/dist/index.mjs
-function useCallbackRef$1(callback) {
+function useCallbackRef(callback) {
 	const callbackRef = import_react.useRef(callback);
 	import_react.useEffect(() => {
 		callbackRef.current = callback;
@@ -17926,7 +17907,7 @@ function useCallbackRef$1(callback) {
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-use-escape-keydown@1.1.1_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-use-escape-keydown/dist/index.mjs
 function useEscapeKeydown(onEscapeKeyDownProp, ownerDocument = globalThis?.document) {
-	const onEscapeKeyDown = useCallbackRef$1(onEscapeKeyDownProp);
+	const onEscapeKeyDown = useCallbackRef(onEscapeKeyDownProp);
 	import_react.useEffect(() => {
 		const handleKeyDown = (event) => {
 			if (event.key === "Escape") onEscapeKeyDown(event);
@@ -18050,7 +18031,7 @@ var DismissableLayerBranch = import_react.forwardRef((props, forwardedRef) => {
 });
 DismissableLayerBranch.displayName = BRANCH_NAME;
 function usePointerDownOutside(onPointerDownOutside, ownerDocument = globalThis?.document) {
-	const handlePointerDownOutside = useCallbackRef$1(onPointerDownOutside);
+	const handlePointerDownOutside = useCallbackRef(onPointerDownOutside);
 	const isPointerInsideReactTreeRef = import_react.useRef(false);
 	const handleClickRef = import_react.useRef(() => {});
 	import_react.useEffect(() => {
@@ -18080,7 +18061,7 @@ function usePointerDownOutside(onPointerDownOutside, ownerDocument = globalThis?
 	return { onPointerDownCapture: () => isPointerInsideReactTreeRef.current = true };
 }
 function useFocusOutside(onFocusOutside, ownerDocument = globalThis?.document) {
-	const handleFocusOutside = useCallbackRef$1(onFocusOutside);
+	const handleFocusOutside = useCallbackRef(onFocusOutside);
 	const isFocusInsideReactTreeRef = import_react.useRef(false);
 	import_react.useEffect(() => {
 		const handleFocus = (event) => {
@@ -18109,15 +18090,15 @@ function handleAndDispatchCustomEvent$1(name, handler, detail, { discrete }) {
 	if (discrete) dispatchDiscreteCustomEvent(target, event);
 	else target.dispatchEvent(event);
 }
-var Root$5 = DismissableLayer;
+var Root$3 = DismissableLayer;
 var Branch = DismissableLayerBranch;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-use-layout-effect@1.1.1_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-use-layout-effect/dist/index.mjs
 var useLayoutEffect2 = globalThis?.document ? import_react.useLayoutEffect : () => {};
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-portal@1.1.9_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react_7668895bec2444446faa4e0f4eb5244b/node_modules/@radix-ui/react-portal/dist/index.mjs
-var PORTAL_NAME$2 = "Portal";
-var Portal$1 = import_react.forwardRef((props, forwardedRef) => {
+var PORTAL_NAME$1 = "Portal";
+var Portal = import_react.forwardRef((props, forwardedRef) => {
 	const { container: containerProp, ...portalProps } = props;
 	const [mounted, setMounted] = import_react.useState(false);
 	useLayoutEffect2(() => setMounted(true), []);
@@ -18127,7 +18108,7 @@ var Portal$1 = import_react.forwardRef((props, forwardedRef) => {
 		ref: forwardedRef
 	}), container) : null;
 });
-Portal$1.displayName = PORTAL_NAME$2;
+Portal.displayName = PORTAL_NAME$1;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-presence@1.1.5_@types+react-dom@19.2.3_@types+react@19.2.14__@types+rea_c01c26c80b5ab5e3ecefbda6eca51ad1/node_modules/@radix-ui/react-presence/dist/index.mjs
 function useStateMachine(initialState, machine) {
@@ -18251,7 +18232,7 @@ function useControllableState({ prop, defaultProp, onChange = () => {}, caller }
 	}
 	return [value, import_react.useCallback((nextValue) => {
 		if (isControlled) {
-			const value2 = isFunction$1(nextValue) ? nextValue(prop) : nextValue;
+			const value2 = isFunction(nextValue) ? nextValue(prop) : nextValue;
 			if (value2 !== prop) onChangeRef.current?.(value2);
 		} else setUncontrolledProp(nextValue);
 	}, [
@@ -18280,7 +18261,7 @@ function useUncontrolledState({ defaultProp, onChange }) {
 		onChangeRef
 	];
 }
-function isFunction$1(value) {
+function isFunction(value) {
 	return typeof value === "function";
 }
 //#endregion
@@ -18297,7 +18278,7 @@ var VISUALLY_HIDDEN_STYLES = Object.freeze({
 	whiteSpace: "nowrap",
 	wordWrap: "normal"
 });
-var NAME$3 = "VisuallyHidden";
+var NAME$2 = "VisuallyHidden";
 var VisuallyHidden = import_react.forwardRef((props, forwardedRef) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.span, {
 		...props,
@@ -18308,8 +18289,8 @@ var VisuallyHidden = import_react.forwardRef((props, forwardedRef) => {
 		}
 	});
 });
-VisuallyHidden.displayName = NAME$3;
-var Root$4 = VisuallyHidden;
+VisuallyHidden.displayName = NAME$2;
+var Root$2 = VisuallyHidden;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-toast@1.2.15_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react_4581e89c6ba13e4159ce65546c8b2a16/node_modules/@radix-ui/react-toast/dist/index.mjs
 var PROVIDER_NAME$1 = "ToastProvider";
@@ -18408,7 +18389,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 	const getSortedTabbableCandidates = import_react.useCallback(({ tabbingDirection }) => {
 		const tabbableCandidates = getItems().map((toastItem) => {
 			const toastNode = toastItem.ref.current;
-			const toastTabbableCandidates = [toastNode, ...getTabbableCandidates$1(toastNode)];
+			const toastTabbableCandidates = [toastNode, ...getTabbableCandidates(toastNode)];
 			return tabbingDirection === "forwards" ? toastTabbableCandidates : toastTabbableCandidates.reverse();
 		});
 		return (tabbingDirection === "forwards" ? tabbableCandidates.reverse() : tabbableCandidates).flat();
@@ -18427,7 +18408,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 					}
 					const sortedCandidates = getSortedTabbableCandidates({ tabbingDirection: isTabbingBackwards ? "backwards" : "forwards" });
 					const index = sortedCandidates.findIndex((candidate) => candidate === focusedElement);
-					if (focusFirst$1(sortedCandidates.slice(index + 1))) event.preventDefault();
+					if (focusFirst(sortedCandidates.slice(index + 1))) event.preventDefault();
 					else isTabbingBackwards ? headFocusProxyRef.current?.focus() : tailFocusProxyRef.current?.focus();
 				}
 			};
@@ -18445,7 +18426,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 			hasToasts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusProxy, {
 				ref: headFocusProxyRef,
 				onFocusFromOutsideViewport: () => {
-					focusFirst$1(getSortedTabbableCandidates({ tabbingDirection: "forwards" }));
+					focusFirst(getSortedTabbableCandidates({ tabbingDirection: "forwards" }));
 				}
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.Slot, {
@@ -18459,7 +18440,7 @@ var ToastViewport$1 = import_react.forwardRef((props, forwardedRef) => {
 			hasToasts && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusProxy, {
 				ref: tailFocusProxyRef,
 				onFocusFromOutsideViewport: () => {
-					focusFirst$1(getSortedTabbableCandidates({ tabbingDirection: "backwards" }));
+					focusFirst(getSortedTabbableCandidates({ tabbingDirection: "backwards" }));
 				}
 			})
 		]
@@ -18502,8 +18483,8 @@ var Toast$2 = import_react.forwardRef((props, forwardedRef) => {
 			...toastProps,
 			ref: forwardedRef,
 			onClose: () => setOpen(false),
-			onPause: useCallbackRef$1(props.onPause),
-			onResume: useCallbackRef$1(props.onResume),
+			onPause: useCallbackRef(props.onPause),
+			onResume: useCallbackRef(props.onResume),
 			onSwipeStart: composeEventHandlers(props.onSwipeStart, (event) => {
 				event.currentTarget.setAttribute("data-swipe", "start");
 			}),
@@ -18546,7 +18527,7 @@ var ToastImpl = import_react.forwardRef((props, forwardedRef) => {
 	const closeTimerRemainingTimeRef = import_react.useRef(duration);
 	const closeTimerRef = import_react.useRef(0);
 	const { onToastAdd, onToastRemove } = context;
-	const handleClose = useCallbackRef$1(() => {
+	const handleClose = useCallbackRef(() => {
 		if (node?.contains(document.activeElement)) context.viewport?.focus();
 		onClose();
 	});
@@ -18609,7 +18590,7 @@ var ToastImpl = import_react.forwardRef((props, forwardedRef) => {
 		onClose: handleClose,
 		children: import_react_dom.createPortal(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Collection.ItemSlot, {
 			scope: __scopeToast,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$5, {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$3, {
 				asChild: true,
 				onEscapeKeyDown: composeEventHandlers(onEscapeKeyDown, () => {
 					if (!context.isFocusedToastEscapeKeyDownRef.current) handleClose();
@@ -18700,7 +18681,7 @@ var ToastAnnounce = (props) => {
 		const timer = window.setTimeout(() => setIsAnnounced(true), 1e3);
 		return () => window.clearTimeout(timer);
 	}, []);
-	return isAnnounced ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
+	return isAnnounced ? null : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal, {
 		asChild: true,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VisuallyHidden, {
 			...announceProps,
@@ -18712,7 +18693,7 @@ var ToastAnnounce = (props) => {
 		})
 	});
 };
-var TITLE_NAME$1 = "ToastTitle";
+var TITLE_NAME = "ToastTitle";
 var ToastTitle$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeToast, ...titleProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
@@ -18720,8 +18701,8 @@ var ToastTitle$1 = import_react.forwardRef((props, forwardedRef) => {
 		ref: forwardedRef
 	});
 });
-ToastTitle$1.displayName = TITLE_NAME$1;
-var DESCRIPTION_NAME$1 = "ToastDescription";
+ToastTitle$1.displayName = TITLE_NAME;
+var DESCRIPTION_NAME = "ToastDescription";
 var ToastDescription$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeToast, ...descriptionProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
@@ -18729,7 +18710,7 @@ var ToastDescription$1 = import_react.forwardRef((props, forwardedRef) => {
 		ref: forwardedRef
 	});
 });
-ToastDescription$1.displayName = DESCRIPTION_NAME$1;
+ToastDescription$1.displayName = DESCRIPTION_NAME;
 var ACTION_NAME = "ToastAction";
 var ToastAction$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { altText, ...actionProps } = props;
@@ -18747,10 +18728,10 @@ var ToastAction$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 ToastAction$1.displayName = ACTION_NAME;
-var CLOSE_NAME$1 = "ToastClose";
+var CLOSE_NAME = "ToastClose";
 var ToastClose$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeToast, ...closeProps } = props;
-	const interactiveContext = useToastInteractiveContext(CLOSE_NAME$1, __scopeToast);
+	const interactiveContext = useToastInteractiveContext(CLOSE_NAME, __scopeToast);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ToastAnnounceExclude, {
 		asChild: true,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
@@ -18761,7 +18742,7 @@ var ToastClose$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-ToastClose$1.displayName = CLOSE_NAME$1;
+ToastClose$1.displayName = CLOSE_NAME;
 var ToastAnnounceExclude = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeToast, altText, ...announceExcludeProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
@@ -18775,7 +18756,7 @@ function getAnnounceTextContent(container) {
 	const textContent = [];
 	Array.from(container.childNodes).forEach((node) => {
 		if (node.nodeType === node.TEXT_NODE && node.textContent) textContent.push(node.textContent);
-		if (isHTMLElement$2(node)) {
+		if (isHTMLElement$1(node)) {
 			const isHidden = node.ariaHidden || node.hidden || node.style.display === "none";
 			const isExcluded = node.dataset.radixToastAnnounceExclude === "";
 			if (!isHidden) if (isExcluded) {
@@ -18805,7 +18786,7 @@ var isDeltaInDirection = (delta, direction, threshold = 0) => {
 	else return !isDeltaX && deltaY > threshold;
 };
 function useNextFrame(callback = () => {}) {
-	const fn = useCallbackRef$1(callback);
+	const fn = useCallbackRef(callback);
 	useLayoutEffect2(() => {
 		let raf1 = 0;
 		let raf2 = 0;
@@ -18816,10 +18797,10 @@ function useNextFrame(callback = () => {}) {
 		};
 	}, [fn]);
 }
-function isHTMLElement$2(node) {
+function isHTMLElement$1(node) {
 	return node.nodeType === node.ELEMENT_NODE;
 }
-function getTabbableCandidates$1(container) {
+function getTabbableCandidates(container) {
 	const nodes = [];
 	const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, { acceptNode: (node) => {
 		const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
@@ -18829,7 +18810,7 @@ function getTabbableCandidates$1(container) {
 	while (walker.nextNode()) nodes.push(walker.currentNode);
 	return nodes;
 }
-function focusFirst$1(candidates) {
+function focusFirst(candidates) {
 	const previouslyFocusedElement = document.activeElement;
 	return candidates.some((candidate) => {
 		if (candidate === previouslyFocusedElement) return true;
@@ -18840,23 +18821,23 @@ function focusFirst$1(candidates) {
 var Provider$1 = ToastProvider$1;
 var Viewport = ToastViewport$1;
 var Root2$1 = Toast$2;
-var Title$1 = ToastTitle$1;
-var Description$1 = ToastDescription$1;
+var Title = ToastTitle$1;
+var Description = ToastDescription$1;
 var Action = ToastAction$1;
-var Close$1 = ToastClose$1;
+var Close = ToastClose$1;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
-function r$1(e) {
+function r(e) {
 	var t, f, n = "";
 	if ("string" == typeof e || "number" == typeof e) n += e;
 	else if ("object" == typeof e) if (Array.isArray(e)) {
 		var o = e.length;
-		for (t = 0; t < o; t++) e[t] && (f = r$1(e[t])) && (n && (n += " "), n += f);
+		for (t = 0; t < o; t++) e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
 	} else for (f in e) e[f] && (n && (n += " "), n += f);
 	return n;
 }
 function clsx() {
-	for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r$1(e)) && (n && (n += " "), n += t);
+	for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
 	return n;
 }
 //#endregion
@@ -19039,13 +19020,6 @@ var ArrowLeftRight = createLucideIcon("arrow-left-right", [
 		key: "h6l3hr"
 	}]
 ]);
-var ArrowLeft = createLucideIcon("arrow-left", [["path", {
-	d: "m12 19-7-7 7-7",
-	key: "1l729n"
-}], ["path", {
-	d: "M19 12H5",
-	key: "x3x0zl"
-}]]);
 var ArrowRight = createLucideIcon("arrow-right", [["path", {
 	d: "M5 12h14",
 	key: "1ays0h"
@@ -19084,48 +19058,31 @@ var CircleCheck = createLucideIcon("circle-check", [["circle", {
 	d: "m9 12 2 2 4-4",
 	key: "dzmm74"
 }]]);
+var Clock = createLucideIcon("clock", [["circle", {
+	cx: "12",
+	cy: "12",
+	r: "10",
+	key: "1mglay"
+}], ["path", {
+	d: "M12 6v6l4 2",
+	key: "mmk7yg"
+}]]);
 var Facebook = createLucideIcon("facebook", [["path", {
 	d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
 	key: "1jg4f8"
 }]]);
-var Factory = createLucideIcon("factory", [
+var Hammer = createLucideIcon("hammer", [
 	["path", {
-		d: "M12 16h.01",
-		key: "1drbdi"
+		d: "m15 12-9.373 9.373a1 1 0 0 1-3.001-3L12 9",
+		key: "1hayfq"
 	}],
 	["path", {
-		d: "M16 16h.01",
-		key: "1f9h7w"
+		d: "m18 15 4-4",
+		key: "16gjal"
 	}],
 	["path", {
-		d: "M3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a.5.5 0 0 0-.769-.422l-4.462 2.844A.5.5 0 0 1 15 10.5v-2a.5.5 0 0 0-.769-.422L9.77 10.922A.5.5 0 0 1 9 10.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z",
-		key: "1iv0i2"
-	}],
-	["path", {
-		d: "M8 16h.01",
-		key: "18s6g9"
-	}]
-]);
-var FileText = createLucideIcon("file-text", [
-	["path", {
-		d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
-		key: "1oefj6"
-	}],
-	["path", {
-		d: "M14 2v5a1 1 0 0 0 1 1h5",
-		key: "wfsgrz"
-	}],
-	["path", {
-		d: "M10 9H8",
-		key: "b1mrlr"
-	}],
-	["path", {
-		d: "M16 13H8",
-		key: "t4e002"
-	}],
-	["path", {
-		d: "M16 17H8",
-		key: "z1uh3a"
+		d: "m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172v-.344a2 2 0 0 0-.586-1.414l-1.657-1.657A6 6 0 0 0 12.516 3H9l1.243 1.243A6 6 0 0 1 12 8.485V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5",
+		key: "15ts47"
 	}]
 ]);
 var HardHat = createLucideIcon("hard-hat", [
@@ -19191,10 +19148,6 @@ var Linkedin = createLucideIcon("linkedin", [
 		key: "bt5ra8"
 	}]
 ]);
-var LoaderCircle = createLucideIcon("loader-circle", [["path", {
-	d: "M21 12a9 9 0 1 1-6.219-8.56",
-	key: "13zald"
-}]]);
 var Mail = createLucideIcon("mail", [["path", {
 	d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7",
 	key: "132q7q"
@@ -19233,21 +19186,68 @@ var MessageCircle = createLucideIcon("message-circle", [["path", {
 	d: "M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719",
 	key: "1sd12s"
 }]]);
-var Mountain = createLucideIcon("mountain", [["path", {
-	d: "m8 3 4 8 5-5 5 15H2L8 3z",
-	key: "otkl63"
-}]]);
+var PaintRoller = createLucideIcon("paint-roller", [
+	["rect", {
+		width: "16",
+		height: "6",
+		x: "2",
+		y: "2",
+		rx: "2",
+		key: "jcyz7m"
+	}],
+	["path", {
+		d: "M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2",
+		key: "1b9h7c"
+	}],
+	["rect", {
+		width: "4",
+		height: "6",
+		x: "8",
+		y: "16",
+		rx: "1",
+		key: "d6e7yl"
+	}]
+]);
 var Phone = createLucideIcon("phone", [["path", {
 	d: "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384",
 	key: "9njp5v"
 }]]);
-var Send = createLucideIcon("send", [["path", {
-	d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
-	key: "1ffxy3"
-}], ["path", {
-	d: "m21.854 2.147-10.94 10.939",
-	key: "12cjpa"
-}]]);
+var Ruler = createLucideIcon("ruler", [
+	["path", {
+		d: "M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z",
+		key: "icamh8"
+	}],
+	["path", {
+		d: "m14.5 12.5 2-2",
+		key: "inckbg"
+	}],
+	["path", {
+		d: "m11.5 9.5 2-2",
+		key: "fmmyf7"
+	}],
+	["path", {
+		d: "m8.5 6.5 2-2",
+		key: "vc6u1g"
+	}],
+	["path", {
+		d: "m17.5 15.5 2-2",
+		key: "wo5hmg"
+	}]
+]);
+var ShieldAlert = createLucideIcon("shield-alert", [
+	["path", {
+		d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+		key: "oel41y"
+	}],
+	["path", {
+		d: "M12 8v4",
+		key: "1got3b"
+	}],
+	["path", {
+		d: "M12 16h.01",
+		key: "1drbdi"
+	}]
+]);
 var ShieldCheck = createLucideIcon("shield-check", [["path", {
 	d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
 	key: "oel41y"
@@ -19583,12 +19583,12 @@ var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|
 var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
 var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
 var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
-var isLength = (value) => isNumber$1(value) || stringLengths.has(value) || fractionRegex.test(value);
+var isLength = (value) => isNumber(value) || stringLengths.has(value) || fractionRegex.test(value);
 var isArbitraryLength = (value) => getIsArbitraryValue(value, "length", isLengthOnly);
-var isNumber$1 = (value) => Boolean(value) && !Number.isNaN(Number(value));
-var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber$1);
+var isNumber = (value) => Boolean(value) && !Number.isNaN(Number(value));
+var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber);
 var isInteger = (value) => Boolean(value) && Number.isInteger(Number(value));
-var isPercent = (value) => value.endsWith("%") && isNumber$1(value.slice(0, -1));
+var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
 var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
 var isTshirtSize = (value) => tshirtUnitRegex.test(value);
 var sizeLabels = /* @__PURE__ */ new Set([
@@ -19665,7 +19665,7 @@ var getDefaultConfig = () => {
 	];
 	const getNumberWithAutoAndArbitrary = () => [
 		"auto",
-		isNumber$1,
+		isNumber,
 		isArbitraryValue
 	];
 	const getPositions = () => [
@@ -19728,7 +19728,7 @@ var getDefaultConfig = () => {
 		"right",
 		"column"
 	];
-	const getNumberAndArbitrary = () => [isNumber$1, isArbitraryValue];
+	const getNumberAndArbitrary = () => [isNumber, isArbitraryValue];
 	return {
 		cacheSize: 500,
 		separator: ":",
@@ -20117,7 +20117,7 @@ var getDefaultConfig = () => {
 			] }],
 			"line-clamp": [{ "line-clamp": [
 				"none",
-				isNumber$1,
+				isNumber,
 				isArbitraryNumber
 			] }],
 			leading: [{ leading: [
@@ -20727,7 +20727,7 @@ var ToastAction = import_react.forwardRef(({ className, ...props }, ref) => /* @
 	...props
 }));
 ToastAction.displayName = Action.displayName;
-var ToastClose = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Close$1, {
+var ToastClose = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Close, {
 	"data-uid": "src/components/ui/toast.tsx:75:3",
 	"data-prohibitions": "[editContent]",
 	ref,
@@ -20740,23 +20740,23 @@ var ToastClose = import_react.forwardRef(({ className, ...props }, ref) => /* @_
 		className: "h-4 w-4"
 	})
 }));
-ToastClose.displayName = Close$1.displayName;
-var ToastTitle = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title$1, {
+ToastClose.displayName = Close.displayName;
+var ToastTitle = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title, {
 	"data-uid": "src/components/ui/toast.tsx:93:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1("text-sm font-semibold", className),
 	...props
 }));
-ToastTitle.displayName = Title$1.displayName;
-var ToastDescription = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Description$1, {
+ToastTitle.displayName = Title.displayName;
+var ToastDescription = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Description, {
 	"data-uid": "src/components/ui/toast.tsx:101:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1("text-sm opacity-90", className),
 	...props
 }));
-ToastDescription.displayName = Description$1.displayName;
+ToastDescription.displayName = Description.displayName;
 //#endregion
 //#region src/components/ui/toaster.tsx
 function Toaster$2() {
@@ -21767,11 +21767,11 @@ var Toaster = ({ ...props }) => {
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-id@1.1.1_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-id/dist/index.mjs
 var useReactId = import_react[" useId ".trim().toString()] || (() => void 0);
-var count$1 = 0;
+var count = 0;
 function useId(deterministicId) {
 	const [id, setId] = import_react.useState(useReactId());
 	useLayoutEffect2(() => {
-		if (!deterministicId) setId((reactId) => reactId ?? String(count$1++));
+		if (!deterministicId) setId((reactId) => reactId ?? String(count++));
 	}, [deterministicId]);
 	return deterministicId || (id ? `radix-${id}` : "");
 }
@@ -22497,7 +22497,7 @@ function isElement(value) {
 	if (!hasWindow()) return false;
 	return value instanceof Element || value instanceof getWindow(value).Element;
 }
-function isHTMLElement$1(value) {
+function isHTMLElement(value) {
 	if (!hasWindow()) return false;
 	return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
 }
@@ -22532,7 +22532,7 @@ function isContainingBlock(elementOrCss) {
 }
 function getContainingBlock(element) {
 	let currentNode = getParentNode(element);
-	while (isHTMLElement$1(currentNode) && !isLastTraversableNode(currentNode)) {
+	while (isHTMLElement(currentNode) && !isLastTraversableNode(currentNode)) {
 		if (isContainingBlock(currentNode)) return currentNode;
 		else if (isTopLayer(currentNode)) return null;
 		currentNode = getParentNode(currentNode);
@@ -22567,7 +22567,7 @@ function getParentNode(node) {
 function getNearestOverflowAncestor(node) {
 	const parentNode = getParentNode(node);
 	if (isLastTraversableNode(parentNode)) return node.ownerDocument ? node.ownerDocument.body : node.body;
-	if (isHTMLElement$1(parentNode) && isOverflowElement(parentNode)) return parentNode;
+	if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) return parentNode;
 	return getNearestOverflowAncestor(parentNode);
 }
 function getOverflowAncestors(node, list, traverseIframes) {
@@ -22591,7 +22591,7 @@ function getCssDimensions(element) {
 	const css = getComputedStyle$1(element);
 	let width = parseFloat(css.width) || 0;
 	let height = parseFloat(css.height) || 0;
-	const hasOffset = isHTMLElement$1(element);
+	const hasOffset = isHTMLElement(element);
 	const offsetWidth = hasOffset ? element.offsetWidth : width;
 	const offsetHeight = hasOffset ? element.offsetHeight : height;
 	const shouldFallback = round(width) !== offsetWidth || round(height) !== offsetHeight;
@@ -22610,7 +22610,7 @@ function unwrapElement(element) {
 }
 function getScale(element) {
 	const domElement = unwrapElement(element);
-	if (!isHTMLElement$1(domElement)) return createCoords(1);
+	if (!isHTMLElement(domElement)) return createCoords(1);
 	const rect = domElement.getBoundingClientRect();
 	const { width, height, $ } = getCssDimensions(domElement);
 	let x = ($ ? round(rect.width) : rect.width) / width;
@@ -22702,7 +22702,7 @@ function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
 	};
 	let scale = createCoords(1);
 	const offsets = createCoords(0);
-	const isOffsetParentAnElement = isHTMLElement$1(offsetParent);
+	const isOffsetParentAnElement = isHTMLElement(offsetParent);
 	if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
 		if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) scroll = getNodeScroll(offsetParent);
 		if (isOffsetParentAnElement) {
@@ -22777,7 +22777,7 @@ function getInnerBoundingClientRect(element, strategy) {
 	const clientRect = getBoundingClientRect(element, true, strategy === "fixed");
 	const top = clientRect.top + element.clientTop;
 	const left = clientRect.left + element.clientLeft;
-	const scale = isHTMLElement$1(element) ? getScale(element) : createCoords(1);
+	const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
 	return {
 		width: element.clientWidth * scale.x,
 		height: element.clientHeight * scale.y,
@@ -22854,7 +22854,7 @@ function getDimensions(element) {
 	};
 }
 function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
-	const isOffsetParentAnElement = isHTMLElement$1(offsetParent);
+	const isOffsetParentAnElement = isHTMLElement(offsetParent);
 	const documentElement = getDocumentElement(offsetParent);
 	const isFixed = strategy === "fixed";
 	const rect = getBoundingClientRect(element, true, isFixed, offsetParent);
@@ -22887,7 +22887,7 @@ function isStaticPositioned(element) {
 	return getComputedStyle$1(element).position === "static";
 }
 function getTrueOffsetParent(element, polyfill) {
-	if (!isHTMLElement$1(element) || getComputedStyle$1(element).position === "fixed") return null;
+	if (!isHTMLElement(element) || getComputedStyle$1(element).position === "fixed") return null;
 	if (polyfill) return polyfill(element);
 	let rawOffsetParent = element.offsetParent;
 	if (getDocumentElement(element) === rawOffsetParent) rawOffsetParent = rawOffsetParent.ownerDocument.body;
@@ -22896,7 +22896,7 @@ function getTrueOffsetParent(element, polyfill) {
 function getOffsetParent(element, polyfill) {
 	const win = getWindow(element);
 	if (isTopLayer(element)) return win;
-	if (!isHTMLElement$1(element)) {
+	if (!isHTMLElement(element)) {
 		let svgOffsetParent = getParentNode(element);
 		while (svgOffsetParent && !isLastTraversableNode(svgOffsetParent)) {
 			if (isElement(svgOffsetParent) && !isStaticPositioned(svgOffsetParent)) return svgOffsetParent;
@@ -23117,7 +23117,7 @@ var computePosition = (reference, floating, options) => {
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@floating-ui+react-dom@2.1.8_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/@floating-ui/react-dom/dist/floating-ui.react-dom.mjs
 var index = typeof document !== "undefined" ? import_react.useLayoutEffect : function noop() {};
-function deepEqual$1(a, b) {
+function deepEqual(a, b) {
 	if (a === b) return true;
 	if (typeof a !== typeof b) return false;
 	if (typeof a === "function" && a.toString() === b.toString()) return true;
@@ -23128,7 +23128,7 @@ function deepEqual$1(a, b) {
 		if (Array.isArray(a)) {
 			length = a.length;
 			if (length !== b.length) return false;
-			for (i = length; i-- !== 0;) if (!deepEqual$1(a[i], b[i])) return false;
+			for (i = length; i-- !== 0;) if (!deepEqual(a[i], b[i])) return false;
 			return true;
 		}
 		keys = Object.keys(a);
@@ -23138,7 +23138,7 @@ function deepEqual$1(a, b) {
 		for (i = length; i-- !== 0;) {
 			const key = keys[i];
 			if (key === "_owner" && a.$$typeof) continue;
-			if (!deepEqual$1(a[key], b[key])) return false;
+			if (!deepEqual(a[key], b[key])) return false;
 		}
 		return true;
 	}
@@ -23175,7 +23175,7 @@ function useFloating(options) {
 		isPositioned: false
 	});
 	const [latestMiddleware, setLatestMiddleware] = import_react.useState(middleware);
-	if (!deepEqual$1(latestMiddleware, middleware)) setLatestMiddleware(middleware);
+	if (!deepEqual(latestMiddleware, middleware)) setLatestMiddleware(middleware);
 	const [_reference, _setReference] = import_react.useState(null);
 	const [_floating, _setFloating] = import_react.useState(null);
 	const setReference = import_react.useCallback((node) => {
@@ -23212,7 +23212,7 @@ function useFloating(options) {
 				...data,
 				isPositioned: openRef.current !== false
 			};
-			if (isMountedRef.current && !deepEqual$1(dataRef.current, fullData)) {
+			if (isMountedRef.current && !deepEqual(dataRef.current, fullData)) {
 				dataRef.current = fullData;
 				import_react_dom.flushSync(() => {
 					setData(fullData);
@@ -23430,7 +23430,7 @@ var arrow = (options, deps) => {
 };
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-arrow@1.1.7_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@_e05f2c19a58a99fddf374207b5e3778c/node_modules/@radix-ui/react-arrow/dist/index.mjs
-var NAME$2 = "Arrow";
+var NAME$1 = "Arrow";
 var Arrow$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { children, width = 10, height = 5, ...arrowProps } = props;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.svg, {
@@ -23443,8 +23443,8 @@ var Arrow$1 = import_react.forwardRef((props, forwardedRef) => {
 		children: props.asChild ? children : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", { points: "0,0 30,0 15,10" })
 	});
 });
-Arrow$1.displayName = NAME$2;
-var Root$3 = Arrow$1;
+Arrow$1.displayName = NAME$1;
+var Root$1 = Arrow$1;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-use-size@1.1.1_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-use-size/dist/index.mjs
 function useSize(element) {
@@ -23515,11 +23515,11 @@ var PopperAnchor = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 PopperAnchor.displayName = ANCHOR_NAME;
-var CONTENT_NAME$2 = "PopperContent";
-var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$2);
+var CONTENT_NAME$1 = "PopperContent";
+var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$1);
 var PopperContent = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopePopper, side = "bottom", sideOffset = 0, align = "center", alignOffset = 0, arrowPadding = 0, avoidCollisions = true, collisionBoundary = [], collisionPadding: collisionPaddingProp = 0, sticky = "partial", hideWhenDetached = false, updatePositionStrategy = "optimized", onPlaced, ...contentProps } = props;
-	const context = usePopperContext(CONTENT_NAME$2, __scopePopper);
+	const context = usePopperContext(CONTENT_NAME$1, __scopePopper);
 	const [content, setContent] = import_react.useState(null);
 	const composedRefs = useComposedRefs(forwardedRef, (node) => setContent(node));
 	const [arrow$4, setArrow] = import_react.useState(null);
@@ -23586,7 +23586,7 @@ var PopperContent = import_react.forwardRef((props, forwardedRef) => {
 		]
 	});
 	const [placedSide, placedAlign] = getSideAndAlignFromPlacement(placement);
-	const handlePlaced = useCallbackRef$1(onPlaced);
+	const handlePlaced = useCallbackRef(onPlaced);
 	useLayoutEffect2(() => {
 		if (isPositioned) handlePlaced?.();
 	}, [isPositioned, handlePlaced]);
@@ -23632,7 +23632,7 @@ var PopperContent = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-PopperContent.displayName = CONTENT_NAME$2;
+PopperContent.displayName = CONTENT_NAME$1;
 var ARROW_NAME$1 = "PopperArrow";
 var OPPOSITE_SIDE = {
 	top: "bottom",
@@ -23665,7 +23665,7 @@ var PopperArrow = import_react.forwardRef(function PopperArrow2(props, forwarded
 			}[contentContext.placedSide],
 			visibility: contentContext.shouldHideArrow ? "hidden" : void 0
 		},
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$3, {
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$1, {
 			...arrowProps,
 			ref: forwardedRef,
 			style: {
@@ -23722,7 +23722,7 @@ function getSideAndAlignFromPlacement(placement) {
 }
 var Root2 = Popper;
 var Anchor = PopperAnchor;
-var Content$1 = PopperContent;
+var Content = PopperContent;
 var Arrow = PopperArrow;
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-tooltip@1.2.8_@types+react-dom@19.2.3_@types+react@19.2.14__@types+reac_9074d9fb06315b089b2bee17c4c65951/node_modules/@radix-ui/react-tooltip/dist/index.mjs
@@ -23848,11 +23848,11 @@ var Tooltip$1 = (props) => {
 	});
 };
 Tooltip$1.displayName = TOOLTIP_NAME;
-var TRIGGER_NAME$1 = "TooltipTrigger";
+var TRIGGER_NAME = "TooltipTrigger";
 var TooltipTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, ...triggerProps } = props;
-	const context = useTooltipContext(TRIGGER_NAME$1, __scopeTooltip);
-	const providerContext = useTooltipProviderContext(TRIGGER_NAME$1, __scopeTooltip);
+	const context = useTooltipContext(TRIGGER_NAME, __scopeTooltip);
+	const providerContext = useTooltipProviderContext(TRIGGER_NAME, __scopeTooltip);
 	const popperScope = usePopperScope(__scopeTooltip);
 	const composedRefs = useComposedRefs(forwardedRef, import_react.useRef(null), context.onTriggerChange);
 	const isPointerDownRef = import_react.useRef(false);
@@ -23893,18 +23893,18 @@ var TooltipTrigger$1 = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TooltipTrigger$1.displayName = TRIGGER_NAME$1;
-var PORTAL_NAME$1 = "TooltipPortal";
-var [PortalProvider$1, usePortalContext$1] = createTooltipContext(PORTAL_NAME$1, { forceMount: void 0 });
+TooltipTrigger$1.displayName = TRIGGER_NAME;
+var PORTAL_NAME = "TooltipPortal";
+var [PortalProvider, usePortalContext] = createTooltipContext(PORTAL_NAME, { forceMount: void 0 });
 var TooltipPortal = (props) => {
 	const { __scopeTooltip, forceMount, children, container } = props;
-	const context = useTooltipContext(PORTAL_NAME$1, __scopeTooltip);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider$1, {
+	const context = useTooltipContext(PORTAL_NAME, __scopeTooltip);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider, {
 		scope: __scopeTooltip,
 		forceMount,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 			present: forceMount || context.open,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal, {
 				asChild: true,
 				container,
 				children
@@ -23912,12 +23912,12 @@ var TooltipPortal = (props) => {
 		})
 	});
 };
-TooltipPortal.displayName = PORTAL_NAME$1;
-var CONTENT_NAME$1 = "TooltipContent";
+TooltipPortal.displayName = PORTAL_NAME;
+var CONTENT_NAME = "TooltipContent";
 var TooltipContent$1 = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext$1(CONTENT_NAME$1, props.__scopeTooltip);
+	const portalContext = usePortalContext(CONTENT_NAME, props.__scopeTooltip);
 	const { forceMount = portalContext.forceMount, side = "top", ...contentProps } = props;
-	const context = useTooltipContext(CONTENT_NAME$1, props.__scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME, props.__scopeTooltip);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
 		present: forceMount || context.open,
 		children: context.disableHoverableContent ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TooltipContentImpl, {
@@ -23932,8 +23932,8 @@ var TooltipContent$1 = import_react.forwardRef((props, forwardedRef) => {
 	});
 });
 var TooltipContentHoverable = import_react.forwardRef((props, forwardedRef) => {
-	const context = useTooltipContext(CONTENT_NAME$1, props.__scopeTooltip);
-	const providerContext = useTooltipProviderContext(CONTENT_NAME$1, props.__scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME, props.__scopeTooltip);
+	const providerContext = useTooltipProviderContext(CONTENT_NAME, props.__scopeTooltip);
 	const ref = import_react.useRef(null);
 	const composedRefs = useComposedRefs(forwardedRef, ref);
 	const [pointerGraceArea, setPointerGraceArea] = import_react.useState(null);
@@ -24010,7 +24010,7 @@ var [VisuallyHiddenContentContextProvider, useVisuallyHiddenContentContext] = cr
 var Slottable = /* @__PURE__ */ createSlottable("TooltipContent");
 var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, children, "aria-label": ariaLabel, onEscapeKeyDown, onPointerDownOutside, ...contentProps } = props;
-	const context = useTooltipContext(CONTENT_NAME$1, __scopeTooltip);
+	const context = useTooltipContext(CONTENT_NAME, __scopeTooltip);
 	const popperScope = usePopperScope(__scopeTooltip);
 	const { onClose } = context;
 	import_react.useEffect(() => {
@@ -24033,7 +24033,7 @@ var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 		onPointerDownOutside,
 		onFocusOutside: (event) => event.preventDefault(),
 		onDismiss: onClose,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Content$1, {
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Content, {
 			"data-state": context.stateAttribute,
 			...popperScope,
 			...contentProps,
@@ -24049,7 +24049,7 @@ var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slottable, { children }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VisuallyHiddenContentContextProvider, {
 				scope: __scopeTooltip,
 				isInside: true,
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$4, {
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$2, {
 					id: context.contentId,
 					role: "tooltip",
 					children: ariaLabel || children
@@ -24058,7 +24058,7 @@ var TooltipContentImpl = import_react.forwardRef((props, forwardedRef) => {
 		})
 	});
 });
-TooltipContent$1.displayName = CONTENT_NAME$1;
+TooltipContent$1.displayName = CONTENT_NAME;
 var ARROW_NAME = "TooltipArrow";
 var TooltipArrow = import_react.forwardRef((props, forwardedRef) => {
 	const { __scopeTooltip, ...arrowProps } = props;
@@ -24255,7 +24255,7 @@ function createSlot(ownerName) {
 	Slot2.displayName = `${ownerName}.Slot`;
 	return Slot2;
 }
-var Slot$1 = /* @__PURE__ */ createSlot("Slot");
+var Slot = /* @__PURE__ */ createSlot("Slot");
 /* @__NO_SIDE_EFFECTS__ */
 function createSlotClone(ownerName) {
 	const SlotClone = import_react.forwardRef((props, forwardedRef) => {
@@ -24333,7 +24333,7 @@ var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespa
 	}
 });
 var Button = import_react.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot$1 : "button", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot : "button", {
 		"data-uid": "src/components/ui/button.tsx:44:7",
 		"data-prohibitions": "[editContent]",
 		className: cn$1(buttonVariants({
@@ -24346,6 +24346,441 @@ var Button = import_react.forwardRef(({ className, variant, size, asChild = fals
 	});
 });
 Button.displayName = "Button";
+//#endregion
+//#region src/assets/logotipo-c129e.jpg
+var logotipo_c129e_default = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABPAGYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKSgApaYKbcXEdvC8krrHGg3M7EAKB1JNAEma4v4qfGLwj8F/DcmueLtat9Jsl4jEjZlnb+5Gg+Z29gPrXyx+0t/wUm8OfD17rw98O1h8WeIxmJtQzusLZunBH+uYHsvy/7R6V+fXxWPxI8WeOtB1P4qNqhv8AxAI57Y6iPLb7M0m3McX/ACzTIOBgDvjvXo0cHKetTRfiebWxsYXjTV3+CP0j8G/8FEPDviRYNVuvD99p3hm71G5sYLsuHnRYlhYSPGOMHzjkKSRt719U+GvFWk+MNHg1XRdQt9S0+cZjnt3DKfY+h9jyK/Pz9rz4SeF/gno/gDw34T01dO0xIbqVxuLyTSkxBpHY8sxAH5ADAFR3Hgr4mfss6gfEPhjUv7U0LbHJdNagyRKrKGC3UGfk4P3vfhhnFcNSUOZ8ui6HfTjPkXNqz9HKK+fvgb+2D4X+KywabqhTw54jbC/ZbiQeTO3/AEykPU/7JwfTNfQAO4ZFQWLRSUUALRRRQAUhpaSgBtfPv7b3wx8ZfF74O2/hbwSZF1K+1W3W5YXHkxi2CybzK2eUB25HOeODX0HurF8TeMtE8G29pca7qdtpNvdXKWcM13II0aZwSqbjwCdpxmtKcnGSlHczqRUotS2PzH+MXwX0/wDYH8BeGtYsrax8V/EbWppYk1vUYd9vpRRVYtbQNlWfLDDvkjGQBnFc/wDtqatea940+A+pahcPdX954S0u4uJ5PvSSPIWZj7kkmva/+CuTBvCfw3dTkG9vCP8Av3FXhH7Xx/4n/wCz3/2Jmkf+hmvboydRQqS3dzwqy9m5047LlPpr/gol/wAhjwN/17XP/oUddv8AGbw/rngW80/x3pWreTDeQW1tLbAdxCBhgcq6kLyDXEf8FEv+Qx4G/wCvW5/9Cjr2P9pgZ+C2gdv9Itv/AES9fn+f01PAVKl2nD3k07WaP0fhuq4ZlSp2TjU92SavdP19D5o8QeAfCHxbZp9M+zeBvFZ5MXK6Zet7f88GJ+q/SvuD4H6Xq2ifCnwzYa75h1a2s1iuPNl81twJH3snPGOc18/a9oXgOx+B/gvVPEjSaLcXziyTWLWLf5bnzGUzKPvJhMZ6jjtX0b8J9Pj0v4d6DaxX9vqkUVsAl5avvjmXJIZT3GDU5RUx8oRWLtKLimpLfW2jXfzNM8o5bGpJ4G8ZKTi4PZWvqn2026HXUUUV9GfKhRRRQAU1qdRQA3ivkX/gp9Z3F5+zI5t4JZxDrNrLKY0LeWgWQFmx0GSBk+or672ioLyyhvreSC4ijngkUo8UihldTwQQeoNaU5+zmp9jKpD2kHDufiR8WPjhpXxC/Zr+Fng5bi9n8SeF7i8S8N2CwaJyDEyPk5AGFwcEbemMV3v7Xn/Iwfs9jv8A8IXpH/oZr69+JX/BMj4a+OPG1rrmlXN54UsXl8zUNJ05VMM46/ut3+pJPXGRjoBXzf8A8FF/D9n4T+O3wt0XTomh07TtDs7S2jZixWOO5dVGTycADk17lOtTqTjGn5v7zwqtGpTjKVTyR7f/AMFEf+Qx4G/69bn/ANCjr3z42eEdU8bfC3w9pukW/n3PnW7tuYKqKImyzE9AMivA/wDgol/yFvAx/wCnW5/9CjrlNa+LHxQ/aiuIfCvhCwm07QookimhtXKqVAA3XE3of7owPZjXyuLw8MZRnQm9JK2h9dg8VPA4iGJpr3ou6vsWP2lviN4c/wCFV+G/htpWpx61q2kXQnvLuyGbZSFkBRXP3jl+3HHXPFfXn7NNrNZ/AnwVDcRPBMunrujkUqwySeQfY1wPwN/Y28M/DM2+q66I/EfiNcOJJU/0a3b/AKZoepH95vwAr6IVcDjgVtSpxowjThslZfIwq1Z16kqs95Nt+rFP6Uq9KbTl6VoZC0UUUAFJmlpNtAAzbeTTVkVujA/SvIfiwsni34meDvAd1d3FloGo2l7qd+trM0L332cwqltvUhghMxdgpBIjx0Jzz3xZ+HOgfBvwnL448EWMXhnWdHkgkaLTcxQ6jGZUR7eaMHbIXDEKxG4Ngg1oorRX1Zk5vVpaI9/MgzjPNcX8Tvg94P8AjDpUNn4r0WDVFt5BJbzsNs1u4IIaNx8y8gd8HuDXkvxW03TNa/aG06PVvBN146gXws0iWNvHbv5D/awPMInljXpxkEmrXwV8nR/jN4j0220G/wDAOnXGlQzWvhm/dSLhkkYS3cSxu8SAB40Ko+ScFgOCbUHFc6epm6ik+VrQ3fjT+zrZfG7xZ4avNX1F7bRtKhlSW1txiWdmZSBu6KPl5PXnt1r07wf4L0TwHosOlaBpsGl2EX3YYFxk/wB5j1Y+5ya+UfAN38ErXwPdz+Mbewl8Rf2pqKzzR2szXpc30yxhHjXfvwUVdpz0Ar1/RfHmo/Cf9mu38ReMmn/tOxs2KxalKBcSM0hW1ilYn/WENErE98k96UqbjohxqqW57UrbqY0qoTuOPrXzL8EfEGkfDf4iWPhceMrDxO3jC1bULiW31FLjZrCDdcYAYlUlQ7lHQeSR3ra+I3gd3+KGra94q8DXXxH8M3FtbxaclqY7htJKKRKPssjru3sQ3mJuftjgUOnZ2bH7W8bpH0GrbuRRmuL+EeoeGL/wXbf8Ij5qaPDLLCLecSrLbSK58yJ0l+dCrZGw4xwAMYrtayejsbJ3VwooopDCiiigDzv4u+G7HxJa6d52n60+pWc5ubDVNCKLc2Mu3aWVnOMMrEFSGVhkEGuFt/DOo6jqmnXvi1vGni+LTZlubXT7mzsra1WZTlJXSEr5jKeRuJUHkLkA174VBo2isZRrX9ypZeiNoujb36d36s8N8WaTqeu+OLfxXpSeMPDmpR6cdMZbSwspkkiMnmciUtg7vSpPCuj3ejeLD4o1m28ZeKddW0axt7i/trOJLaFmV3WOOEooLFEyxyTtHNe3bRRtFRyV7W9r+CK5sPe/svxf+Z41oujafpfw/vPB9z4Q8R6ppN0900ouoYdzefM8rDiQYw0hwRyMDvUM2jnVLPwnaazo3izW4PD0vnqLyC2b7bKsbJHJPhxuKBiRjGWwTyK9r2ijaKOWv/z9/BD56G3sl97PHvGWk6b4u0uK2XwVrmk3dvcw3lrqFhZ2yT280Th1ZTv9sEHghiO9VfEUfiW91m51HRL/AMcaCboL5totnZXVuCqhd0azFjGSByFO0nnGc17XtFG0Uctf/n7+CByoP/l1+LOK+Evhm18KeGXtbeHU0muLua7u7jWNn2m5uJG3SSvs+UZPQKAAAAAAK7emCML0p1dCvb3ndnO7X91WQtFFFMR//9k=";
+//#endregion
+//#region src/components/layout/Header.tsx
+var navLinks = [
+	{
+		name: "Início",
+		href: "#inicio"
+	},
+	{
+		name: "Projetos",
+		href: "#projetos"
+	},
+	{
+		name: "Clientes",
+		href: "#clientes"
+	},
+	{
+		name: "Sobre",
+		href: "#sobre"
+	},
+	{
+		name: "Contato",
+		href: "#contato"
+	}
+];
+function Header() {
+	const [isScrolled, setIsScrolled] = (0, import_react.useState)(false);
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, import_react.useState)(false);
+	(0, import_react.useEffect)(() => {
+		const handleScroll = () => {
+			setIsScrolled(window.scrollY > 20);
+		};
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+	const closeMenu = () => setIsMobileMenuOpen(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+		"data-uid": "src/components/layout/Header.tsx:30:5",
+		"data-prohibitions": "[editContent]",
+		className: cn$1("fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white border-b", isScrolled ? "py-3 shadow-md border-transparent" : "py-5 border-gray-100"),
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/layout/Header.tsx:36:7",
+			"data-prohibitions": "[editContent]",
+			className: "container mx-auto px-4 md:px-6 flex items-center justify-between",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+					"data-uid": "src/components/layout/Header.tsx:38:9",
+					"data-prohibitions": "[]",
+					href: "#inicio",
+					className: "flex items-center flex-shrink-0 z-50",
+					onClick: closeMenu,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+						"data-uid": "src/components/layout/Header.tsx:39:11",
+						"data-prohibitions": "[editContent]",
+						src: logotipo_c129e_default,
+						alt: "JT Obras e Manutenções",
+						className: "w-auto object-contain transition-all duration-300",
+						style: { maxHeight: "40px" }
+					})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+					"data-uid": "src/components/layout/Header.tsx:48:9",
+					"data-prohibitions": "[editContent]",
+					className: "hidden md:flex items-center gap-8",
+					children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+						"data-uid": "src/components/layout/Header.tsx:50:13",
+						"data-prohibitions": "[editContent]",
+						href: link.href,
+						className: "text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200",
+						children: link.name
+					}, link.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						"data-uid": "src/components/layout/Header.tsx:58:11",
+						"data-prohibitions": "[]",
+						asChild: true,
+						className: "bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+							"data-uid": "src/components/layout/Header.tsx:62:13",
+							"data-prohibitions": "[]",
+							href: "#contato",
+							children: "Solicitar Orçamento"
+						})
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					"data-uid": "src/components/layout/Header.tsx:67:9",
+					"data-prohibitions": "[editContent]",
+					className: "md:hidden z-50 p-2 text-brand-navy focus:outline-none",
+					onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
+					"aria-label": "Toggle menu",
+					children: isMobileMenuOpen ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, {
+						"data-uid": "src/components/layout/Header.tsx:72:31",
+						"data-prohibitions": "[editContent]",
+						size: 24
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
+						"data-uid": "src/components/layout/Header.tsx:72:49",
+						"data-prohibitions": "[editContent]",
+						size: 24
+					})
+				})
+			]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/layout/Header.tsx:77:7",
+			"data-prohibitions": "[editContent]",
+			className: cn$1("fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 md:hidden transition-transform duration-300 ease-in-out", isMobileMenuOpen ? "translate-x-0" : "translate-x-full"),
+			children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+				"data-uid": "src/components/layout/Header.tsx:84:11",
+				"data-prohibitions": "[editContent]",
+				href: link.href,
+				onClick: closeMenu,
+				className: "text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4",
+				children: link.name
+			}, link.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				"data-uid": "src/components/layout/Header.tsx:93:9",
+				"data-prohibitions": "[]",
+				asChild: true,
+				className: "bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg",
+				onClick: closeMenu,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+					"data-uid": "src/components/layout/Header.tsx:98:11",
+					"data-prohibitions": "[]",
+					href: "#contato",
+					children: "Solicitar Orçamento"
+				})
+			})]
+		})]
+	});
+}
+//#endregion
+//#region src/components/layout/Footer.tsx
+function Footer() {
+	const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
+		"data-uid": "src/components/layout/Footer.tsx:8:5",
+		"data-prohibitions": "[editContent]",
+		className: "bg-brand-navy text-white pt-16 pb-8",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/layout/Footer.tsx:9:7",
+			"data-prohibitions": "[editContent]",
+			className: "container mx-auto px-4 md:px-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/layout/Footer.tsx:10:9",
+				"data-prohibitions": "[editContent]",
+				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:12:11",
+						"data-prohibitions": "[]",
+						className: "space-y-4",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+								"data-uid": "src/components/layout/Footer.tsx:13:13",
+								"data-prohibitions": "[]",
+								className: "text-xl font-bold mb-4 text-brand-light",
+								children: "JT Obras e Projetos"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								"data-uid": "src/components/layout/Footer.tsx:14:13",
+								"data-prohibitions": "[]",
+								className: "text-gray-300 text-sm leading-relaxed",
+								children: "Especialistas em obras complexas, reformas comerciais e manutenções com rígido padrão de segurança e excelência."
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/layout/Footer.tsx:18:13",
+								"data-prohibitions": "[]",
+								className: "flex gap-4 pt-2",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:19:15",
+										"data-prohibitions": "[]",
+										href: "#",
+										className: "text-gray-300 hover:text-brand-orange transition-colors",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Instagram, {
+											"data-uid": "src/components/layout/Footer.tsx:20:17",
+											"data-prohibitions": "[editContent]",
+											size: 20
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:22:15",
+										"data-prohibitions": "[]",
+										href: "#",
+										className: "text-gray-300 hover:text-brand-orange transition-colors",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Linkedin, {
+											"data-uid": "src/components/layout/Footer.tsx:23:17",
+											"data-prohibitions": "[editContent]",
+											size: 20
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:25:15",
+										"data-prohibitions": "[]",
+										href: "#",
+										className: "text-gray-300 hover:text-brand-orange transition-colors",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Facebook, {
+											"data-uid": "src/components/layout/Footer.tsx:26:17",
+											"data-prohibitions": "[editContent]",
+											size: 20
+										})
+									})
+								]
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:32:11",
+						"data-prohibitions": "[]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/layout/Footer.tsx:33:13",
+							"data-prohibitions": "[]",
+							className: "text-lg font-bold mb-4 text-brand-light",
+							children: "Links Rápidos"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
+							"data-uid": "src/components/layout/Footer.tsx:34:13",
+							"data-prohibitions": "[]",
+							className: "space-y-3",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:35:15",
+									"data-prohibitions": "[]",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:36:17",
+										"data-prohibitions": "[]",
+										href: "#inicio",
+										className: "text-gray-300 hover:text-white transition-colors text-sm",
+										children: "Início"
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:43:15",
+									"data-prohibitions": "[]",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:44:17",
+										"data-prohibitions": "[]",
+										href: "#projetos",
+										className: "text-gray-300 hover:text-white transition-colors text-sm",
+										children: "Nossos Projetos"
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:51:15",
+									"data-prohibitions": "[]",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:52:17",
+										"data-prohibitions": "[]",
+										href: "#sobre",
+										className: "text-gray-300 hover:text-white transition-colors text-sm",
+										children: "Sobre Nós"
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:59:15",
+									"data-prohibitions": "[]",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:60:17",
+										"data-prohibitions": "[]",
+										href: "#clientes",
+										className: "text-gray-300 hover:text-white transition-colors text-sm",
+										children: "Clientes"
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:67:15",
+									"data-prohibitions": "[]",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/layout/Footer.tsx:68:17",
+										"data-prohibitions": "[]",
+										href: "#contato",
+										className: "text-gray-300 hover:text-white transition-colors text-sm",
+										children: "Fale Conosco"
+									})
+								})
+							]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:79:11",
+						"data-prohibitions": "[]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/layout/Footer.tsx:80:13",
+							"data-prohibitions": "[]",
+							className: "text-lg font-bold mb-4 text-brand-light",
+							children: "Especialidades"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
+							"data-uid": "src/components/layout/Footer.tsx:81:13",
+							"data-prohibitions": "[]",
+							className: "space-y-3",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:82:15",
+									"data-prohibitions": "[]",
+									className: "text-gray-300 text-sm",
+									children: "Reformas Comerciais"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:83:15",
+									"data-prohibitions": "[]",
+									className: "text-gray-300 text-sm",
+									children: "Manutenção Predial"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:84:15",
+									"data-prohibitions": "[]",
+									className: "text-gray-300 text-sm",
+									children: "Adequação NR 10 e NR 35"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:85:15",
+									"data-prohibitions": "[]",
+									className: "text-gray-300 text-sm",
+									children: "Projetos Estruturais"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:86:15",
+									"data-prohibitions": "[]",
+									className: "text-gray-300 text-sm",
+									children: "Gestão de Obras"
+								})
+							]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:91:11",
+						"data-prohibitions": "[]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/layout/Footer.tsx:92:13",
+							"data-prohibitions": "[]",
+							className: "text-lg font-bold mb-4 text-brand-light",
+							children: "Contato"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
+							"data-uid": "src/components/layout/Footer.tsx:93:13",
+							"data-prohibitions": "[]",
+							className: "space-y-4",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:94:15",
+									"data-prohibitions": "[]",
+									className: "flex items-start gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
+										"data-uid": "src/components/layout/Footer.tsx:95:17",
+										"data-prohibitions": "[editContent]",
+										className: "text-brand-orange shrink-0 mt-0.5",
+										size: 18
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/layout/Footer.tsx:96:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-300 text-sm",
+										children: "São Paulo, SP - Atendimento em todo Brasil"
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:100:15",
+									"data-prohibitions": "[]",
+									className: "flex items-center gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
+										"data-uid": "src/components/layout/Footer.tsx:101:17",
+										"data-prohibitions": "[editContent]",
+										className: "text-brand-orange shrink-0",
+										size: 18
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/layout/Footer.tsx:102:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-300 text-sm",
+										children: "(11) 99999-9999"
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+									"data-uid": "src/components/layout/Footer.tsx:104:15",
+									"data-prohibitions": "[]",
+									className: "flex items-center gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
+										"data-uid": "src/components/layout/Footer.tsx:105:17",
+										"data-prohibitions": "[editContent]",
+										className: "text-brand-orange shrink-0",
+										size: 18
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/layout/Footer.tsx:106:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-300 text-sm",
+										children: "contato@jtobras.com.br"
+									})]
+								})
+							]
+						})]
+					})
+				]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				"data-uid": "src/components/layout/Footer.tsx:113:9",
+				"data-prohibitions": "[editContent]",
+				className: "pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					"data-uid": "src/components/layout/Footer.tsx:114:11",
+					"data-prohibitions": "[]",
+					className: "flex items-center gap-4 flex-col md:flex-row text-center md:text-left",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:115:13",
+						"data-prohibitions": "[]",
+						className: "bg-white p-2 rounded shadow-sm",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+							"data-uid": "src/components/layout/Footer.tsx:116:15",
+							"data-prohibitions": "[editContent]",
+							src: logotipo_c129e_default,
+							alt: "Logo JT Obras e Manutenções",
+							className: "h-10 w-auto object-contain"
+						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						"data-uid": "src/components/layout/Footer.tsx:122:13",
+						"data-prohibitions": "[]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/layout/Footer.tsx:123:15",
+							"data-prohibitions": "[]",
+							className: "text-sm text-gray-400 font-medium",
+							children: "JT Obras e Manutenções LTDA"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/layout/Footer.tsx:124:15",
+							"data-prohibitions": "[]",
+							className: "text-xs text-gray-500 mt-1",
+							children: "CNPJ: 63.243.791/0001-09"
+						})]
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					"data-uid": "src/components/layout/Footer.tsx:128:11",
+					"data-prohibitions": "[editContent]",
+					className: "text-xs text-gray-500 text-center md:text-right",
+					children: [
+						"© ",
+						currentYear,
+						" Todos os direitos reservados."
+					]
+				})]
+			})]
+		})
+	});
+}
 //#endregion
 //#region src/components/animations/FadeIn.tsx
 function FadeIn({ children, className, delay = 0, direction = "up" }) {
@@ -24378,118 +24813,224 @@ function FadeIn({ children, className, delay = 0, direction = "up" }) {
 function Hero() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		"data-uid": "src/components/sections/Hero.tsx:7:5",
-		"data-prohibitions": "[]",
+		"data-prohibitions": "[editContent]",
 		id: "inicio",
-		className: "relative min-h-[85vh] flex items-center justify-center overflow-hidden",
+		className: "relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-brand-navy",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:11:7",
+				"data-uid": "src/components/sections/Hero.tsx:12:7",
 				"data-prohibitions": "[editContent]",
-				className: "absolute inset-0 z-0 bg-cover bg-center bg-no-repeat",
-				style: { backgroundImage: "url(https://img.usecurling.com/p/1920/1080?q=modern%20construction%20site&color=blue)" }
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:18:7",
-				"data-prohibitions": "[editContent]",
-				className: "absolute inset-0 z-10 bg-primary/80 mix-blend-multiply"
+				className: "absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20",
+				style: { backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site&color=black')` }
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				"data-uid": "src/components/sections/Hero.tsx:19:7",
-				"data-prohibitions": "[editContent]",
-				className: "absolute inset-0 z-10 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:21:7",
 				"data-prohibitions": "[]",
-				className: "container relative z-20 px-4 py-32 text-center md:text-left text-white",
+				className: "container mx-auto px-4 md:px-6 relative z-10",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/sections/Hero.tsx:22:9",
+					"data-uid": "src/components/sections/Hero.tsx:20:9",
 					"data-prohibitions": "[]",
-					className: "max-w-3xl",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-							"data-uid": "src/components/sections/Hero.tsx:23:11",
-							"data-prohibitions": "[]",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:24:13",
+					className: "grid lg:grid-cols-2 gap-12 items-center",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+						"data-uid": "src/components/sections/Hero.tsx:21:11",
+						"data-prohibitions": "[]",
+						className: "max-w-2xl",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Hero.tsx:22:13",
 								"data-prohibitions": "[]",
-								className: "inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
-									"data-uid": "src/components/sections/Hero.tsx:25:15",
-									"data-prohibitions": "[editContent]",
-									size: 16,
-									className: "text-secondary"
+								className: "inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/components/sections/Hero.tsx:23:15",
+									"data-prohibitions": "[]",
+									className: "flex h-2 w-2 rounded-full bg-brand-orange animate-pulse"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/sections/Hero.tsx:26:15",
+									"data-uid": "src/components/sections/Hero.tsx:24:15",
 									"data-prohibitions": "[]",
-									className: "text-sm font-medium",
-									children: "Especialistas em NR 10, NR 35, NR 18 e NR 01"
+									className: "text-sm font-medium text-white",
+									children: "Especialistas em Obras Complexas"
 								})]
-							})
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-							"data-uid": "src/components/sections/Hero.tsx:32:11",
-							"data-prohibitions": "[]",
-							delay: 200,
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
-								"data-uid": "src/components/sections/Hero.tsx:33:13",
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
+								"data-uid": "src/components/sections/Hero.tsx:29:13",
 								"data-prohibitions": "[]",
-								className: "text-5xl md:text-6xl lg:text-7xl font-poppins font-extrabold tracking-tight mb-6 leading-[1.1]",
-								children: ["Transformando Ideias em ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/sections/Hero.tsx:34:39",
-									"data-prohibitions": "[]",
-									className: "text-secondary",
-									children: "Realidade"
-								})]
-							})
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-							"data-uid": "src/components/sections/Hero.tsx:38:11",
-							"data-prohibitions": "[]",
-							delay: 400,
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6",
+								children: [
+									"Construindo Soluções com ",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										"data-uid": "src/components/sections/Hero.tsx:30:40",
+										"data-prohibitions": "[]",
+										className: "text-brand-light",
+										children: "Excelência"
+									}),
+									" e Segurança"
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								"data-uid": "src/components/sections/Hero.tsx:34:13",
+								"data-prohibitions": "[]",
+								className: "text-lg md:text-xl text-gray-300 mb-8 leading-relaxed",
+								children: "Qualidade, confiança e inovação em reformas e construções. Especialistas certificados em NR 10, NR 35 e NR 18 para garantir o sucesso do seu projeto."
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								"data-uid": "src/components/sections/Hero.tsx:39:13",
 								"data-prohibitions": "[]",
-								className: "text-lg md:text-xl text-gray-200 mb-8 max-w-2xl font-light leading-relaxed",
-								children: "Qualidade, confiança e inovação em cada projeto. Sua satisfação é a nossa prioridade."
+								className: "flex flex-col sm:flex-row gap-4",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									"data-uid": "src/components/sections/Hero.tsx:40:15",
+									"data-prohibitions": "[]",
+									size: "lg",
+									className: "bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8",
+									asChild: true,
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+										"data-uid": "src/components/sections/Hero.tsx:45:17",
+										"data-prohibitions": "[]",
+										href: "#contato",
+										children: ["Solicitar Orçamento ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, {
+											"data-uid": "src/components/sections/Hero.tsx:46:39",
+											"data-prohibitions": "[editContent]",
+											className: "ml-2 h-5 w-5"
+										})]
+									})
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									"data-uid": "src/components/sections/Hero.tsx:49:15",
+									"data-prohibitions": "[]",
+									size: "lg",
+									variant: "outline",
+									className: "text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8",
+									asChild: true,
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										"data-uid": "src/components/sections/Hero.tsx:55:17",
+										"data-prohibitions": "[]",
+										href: "#projetos",
+										children: "Conheça Nossos Projetos"
+									})
+								})]
 							})
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-							"data-uid": "src/components/sections/Hero.tsx:44:11",
+						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+						"data-uid": "src/components/sections/Hero.tsx:60:11",
+						"data-prohibitions": "[]",
+						direction: "left",
+						delay: .2,
+						className: "hidden lg:grid grid-cols-2 gap-4",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							"data-uid": "src/components/sections/Hero.tsx:61:13",
 							"data-prohibitions": "[]",
-							delay: 600,
-							className: "flex flex-col sm:flex-row gap-4 justify-center md:justify-start",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/components/sections/Hero.tsx:48:13",
+							className: "space-y-4 translate-y-8",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Hero.tsx:62:15",
 								"data-prohibitions": "[]",
-								size: "lg",
-								className: "bg-accent hover:bg-white hover:text-accent text-lg h-14 px-8 rounded-md transition-all duration-300 shadow-lg hover:shadow-xl group",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-									"data-uid": "src/components/sections/Hero.tsx:52:15",
-									"data-prohibitions": "[]",
-									href: "#contato",
-									className: "flex items-center",
-									children: ["Solicitar Orçamento", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, {
-										"data-uid": "src/components/sections/Hero.tsx:54:17",
+								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HardHat, {
+										"data-uid": "src/components/sections/Hero.tsx:63:17",
 										"data-prohibitions": "[editContent]",
-										className: "ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform"
-									})]
-								})
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/components/sections/Hero.tsx:57:13",
+										className: "h-10 w-10 text-brand-orange mb-4"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+										"data-uid": "src/components/sections/Hero.tsx:64:17",
+										"data-prohibitions": "[]",
+										className: "text-xl font-bold text-white mb-2",
+										children: "Engenharia"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										"data-uid": "src/components/sections/Hero.tsx:65:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-400 text-sm",
+										children: "Projetos estruturais e execução precisa para sua obra."
+									})
+								]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Hero.tsx:69:15",
 								"data-prohibitions": "[]",
-								size: "lg",
-								variant: "outline",
-								className: "text-white border-white/30 hover:bg-white/10 hover:text-white text-lg h-14 px-8 backdrop-blur-sm",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/sections/Hero.tsx:62:15",
-									"data-prohibitions": "[]",
-									href: "/portfolio",
-									children: "Ver Projetos"
-								})
+								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ruler, {
+										"data-uid": "src/components/sections/Hero.tsx:70:17",
+										"data-prohibitions": "[editContent]",
+										className: "h-10 w-10 text-brand-light mb-4"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+										"data-uid": "src/components/sections/Hero.tsx:71:17",
+										"data-prohibitions": "[]",
+										className: "text-xl font-bold text-white mb-2",
+										children: "Reformas"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										"data-uid": "src/components/sections/Hero.tsx:72:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-400 text-sm",
+										children: "Modernização e adequação de espaços comerciais."
+									})
+								]
 							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							"data-uid": "src/components/sections/Hero.tsx:77:13",
+							"data-prohibitions": "[]",
+							className: "space-y-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Hero.tsx:78:15",
+								"data-prohibitions": "[]",
+								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
+										"data-uid": "src/components/sections/Hero.tsx:79:17",
+										"data-prohibitions": "[editContent]",
+										className: "h-10 w-10 text-green-400 mb-4"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+										"data-uid": "src/components/sections/Hero.tsx:80:17",
+										"data-prohibitions": "[]",
+										className: "text-xl font-bold text-white mb-2",
+										children: "Segurança (NRs)"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										"data-uid": "src/components/sections/Hero.tsx:81:17",
+										"data-prohibitions": "[]",
+										className: "text-gray-400 text-sm",
+										children: "Rigoroso cumprimento das normas NR 10, 18 e 35."
+									})
+								]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Hero.tsx:85:15",
+								"data-prohibitions": "[]",
+								className: "rounded-2xl overflow-hidden h-48 border border-white/10 relative",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+									"data-uid": "src/components/sections/Hero.tsx:86:17",
+									"data-prohibitions": "[editContent]",
+									src: "https://img.usecurling.com/p/400/400?q=architect%20blueprint",
+									alt: "Projeto",
+									className: "w-full h-full object-cover"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									"data-uid": "src/components/sections/Hero.tsx:91:17",
+									"data-prohibitions": "[]",
+									className: "absolute inset-0 bg-brand-navy/40 mix-blend-multiply"
+								})]
+							})]
+						})]
+					})]
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Hero.tsx:99:7",
+				"data-prohibitions": "[]",
+				className: "absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+					"data-uid": "src/components/sections/Hero.tsx:100:9",
+					"data-prohibitions": "[]",
+					href: "#projetos",
+					className: "text-white/50 hover:text-white transition-colors",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						"data-uid": "src/components/sections/Hero.tsx:101:11",
+						"data-prohibitions": "[]",
+						className: "w-[30px] h-[50px] rounded-full border-2 border-current flex justify-center pt-2",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/components/sections/Hero.tsx:102:13",
+							"data-prohibitions": "[]",
+							className: "w-1.5 h-3 bg-current rounded-full animate-scroll-down"
 						})
-					]
+					})
 				})
 			})
 		]
@@ -24546,1984 +25087,233 @@ var CardFooter = import_react.forwardRef(({ className, ...props }, ref) => /* @_
 }));
 CardFooter.displayName = "CardFooter";
 //#endregion
-//#region src/components/sections/Safety.tsx
-var SAFETY_STANDARDS = [
-	{
-		id: "nr10",
-		title: "NR 10",
-		subtitle: "Segurança Elétrica",
-		description: "Nossa equipe é rigorosamente treinada e equipada para atuar em instalações e serviços em eletricidade, garantindo a saúde e segurança de todos.",
-		icon: Zap,
-		color: "text-warning"
-	},
-	{
-		id: "nr35",
-		title: "NR 35",
-		subtitle: "Trabalho em Altura",
-		description: "Executamos serviços em altura com planejamento minucioso, utilizando EPIs certificados e linhas de vida aprovadas.",
-		icon: Mountain,
-		color: "text-secondary"
-	},
-	{
-		id: "nr18",
-		title: "NR 18",
-		subtitle: "Segurança na Construção",
-		description: "Garantimos medidas de controle e sistemas preventivos nos processos e no meio ambiente de trabalho na indústria da construção.",
-		icon: Building2,
-		color: "text-accent"
-	},
-	{
-		id: "nr01",
-		title: "NR 01",
-		subtitle: "Gerenciamento de Riscos",
-		description: "Aplicamos o PGR (Programa de Gerenciamento de Riscos) de forma integrada, antecipando e controlando riscos ocupacionais.",
-		icon: HardHat,
-		color: "text-primary"
-	}
-];
-function Safety() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/Safety.tsx:46:5",
-		"data-prohibitions": "[editContent]",
-		id: "seguranca",
-		className: "py-24 bg-white relative",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/sections/Safety.tsx:47:7",
-			"data-prohibitions": "[editContent]",
-			className: "container px-4",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-				"data-uid": "src/components/sections/Safety.tsx:48:9",
-				"data-prohibitions": "[]",
-				className: "text-center max-w-3xl mx-auto mb-16",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-					"data-uid": "src/components/sections/Safety.tsx:49:11",
-					"data-prohibitions": "[]",
-					className: "text-heading text-4xl mb-4",
-					children: "Compromisso com a Segurança"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					"data-uid": "src/components/sections/Safety.tsx:50:11",
-					"data-prohibitions": "[]",
-					className: "text-muted-foreground text-lg",
-					children: "A vida e a integridade da nossa equipe são prioridade máxima. Operamos estritamente dentro das Normas Regulamentadoras mais exigentes do setor."
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Safety.tsx:56:9",
-				"data-prohibitions": "[editContent]",
-				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6",
-				children: SAFETY_STANDARDS.map((standard, index) => {
-					const Icon = standard.icon;
-					return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-						"data-uid": "src/components/sections/Safety.tsx:60:15",
-						"data-prohibitions": "[editContent]",
-						delay: index * 150,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-							"data-uid": "src/components/sections/Safety.tsx:61:17",
-							"data-prohibitions": "[editContent]",
-							className: "h-full border-border/50 shadow-soft hover:shadow-hover hover:-translate-y-2 transition-all duration-300 group overflow-hidden relative",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/components/sections/Safety.tsx:62:19",
-									"data-prohibitions": "[editContent]",
-									className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent group-hover:via-primary transition-all duration-500"
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
-									"data-uid": "src/components/sections/Safety.tsx:63:19",
-									"data-prohibitions": "[editContent]",
-									className: "text-center pt-8",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											"data-uid": "src/components/sections/Safety.tsx:64:21",
-											"data-prohibitions": "[editContent]",
-											className: "mx-auto bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300",
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
-												"data-uid": "src/components/sections/Safety.tsx:65:23",
-												"data-prohibitions": "[editContent]",
-												size: 40,
-												className: standard.color
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-											"data-uid": "src/components/sections/Safety.tsx:67:21",
-											"data-prohibitions": "[editContent]",
-											className: "font-poppins text-2xl text-primary mb-1",
-											children: standard.title
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											"data-uid": "src/components/sections/Safety.tsx:70:21",
-											"data-prohibitions": "[editContent]",
-											className: "text-xs font-semibold text-secondary uppercase tracking-wider h-8",
-											children: standard.subtitle
-										})
-									]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-									"data-uid": "src/components/sections/Safety.tsx:74:19",
-									"data-prohibitions": "[editContent]",
-									className: "text-center text-muted-foreground",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Safety.tsx:75:21",
-										"data-prohibitions": "[editContent]",
-										className: "text-sm",
-										children: standard.description
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/sections/Safety.tsx:76:21",
-										"data-prohibitions": "[]",
-										className: "mt-6 inline-flex items-center text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded border border-primary/10 group-hover:bg-primary group-hover:text-white transition-colors",
-										children: "Certificação Garantida"
-									})]
-								})
-							]
-						})
-					}, standard.id);
-				})
-			})]
-		})
-	});
-}
-//#endregion
 //#region src/components/sections/Services.tsx
-var SERVICES = [
+var services = [
+	{
+		title: "Obras Corporativas",
+		description: "Construção e reforma de escritórios, galpões e lajes corporativas com foco em prazo e qualidade.",
+		icon: Building2,
+		image: "https://img.usecurling.com/p/600/400?q=office%20construction&color=blue"
+	},
 	{
 		title: "Manutenção Industrial",
-		description: "Soluções preventivas e corretivas para manter sua linha de produção operando com máxima eficiência e segurança.",
-		icon: Factory,
-		image: "https://img.usecurling.com/p/600/400?q=industrial%20maintenance&color=blue"
-	},
-	{
-		title: "Construção Civil",
-		description: "Obras corporativas, galpões e reformas estruturais executadas com excelência técnica e cumprimento de prazos.",
-		icon: Building2,
-		image: "https://img.usecurling.com/p/600/400?q=civil%20construction&color=blue"
-	},
-	{
-		title: "Infraestrutura Complexa",
-		description: "Projetos de alta complexidade que exigem logística precisa, engenharia robusta e equipes altamente especializadas.",
+		description: "Serviços preventivos e corretivos em plantas industriais, garantindo operação contínua.",
 		icon: Wrench,
-		image: "https://img.usecurling.com/p/600/400?q=infrastructure&color=blue"
+		image: "https://img.usecurling.com/p/600/400?q=industrial%20maintenance&color=orange"
 	},
 	{
-		title: "Projetos Elétricos",
-		description: "Instalações de baixa, média e alta tensão, laudos técnicos e adequações rigorosas à NR 10.",
+		title: "Instalações Elétricas",
+		description: "Projetos e execução de baixa e média tensão, painéis e adequação à NR 10.",
 		icon: Zap,
-		image: "https://img.usecurling.com/p/600/400?q=electrical%20engineering&color=blue"
+		image: "https://img.usecurling.com/p/600/400?q=electrical%20panel&color=black"
+	},
+	{
+		title: "Acabamentos Finos",
+		description: "Revestimentos, pintura, gesso e marcenaria de alto padrão para ambientes exigentes.",
+		icon: PaintRoller,
+		image: "https://img.usecurling.com/p/600/400?q=interior%20finishes"
+	},
+	{
+		title: "Trabalho em Altura",
+		description: "Equipe especializada e certificada em NR 35 para fachadas e coberturas.",
+		icon: ShieldAlert,
+		image: "https://img.usecurling.com/p/600/400?q=scaffolding&color=gray"
+	},
+	{
+		title: "Estruturas Metálicas",
+		description: "Fabricação e montagem de mezaninos, coberturas e reforços estruturais.",
+		icon: Hammer,
+		image: "https://img.usecurling.com/p/600/400?q=steel%20structure&color=black"
 	}
 ];
 function Services() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/Services.tsx:38:5",
+		"data-uid": "src/components/sections/Services.tsx:49:5",
 		"data-prohibitions": "[editContent]",
-		id: "servicos",
-		className: "py-24 bg-slate-50 relative",
+		id: "projetos",
+		className: "py-24 bg-gray-50",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/sections/Services.tsx:39:7",
+			"data-uid": "src/components/sections/Services.tsx:50:7",
 			"data-prohibitions": "[editContent]",
-			className: "container px-4",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-				"data-uid": "src/components/sections/Services.tsx:40:9",
+			className: "container mx-auto px-4 md:px-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Services.tsx:51:9",
 				"data-prohibitions": "[]",
 				className: "text-center max-w-3xl mx-auto mb-16",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-					"data-uid": "src/components/sections/Services.tsx:41:11",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+					"data-uid": "src/components/sections/Services.tsx:52:11",
 					"data-prohibitions": "[]",
-					className: "text-heading text-4xl mb-4",
-					children: "Nossas Especialidades"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					"data-uid": "src/components/sections/Services.tsx:42:11",
-					"data-prohibitions": "[]",
-					className: "text-muted-foreground text-lg",
-					children: "Oferecemos um portfólio completo de serviços para atender às demandas mais complexas da engenharia moderna."
-				})]
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							"data-uid": "src/components/sections/Services.tsx:53:13",
+							"data-prohibitions": "[]",
+							className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
+							children: "Nossas Especialidades"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/sections/Services.tsx:56:13",
+							"data-prohibitions": "[]",
+							className: "text-3xl md:text-4xl font-extrabold text-brand-navy mb-4",
+							children: "Projetos e Serviços Especializados"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/sections/Services.tsx:59:13",
+							"data-prohibitions": "[]",
+							className: "text-gray-600 text-lg",
+							children: "Oferecemos soluções completas em engenharia, do projeto à entrega das chaves, com equipes multidisciplinares e gestão rigorosa."
+						})
+					]
+				})
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Services.tsx:48:9",
+				"data-uid": "src/components/sections/Services.tsx:66:9",
 				"data-prohibitions": "[editContent]",
-				className: "grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8",
-				children: SERVICES.map((service, index) => {
-					const Icon = service.icon;
-					return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-						"data-uid": "src/components/sections/Services.tsx:52:15",
+				className: "grid md:grid-cols-2 lg:grid-cols-3 gap-8",
+				children: services.map((service, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
+					"data-uid": "src/components/sections/Services.tsx:68:13",
+					"data-prohibitions": "[editContent]",
+					delay: index * .1,
+					direction: "up",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						"data-uid": "src/components/sections/Services.tsx:69:15",
 						"data-prohibitions": "[editContent]",
-						delay: index * 150,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-							"data-uid": "src/components/sections/Services.tsx:53:17",
-							"data-prohibitions": "[editContent]",
-							className: "overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group h-full cursor-pointer",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Services.tsx:54:19",
-								"data-prohibitions": "[editContent]",
-								className: "flex flex-col sm:flex-row h-full",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/sections/Services.tsx:55:21",
-									"data-prohibitions": "[]",
-									className: "sm:w-2/5 overflow-hidden relative",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/sections/Services.tsx:56:23",
+						className: "overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group h-full bg-white flex flex-col",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Services.tsx:70:17",
+								"data-prohibitions": "[]",
+								className: "h-48 overflow-hidden relative",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										"data-uid": "src/components/sections/Services.tsx:71:19",
 										"data-prohibitions": "[editContent]",
-										className: "absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-										"data-uid": "src/components/sections/Services.tsx:57:23",
+										className: "absolute inset-0 bg-brand-navy/20 group-hover:bg-transparent transition-colors duration-500 z-10"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+										"data-uid": "src/components/sections/Services.tsx:72:19",
 										"data-prohibitions": "[editContent]",
 										src: service.image,
 										alt: service.title,
-										className: "object-cover w-full h-48 sm:h-full group-hover:scale-110 transition-transform duration-700"
-									})]
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-									"data-uid": "src/components/sections/Services.tsx:63:21",
-									"data-prohibitions": "[editContent]",
-									className: "sm:w-3/5 p-6 sm:p-8 flex flex-col justify-center bg-white group-hover:bg-primary group-hover:text-white transition-colors duration-300",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											"data-uid": "src/components/sections/Services.tsx:64:23",
-											"data-prohibitions": "[]",
-											className: "bg-primary/5 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors",
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
-												"data-uid": "src/components/sections/Services.tsx:65:25",
-												"data-prohibitions": "[editContent]",
-												className: "text-primary group-hover:text-white",
-												size: 24
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-											"data-uid": "src/components/sections/Services.tsx:67:23",
+										className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										"data-uid": "src/components/sections/Services.tsx:77:19",
+										"data-prohibitions": "[]",
+										className: "absolute bottom-4 left-4 z-20 bg-white p-3 rounded-lg shadow-md group-hover:bg-brand-orange group-hover:text-white transition-colors duration-300",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(service.icon, {
+											"data-uid": "src/components/sections/Services.tsx:78:21",
 											"data-prohibitions": "[editContent]",
-											className: "font-poppins font-bold text-xl mb-3 text-primary group-hover:text-white",
-											children: service.title
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											"data-uid": "src/components/sections/Services.tsx:70:23",
-											"data-prohibitions": "[editContent]",
-											className: "text-muted-foreground group-hover:text-white/80 text-sm leading-relaxed",
-											children: service.description
+											className: "h-6 w-6 text-brand-navy group-hover:text-white"
 										})
-									]
-								})]
+									})
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
+								"data-uid": "src/components/sections/Services.tsx:81:17",
+								"data-prohibitions": "[editContent]",
+								className: "pt-6 pb-2",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+									"data-uid": "src/components/sections/Services.tsx:82:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-xl font-bold text-brand-navy group-hover:text-brand-light transition-colors",
+									children: service.title
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+								"data-uid": "src/components/sections/Services.tsx:86:17",
+								"data-prohibitions": "[editContent]",
+								className: "pb-6 flex-grow",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
+									"data-uid": "src/components/sections/Services.tsx:87:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-gray-600 text-base",
+									children: service.description
+								})
 							})
-						})
-					}, service.title);
-				})
+						]
+					})
+				}, index))
 			})]
 		})
 	});
 }
 //#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/embla-carousel-reactive-utils@8.6.0_embla-carousel@8.6.0/node_modules/embla-carousel-reactive-utils/esm/embla-carousel-reactive-utils.esm.js
-function isObject$3(subject) {
-	return Object.prototype.toString.call(subject) === "[object Object]";
-}
-function isRecord(subject) {
-	return isObject$3(subject) || Array.isArray(subject);
-}
-function canUseDOM() {
-	return !!(typeof window !== "undefined" && window.document && window.document.createElement);
-}
-function areOptionsEqual(optionsA, optionsB) {
-	const optionsAKeys = Object.keys(optionsA);
-	const optionsBKeys = Object.keys(optionsB);
-	if (optionsAKeys.length !== optionsBKeys.length) return false;
-	if (JSON.stringify(Object.keys(optionsA.breakpoints || {})) !== JSON.stringify(Object.keys(optionsB.breakpoints || {}))) return false;
-	return optionsAKeys.every((key) => {
-		const valueA = optionsA[key];
-		const valueB = optionsB[key];
-		if (typeof valueA === "function") return `${valueA}` === `${valueB}`;
-		if (!isRecord(valueA) || !isRecord(valueB)) return valueA === valueB;
-		return areOptionsEqual(valueA, valueB);
-	});
-}
-function sortAndMapPluginToOptions(plugins) {
-	return plugins.concat().sort((a, b) => a.name > b.name ? 1 : -1).map((plugin) => plugin.options);
-}
-function arePluginsEqual(pluginsA, pluginsB) {
-	if (pluginsA.length !== pluginsB.length) return false;
-	const optionsA = sortAndMapPluginToOptions(pluginsA);
-	const optionsB = sortAndMapPluginToOptions(pluginsB);
-	return optionsA.every((optionA, index) => {
-		const optionB = optionsB[index];
-		return areOptionsEqual(optionA, optionB);
-	});
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/embla-carousel@8.6.0/node_modules/embla-carousel/esm/embla-carousel.esm.js
-function isNumber(subject) {
-	return typeof subject === "number";
-}
-function isString$1(subject) {
-	return typeof subject === "string";
-}
-function isBoolean$1(subject) {
-	return typeof subject === "boolean";
-}
-function isObject$2(subject) {
-	return Object.prototype.toString.call(subject) === "[object Object]";
-}
-function mathAbs(n) {
-	return Math.abs(n);
-}
-function mathSign(n) {
-	return Math.sign(n);
-}
-function deltaAbs(valueB, valueA) {
-	return mathAbs(valueB - valueA);
-}
-function factorAbs(valueB, valueA) {
-	if (valueB === 0 || valueA === 0) return 0;
-	if (mathAbs(valueB) <= mathAbs(valueA)) return 0;
-	return mathAbs(deltaAbs(mathAbs(valueB), mathAbs(valueA)) / valueB);
-}
-function roundToTwoDecimals(num) {
-	return Math.round(num * 100) / 100;
-}
-function arrayKeys(array) {
-	return objectKeys(array).map(Number);
-}
-function arrayLast(array) {
-	return array[arrayLastIndex(array)];
-}
-function arrayLastIndex(array) {
-	return Math.max(0, array.length - 1);
-}
-function arrayIsLastIndex(array, index) {
-	return index === arrayLastIndex(array);
-}
-function arrayFromNumber(n, startAt = 0) {
-	return Array.from(Array(n), (_, i) => startAt + i);
-}
-function objectKeys(object) {
-	return Object.keys(object);
-}
-function objectsMergeDeep(objectA, objectB) {
-	return [objectA, objectB].reduce((mergedObjects, currentObject) => {
-		objectKeys(currentObject).forEach((key) => {
-			const valueA = mergedObjects[key];
-			const valueB = currentObject[key];
-			mergedObjects[key] = isObject$2(valueA) && isObject$2(valueB) ? objectsMergeDeep(valueA, valueB) : valueB;
-		});
-		return mergedObjects;
-	}, {});
-}
-function isMouseEvent(evt, ownerWindow) {
-	return typeof ownerWindow.MouseEvent !== "undefined" && evt instanceof ownerWindow.MouseEvent;
-}
-function Alignment(align, viewSize) {
-	const predefined = {
-		start,
-		center,
-		end
-	};
-	function start() {
-		return 0;
-	}
-	function center(n) {
-		return end(n) / 2;
-	}
-	function end(n) {
-		return viewSize - n;
-	}
-	function measure(n, index) {
-		if (isString$1(align)) return predefined[align](n);
-		return align(viewSize, n, index);
-	}
-	return { measure };
-}
-function EventStore() {
-	let listeners = [];
-	function add(node, type, handler, options = { passive: true }) {
-		let removeListener;
-		if ("addEventListener" in node) {
-			node.addEventListener(type, handler, options);
-			removeListener = () => node.removeEventListener(type, handler, options);
-		} else {
-			const legacyMediaQueryList = node;
-			legacyMediaQueryList.addListener(handler);
-			removeListener = () => legacyMediaQueryList.removeListener(handler);
-		}
-		listeners.push(removeListener);
-		return self;
-	}
-	function clear() {
-		listeners = listeners.filter((remove) => remove());
-	}
-	const self = {
-		add,
-		clear
-	};
-	return self;
-}
-function Animations(ownerDocument, ownerWindow, update, render) {
-	const documentVisibleHandler = EventStore();
-	const fixedTimeStep = 1e3 / 60;
-	let lastTimeStamp = null;
-	let accumulatedTime = 0;
-	let animationId = 0;
-	function init() {
-		documentVisibleHandler.add(ownerDocument, "visibilitychange", () => {
-			if (ownerDocument.hidden) reset();
-		});
-	}
-	function destroy() {
-		stop();
-		documentVisibleHandler.clear();
-	}
-	function animate(timeStamp) {
-		if (!animationId) return;
-		if (!lastTimeStamp) {
-			lastTimeStamp = timeStamp;
-			update();
-			update();
-		}
-		const timeElapsed = timeStamp - lastTimeStamp;
-		lastTimeStamp = timeStamp;
-		accumulatedTime += timeElapsed;
-		while (accumulatedTime >= fixedTimeStep) {
-			update();
-			accumulatedTime -= fixedTimeStep;
-		}
-		render(accumulatedTime / fixedTimeStep);
-		if (animationId) animationId = ownerWindow.requestAnimationFrame(animate);
-	}
-	function start() {
-		if (animationId) return;
-		animationId = ownerWindow.requestAnimationFrame(animate);
-	}
-	function stop() {
-		ownerWindow.cancelAnimationFrame(animationId);
-		lastTimeStamp = null;
-		accumulatedTime = 0;
-		animationId = 0;
-	}
-	function reset() {
-		lastTimeStamp = null;
-		accumulatedTime = 0;
-	}
-	return {
-		init,
-		destroy,
-		start,
-		stop,
-		update,
-		render
-	};
-}
-function Axis(axis, contentDirection) {
-	const isRightToLeft = contentDirection === "rtl";
-	const isVertical = axis === "y";
-	const scroll = isVertical ? "y" : "x";
-	const cross = isVertical ? "x" : "y";
-	const sign = !isVertical && isRightToLeft ? -1 : 1;
-	const startEdge = getStartEdge();
-	const endEdge = getEndEdge();
-	function measureSize(nodeRect) {
-		const { height, width } = nodeRect;
-		return isVertical ? height : width;
-	}
-	function getStartEdge() {
-		if (isVertical) return "top";
-		return isRightToLeft ? "right" : "left";
-	}
-	function getEndEdge() {
-		if (isVertical) return "bottom";
-		return isRightToLeft ? "left" : "right";
-	}
-	function direction(n) {
-		return n * sign;
-	}
-	return {
-		scroll,
-		cross,
-		startEdge,
-		endEdge,
-		measureSize,
-		direction
-	};
-}
-function Limit(min = 0, max = 0) {
-	const length = mathAbs(min - max);
-	function reachedMin(n) {
-		return n < min;
-	}
-	function reachedMax(n) {
-		return n > max;
-	}
-	function reachedAny(n) {
-		return reachedMin(n) || reachedMax(n);
-	}
-	function constrain(n) {
-		if (!reachedAny(n)) return n;
-		return reachedMin(n) ? min : max;
-	}
-	function removeOffset(n) {
-		if (!length) return n;
-		return n - length * Math.ceil((n - max) / length);
-	}
-	return {
-		length,
-		max,
-		min,
-		constrain,
-		reachedAny,
-		reachedMax,
-		reachedMin,
-		removeOffset
-	};
-}
-function Counter(max, start, loop) {
-	const { constrain } = Limit(0, max);
-	const loopEnd = max + 1;
-	let counter = withinLimit(start);
-	function withinLimit(n) {
-		return !loop ? constrain(n) : mathAbs((loopEnd + n) % loopEnd);
-	}
-	function get() {
-		return counter;
-	}
-	function set(n) {
-		counter = withinLimit(n);
-		return self;
-	}
-	function add(n) {
-		return clone().set(get() + n);
-	}
-	function clone() {
-		return Counter(max, get(), loop);
-	}
-	const self = {
-		get,
-		set,
-		add,
-		clone
-	};
-	return self;
-}
-function DragHandler(axis, rootNode, ownerDocument, ownerWindow, target, dragTracker, location, animation, scrollTo, scrollBody, scrollTarget, index, eventHandler, percentOfView, dragFree, dragThreshold, skipSnaps, baseFriction, watchDrag) {
-	const { cross: crossAxis, direction } = axis;
-	const focusNodes = [
-		"INPUT",
-		"SELECT",
-		"TEXTAREA"
-	];
-	const nonPassiveEvent = { passive: false };
-	const initEvents = EventStore();
-	const dragEvents = EventStore();
-	const goToNextThreshold = Limit(50, 225).constrain(percentOfView.measure(20));
-	const snapForceBoost = {
-		mouse: 300,
-		touch: 400
-	};
-	const freeForceBoost = {
-		mouse: 500,
-		touch: 600
-	};
-	const baseSpeed = dragFree ? 43 : 25;
-	let isMoving = false;
-	let startScroll = 0;
-	let startCross = 0;
-	let pointerIsDown = false;
-	let preventScroll = false;
-	let preventClick = false;
-	let isMouse = false;
-	function init(emblaApi) {
-		if (!watchDrag) return;
-		function downIfAllowed(evt) {
-			if (isBoolean$1(watchDrag) || watchDrag(emblaApi, evt)) down(evt);
-		}
-		const node = rootNode;
-		initEvents.add(node, "dragstart", (evt) => evt.preventDefault(), nonPassiveEvent).add(node, "touchmove", () => void 0, nonPassiveEvent).add(node, "touchend", () => void 0).add(node, "touchstart", downIfAllowed).add(node, "mousedown", downIfAllowed).add(node, "touchcancel", up).add(node, "contextmenu", up).add(node, "click", click, true);
-	}
-	function destroy() {
-		initEvents.clear();
-		dragEvents.clear();
-	}
-	function addDragEvents() {
-		const node = isMouse ? ownerDocument : rootNode;
-		dragEvents.add(node, "touchmove", move, nonPassiveEvent).add(node, "touchend", up).add(node, "mousemove", move, nonPassiveEvent).add(node, "mouseup", up);
-	}
-	function isFocusNode(node) {
-		const nodeName = node.nodeName || "";
-		return focusNodes.includes(nodeName);
-	}
-	function forceBoost() {
-		return (dragFree ? freeForceBoost : snapForceBoost)[isMouse ? "mouse" : "touch"];
-	}
-	function allowedForce(force, targetChanged) {
-		const next = index.add(mathSign(force) * -1);
-		const baseForce = scrollTarget.byDistance(force, !dragFree).distance;
-		if (dragFree || mathAbs(force) < goToNextThreshold) return baseForce;
-		if (skipSnaps && targetChanged) return baseForce * .5;
-		return scrollTarget.byIndex(next.get(), 0).distance;
-	}
-	function down(evt) {
-		const isMouseEvt = isMouseEvent(evt, ownerWindow);
-		isMouse = isMouseEvt;
-		preventClick = dragFree && isMouseEvt && !evt.buttons && isMoving;
-		isMoving = deltaAbs(target.get(), location.get()) >= 2;
-		if (isMouseEvt && evt.button !== 0) return;
-		if (isFocusNode(evt.target)) return;
-		pointerIsDown = true;
-		dragTracker.pointerDown(evt);
-		scrollBody.useFriction(0).useDuration(0);
-		target.set(location);
-		addDragEvents();
-		startScroll = dragTracker.readPoint(evt);
-		startCross = dragTracker.readPoint(evt, crossAxis);
-		eventHandler.emit("pointerDown");
-	}
-	function move(evt) {
-		if (!isMouseEvent(evt, ownerWindow) && evt.touches.length >= 2) return up(evt);
-		const lastScroll = dragTracker.readPoint(evt);
-		const lastCross = dragTracker.readPoint(evt, crossAxis);
-		const diffScroll = deltaAbs(lastScroll, startScroll);
-		const diffCross = deltaAbs(lastCross, startCross);
-		if (!preventScroll && !isMouse) {
-			if (!evt.cancelable) return up(evt);
-			preventScroll = diffScroll > diffCross;
-			if (!preventScroll) return up(evt);
-		}
-		const diff = dragTracker.pointerMove(evt);
-		if (diffScroll > dragThreshold) preventClick = true;
-		scrollBody.useFriction(.3).useDuration(.75);
-		animation.start();
-		target.add(direction(diff));
-		evt.preventDefault();
-	}
-	function up(evt) {
-		const targetChanged = scrollTarget.byDistance(0, false).index !== index.get();
-		const rawForce = dragTracker.pointerUp(evt) * forceBoost();
-		const force = allowedForce(direction(rawForce), targetChanged);
-		const forceFactor = factorAbs(rawForce, force);
-		const speed = baseSpeed - 10 * forceFactor;
-		const friction = baseFriction + forceFactor / 50;
-		preventScroll = false;
-		pointerIsDown = false;
-		dragEvents.clear();
-		scrollBody.useDuration(speed).useFriction(friction);
-		scrollTo.distance(force, !dragFree);
-		isMouse = false;
-		eventHandler.emit("pointerUp");
-	}
-	function click(evt) {
-		if (preventClick) {
-			evt.stopPropagation();
-			evt.preventDefault();
-			preventClick = false;
-		}
-	}
-	function pointerDown() {
-		return pointerIsDown;
-	}
-	return {
-		init,
-		destroy,
-		pointerDown
-	};
-}
-function DragTracker(axis, ownerWindow) {
-	const logInterval = 170;
-	let startEvent;
-	let lastEvent;
-	function readTime(evt) {
-		return evt.timeStamp;
-	}
-	function readPoint(evt, evtAxis) {
-		const coord = `client${(evtAxis || axis.scroll) === "x" ? "X" : "Y"}`;
-		return (isMouseEvent(evt, ownerWindow) ? evt : evt.touches[0])[coord];
-	}
-	function pointerDown(evt) {
-		startEvent = evt;
-		lastEvent = evt;
-		return readPoint(evt);
-	}
-	function pointerMove(evt) {
-		const diff = readPoint(evt) - readPoint(lastEvent);
-		const expired = readTime(evt) - readTime(startEvent) > logInterval;
-		lastEvent = evt;
-		if (expired) startEvent = evt;
-		return diff;
-	}
-	function pointerUp(evt) {
-		if (!startEvent || !lastEvent) return 0;
-		const diffDrag = readPoint(lastEvent) - readPoint(startEvent);
-		const diffTime = readTime(evt) - readTime(startEvent);
-		const expired = readTime(evt) - readTime(lastEvent) > logInterval;
-		const force = diffDrag / diffTime;
-		return diffTime && !expired && mathAbs(force) > .1 ? force : 0;
-	}
-	return {
-		pointerDown,
-		pointerMove,
-		pointerUp,
-		readPoint
-	};
-}
-function NodeRects() {
-	function measure(node) {
-		const { offsetTop, offsetLeft, offsetWidth, offsetHeight } = node;
-		return {
-			top: offsetTop,
-			right: offsetLeft + offsetWidth,
-			bottom: offsetTop + offsetHeight,
-			left: offsetLeft,
-			width: offsetWidth,
-			height: offsetHeight
-		};
-	}
-	return { measure };
-}
-function PercentOfView(viewSize) {
-	function measure(n) {
-		return viewSize * (n / 100);
-	}
-	return { measure };
-}
-function ResizeHandler(container, eventHandler, ownerWindow, slides, axis, watchResize, nodeRects) {
-	const observeNodes = [container].concat(slides);
-	let resizeObserver;
-	let containerSize;
-	let slideSizes = [];
-	let destroyed = false;
-	function readSize(node) {
-		return axis.measureSize(nodeRects.measure(node));
-	}
-	function init(emblaApi) {
-		if (!watchResize) return;
-		containerSize = readSize(container);
-		slideSizes = slides.map(readSize);
-		function defaultCallback(entries) {
-			for (const entry of entries) {
-				if (destroyed) return;
-				const isContainer = entry.target === container;
-				const slideIndex = slides.indexOf(entry.target);
-				const lastSize = isContainer ? containerSize : slideSizes[slideIndex];
-				if (mathAbs(readSize(isContainer ? container : slides[slideIndex]) - lastSize) >= .5) {
-					emblaApi.reInit();
-					eventHandler.emit("resize");
-					break;
-				}
-			}
-		}
-		resizeObserver = new ResizeObserver((entries) => {
-			if (isBoolean$1(watchResize) || watchResize(emblaApi, entries)) defaultCallback(entries);
-		});
-		ownerWindow.requestAnimationFrame(() => {
-			observeNodes.forEach((node) => resizeObserver.observe(node));
-		});
-	}
-	function destroy() {
-		destroyed = true;
-		if (resizeObserver) resizeObserver.disconnect();
-	}
-	return {
-		init,
-		destroy
-	};
-}
-function ScrollBody(location, offsetLocation, previousLocation, target, baseDuration, baseFriction) {
-	let scrollVelocity = 0;
-	let scrollDirection = 0;
-	let scrollDuration = baseDuration;
-	let scrollFriction = baseFriction;
-	let rawLocation = location.get();
-	let rawLocationPrevious = 0;
-	function seek() {
-		const displacement = target.get() - location.get();
-		const isInstant = !scrollDuration;
-		let scrollDistance = 0;
-		if (isInstant) {
-			scrollVelocity = 0;
-			previousLocation.set(target);
-			location.set(target);
-			scrollDistance = displacement;
-		} else {
-			previousLocation.set(location);
-			scrollVelocity += displacement / scrollDuration;
-			scrollVelocity *= scrollFriction;
-			rawLocation += scrollVelocity;
-			location.add(scrollVelocity);
-			scrollDistance = rawLocation - rawLocationPrevious;
-		}
-		scrollDirection = mathSign(scrollDistance);
-		rawLocationPrevious = rawLocation;
-		return self;
-	}
-	function settled() {
-		return mathAbs(target.get() - offsetLocation.get()) < .001;
-	}
-	function duration() {
-		return scrollDuration;
-	}
-	function direction() {
-		return scrollDirection;
-	}
-	function velocity() {
-		return scrollVelocity;
-	}
-	function useBaseDuration() {
-		return useDuration(baseDuration);
-	}
-	function useBaseFriction() {
-		return useFriction(baseFriction);
-	}
-	function useDuration(n) {
-		scrollDuration = n;
-		return self;
-	}
-	function useFriction(n) {
-		scrollFriction = n;
-		return self;
-	}
-	const self = {
-		direction,
-		duration,
-		velocity,
-		seek,
-		settled,
-		useBaseFriction,
-		useBaseDuration,
-		useFriction,
-		useDuration
-	};
-	return self;
-}
-function ScrollBounds(limit, location, target, scrollBody, percentOfView) {
-	const pullBackThreshold = percentOfView.measure(10);
-	const edgeOffsetTolerance = percentOfView.measure(50);
-	const frictionLimit = Limit(.1, .99);
-	let disabled = false;
-	function shouldConstrain() {
-		if (disabled) return false;
-		if (!limit.reachedAny(target.get())) return false;
-		if (!limit.reachedAny(location.get())) return false;
-		return true;
-	}
-	function constrain(pointerDown) {
-		if (!shouldConstrain()) return;
-		const diffToEdge = mathAbs(limit[limit.reachedMin(location.get()) ? "min" : "max"] - location.get());
-		const diffToTarget = target.get() - location.get();
-		const friction = frictionLimit.constrain(diffToEdge / edgeOffsetTolerance);
-		target.subtract(diffToTarget * friction);
-		if (!pointerDown && mathAbs(diffToTarget) < pullBackThreshold) {
-			target.set(limit.constrain(target.get()));
-			scrollBody.useDuration(25).useBaseFriction();
-		}
-	}
-	function toggleActive(active) {
-		disabled = !active;
-	}
-	return {
-		shouldConstrain,
-		constrain,
-		toggleActive
-	};
-}
-function ScrollContain(viewSize, contentSize, snapsAligned, containScroll, pixelTolerance) {
-	const scrollBounds = Limit(-contentSize + viewSize, 0);
-	const snapsBounded = measureBounded();
-	const scrollContainLimit = findScrollContainLimit();
-	const snapsContained = measureContained();
-	function usePixelTolerance(bound, snap) {
-		return deltaAbs(bound, snap) <= 1;
-	}
-	function findScrollContainLimit() {
-		const startSnap = snapsBounded[0];
-		const endSnap = arrayLast(snapsBounded);
-		return Limit(snapsBounded.lastIndexOf(startSnap), snapsBounded.indexOf(endSnap) + 1);
-	}
-	function measureBounded() {
-		return snapsAligned.map((snapAligned, index) => {
-			const { min, max } = scrollBounds;
-			const snap = scrollBounds.constrain(snapAligned);
-			const isFirst = !index;
-			const isLast = arrayIsLastIndex(snapsAligned, index);
-			if (isFirst) return max;
-			if (isLast) return min;
-			if (usePixelTolerance(min, snap)) return min;
-			if (usePixelTolerance(max, snap)) return max;
-			return snap;
-		}).map((scrollBound) => parseFloat(scrollBound.toFixed(3)));
-	}
-	function measureContained() {
-		if (contentSize <= viewSize + pixelTolerance) return [scrollBounds.max];
-		if (containScroll === "keepSnaps") return snapsBounded;
-		const { min, max } = scrollContainLimit;
-		return snapsBounded.slice(min, max);
-	}
-	return {
-		snapsContained,
-		scrollContainLimit
-	};
-}
-function ScrollLimit(contentSize, scrollSnaps, loop) {
-	const max = scrollSnaps[0];
-	return { limit: Limit(loop ? max - contentSize : arrayLast(scrollSnaps), max) };
-}
-function ScrollLooper(contentSize, limit, location, vectors) {
-	const jointSafety = .1;
-	const { reachedMin, reachedMax } = Limit(limit.min + jointSafety, limit.max + jointSafety);
-	function shouldLoop(direction) {
-		if (direction === 1) return reachedMax(location.get());
-		if (direction === -1) return reachedMin(location.get());
-		return false;
-	}
-	function loop(direction) {
-		if (!shouldLoop(direction)) return;
-		const loopDistance = contentSize * (direction * -1);
-		vectors.forEach((v) => v.add(loopDistance));
-	}
-	return { loop };
-}
-function ScrollProgress(limit) {
-	const { max, length } = limit;
-	function get(n) {
-		const currentLocation = n - max;
-		return length ? currentLocation / -length : 0;
-	}
-	return { get };
-}
-function ScrollSnaps(axis, alignment, containerRect, slideRects, slidesToScroll) {
-	const { startEdge, endEdge } = axis;
-	const { groupSlides } = slidesToScroll;
-	const alignments = measureSizes().map(alignment.measure);
-	const snaps = measureUnaligned();
-	const snapsAligned = measureAligned();
-	function measureSizes() {
-		return groupSlides(slideRects).map((rects) => arrayLast(rects)[endEdge] - rects[0][startEdge]).map(mathAbs);
-	}
-	function measureUnaligned() {
-		return slideRects.map((rect) => containerRect[startEdge] - rect[startEdge]).map((snap) => -mathAbs(snap));
-	}
-	function measureAligned() {
-		return groupSlides(snaps).map((g) => g[0]).map((snap, index) => snap + alignments[index]);
-	}
-	return {
-		snaps,
-		snapsAligned
-	};
-}
-function SlideRegistry(containSnaps, containScroll, scrollSnaps, scrollContainLimit, slidesToScroll, slideIndexes) {
-	const { groupSlides } = slidesToScroll;
-	const { min, max } = scrollContainLimit;
-	const slideRegistry = createSlideRegistry();
-	function createSlideRegistry() {
-		const groupedSlideIndexes = groupSlides(slideIndexes);
-		const doNotContain = !containSnaps || containScroll === "keepSnaps";
-		if (scrollSnaps.length === 1) return [slideIndexes];
-		if (doNotContain) return groupedSlideIndexes;
-		return groupedSlideIndexes.slice(min, max).map((group, index, groups) => {
-			const isFirst = !index;
-			const isLast = arrayIsLastIndex(groups, index);
-			if (isFirst) return arrayFromNumber(arrayLast(groups[0]) + 1);
-			if (isLast) return arrayFromNumber(arrayLastIndex(slideIndexes) - arrayLast(groups)[0] + 1, arrayLast(groups)[0]);
-			return group;
-		});
-	}
-	return { slideRegistry };
-}
-function ScrollTarget(loop, scrollSnaps, contentSize, limit, targetVector) {
-	const { reachedAny, removeOffset, constrain } = limit;
-	function minDistance(distances) {
-		return distances.concat().sort((a, b) => mathAbs(a) - mathAbs(b))[0];
-	}
-	function findTargetSnap(target) {
-		const distance = loop ? removeOffset(target) : constrain(target);
-		const { index } = scrollSnaps.map((snap, index) => ({
-			diff: shortcut(snap - distance, 0),
-			index
-		})).sort((d1, d2) => mathAbs(d1.diff) - mathAbs(d2.diff))[0];
-		return {
-			index,
-			distance
-		};
-	}
-	function shortcut(target, direction) {
-		const targets = [
-			target,
-			target + contentSize,
-			target - contentSize
-		];
-		if (!loop) return target;
-		if (!direction) return minDistance(targets);
-		const matchingTargets = targets.filter((t) => mathSign(t) === direction);
-		if (matchingTargets.length) return minDistance(matchingTargets);
-		return arrayLast(targets) - contentSize;
-	}
-	function byIndex(index, direction) {
-		return {
-			index,
-			distance: shortcut(scrollSnaps[index] - targetVector.get(), direction)
-		};
-	}
-	function byDistance(distance, snap) {
-		const target = targetVector.get() + distance;
-		const { index, distance: targetSnapDistance } = findTargetSnap(target);
-		const reachedBound = !loop && reachedAny(target);
-		if (!snap || reachedBound) return {
-			index,
-			distance
-		};
-		return {
-			index,
-			distance: distance + shortcut(scrollSnaps[index] - targetSnapDistance, 0)
-		};
-	}
-	return {
-		byDistance,
-		byIndex,
-		shortcut
-	};
-}
-function ScrollTo(animation, indexCurrent, indexPrevious, scrollBody, scrollTarget, targetVector, eventHandler) {
-	function scrollTo(target) {
-		const distanceDiff = target.distance;
-		const indexDiff = target.index !== indexCurrent.get();
-		targetVector.add(distanceDiff);
-		if (distanceDiff) if (scrollBody.duration()) animation.start();
-		else {
-			animation.update();
-			animation.render(1);
-			animation.update();
-		}
-		if (indexDiff) {
-			indexPrevious.set(indexCurrent.get());
-			indexCurrent.set(target.index);
-			eventHandler.emit("select");
-		}
-	}
-	function distance(n, snap) {
-		scrollTo(scrollTarget.byDistance(n, snap));
-	}
-	function index(n, direction) {
-		const targetIndex = indexCurrent.clone().set(n);
-		scrollTo(scrollTarget.byIndex(targetIndex.get(), direction));
-	}
-	return {
-		distance,
-		index
-	};
-}
-function SlideFocus(root, slides, slideRegistry, scrollTo, scrollBody, eventStore, eventHandler, watchFocus) {
-	const focusListenerOptions = {
-		passive: true,
-		capture: true
-	};
-	let lastTabPressTime = 0;
-	function init(emblaApi) {
-		if (!watchFocus) return;
-		function defaultCallback(index) {
-			if ((/* @__PURE__ */ new Date()).getTime() - lastTabPressTime > 10) return;
-			eventHandler.emit("slideFocusStart");
-			root.scrollLeft = 0;
-			const group = slideRegistry.findIndex((group) => group.includes(index));
-			if (!isNumber(group)) return;
-			scrollBody.useDuration(0);
-			scrollTo.index(group, 0);
-			eventHandler.emit("slideFocus");
-		}
-		eventStore.add(document, "keydown", registerTabPress, false);
-		slides.forEach((slide, slideIndex) => {
-			eventStore.add(slide, "focus", (evt) => {
-				if (isBoolean$1(watchFocus) || watchFocus(emblaApi, evt)) defaultCallback(slideIndex);
-			}, focusListenerOptions);
-		});
-	}
-	function registerTabPress(event) {
-		if (event.code === "Tab") lastTabPressTime = (/* @__PURE__ */ new Date()).getTime();
-	}
-	return { init };
-}
-function Vector1D(initialValue) {
-	let value = initialValue;
-	function get() {
-		return value;
-	}
-	function set(n) {
-		value = normalizeInput(n);
-	}
-	function add(n) {
-		value += normalizeInput(n);
-	}
-	function subtract(n) {
-		value -= normalizeInput(n);
-	}
-	function normalizeInput(n) {
-		return isNumber(n) ? n : n.get();
-	}
-	return {
-		get,
-		set,
-		add,
-		subtract
-	};
-}
-function Translate(axis, container) {
-	const translate = axis.scroll === "x" ? x : y;
-	const containerStyle = container.style;
-	let previousTarget = null;
-	let disabled = false;
-	function x(n) {
-		return `translate3d(${n}px,0px,0px)`;
-	}
-	function y(n) {
-		return `translate3d(0px,${n}px,0px)`;
-	}
-	function to(target) {
-		if (disabled) return;
-		const newTarget = roundToTwoDecimals(axis.direction(target));
-		if (newTarget === previousTarget) return;
-		containerStyle.transform = translate(newTarget);
-		previousTarget = newTarget;
-	}
-	function toggleActive(active) {
-		disabled = !active;
-	}
-	function clear() {
-		if (disabled) return;
-		containerStyle.transform = "";
-		if (!container.getAttribute("style")) container.removeAttribute("style");
-	}
-	return {
-		clear,
-		to,
-		toggleActive
-	};
-}
-function SlideLooper(axis, viewSize, contentSize, slideSizes, slideSizesWithGaps, snaps, scrollSnaps, location, slides) {
-	const roundingSafety = .5;
-	const ascItems = arrayKeys(slideSizesWithGaps);
-	const descItems = arrayKeys(slideSizesWithGaps).reverse();
-	const loopPoints = startPoints().concat(endPoints());
-	function removeSlideSizes(indexes, from) {
-		return indexes.reduce((a, i) => {
-			return a - slideSizesWithGaps[i];
-		}, from);
-	}
-	function slidesInGap(indexes, gap) {
-		return indexes.reduce((a, i) => {
-			return removeSlideSizes(a, gap) > 0 ? a.concat([i]) : a;
-		}, []);
-	}
-	function findSlideBounds(offset) {
-		return snaps.map((snap, index) => ({
-			start: snap - slideSizes[index] + roundingSafety + offset,
-			end: snap + viewSize - roundingSafety + offset
-		}));
-	}
-	function findLoopPoints(indexes, offset, isEndEdge) {
-		const slideBounds = findSlideBounds(offset);
-		return indexes.map((index) => {
-			const initial = isEndEdge ? 0 : -contentSize;
-			const altered = isEndEdge ? contentSize : 0;
-			const boundEdge = isEndEdge ? "end" : "start";
-			const loopPoint = slideBounds[index][boundEdge];
-			return {
-				index,
-				loopPoint,
-				slideLocation: Vector1D(-1),
-				translate: Translate(axis, slides[index]),
-				target: () => location.get() > loopPoint ? initial : altered
-			};
-		});
-	}
-	function startPoints() {
-		const gap = scrollSnaps[0];
-		return findLoopPoints(slidesInGap(descItems, gap), contentSize, false);
-	}
-	function endPoints() {
-		return findLoopPoints(slidesInGap(ascItems, viewSize - scrollSnaps[0] - 1), -contentSize, true);
-	}
-	function canLoop() {
-		return loopPoints.every(({ index }) => {
-			return removeSlideSizes(ascItems.filter((i) => i !== index), viewSize) <= .1;
-		});
-	}
-	function loop() {
-		loopPoints.forEach((loopPoint) => {
-			const { target, translate, slideLocation } = loopPoint;
-			const shiftLocation = target();
-			if (shiftLocation === slideLocation.get()) return;
-			translate.to(shiftLocation);
-			slideLocation.set(shiftLocation);
-		});
-	}
-	function clear() {
-		loopPoints.forEach((loopPoint) => loopPoint.translate.clear());
-	}
-	return {
-		canLoop,
-		clear,
-		loop,
-		loopPoints
-	};
-}
-function SlidesHandler(container, eventHandler, watchSlides) {
-	let mutationObserver;
-	let destroyed = false;
-	function init(emblaApi) {
-		if (!watchSlides) return;
-		function defaultCallback(mutations) {
-			for (const mutation of mutations) if (mutation.type === "childList") {
-				emblaApi.reInit();
-				eventHandler.emit("slidesChanged");
-				break;
-			}
-		}
-		mutationObserver = new MutationObserver((mutations) => {
-			if (destroyed) return;
-			if (isBoolean$1(watchSlides) || watchSlides(emblaApi, mutations)) defaultCallback(mutations);
-		});
-		mutationObserver.observe(container, { childList: true });
-	}
-	function destroy() {
-		if (mutationObserver) mutationObserver.disconnect();
-		destroyed = true;
-	}
-	return {
-		init,
-		destroy
-	};
-}
-function SlidesInView(container, slides, eventHandler, threshold) {
-	const intersectionEntryMap = {};
-	let inViewCache = null;
-	let notInViewCache = null;
-	let intersectionObserver;
-	let destroyed = false;
-	function init() {
-		intersectionObserver = new IntersectionObserver((entries) => {
-			if (destroyed) return;
-			entries.forEach((entry) => {
-				const index = slides.indexOf(entry.target);
-				intersectionEntryMap[index] = entry;
-			});
-			inViewCache = null;
-			notInViewCache = null;
-			eventHandler.emit("slidesInView");
-		}, {
-			root: container.parentElement,
-			threshold
-		});
-		slides.forEach((slide) => intersectionObserver.observe(slide));
-	}
-	function destroy() {
-		if (intersectionObserver) intersectionObserver.disconnect();
-		destroyed = true;
-	}
-	function createInViewList(inView) {
-		return objectKeys(intersectionEntryMap).reduce((list, slideIndex) => {
-			const index = parseInt(slideIndex);
-			const { isIntersecting } = intersectionEntryMap[index];
-			if (inView && isIntersecting || !inView && !isIntersecting) list.push(index);
-			return list;
-		}, []);
-	}
-	function get(inView = true) {
-		if (inView && inViewCache) return inViewCache;
-		if (!inView && notInViewCache) return notInViewCache;
-		const slideIndexes = createInViewList(inView);
-		if (inView) inViewCache = slideIndexes;
-		if (!inView) notInViewCache = slideIndexes;
-		return slideIndexes;
-	}
-	return {
-		init,
-		destroy,
-		get
-	};
-}
-function SlideSizes(axis, containerRect, slideRects, slides, readEdgeGap, ownerWindow) {
-	const { measureSize, startEdge, endEdge } = axis;
-	const withEdgeGap = slideRects[0] && readEdgeGap;
-	const startGap = measureStartGap();
-	const endGap = measureEndGap();
-	const slideSizes = slideRects.map(measureSize);
-	const slideSizesWithGaps = measureWithGaps();
-	function measureStartGap() {
-		if (!withEdgeGap) return 0;
-		const slideRect = slideRects[0];
-		return mathAbs(containerRect[startEdge] - slideRect[startEdge]);
-	}
-	function measureEndGap() {
-		if (!withEdgeGap) return 0;
-		const style = ownerWindow.getComputedStyle(arrayLast(slides));
-		return parseFloat(style.getPropertyValue(`margin-${endEdge}`));
-	}
-	function measureWithGaps() {
-		return slideRects.map((rect, index, rects) => {
-			const isFirst = !index;
-			const isLast = arrayIsLastIndex(rects, index);
-			if (isFirst) return slideSizes[index] + startGap;
-			if (isLast) return slideSizes[index] + endGap;
-			return rects[index + 1][startEdge] - rect[startEdge];
-		}).map(mathAbs);
-	}
-	return {
-		slideSizes,
-		slideSizesWithGaps,
-		startGap,
-		endGap
-	};
-}
-function SlidesToScroll(axis, viewSize, slidesToScroll, loop, containerRect, slideRects, startGap, endGap, pixelTolerance) {
-	const { startEdge, endEdge, direction } = axis;
-	const groupByNumber = isNumber(slidesToScroll);
-	function byNumber(array, groupSize) {
-		return arrayKeys(array).filter((i) => i % groupSize === 0).map((i) => array.slice(i, i + groupSize));
-	}
-	function bySize(array) {
-		if (!array.length) return [];
-		return arrayKeys(array).reduce((groups, rectB, index) => {
-			const rectA = arrayLast(groups) || 0;
-			const isFirst = rectA === 0;
-			const isLast = rectB === arrayLastIndex(array);
-			const edgeA = containerRect[startEdge] - slideRects[rectA][startEdge];
-			const edgeB = containerRect[startEdge] - slideRects[rectB][endEdge];
-			const gapA = !loop && isFirst ? direction(startGap) : 0;
-			const chunkSize = mathAbs(edgeB - (!loop && isLast ? direction(endGap) : 0) - (edgeA + gapA));
-			if (index && chunkSize > viewSize + pixelTolerance) groups.push(rectB);
-			if (isLast) groups.push(array.length);
-			return groups;
-		}, []).map((currentSize, index, groups) => {
-			const previousSize = Math.max(groups[index - 1] || 0);
-			return array.slice(previousSize, currentSize);
-		});
-	}
-	function groupSlides(array) {
-		return groupByNumber ? byNumber(array, slidesToScroll) : bySize(array);
-	}
-	return { groupSlides };
-}
-function Engine(root, container, slides, ownerDocument, ownerWindow, options, eventHandler) {
-	const { align, axis: scrollAxis, direction, startIndex, loop, duration, dragFree, dragThreshold, inViewThreshold, slidesToScroll: groupSlides, skipSnaps, containScroll, watchResize, watchSlides, watchDrag, watchFocus } = options;
-	const pixelTolerance = 2;
-	const nodeRects = NodeRects();
-	const containerRect = nodeRects.measure(container);
-	const slideRects = slides.map(nodeRects.measure);
-	const axis = Axis(scrollAxis, direction);
-	const viewSize = axis.measureSize(containerRect);
-	const percentOfView = PercentOfView(viewSize);
-	const alignment = Alignment(align, viewSize);
-	const containSnaps = !loop && !!containScroll;
-	const { slideSizes, slideSizesWithGaps, startGap, endGap } = SlideSizes(axis, containerRect, slideRects, slides, loop || !!containScroll, ownerWindow);
-	const slidesToScroll = SlidesToScroll(axis, viewSize, groupSlides, loop, containerRect, slideRects, startGap, endGap, pixelTolerance);
-	const { snaps, snapsAligned } = ScrollSnaps(axis, alignment, containerRect, slideRects, slidesToScroll);
-	const contentSize = -arrayLast(snaps) + arrayLast(slideSizesWithGaps);
-	const { snapsContained, scrollContainLimit } = ScrollContain(viewSize, contentSize, snapsAligned, containScroll, pixelTolerance);
-	const scrollSnaps = containSnaps ? snapsContained : snapsAligned;
-	const { limit } = ScrollLimit(contentSize, scrollSnaps, loop);
-	const index = Counter(arrayLastIndex(scrollSnaps), startIndex, loop);
-	const indexPrevious = index.clone();
-	const slideIndexes = arrayKeys(slides);
-	const update = ({ dragHandler, scrollBody, scrollBounds, options: { loop } }) => {
-		if (!loop) scrollBounds.constrain(dragHandler.pointerDown());
-		scrollBody.seek();
-	};
-	const render = ({ scrollBody, translate, location, offsetLocation, previousLocation, scrollLooper, slideLooper, dragHandler, animation, eventHandler, scrollBounds, options: { loop } }, alpha) => {
-		const shouldSettle = scrollBody.settled();
-		const withinBounds = !scrollBounds.shouldConstrain();
-		const hasSettled = loop ? shouldSettle : shouldSettle && withinBounds;
-		const hasSettledAndIdle = hasSettled && !dragHandler.pointerDown();
-		if (hasSettledAndIdle) animation.stop();
-		const interpolatedLocation = location.get() * alpha + previousLocation.get() * (1 - alpha);
-		offsetLocation.set(interpolatedLocation);
-		if (loop) {
-			scrollLooper.loop(scrollBody.direction());
-			slideLooper.loop();
-		}
-		translate.to(offsetLocation.get());
-		if (hasSettledAndIdle) eventHandler.emit("settle");
-		if (!hasSettled) eventHandler.emit("scroll");
-	};
-	const animation = Animations(ownerDocument, ownerWindow, () => update(engine), (alpha) => render(engine, alpha));
-	const friction = .68;
-	const startLocation = scrollSnaps[index.get()];
-	const location = Vector1D(startLocation);
-	const previousLocation = Vector1D(startLocation);
-	const offsetLocation = Vector1D(startLocation);
-	const target = Vector1D(startLocation);
-	const scrollBody = ScrollBody(location, offsetLocation, previousLocation, target, duration, friction);
-	const scrollTarget = ScrollTarget(loop, scrollSnaps, contentSize, limit, target);
-	const scrollTo = ScrollTo(animation, index, indexPrevious, scrollBody, scrollTarget, target, eventHandler);
-	const scrollProgress = ScrollProgress(limit);
-	const eventStore = EventStore();
-	const slidesInView = SlidesInView(container, slides, eventHandler, inViewThreshold);
-	const { slideRegistry } = SlideRegistry(containSnaps, containScroll, scrollSnaps, scrollContainLimit, slidesToScroll, slideIndexes);
-	const slideFocus = SlideFocus(root, slides, slideRegistry, scrollTo, scrollBody, eventStore, eventHandler, watchFocus);
-	const engine = {
-		ownerDocument,
-		ownerWindow,
-		eventHandler,
-		containerRect,
-		slideRects,
-		animation,
-		axis,
-		dragHandler: DragHandler(axis, root, ownerDocument, ownerWindow, target, DragTracker(axis, ownerWindow), location, animation, scrollTo, scrollBody, scrollTarget, index, eventHandler, percentOfView, dragFree, dragThreshold, skipSnaps, friction, watchDrag),
-		eventStore,
-		percentOfView,
-		index,
-		indexPrevious,
-		limit,
-		location,
-		offsetLocation,
-		previousLocation,
-		options,
-		resizeHandler: ResizeHandler(container, eventHandler, ownerWindow, slides, axis, watchResize, nodeRects),
-		scrollBody,
-		scrollBounds: ScrollBounds(limit, offsetLocation, target, scrollBody, percentOfView),
-		scrollLooper: ScrollLooper(contentSize, limit, offsetLocation, [
-			location,
-			offsetLocation,
-			previousLocation,
-			target
-		]),
-		scrollProgress,
-		scrollSnapList: scrollSnaps.map(scrollProgress.get),
-		scrollSnaps,
-		scrollTarget,
-		scrollTo,
-		slideLooper: SlideLooper(axis, viewSize, contentSize, slideSizes, slideSizesWithGaps, snaps, scrollSnaps, offsetLocation, slides),
-		slideFocus,
-		slidesHandler: SlidesHandler(container, eventHandler, watchSlides),
-		slidesInView,
-		slideIndexes,
-		slideRegistry,
-		slidesToScroll,
-		target,
-		translate: Translate(axis, container)
-	};
-	return engine;
-}
-function EventHandler() {
-	let listeners = {};
-	let api;
-	function init(emblaApi) {
-		api = emblaApi;
-	}
-	function getListeners(evt) {
-		return listeners[evt] || [];
-	}
-	function emit(evt) {
-		getListeners(evt).forEach((e) => e(api, evt));
-		return self;
-	}
-	function on(evt, cb) {
-		listeners[evt] = getListeners(evt).concat([cb]);
-		return self;
-	}
-	function off(evt, cb) {
-		listeners[evt] = getListeners(evt).filter((e) => e !== cb);
-		return self;
-	}
-	function clear() {
-		listeners = {};
-	}
-	const self = {
-		init,
-		emit,
-		off,
-		on,
-		clear
-	};
-	return self;
-}
-var defaultOptions$1 = {
-	align: "center",
-	axis: "x",
-	container: null,
-	slides: null,
-	containScroll: "trimSnaps",
-	direction: "ltr",
-	slidesToScroll: 1,
-	inViewThreshold: 0,
-	breakpoints: {},
-	dragFree: false,
-	dragThreshold: 10,
-	loop: false,
-	skipSnaps: false,
-	duration: 25,
-	startIndex: 0,
-	active: true,
-	watchDrag: true,
-	watchResize: true,
-	watchSlides: true,
-	watchFocus: true
-};
-function OptionsHandler(ownerWindow) {
-	function mergeOptions(optionsA, optionsB) {
-		return objectsMergeDeep(optionsA, optionsB || {});
-	}
-	function optionsAtMedia(options) {
-		const optionsAtMedia = options.breakpoints || {};
-		return mergeOptions(options, objectKeys(optionsAtMedia).filter((media) => ownerWindow.matchMedia(media).matches).map((media) => optionsAtMedia[media]).reduce((a, mediaOption) => mergeOptions(a, mediaOption), {}));
-	}
-	function optionsMediaQueries(optionsList) {
-		return optionsList.map((options) => objectKeys(options.breakpoints || {})).reduce((acc, mediaQueries) => acc.concat(mediaQueries), []).map(ownerWindow.matchMedia);
-	}
-	return {
-		mergeOptions,
-		optionsAtMedia,
-		optionsMediaQueries
-	};
-}
-function PluginsHandler(optionsHandler) {
-	let activePlugins = [];
-	function init(emblaApi, plugins) {
-		activePlugins = plugins.filter(({ options }) => optionsHandler.optionsAtMedia(options).active !== false);
-		activePlugins.forEach((plugin) => plugin.init(emblaApi, optionsHandler));
-		return plugins.reduce((map, plugin) => Object.assign(map, { [plugin.name]: plugin }), {});
-	}
-	function destroy() {
-		activePlugins = activePlugins.filter((plugin) => plugin.destroy());
-	}
-	return {
-		init,
-		destroy
-	};
-}
-function EmblaCarousel(root, userOptions, userPlugins) {
-	const ownerDocument = root.ownerDocument;
-	const ownerWindow = ownerDocument.defaultView;
-	const optionsHandler = OptionsHandler(ownerWindow);
-	const pluginsHandler = PluginsHandler(optionsHandler);
-	const mediaHandlers = EventStore();
-	const eventHandler = EventHandler();
-	const { mergeOptions, optionsAtMedia, optionsMediaQueries } = optionsHandler;
-	const { on, off, emit } = eventHandler;
-	const reInit = reActivate;
-	let destroyed = false;
-	let engine;
-	let optionsBase = mergeOptions(defaultOptions$1, EmblaCarousel.globalOptions);
-	let options = mergeOptions(optionsBase);
-	let pluginList = [];
-	let pluginApis;
-	let container;
-	let slides;
-	function storeElements() {
-		const { container: userContainer, slides: userSlides } = options;
-		container = (isString$1(userContainer) ? root.querySelector(userContainer) : userContainer) || root.children[0];
-		const customSlides = isString$1(userSlides) ? container.querySelectorAll(userSlides) : userSlides;
-		slides = [].slice.call(customSlides || container.children);
-	}
-	function createEngine(options) {
-		const engine = Engine(root, container, slides, ownerDocument, ownerWindow, options, eventHandler);
-		if (options.loop && !engine.slideLooper.canLoop()) return createEngine(Object.assign({}, options, { loop: false }));
-		return engine;
-	}
-	function activate(withOptions, withPlugins) {
-		if (destroyed) return;
-		optionsBase = mergeOptions(optionsBase, withOptions);
-		options = optionsAtMedia(optionsBase);
-		pluginList = withPlugins || pluginList;
-		storeElements();
-		engine = createEngine(options);
-		optionsMediaQueries([optionsBase, ...pluginList.map(({ options }) => options)]).forEach((query) => mediaHandlers.add(query, "change", reActivate));
-		if (!options.active) return;
-		engine.translate.to(engine.location.get());
-		engine.animation.init();
-		engine.slidesInView.init();
-		engine.slideFocus.init(self);
-		engine.eventHandler.init(self);
-		engine.resizeHandler.init(self);
-		engine.slidesHandler.init(self);
-		if (engine.options.loop) engine.slideLooper.loop();
-		if (container.offsetParent && slides.length) engine.dragHandler.init(self);
-		pluginApis = pluginsHandler.init(self, pluginList);
-	}
-	function reActivate(withOptions, withPlugins) {
-		const startIndex = selectedScrollSnap();
-		deActivate();
-		activate(mergeOptions({ startIndex }, withOptions), withPlugins);
-		eventHandler.emit("reInit");
-	}
-	function deActivate() {
-		engine.dragHandler.destroy();
-		engine.eventStore.clear();
-		engine.translate.clear();
-		engine.slideLooper.clear();
-		engine.resizeHandler.destroy();
-		engine.slidesHandler.destroy();
-		engine.slidesInView.destroy();
-		engine.animation.destroy();
-		pluginsHandler.destroy();
-		mediaHandlers.clear();
-	}
-	function destroy() {
-		if (destroyed) return;
-		destroyed = true;
-		mediaHandlers.clear();
-		deActivate();
-		eventHandler.emit("destroy");
-		eventHandler.clear();
-	}
-	function scrollTo(index, jump, direction) {
-		if (!options.active || destroyed) return;
-		engine.scrollBody.useBaseFriction().useDuration(jump === true ? 0 : options.duration);
-		engine.scrollTo.index(index, direction || 0);
-	}
-	function scrollNext(jump) {
-		scrollTo(engine.index.add(1).get(), jump, -1);
-	}
-	function scrollPrev(jump) {
-		scrollTo(engine.index.add(-1).get(), jump, 1);
-	}
-	function canScrollNext() {
-		return engine.index.add(1).get() !== selectedScrollSnap();
-	}
-	function canScrollPrev() {
-		return engine.index.add(-1).get() !== selectedScrollSnap();
-	}
-	function scrollSnapList() {
-		return engine.scrollSnapList;
-	}
-	function scrollProgress() {
-		return engine.scrollProgress.get(engine.offsetLocation.get());
-	}
-	function selectedScrollSnap() {
-		return engine.index.get();
-	}
-	function previousScrollSnap() {
-		return engine.indexPrevious.get();
-	}
-	function slidesInView() {
-		return engine.slidesInView.get();
-	}
-	function slidesNotInView() {
-		return engine.slidesInView.get(false);
-	}
-	function plugins() {
-		return pluginApis;
-	}
-	function internalEngine() {
-		return engine;
-	}
-	function rootNode() {
-		return root;
-	}
-	function containerNode() {
-		return container;
-	}
-	function slideNodes() {
-		return slides;
-	}
-	const self = {
-		canScrollNext,
-		canScrollPrev,
-		containerNode,
-		internalEngine,
-		destroy,
-		off,
-		on,
-		emit,
-		plugins,
-		previousScrollSnap,
-		reInit,
-		rootNode,
-		scrollNext,
-		scrollPrev,
-		scrollProgress,
-		scrollSnapList,
-		scrollTo,
-		selectedScrollSnap,
-		slideNodes,
-		slidesInView,
-		slidesNotInView
-	};
-	activate(userOptions, userPlugins);
-	setTimeout(() => eventHandler.emit("init"), 0);
-	return self;
-}
-EmblaCarousel.globalOptions = void 0;
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/embla-carousel-react@8.6.0_react@19.2.4/node_modules/embla-carousel-react/esm/embla-carousel-react.esm.js
-function useEmblaCarousel(options = {}, plugins = []) {
-	const storedOptions = (0, import_react.useRef)(options);
-	const storedPlugins = (0, import_react.useRef)(plugins);
-	const [emblaApi, setEmblaApi] = (0, import_react.useState)();
-	const [viewport, setViewport] = (0, import_react.useState)();
-	const reInit = (0, import_react.useCallback)(() => {
-		if (emblaApi) emblaApi.reInit(storedOptions.current, storedPlugins.current);
-	}, [emblaApi]);
-	(0, import_react.useEffect)(() => {
-		if (areOptionsEqual(storedOptions.current, options)) return;
-		storedOptions.current = options;
-		reInit();
-	}, [options, reInit]);
-	(0, import_react.useEffect)(() => {
-		if (arePluginsEqual(storedPlugins.current, plugins)) return;
-		storedPlugins.current = plugins;
-		reInit();
-	}, [plugins, reInit]);
-	(0, import_react.useEffect)(() => {
-		if (canUseDOM() && viewport) {
-			EmblaCarousel.globalOptions = useEmblaCarousel.globalOptions;
-			const newEmblaApi = EmblaCarousel(viewport, storedOptions.current, storedPlugins.current);
-			setEmblaApi(newEmblaApi);
-			return () => newEmblaApi.destroy();
-		} else setEmblaApi(void 0);
-	}, [viewport, setEmblaApi]);
-	return [setViewport, emblaApi];
-}
-useEmblaCarousel.globalOptions = void 0;
-//#endregion
-//#region src/components/ui/carousel.tsx
-var CarouselContext = import_react.createContext(null);
-function useCarousel() {
-	const context = import_react.useContext(CarouselContext);
-	if (!context) throw new Error("useCarousel must be used within a <Carousel />");
-	return context;
-}
-var Carousel = import_react.forwardRef(({ orientation = "horizontal", opts, setApi, plugins, className, children, ...props }, ref) => {
-	const [carouselRef, api] = useEmblaCarousel({
-		...opts,
-		axis: orientation === "horizontal" ? "x" : "y"
-	}, plugins);
-	const [canScrollPrev, setCanScrollPrev] = import_react.useState(false);
-	const [canScrollNext, setCanScrollNext] = import_react.useState(false);
-	const onSelect = import_react.useCallback((api) => {
-		if (!api) return;
-		setCanScrollPrev(api.canScrollPrev());
-		setCanScrollNext(api.canScrollNext());
-	}, []);
-	const scrollPrev = import_react.useCallback(() => {
-		api?.scrollPrev();
-	}, [api]);
-	const scrollNext = import_react.useCallback(() => {
-		api?.scrollNext();
-	}, [api]);
-	const handleKeyDown = import_react.useCallback((event) => {
-		if (event.key === "ArrowLeft") {
-			event.preventDefault();
-			scrollPrev();
-		} else if (event.key === "ArrowRight") {
-			event.preventDefault();
-			scrollNext();
-		}
-	}, [scrollPrev, scrollNext]);
-	import_react.useEffect(() => {
-		if (!api || !setApi) return;
-		setApi(api);
-	}, [api, setApi]);
-	import_react.useEffect(() => {
-		if (!api) return;
-		onSelect(api);
-		api.on("reInit", onSelect);
-		api.on("select", onSelect);
-		return () => {
-			api?.off("select", onSelect);
-		};
-	}, [api, onSelect]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselContext.Provider, {
-		"data-uid": "src/components/ui/carousel.tsx:109:5",
-		"data-prohibitions": "[editContent]",
-		value: {
-			carouselRef,
-			api,
-			opts,
-			orientation: orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
-			scrollPrev,
-			scrollNext,
-			canScrollPrev,
-			canScrollNext
-		},
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/ui/carousel.tsx:121:7",
-			"data-prohibitions": "[editContent]",
-			ref,
-			onKeyDownCapture: handleKeyDown,
-			className: cn$1("relative", className),
-			role: "region",
-			"aria-roledescription": "carousel",
-			...props,
-			children
-		})
-	});
-});
-Carousel.displayName = "Carousel";
-var CarouselContent = import_react.forwardRef(({ className, ...props }, ref) => {
-	const { carouselRef, orientation } = useCarousel();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		"data-uid": "src/components/ui/carousel.tsx:141:7",
-		"data-prohibitions": "[editContent]",
-		ref: carouselRef,
-		className: "overflow-hidden",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/ui/carousel.tsx:142:9",
-			"data-prohibitions": "[editContent]",
-			ref,
-			className: cn$1("flex", orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col", className),
-			...props
-		})
-	});
-});
-CarouselContent.displayName = "CarouselContent";
-var CarouselItem = import_react.forwardRef(({ className, ...props }, ref) => {
-	const { orientation } = useCarousel();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		"data-uid": "src/components/ui/carousel.tsx:162:7",
-		"data-prohibitions": "[editContent]",
-		ref,
-		role: "group",
-		"aria-roledescription": "slide",
-		className: cn$1("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "pl-4" : "pt-4", className),
-		...props
-	});
-});
-CarouselItem.displayName = "CarouselItem";
-var CarouselPrevious = import_react.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-	const { orientation, scrollPrev, canScrollPrev } = useCarousel();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-		"data-uid": "src/components/ui/carousel.tsx:183:7",
-		"data-prohibitions": "[editContent]",
-		ref,
-		variant,
-		size,
-		className: cn$1("absolute  h-8 w-8 rounded-full", orientation === "horizontal" ? "-left-12 top-1/2 -translate-y-1/2" : "-top-12 left-1/2 -translate-x-1/2 rotate-90", className),
-		disabled: !canScrollPrev,
-		onClick: scrollPrev,
-		...props,
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, {
-			"data-uid": "src/components/ui/carousel.tsx:198:9",
-			"data-prohibitions": "[editContent]",
-			className: "h-4 w-4"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			"data-uid": "src/components/ui/carousel.tsx:199:9",
-			"data-prohibitions": "[]",
-			className: "sr-only",
-			children: "Previous slide"
-		})]
-	});
-});
-CarouselPrevious.displayName = "CarouselPrevious";
-var CarouselNext = import_react.forwardRef(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-	const { orientation, scrollNext, canScrollNext } = useCarousel();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-		"data-uid": "src/components/ui/carousel.tsx:211:7",
-		"data-prohibitions": "[editContent]",
-		ref,
-		variant,
-		size,
-		className: cn$1("absolute h-8 w-8 rounded-full", orientation === "horizontal" ? "-right-12 top-1/2 -translate-y-1/2" : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90", className),
-		disabled: !canScrollNext,
-		onClick: scrollNext,
-		...props,
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, {
-			"data-uid": "src/components/ui/carousel.tsx:226:9",
-			"data-prohibitions": "[editContent]",
-			className: "h-4 w-4"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			"data-uid": "src/components/ui/carousel.tsx:227:9",
-			"data-prohibitions": "[]",
-			className: "sr-only",
-			children: "Next slide"
-		})]
-	});
-});
-CarouselNext.displayName = "CarouselNext";
-//#endregion
 //#region src/components/sections/Clients.tsx
-var CLIENTS = [
+var clients = [
 	{
-		name: "ETEC",
-		url: "https://img.usecurling.com/i?q=school&shape=outline&color=blue"
+		name: "Empresa A",
+		logo: "https://img.usecurling.com/i?q=corporate%20logo&shape=outline&color=gray"
 	},
 	{
-		name: "SESI",
-		url: "https://img.usecurling.com/i?q=industry&shape=outline&color=red"
+		name: "Empresa B",
+		logo: "https://img.usecurling.com/i?q=tech%20company%20logo&shape=outline&color=gray"
 	},
 	{
-		name: "SENAI",
-		url: "https://img.usecurling.com/i?q=education&shape=outline&color=red"
+		name: "Empresa C",
+		logo: "https://img.usecurling.com/i?q=industrial%20logo&shape=outline&color=gray"
 	},
 	{
-		name: "Prefeitura de São Bernardo",
-		url: "https://img.usecurling.com/i?q=government&shape=outline&color=blue"
+		name: "Empresa D",
+		logo: "https://img.usecurling.com/i?q=retail%20logo&shape=outline&color=gray"
 	},
 	{
-		name: "Condomínios de Alto Padrão",
-		url: "https://img.usecurling.com/i?q=building&shape=outline&color=black"
+		name: "Empresa E",
+		logo: "https://img.usecurling.com/i?q=healthcare%20logo&shape=outline&color=gray"
+	},
+	{
+		name: "Empresa F",
+		logo: "https://img.usecurling.com/i?q=logistics%20logo&shape=outline&color=gray"
 	}
 ];
 function Clients() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/Clients.tsx:26:5",
+		"data-uid": "src/components/sections/Clients.tsx:32:5",
 		"data-prohibitions": "[editContent]",
 		id: "clientes",
-		className: "py-24 bg-white",
+		className: "py-20 bg-white border-t border-gray-100",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/sections/Clients.tsx:27:7",
+			"data-uid": "src/components/sections/Clients.tsx:33:7",
 			"data-prohibitions": "[editContent]",
-			className: "container px-4",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-				"data-uid": "src/components/sections/Clients.tsx:28:9",
+			className: "container mx-auto px-4 md:px-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Clients.tsx:34:9",
 				"data-prohibitions": "[]",
-				className: "text-center mb-16",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-					"data-uid": "src/components/sections/Clients.tsx:29:11",
+				className: "text-center mb-12",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+					"data-uid": "src/components/sections/Clients.tsx:35:11",
 					"data-prohibitions": "[]",
-					className: "text-heading text-3xl md:text-4xl mb-4",
-					children: "Empresas que Confiam em Nós"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					"data-uid": "src/components/sections/Clients.tsx:30:11",
-					"data-prohibitions": "[]",
-					className: "text-muted-foreground text-lg max-w-2xl mx-auto",
-					children: "Nosso histórico de sucesso é construído sobre parcerias sólidas com grandes instituições."
-				})]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+						"data-uid": "src/components/sections/Clients.tsx:36:13",
+						"data-prohibitions": "[]",
+						className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
+						children: "Quem Confia em Nós"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						"data-uid": "src/components/sections/Clients.tsx:39:13",
+						"data-prohibitions": "[]",
+						className: "text-3xl md:text-4xl font-extrabold text-brand-navy",
+						children: "Nossos Clientes"
+					})]
+				})
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-				"data-uid": "src/components/sections/Clients.tsx:36:9",
+				"data-uid": "src/components/sections/Clients.tsx:43:9",
 				"data-prohibitions": "[editContent]",
-				delay: 200,
+				delay: .2,
+				className: "w-full",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/sections/Clients.tsx:37:11",
+					"data-uid": "src/components/sections/Clients.tsx:44:11",
 					"data-prohibitions": "[editContent]",
-					className: "px-12 relative",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Carousel, {
-						"data-uid": "src/components/sections/Clients.tsx:38:13",
-						"data-prohibitions": "[editContent]",
-						opts: {
-							align: "start",
-							loop: true
-						},
-						className: "w-full",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselContent, {
-								"data-uid": "src/components/sections/Clients.tsx:45:15",
-								"data-prohibitions": "[editContent]",
-								className: "-ml-2 md:-ml-4",
-								children: CLIENTS.map((client, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselItem, {
-									"data-uid": "src/components/sections/Clients.tsx:47:19",
-									"data-prohibitions": "[editContent]",
-									className: "pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/sections/Clients.tsx:51:21",
-										"data-prohibitions": "[editContent]",
-										className: "p-6 h-32 flex items-center justify-center border rounded-xl bg-slate-50 group hover:border-primary/50 transition-colors",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/Clients.tsx:52:23",
-											"data-prohibitions": "[editContent]",
-											className: "flex flex-col items-center gap-3 opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-												"data-uid": "src/components/sections/Clients.tsx:53:25",
-												"data-prohibitions": "[editContent]",
-												src: client.url,
-												alt: `Logo ${client.name}`,
-												className: "h-12 w-auto object-contain"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												"data-uid": "src/components/sections/Clients.tsx:58:25",
-												"data-prohibitions": "[editContent]",
-												className: "text-xs font-medium text-center text-slate-600 font-montserrat",
-												children: client.name
-											})]
-										})
-									})
-								}, index))
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselPrevious, {
-								"data-uid": "src/components/sections/Clients.tsx:66:15",
-								"data-prohibitions": "[editContent]",
-								className: "hidden md:flex -left-4 bg-white hover:bg-slate-100"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CarouselNext, {
-								"data-uid": "src/components/sections/Clients.tsx:67:15",
-								"data-prohibitions": "[editContent]",
-								className: "hidden md:flex -right-4 bg-white hover:bg-slate-100"
-							})
-						]
-					})
+					className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center justify-items-center opacity-60 hover:opacity-100 transition-opacity duration-500",
+					children: clients.map((client, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						"data-uid": "src/components/sections/Clients.tsx:46:15",
+						"data-prohibitions": "[]",
+						className: "w-32 h-20 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+							"data-uid": "src/components/sections/Clients.tsx:50:17",
+							"data-prohibitions": "[editContent]",
+							src: client.logo,
+							alt: `Logo ${client.name}`,
+							className: "max-w-full max-h-full object-contain mix-blend-multiply"
+						})
+					}, index))
 				})
 			})]
 		})
@@ -26532,5613 +25322,128 @@ function Clients() {
 //#endregion
 //#region src/components/sections/CompanyProfile.tsx
 function CompanyProfile() {
+	const values = [
+		"Compromisso com Prazos e Custos",
+		"Transparência Total com o Cliente",
+		"Rigoroso Controle de Qualidade",
+		"Segurança em Primeiro Lugar (NRs)",
+		"Inovação em Processos Construtivos",
+		"Sustentabilidade nos Canteiros"
+	];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/CompanyProfile.tsx:7:5",
+		"data-uid": "src/components/sections/CompanyProfile.tsx:15:5",
 		"data-prohibitions": "[editContent]",
 		id: "sobre",
-		className: "py-24 bg-slate-50",
+		className: "py-24 bg-brand-navy text-white overflow-hidden",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/sections/CompanyProfile.tsx:8:7",
+			"data-uid": "src/components/sections/CompanyProfile.tsx:16:7",
 			"data-prohibitions": "[editContent]",
-			className: "container px-4",
+			className: "container mx-auto px-4 md:px-6",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/sections/CompanyProfile.tsx:9:9",
+				"data-uid": "src/components/sections/CompanyProfile.tsx:17:9",
 				"data-prohibitions": "[editContent]",
-				className: "grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start",
+				className: "grid lg:grid-cols-2 gap-12 items-center",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/components/sections/CompanyProfile.tsx:11:11",
-					"data-prohibitions": "[editContent]",
+					"data-uid": "src/components/sections/CompanyProfile.tsx:18:11",
+					"data-prohibitions": "[]",
 					direction: "right",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/sections/CompanyProfile.tsx:12:13",
-						"data-prohibitions": "[editContent]",
-						className: "space-y-6",
+						"data-uid": "src/components/sections/CompanyProfile.tsx:19:13",
+						"data-prohibitions": "[]",
+						className: "relative",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:13:15",
-								"data-prohibitions": "[]",
-								className: "text-heading text-4xl",
-								children: "Perfil Corporativo"
-							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:14:15",
+								"data-uid": "src/components/sections/CompanyProfile.tsx:20:15",
 								"data-prohibitions": "[]",
-								className: "w-20 h-1 bg-accent rounded"
+								className: "absolute -inset-4 bg-brand-light/20 blur-2xl rounded-full z-0"
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:15:15",
-								"data-prohibitions": "[]",
-								className: "text-lg text-muted-foreground leading-relaxed",
-								children: [
-									"A ",
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:16:19",
-										"data-prohibitions": "[]",
-										children: "JT Obras e Manutenções"
-									}),
-									" é uma empresa consolidada no mercado de engenharia e construção civil. Nossa missão é entregar obras complexas com um nível de exigência inegociável em relação à qualidade técnica e à segurança de todos os envolvidos."
-								]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 								"data-uid": "src/components/sections/CompanyProfile.tsx:21:15",
-								"data-prohibitions": "[]",
-								className: "text-lg text-muted-foreground leading-relaxed",
-								children: [
-									"Sob a direção de ",
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:22:34",
-										"data-prohibitions": "[]",
-										children: "Joel Nascimento de Paula"
-									}),
-									", construímos nossa reputação através do rigor metodológico e forte compromisso com normas técnicas, incluindo a rigorosa aplicação das normas NR 10, NR 35, NR 18 e NR 01."
-								]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:27:15",
 								"data-prohibitions": "[editContent]",
-								className: "space-y-3 pt-4",
-								children: [
-									"Conformidade com NR 10, NR 35, NR 18 e NR 01",
-									"Equipe Multidisciplinar Qualificada",
-									"Forte Política de Compliance e Segurança",
-									"Atendimento Personalizado e Transparente"
-								].map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-									"data-uid": "src/components/sections/CompanyProfile.tsx:34:19",
-									"data-prohibitions": "[editContent]",
-									className: "flex items-center gap-3 text-primary font-medium",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:35:21",
-										"data-prohibitions": "[editContent]",
-										className: "text-accent",
-										size: 20
-									}), item]
-								}, item))
+								src: "https://img.usecurling.com/p/800/600?q=engineering%20team&color=blue",
+								alt: "Equipe JT Obras",
+								className: "relative z-10 rounded-2xl shadow-2xl border-4 border-white/10 w-full object-cover"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/CompanyProfile.tsx:26:15",
+								"data-prohibitions": "[]",
+								className: "absolute -bottom-8 -right-8 bg-brand-orange text-white p-6 rounded-2xl shadow-xl z-20 hidden md:block",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									"data-uid": "src/components/sections/CompanyProfile.tsx:27:17",
+									"data-prohibitions": "[]",
+									className: "text-4xl font-extrabold mb-1",
+									children: "+10"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/sections/CompanyProfile.tsx:28:17",
+									"data-prohibitions": "[]",
+									className: "text-sm font-medium opacity-90",
+									children: [
+										"Anos de Experiência",
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
+											"data-uid": "src/components/sections/CompanyProfile.tsx:30:19",
+											"data-prohibitions": "[editContent]"
+										}),
+										"no Mercado"
+									]
+								})]
 							})
 						]
 					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/components/sections/CompanyProfile.tsx:44:11",
-					"data-prohibitions": "[]",
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+					"data-uid": "src/components/sections/CompanyProfile.tsx:37:11",
+					"data-prohibitions": "[editContent]",
 					direction: "left",
-					delay: 200,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/sections/CompanyProfile.tsx:45:13",
-						"data-prohibitions": "[]",
-						className: "space-y-6",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-							"data-uid": "src/components/sections/CompanyProfile.tsx:46:15",
+					delay: .2,
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							"data-uid": "src/components/sections/CompanyProfile.tsx:38:13",
 							"data-prohibitions": "[]",
-							className: "shadow-soft border-t-4 border-t-primary rounded-xl overflow-hidden",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:47:17",
-								"data-prohibitions": "[]",
-								className: "bg-white pb-2 border-b",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardTitle, {
-									"data-uid": "src/components/sections/CompanyProfile.tsx:48:19",
-									"data-prohibitions": "[]",
-									className: "flex items-center gap-2 text-xl font-poppins",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:49:21",
-										"data-prohibitions": "[editContent]",
-										className: "text-primary",
-										size: 24
-									}), "Ficha Técnica"]
-								})
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
-								"data-uid": "src/components/sections/CompanyProfile.tsx:53:17",
-								"data-prohibitions": "[]",
-								className: "p-6 bg-slate-50/50 space-y-4 text-sm",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:54:19",
-										"data-prohibitions": "[]",
-										className: "grid grid-cols-1 md:grid-cols-2 gap-4",
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:55:21",
-												"data-prohibitions": "[]",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:56:23",
-													"data-prohibitions": "[]",
-													className: "text-muted-foreground text-xs font-semibold uppercase",
-													children: "Razão Social"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:59:23",
-													"data-prohibitions": "[]",
-													className: "font-medium text-slate-900",
-													children: "JT Obras e Manutenções"
-												})]
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:61:21",
-												"data-prohibitions": "[]",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:62:23",
-													"data-prohibitions": "[]",
-													className: "text-muted-foreground text-xs font-semibold uppercase",
-													children: "CNPJ"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:63:23",
-													"data-prohibitions": "[]",
-													className: "font-mono font-medium text-slate-900",
-													children: "63.243.791/0001-09"
-												})]
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:65:21",
-												"data-prohibitions": "[]",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:66:23",
-													"data-prohibitions": "[]",
-													className: "text-muted-foreground text-xs font-semibold uppercase",
-													children: "Regime Tributário"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:69:23",
-													"data-prohibitions": "[]",
-													className: "font-medium text-slate-900",
-													children: "Simples Nacional"
-												})]
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:71:21",
-												"data-prohibitions": "[]",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:72:23",
-													"data-prohibitions": "[]",
-													className: "text-muted-foreground text-xs font-semibold uppercase",
-													children: "Diretor"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:75:23",
-													"data-prohibitions": "[]",
-													className: "font-medium text-slate-900",
-													children: "Joel Nascimento de Paula"
-												})]
-											})
-										]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:79:19",
-										"data-prohibitions": "[]",
-										className: "pt-4 border-t",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											"data-uid": "src/components/sections/CompanyProfile.tsx:80:21",
-											"data-prohibitions": "[]",
-											className: "text-muted-foreground text-xs font-semibold uppercase mb-1",
-											children: "Sede"
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-											"data-uid": "src/components/sections/CompanyProfile.tsx:83:21",
-											"data-prohibitions": "[]",
-											className: "font-medium text-slate-900",
-											children: [
-												"Rua Tommaso Giordani, 371",
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:85:23",
-													"data-prohibitions": "[editContent]"
-												}),
-												"Vila Guacuri – São Paulo - SP",
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-													"data-uid": "src/components/sections/CompanyProfile.tsx:87:23",
-													"data-prohibitions": "[editContent]"
-												}),
-												"CEP: 04.475-210"
-											]
-										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/CompanyProfile.tsx:92:19",
-										"data-prohibitions": "[]",
-										className: "pt-4 border-t grid grid-cols-1 md:grid-cols-2 gap-4",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/CompanyProfile.tsx:93:21",
-											"data-prohibitions": "[]",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:94:23",
-												"data-prohibitions": "[]",
-												className: "text-muted-foreground text-xs font-semibold uppercase mb-1",
-												children: "WhatsApp"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:97:23",
-												"data-prohibitions": "[]",
-												className: "font-medium text-slate-900",
-												children: "(11) 94003-7545"
-											})]
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/CompanyProfile.tsx:99:21",
-											"data-prohibitions": "[]",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:100:23",
-												"data-prohibitions": "[]",
-												className: "text-muted-foreground text-xs font-semibold uppercase mb-1",
-												children: "E-mail"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/CompanyProfile.tsx:103:23",
-												"data-prohibitions": "[]",
-												className: "font-medium text-slate-900",
-												children: "jt.obrasemanutencao@gmail.com"
-											})]
-										})]
-									})
-								]
-							})]
+							className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
+							children: "Sobre Nós"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/sections/CompanyProfile.tsx:41:13",
+							"data-prohibitions": "[]",
+							className: "text-3xl md:text-4xl font-extrabold mb-6 text-white",
+							children: "Sólida Experiência na Construção Civil"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/sections/CompanyProfile.tsx:45:13",
+							"data-prohibitions": "[]",
+							className: "text-gray-300 mb-6 text-lg leading-relaxed",
+							children: "A JT Obras e Manutenções nasceu com o propósito de elevar o padrão de entregas na construção civil e reformas comerciais. Nossa equipe é formada por engenheiros e técnicos altamente capacitados."
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/sections/CompanyProfile.tsx:50:13",
+							"data-prohibitions": "[]",
+							className: "text-gray-300 mb-8 text-lg leading-relaxed",
+							children: "Temos orgulho de nosso histórico impecável no cumprimento de normas regulamentadoras, garantindo que cada obra seja um ambiente seguro para nossos colaboradores e para os nossos clientes."
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							"data-uid": "src/components/sections/CompanyProfile.tsx:56:13",
+							"data-prohibitions": "[editContent]",
+							className: "grid sm:grid-cols-2 gap-4 mb-8",
+							children: values.map((value, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/CompanyProfile.tsx:58:17",
+								"data-prohibitions": "[editContent]",
+								className: "flex items-center gap-3",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CircleCheck, {
+									"data-uid": "src/components/sections/CompanyProfile.tsx:59:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-brand-light h-5 w-5 shrink-0"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									"data-uid": "src/components/sections/CompanyProfile.tsx:60:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-sm text-gray-200",
+									children: value
+								})]
+							}, i))
 						})
-					})
+					]
 				})]
 			})
 		})
 	});
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-hook-form@7.71.2_react@19.2.4/node_modules/react-hook-form/dist/index.esm.mjs
-var isCheckBoxInput = (element) => element.type === "checkbox";
-var isDateObject = (value) => value instanceof Date;
-var isNullOrUndefined = (value) => value == null;
-var isObjectType = (value) => typeof value === "object";
-var isObject$1 = (value) => !isNullOrUndefined(value) && !Array.isArray(value) && isObjectType(value) && !isDateObject(value);
-var getEventValue = (event) => isObject$1(event) && event.target ? isCheckBoxInput(event.target) ? event.target.checked : event.target.value : event;
-var getNodeParentName = (name) => name.substring(0, name.search(/\.\d+(\.|$)/)) || name;
-var isNameInFieldArray = (names, name) => names.has(getNodeParentName(name));
-var isPlainObject$1 = (tempObject) => {
-	const prototypeCopy = tempObject.constructor && tempObject.constructor.prototype;
-	return isObject$1(prototypeCopy) && prototypeCopy.hasOwnProperty("isPrototypeOf");
-};
-var isWeb = typeof window !== "undefined" && typeof window.HTMLElement !== "undefined" && typeof document !== "undefined";
-function cloneObject(data) {
-	if (data instanceof Date) return new Date(data);
-	const isFileListInstance = typeof FileList !== "undefined" && data instanceof FileList;
-	if (isWeb && (data instanceof Blob || isFileListInstance)) return data;
-	const isArray = Array.isArray(data);
-	if (!isArray && !(isObject$1(data) && isPlainObject$1(data))) return data;
-	const copy = isArray ? [] : Object.create(Object.getPrototypeOf(data));
-	for (const key in data) if (Object.prototype.hasOwnProperty.call(data, key)) copy[key] = cloneObject(data[key]);
-	return copy;
-}
-var isKey = (value) => /^\w*$/.test(value);
-var isUndefined = (val) => val === void 0;
-var compact = (value) => Array.isArray(value) ? value.filter(Boolean) : [];
-var stringToPath = (input) => compact(input.replace(/["|']|\]/g, "").split(/\.|\[/));
-var get = (object, path, defaultValue) => {
-	if (!path || !isObject$1(object)) return defaultValue;
-	const result = (isKey(path) ? [path] : stringToPath(path)).reduce((result, key) => isNullOrUndefined(result) ? result : result[key], object);
-	return isUndefined(result) || result === object ? isUndefined(object[path]) ? defaultValue : object[path] : result;
-};
-var isBoolean = (value) => typeof value === "boolean";
-var isFunction = (value) => typeof value === "function";
-var set = (object, path, value) => {
-	let index = -1;
-	const tempPath = isKey(path) ? [path] : stringToPath(path);
-	const length = tempPath.length;
-	const lastIndex = length - 1;
-	while (++index < length) {
-		const key = tempPath[index];
-		let newValue = value;
-		if (index !== lastIndex) {
-			const objValue = object[key];
-			newValue = isObject$1(objValue) || Array.isArray(objValue) ? objValue : !isNaN(+tempPath[index + 1]) ? [] : {};
-		}
-		if (key === "__proto__" || key === "constructor" || key === "prototype") return;
-		object[key] = newValue;
-		object = object[key];
-	}
-};
-var EVENTS = {
-	BLUR: "blur",
-	FOCUS_OUT: "focusout",
-	CHANGE: "change"
-};
-var VALIDATION_MODE = {
-	onBlur: "onBlur",
-	onChange: "onChange",
-	onSubmit: "onSubmit",
-	onTouched: "onTouched",
-	all: "all"
-};
-var INPUT_VALIDATION_RULES = {
-	max: "max",
-	min: "min",
-	maxLength: "maxLength",
-	minLength: "minLength",
-	pattern: "pattern",
-	required: "required",
-	validate: "validate"
-};
-/**
-* Separate context for `control` to prevent unnecessary rerenders.
-* Internal hooks that only need control use this instead of full form context.
-*/
-var HookFormControlContext = import_react.createContext(null);
-HookFormControlContext.displayName = "HookFormControlContext";
-/**
-* @internal Internal hook to access only control from context.
-*/
-var useFormControlContext = () => import_react.useContext(HookFormControlContext);
-var getProxyFormState = (formState, control, localProxyFormState, isRoot = true) => {
-	const result = { defaultValues: control._defaultValues };
-	for (const key in formState) Object.defineProperty(result, key, { get: () => {
-		const _key = key;
-		if (control._proxyFormState[_key] !== VALIDATION_MODE.all) control._proxyFormState[_key] = !isRoot || VALIDATION_MODE.all;
-		localProxyFormState && (localProxyFormState[_key] = true);
-		return formState[_key];
-	} });
-	return result;
-};
-var useIsomorphicLayoutEffect$1 = typeof window !== "undefined" ? import_react.useLayoutEffect : import_react.useEffect;
-/**
-* This custom hook allows you to subscribe to each form state, and isolate the re-render at the custom hook level. It has its scope in terms of form state subscription, so it would not affect other useFormState and useForm. Using this hook can reduce the re-render impact on large and complex form application.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/useformstate) • [Demo](https://codesandbox.io/s/useformstate-75xly)
-*
-* @param props - include options on specify fields to subscribe. {@link UseFormStateReturn}
-*
-* @example
-* ```tsx
-* function App() {
-*   const { register, handleSubmit, control } = useForm({
-*     defaultValues: {
-*     firstName: "firstName"
-*   }});
-*   const { dirtyFields } = useFormState({
-*     control
-*   });
-*   const onSubmit = (data) => console.log(data);
-*
-*   return (
-*     <form onSubmit={handleSubmit(onSubmit)}>
-*       <input {...register("firstName")} placeholder="First Name" />
-*       {dirtyFields.firstName && <p>Field is dirty.</p>}
-*       <input type="submit" />
-*     </form>
-*   );
-* }
-* ```
-*/
-function useFormState(props) {
-	const formControl = useFormControlContext();
-	const { control = formControl, disabled, name, exact } = props || {};
-	const [formState, updateFormState] = import_react.useState(control._formState);
-	const _localProxyFormState = import_react.useRef({
-		isDirty: false,
-		isLoading: false,
-		dirtyFields: false,
-		touchedFields: false,
-		validatingFields: false,
-		isValidating: false,
-		isValid: false,
-		errors: false
-	});
-	useIsomorphicLayoutEffect$1(() => control._subscribe({
-		name,
-		formState: _localProxyFormState.current,
-		exact,
-		callback: (formState) => {
-			!disabled && updateFormState({
-				...control._formState,
-				...formState
-			});
-		}
-	}), [
-		name,
-		disabled,
-		exact
-	]);
-	import_react.useEffect(() => {
-		_localProxyFormState.current.isValid && control._setValid(true);
-	}, [control]);
-	return import_react.useMemo(() => getProxyFormState(formState, control, _localProxyFormState.current, false), [formState, control]);
-}
-var isString = (value) => typeof value === "string";
-var generateWatchOutput = (names, _names, formValues, isGlobal, defaultValue) => {
-	if (isString(names)) {
-		isGlobal && _names.watch.add(names);
-		return get(formValues, names, defaultValue);
-	}
-	if (Array.isArray(names)) return names.map((fieldName) => (isGlobal && _names.watch.add(fieldName), get(formValues, fieldName)));
-	isGlobal && (_names.watchAll = true);
-	return formValues;
-};
-var isPrimitive = (value) => isNullOrUndefined(value) || !isObjectType(value);
-function deepEqual(object1, object2, _internal_visited = /* @__PURE__ */ new WeakSet()) {
-	if (isPrimitive(object1) || isPrimitive(object2)) return Object.is(object1, object2);
-	if (isDateObject(object1) && isDateObject(object2)) return Object.is(object1.getTime(), object2.getTime());
-	const keys1 = Object.keys(object1);
-	const keys2 = Object.keys(object2);
-	if (keys1.length !== keys2.length) return false;
-	if (_internal_visited.has(object1) || _internal_visited.has(object2)) return true;
-	_internal_visited.add(object1);
-	_internal_visited.add(object2);
-	for (const key of keys1) {
-		const val1 = object1[key];
-		if (!keys2.includes(key)) return false;
-		if (key !== "ref") {
-			const val2 = object2[key];
-			if (isDateObject(val1) && isDateObject(val2) || isObject$1(val1) && isObject$1(val2) || Array.isArray(val1) && Array.isArray(val2) ? !deepEqual(val1, val2, _internal_visited) : !Object.is(val1, val2)) return false;
-		}
-	}
-	return true;
-}
-/**
-* Custom hook to subscribe to field change and isolate re-rendering at the component level.
-*
-* @remarks
-*
-* [API](https://react-hook-form.com/docs/usewatch) • [Demo](https://codesandbox.io/s/react-hook-form-v7-ts-usewatch-h9i5e)
-*
-* @example
-* ```tsx
-* const { control } = useForm();
-* const values = useWatch({
-*   name: "fieldName"
-*   control,
-* })
-* ```
-*/
-function useWatch(props) {
-	const formControl = useFormControlContext();
-	const { control = formControl, name, defaultValue, disabled, exact, compute } = props || {};
-	const _defaultValue = import_react.useRef(defaultValue);
-	const _compute = import_react.useRef(compute);
-	const _computeFormValues = import_react.useRef(void 0);
-	const _prevControl = import_react.useRef(control);
-	const _prevName = import_react.useRef(name);
-	_compute.current = compute;
-	const [value, updateValue] = import_react.useState(() => {
-		const defaultValue = control._getWatch(name, _defaultValue.current);
-		return _compute.current ? _compute.current(defaultValue) : defaultValue;
-	});
-	const getCurrentOutput = import_react.useCallback((values) => {
-		const formValues = generateWatchOutput(name, control._names, values || control._formValues, false, _defaultValue.current);
-		return _compute.current ? _compute.current(formValues) : formValues;
-	}, [
-		control._formValues,
-		control._names,
-		name
-	]);
-	const refreshValue = import_react.useCallback((values) => {
-		if (!disabled) {
-			const formValues = generateWatchOutput(name, control._names, values || control._formValues, false, _defaultValue.current);
-			if (_compute.current) {
-				const computedFormValues = _compute.current(formValues);
-				if (!deepEqual(computedFormValues, _computeFormValues.current)) {
-					updateValue(computedFormValues);
-					_computeFormValues.current = computedFormValues;
-				}
-			} else updateValue(formValues);
-		}
-	}, [
-		control._formValues,
-		control._names,
-		disabled,
-		name
-	]);
-	useIsomorphicLayoutEffect$1(() => {
-		if (_prevControl.current !== control || !deepEqual(_prevName.current, name)) {
-			_prevControl.current = control;
-			_prevName.current = name;
-			refreshValue();
-		}
-		return control._subscribe({
-			name,
-			formState: { values: true },
-			exact,
-			callback: (formState) => {
-				refreshValue(formState.values);
-			}
-		});
-	}, [
-		control,
-		exact,
-		name,
-		refreshValue
-	]);
-	import_react.useEffect(() => control._removeUnmounted());
-	const controlChanged = _prevControl.current !== control;
-	const prevName = _prevName.current;
-	const computedOutput = import_react.useMemo(() => {
-		if (disabled) return null;
-		const nameChanged = !controlChanged && !deepEqual(prevName, name);
-		return controlChanged || nameChanged ? getCurrentOutput() : null;
-	}, [
-		disabled,
-		controlChanged,
-		name,
-		prevName,
-		getCurrentOutput
-	]);
-	return computedOutput !== null ? computedOutput : value;
-}
-/**
-* Custom hook to work with controlled component, this function provide you with both form and field level state. Re-render is isolated at the hook level.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/usecontroller) • [Demo](https://codesandbox.io/s/usecontroller-0o8px)
-*
-* @param props - the path name to the form field value, and validation rules.
-*
-* @returns field properties, field and form state. {@link UseControllerReturn}
-*
-* @example
-* ```tsx
-* function Input(props) {
-*   const { field, fieldState, formState } = useController(props);
-*   return (
-*     <div>
-*       <input {...field} placeholder={props.name} />
-*       <p>{fieldState.isTouched && "Touched"}</p>
-*       <p>{formState.isSubmitted ? "submitted" : ""}</p>
-*     </div>
-*   );
-* }
-* ```
-*/
-function useController(props) {
-	const formControl = useFormControlContext();
-	const { name, disabled, control = formControl, shouldUnregister, defaultValue, exact = true } = props;
-	const isArrayField = isNameInFieldArray(control._names.array, name);
-	const value = useWatch({
-		control,
-		name,
-		defaultValue: import_react.useMemo(() => get(control._formValues, name, get(control._defaultValues, name, defaultValue)), [
-			control,
-			name,
-			defaultValue
-		]),
-		exact
-	});
-	const formState = useFormState({
-		control,
-		name,
-		exact
-	});
-	const _props = import_react.useRef(props);
-	const _previousNameRef = import_react.useRef(void 0);
-	const _registerProps = import_react.useRef(control.register(name, {
-		...props.rules,
-		value,
-		...isBoolean(props.disabled) ? { disabled: props.disabled } : {}
-	}));
-	_props.current = props;
-	const fieldState = import_react.useMemo(() => Object.defineProperties({}, {
-		invalid: {
-			enumerable: true,
-			get: () => !!get(formState.errors, name)
-		},
-		isDirty: {
-			enumerable: true,
-			get: () => !!get(formState.dirtyFields, name)
-		},
-		isTouched: {
-			enumerable: true,
-			get: () => !!get(formState.touchedFields, name)
-		},
-		isValidating: {
-			enumerable: true,
-			get: () => !!get(formState.validatingFields, name)
-		},
-		error: {
-			enumerable: true,
-			get: () => get(formState.errors, name)
-		}
-	}), [formState, name]);
-	const onChange = import_react.useCallback((event) => _registerProps.current.onChange({
-		target: {
-			value: getEventValue(event),
-			name
-		},
-		type: EVENTS.CHANGE
-	}), [name]);
-	const onBlur = import_react.useCallback(() => _registerProps.current.onBlur({
-		target: {
-			value: get(control._formValues, name),
-			name
-		},
-		type: EVENTS.BLUR
-	}), [name, control._formValues]);
-	const ref = import_react.useCallback((elm) => {
-		const field = get(control._fields, name);
-		if (field && field._f && elm) field._f.ref = {
-			focus: () => isFunction(elm.focus) && elm.focus(),
-			select: () => isFunction(elm.select) && elm.select(),
-			setCustomValidity: (message) => isFunction(elm.setCustomValidity) && elm.setCustomValidity(message),
-			reportValidity: () => isFunction(elm.reportValidity) && elm.reportValidity()
-		};
-	}, [control._fields, name]);
-	const field = import_react.useMemo(() => ({
-		name,
-		value,
-		...isBoolean(disabled) || formState.disabled ? { disabled: formState.disabled || disabled } : {},
-		onChange,
-		onBlur,
-		ref
-	}), [
-		name,
-		disabled,
-		formState.disabled,
-		onChange,
-		onBlur,
-		ref,
-		value
-	]);
-	import_react.useEffect(() => {
-		const _shouldUnregisterField = control._options.shouldUnregister || shouldUnregister;
-		const previousName = _previousNameRef.current;
-		if (previousName && previousName !== name && !isArrayField) control.unregister(previousName);
-		control.register(name, {
-			..._props.current.rules,
-			...isBoolean(_props.current.disabled) ? { disabled: _props.current.disabled } : {}
-		});
-		const updateMounted = (name, value) => {
-			const field = get(control._fields, name);
-			if (field && field._f) field._f.mount = value;
-		};
-		updateMounted(name, true);
-		if (_shouldUnregisterField) {
-			const value = cloneObject(get(control._options.defaultValues, name, _props.current.defaultValue));
-			set(control._defaultValues, name, value);
-			if (isUndefined(get(control._formValues, name))) set(control._formValues, name, value);
-		}
-		!isArrayField && control.register(name);
-		_previousNameRef.current = name;
-		return () => {
-			(isArrayField ? _shouldUnregisterField && !control._state.action : _shouldUnregisterField) ? control.unregister(name) : updateMounted(name, false);
-		};
-	}, [
-		name,
-		control,
-		isArrayField,
-		shouldUnregister
-	]);
-	import_react.useEffect(() => {
-		control._setDisabledField({
-			disabled,
-			name
-		});
-	}, [
-		disabled,
-		name,
-		control
-	]);
-	return import_react.useMemo(() => ({
-		field,
-		formState,
-		fieldState
-	}), [
-		field,
-		formState,
-		fieldState
-	]);
-}
-/**
-* Component based on `useController` hook to work with controlled component.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/usecontroller/controller) • [Demo](https://codesandbox.io/s/react-hook-form-v6-controller-ts-jwyzw) • [Video](https://www.youtube.com/watch?v=N2UNk_UCVyA)
-*
-* @param props - the path name to the form field value, and validation rules.
-*
-* @returns provide field handler functions, field and form state.
-*
-* @example
-* ```tsx
-* function App() {
-*   const { control } = useForm<FormValues>({
-*     defaultValues: {
-*       test: ""
-*     }
-*   });
-*
-*   return (
-*     <form>
-*       <Controller
-*         control={control}
-*         name="test"
-*         render={({ field: { onChange, onBlur, value, ref }, formState, fieldState }) => (
-*           <>
-*             <input
-*               onChange={onChange} // send value to hook form
-*               onBlur={onBlur} // notify when input is touched
-*               value={value} // return updated value
-*               ref={ref} // set ref for focus management
-*             />
-*             <p>{formState.isSubmitted ? "submitted" : ""}</p>
-*             <p>{fieldState.isTouched ? "touched" : ""}</p>
-*           </>
-*         )}
-*       />
-*     </form>
-*   );
-* }
-* ```
-*/
-var Controller = (props) => props.render(useController(props));
-var HookFormContext = import_react.createContext(null);
-HookFormContext.displayName = "HookFormContext";
-/**
-* This custom hook allows you to access the form context. useFormContext is intended to be used in deeply nested structures, where it would become inconvenient to pass the context as a prop. To be used with {@link FormProvider}.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/useformcontext) • [Demo](https://codesandbox.io/s/react-hook-form-v7-form-context-ytudi)
-*
-* @returns return all useForm methods
-*
-* @example
-* ```tsx
-* function App() {
-*   const methods = useForm();
-*   const onSubmit = data => console.log(data);
-*
-*   return (
-*     <FormProvider {...methods} >
-*       <form onSubmit={methods.handleSubmit(onSubmit)}>
-*         <NestedInput />
-*         <input type="submit" />
-*       </form>
-*     </FormProvider>
-*   );
-* }
-*
-*  function NestedInput() {
-*   const { register } = useFormContext(); // retrieve all hook methods
-*   return <input {...register("test")} />;
-* }
-* ```
-*/
-var useFormContext = () => import_react.useContext(HookFormContext);
-/**
-* A provider component that propagates the `useForm` methods to all children components via [React Context](https://react.dev/reference/react/useContext) API. To be used with {@link useFormContext}.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/useformcontext) • [Demo](https://codesandbox.io/s/react-hook-form-v7-form-context-ytudi)
-*
-* @param props - all useForm methods
-*
-* @example
-* ```tsx
-* function App() {
-*   const methods = useForm();
-*   const onSubmit = data => console.log(data);
-*
-*   return (
-*     <FormProvider {...methods} >
-*       <form onSubmit={methods.handleSubmit(onSubmit)}>
-*         <NestedInput />
-*         <input type="submit" />
-*       </form>
-*     </FormProvider>
-*   );
-* }
-*
-*  function NestedInput() {
-*   const { register } = useFormContext(); // retrieve all hook methods
-*   return <input {...register("test")} />;
-* }
-* ```
-*/
-var FormProvider = (props) => {
-	const { children, watch, getValues, getFieldState, setError, clearErrors, setValue, trigger, formState, resetField, reset, handleSubmit, unregister, control, register, setFocus, subscribe } = props;
-	return import_react.createElement(HookFormContext.Provider, { value: import_react.useMemo(() => ({
-		watch,
-		getValues,
-		getFieldState,
-		setError,
-		clearErrors,
-		setValue,
-		trigger,
-		formState,
-		resetField,
-		reset,
-		handleSubmit,
-		unregister,
-		control,
-		register,
-		setFocus,
-		subscribe
-	}), [
-		clearErrors,
-		control,
-		formState,
-		getFieldState,
-		getValues,
-		handleSubmit,
-		register,
-		reset,
-		resetField,
-		setError,
-		setFocus,
-		setValue,
-		subscribe,
-		trigger,
-		unregister,
-		watch
-	]) }, import_react.createElement(HookFormControlContext.Provider, { value: control }, children));
-};
-var appendErrors = (name, validateAllFieldCriteria, errors, type, message) => validateAllFieldCriteria ? {
-	...errors[name],
-	types: {
-		...errors[name] && errors[name].types ? errors[name].types : {},
-		[type]: message || true
-	}
-} : {};
-var convertToArrayPayload = (value) => Array.isArray(value) ? value : [value];
-var createSubject = () => {
-	let _observers = [];
-	const next = (value) => {
-		for (const observer of _observers) observer.next && observer.next(value);
-	};
-	const subscribe = (observer) => {
-		_observers.push(observer);
-		return { unsubscribe: () => {
-			_observers = _observers.filter((o) => o !== observer);
-		} };
-	};
-	const unsubscribe = () => {
-		_observers = [];
-	};
-	return {
-		get observers() {
-			return _observers;
-		},
-		next,
-		subscribe,
-		unsubscribe
-	};
-};
-function extractFormValues(fieldsState, formValues) {
-	const values = {};
-	for (const key in fieldsState) if (fieldsState.hasOwnProperty(key)) {
-		const fieldState = fieldsState[key];
-		const fieldValue = formValues[key];
-		if (fieldState && isObject$1(fieldState) && fieldValue) {
-			const nestedFieldsState = extractFormValues(fieldState, fieldValue);
-			if (isObject$1(nestedFieldsState)) values[key] = nestedFieldsState;
-		} else if (fieldsState[key]) values[key] = fieldValue;
-	}
-	return values;
-}
-var isEmptyObject = (value) => isObject$1(value) && !Object.keys(value).length;
-var isFileInput = (element) => element.type === "file";
-var isHTMLElement = (value) => {
-	if (!isWeb) return false;
-	const owner = value ? value.ownerDocument : 0;
-	return value instanceof (owner && owner.defaultView ? owner.defaultView.HTMLElement : HTMLElement);
-};
-var isMultipleSelect = (element) => element.type === `select-multiple`;
-var isRadioInput = (element) => element.type === "radio";
-var isRadioOrCheckbox = (ref) => isRadioInput(ref) || isCheckBoxInput(ref);
-var live = (ref) => isHTMLElement(ref) && ref.isConnected;
-function baseGet(object, updatePath) {
-	const length = updatePath.slice(0, -1).length;
-	let index = 0;
-	while (index < length) object = isUndefined(object) ? index++ : object[updatePath[index++]];
-	return object;
-}
-function isEmptyArray(obj) {
-	for (const key in obj) if (obj.hasOwnProperty(key) && !isUndefined(obj[key])) return false;
-	return true;
-}
-function unset(object, path) {
-	const paths = Array.isArray(path) ? path : isKey(path) ? [path] : stringToPath(path);
-	const childObject = paths.length === 1 ? object : baseGet(object, paths);
-	const index = paths.length - 1;
-	const key = paths[index];
-	if (childObject) delete childObject[key];
-	if (index !== 0 && (isObject$1(childObject) && isEmptyObject(childObject) || Array.isArray(childObject) && isEmptyArray(childObject))) unset(object, paths.slice(0, -1));
-	return object;
-}
-var objectHasFunction = (data) => {
-	for (const key in data) if (isFunction(data[key])) return true;
-	return false;
-};
-function isTraversable(value) {
-	return Array.isArray(value) || isObject$1(value) && !objectHasFunction(value);
-}
-function markFieldsDirty(data, fields = {}) {
-	for (const key in data) {
-		const value = data[key];
-		if (isTraversable(value)) {
-			fields[key] = Array.isArray(value) ? [] : {};
-			markFieldsDirty(value, fields[key]);
-		} else if (!isUndefined(value)) fields[key] = true;
-	}
-	return fields;
-}
-function getDirtyFields(data, formValues, dirtyFieldsFromValues) {
-	if (!dirtyFieldsFromValues) dirtyFieldsFromValues = markFieldsDirty(formValues);
-	for (const key in data) {
-		const value = data[key];
-		if (isTraversable(value)) if (isUndefined(formValues) || isPrimitive(dirtyFieldsFromValues[key])) dirtyFieldsFromValues[key] = markFieldsDirty(value, Array.isArray(value) ? [] : {});
-		else getDirtyFields(value, isNullOrUndefined(formValues) ? {} : formValues[key], dirtyFieldsFromValues[key]);
-		else {
-			const formValue = formValues[key];
-			dirtyFieldsFromValues[key] = !deepEqual(value, formValue);
-		}
-	}
-	return dirtyFieldsFromValues;
-}
-var defaultResult = {
-	value: false,
-	isValid: false
-};
-var validResult = {
-	value: true,
-	isValid: true
-};
-var getCheckboxValue = (options) => {
-	if (Array.isArray(options)) {
-		if (options.length > 1) {
-			const values = options.filter((option) => option && option.checked && !option.disabled).map((option) => option.value);
-			return {
-				value: values,
-				isValid: !!values.length
-			};
-		}
-		return options[0].checked && !options[0].disabled ? options[0].attributes && !isUndefined(options[0].attributes.value) ? isUndefined(options[0].value) || options[0].value === "" ? validResult : {
-			value: options[0].value,
-			isValid: true
-		} : validResult : defaultResult;
-	}
-	return defaultResult;
-};
-var getFieldValueAs = (value, { valueAsNumber, valueAsDate, setValueAs }) => isUndefined(value) ? value : valueAsNumber ? value === "" ? NaN : value ? +value : value : valueAsDate && isString(value) ? new Date(value) : setValueAs ? setValueAs(value) : value;
-var defaultReturn = {
-	isValid: false,
-	value: null
-};
-var getRadioValue = (options) => Array.isArray(options) ? options.reduce((previous, option) => option && option.checked && !option.disabled ? {
-	isValid: true,
-	value: option.value
-} : previous, defaultReturn) : defaultReturn;
-function getFieldValue(_f) {
-	const ref = _f.ref;
-	if (isFileInput(ref)) return ref.files;
-	if (isRadioInput(ref)) return getRadioValue(_f.refs).value;
-	if (isMultipleSelect(ref)) return [...ref.selectedOptions].map(({ value }) => value);
-	if (isCheckBoxInput(ref)) return getCheckboxValue(_f.refs).value;
-	return getFieldValueAs(isUndefined(ref.value) ? _f.ref.value : ref.value, _f);
-}
-var getResolverOptions = (fieldsNames, _fields, criteriaMode, shouldUseNativeValidation) => {
-	const fields = {};
-	for (const name of fieldsNames) {
-		const field = get(_fields, name);
-		field && set(fields, name, field._f);
-	}
-	return {
-		criteriaMode,
-		names: [...fieldsNames],
-		fields,
-		shouldUseNativeValidation
-	};
-};
-var isRegex = (value) => value instanceof RegExp;
-var getRuleValue = (rule) => isUndefined(rule) ? rule : isRegex(rule) ? rule.source : isObject$1(rule) ? isRegex(rule.value) ? rule.value.source : rule.value : rule;
-var getValidationModes = (mode) => ({
-	isOnSubmit: !mode || mode === VALIDATION_MODE.onSubmit,
-	isOnBlur: mode === VALIDATION_MODE.onBlur,
-	isOnChange: mode === VALIDATION_MODE.onChange,
-	isOnAll: mode === VALIDATION_MODE.all,
-	isOnTouch: mode === VALIDATION_MODE.onTouched
-});
-var ASYNC_FUNCTION = "AsyncFunction";
-var hasPromiseValidation = (fieldReference) => !!fieldReference && !!fieldReference.validate && !!(isFunction(fieldReference.validate) && fieldReference.validate.constructor.name === ASYNC_FUNCTION || isObject$1(fieldReference.validate) && Object.values(fieldReference.validate).find((validateFunction) => validateFunction.constructor.name === ASYNC_FUNCTION));
-var hasValidation = (options) => options.mount && (options.required || options.min || options.max || options.maxLength || options.minLength || options.pattern || options.validate);
-var isWatched = (name, _names, isBlurEvent) => !isBlurEvent && (_names.watchAll || _names.watch.has(name) || [..._names.watch].some((watchName) => name.startsWith(watchName) && /^\.\w+/.test(name.slice(watchName.length))));
-var iterateFieldsByAction = (fields, action, fieldsNames, abortEarly) => {
-	for (const key of fieldsNames || Object.keys(fields)) {
-		const field = get(fields, key);
-		if (field) {
-			const { _f, ...currentField } = field;
-			if (_f) {
-				if (_f.refs && _f.refs[0] && action(_f.refs[0], key) && !abortEarly) return true;
-				else if (_f.ref && action(_f.ref, _f.name) && !abortEarly) return true;
-				else if (iterateFieldsByAction(currentField, action)) break;
-			} else if (isObject$1(currentField)) {
-				if (iterateFieldsByAction(currentField, action)) break;
-			}
-		}
-	}
-};
-function schemaErrorLookup(errors, _fields, name) {
-	const error = get(errors, name);
-	if (error || isKey(name)) return {
-		error,
-		name
-	};
-	const names = name.split(".");
-	while (names.length) {
-		const fieldName = names.join(".");
-		const field = get(_fields, fieldName);
-		const foundError = get(errors, fieldName);
-		if (field && !Array.isArray(field) && name !== fieldName) return { name };
-		if (foundError && foundError.type) return {
-			name: fieldName,
-			error: foundError
-		};
-		if (foundError && foundError.root && foundError.root.type) return {
-			name: `${fieldName}.root`,
-			error: foundError.root
-		};
-		names.pop();
-	}
-	return { name };
-}
-var shouldRenderFormState = (formStateData, _proxyFormState, updateFormState, isRoot) => {
-	updateFormState(formStateData);
-	const { name, ...formState } = formStateData;
-	return isEmptyObject(formState) || Object.keys(formState).length >= Object.keys(_proxyFormState).length || Object.keys(formState).find((key) => _proxyFormState[key] === (!isRoot || VALIDATION_MODE.all));
-};
-var shouldSubscribeByName = (name, signalName, exact) => !name || !signalName || name === signalName || convertToArrayPayload(name).some((currentName) => currentName && (exact ? currentName === signalName : currentName.startsWith(signalName) || signalName.startsWith(currentName)));
-var skipValidation = (isBlurEvent, isTouched, isSubmitted, reValidateMode, mode) => {
-	if (mode.isOnAll) return false;
-	else if (!isSubmitted && mode.isOnTouch) return !(isTouched || isBlurEvent);
-	else if (isSubmitted ? reValidateMode.isOnBlur : mode.isOnBlur) return !isBlurEvent;
-	else if (isSubmitted ? reValidateMode.isOnChange : mode.isOnChange) return isBlurEvent;
-	return true;
-};
-var unsetEmptyArray = (ref, name) => !compact(get(ref, name)).length && unset(ref, name);
-var updateFieldArrayRootError = (errors, error, name) => {
-	const fieldArrayErrors = convertToArrayPayload(get(errors, name));
-	set(fieldArrayErrors, "root", error[name]);
-	set(errors, name, fieldArrayErrors);
-	return errors;
-};
-function getValidateError(result, ref, type = "validate") {
-	if (isString(result) || Array.isArray(result) && result.every(isString) || isBoolean(result) && !result) return {
-		type,
-		message: isString(result) ? result : "",
-		ref
-	};
-}
-var getValueAndMessage = (validationData) => isObject$1(validationData) && !isRegex(validationData) ? validationData : {
-	value: validationData,
-	message: ""
-};
-var validateField = async (field, disabledFieldNames, formValues, validateAllFieldCriteria, shouldUseNativeValidation, isFieldArray) => {
-	const { ref, refs, required, maxLength, minLength, min, max, pattern, validate, name, valueAsNumber, mount } = field._f;
-	const inputValue = get(formValues, name);
-	if (!mount || disabledFieldNames.has(name)) return {};
-	const inputRef = refs ? refs[0] : ref;
-	const setCustomValidity = (message) => {
-		if (shouldUseNativeValidation && inputRef.reportValidity) {
-			inputRef.setCustomValidity(isBoolean(message) ? "" : message || "");
-			inputRef.reportValidity();
-		}
-	};
-	const error = {};
-	const isRadio = isRadioInput(ref);
-	const isCheckBox = isCheckBoxInput(ref);
-	const isRadioOrCheckbox = isRadio || isCheckBox;
-	const isEmpty = (valueAsNumber || isFileInput(ref)) && isUndefined(ref.value) && isUndefined(inputValue) || isHTMLElement(ref) && ref.value === "" || inputValue === "" || Array.isArray(inputValue) && !inputValue.length;
-	const appendErrorsCurry = appendErrors.bind(null, name, validateAllFieldCriteria, error);
-	const getMinMaxMessage = (exceedMax, maxLengthMessage, minLengthMessage, maxType = INPUT_VALIDATION_RULES.maxLength, minType = INPUT_VALIDATION_RULES.minLength) => {
-		const message = exceedMax ? maxLengthMessage : minLengthMessage;
-		error[name] = {
-			type: exceedMax ? maxType : minType,
-			message,
-			ref,
-			...appendErrorsCurry(exceedMax ? maxType : minType, message)
-		};
-	};
-	if (isFieldArray ? !Array.isArray(inputValue) || !inputValue.length : required && (!isRadioOrCheckbox && (isEmpty || isNullOrUndefined(inputValue)) || isBoolean(inputValue) && !inputValue || isCheckBox && !getCheckboxValue(refs).isValid || isRadio && !getRadioValue(refs).isValid)) {
-		const { value, message } = isString(required) ? {
-			value: !!required,
-			message: required
-		} : getValueAndMessage(required);
-		if (value) {
-			error[name] = {
-				type: INPUT_VALIDATION_RULES.required,
-				message,
-				ref: inputRef,
-				...appendErrorsCurry(INPUT_VALIDATION_RULES.required, message)
-			};
-			if (!validateAllFieldCriteria) {
-				setCustomValidity(message);
-				return error;
-			}
-		}
-	}
-	if (!isEmpty && (!isNullOrUndefined(min) || !isNullOrUndefined(max))) {
-		let exceedMax;
-		let exceedMin;
-		const maxOutput = getValueAndMessage(max);
-		const minOutput = getValueAndMessage(min);
-		if (!isNullOrUndefined(inputValue) && !isNaN(inputValue)) {
-			const valueNumber = ref.valueAsNumber || (inputValue ? +inputValue : inputValue);
-			if (!isNullOrUndefined(maxOutput.value)) exceedMax = valueNumber > maxOutput.value;
-			if (!isNullOrUndefined(minOutput.value)) exceedMin = valueNumber < minOutput.value;
-		} else {
-			const valueDate = ref.valueAsDate || new Date(inputValue);
-			const convertTimeToDate = (time) => /* @__PURE__ */ new Date((/* @__PURE__ */ new Date()).toDateString() + " " + time);
-			const isTime = ref.type == "time";
-			const isWeek = ref.type == "week";
-			if (isString(maxOutput.value) && inputValue) exceedMax = isTime ? convertTimeToDate(inputValue) > convertTimeToDate(maxOutput.value) : isWeek ? inputValue > maxOutput.value : valueDate > new Date(maxOutput.value);
-			if (isString(minOutput.value) && inputValue) exceedMin = isTime ? convertTimeToDate(inputValue) < convertTimeToDate(minOutput.value) : isWeek ? inputValue < minOutput.value : valueDate < new Date(minOutput.value);
-		}
-		if (exceedMax || exceedMin) {
-			getMinMaxMessage(!!exceedMax, maxOutput.message, minOutput.message, INPUT_VALIDATION_RULES.max, INPUT_VALIDATION_RULES.min);
-			if (!validateAllFieldCriteria) {
-				setCustomValidity(error[name].message);
-				return error;
-			}
-		}
-	}
-	if ((maxLength || minLength) && !isEmpty && (isString(inputValue) || isFieldArray && Array.isArray(inputValue))) {
-		const maxLengthOutput = getValueAndMessage(maxLength);
-		const minLengthOutput = getValueAndMessage(minLength);
-		const exceedMax = !isNullOrUndefined(maxLengthOutput.value) && inputValue.length > +maxLengthOutput.value;
-		const exceedMin = !isNullOrUndefined(minLengthOutput.value) && inputValue.length < +minLengthOutput.value;
-		if (exceedMax || exceedMin) {
-			getMinMaxMessage(exceedMax, maxLengthOutput.message, minLengthOutput.message);
-			if (!validateAllFieldCriteria) {
-				setCustomValidity(error[name].message);
-				return error;
-			}
-		}
-	}
-	if (pattern && !isEmpty && isString(inputValue)) {
-		const { value: patternValue, message } = getValueAndMessage(pattern);
-		if (isRegex(patternValue) && !inputValue.match(patternValue)) {
-			error[name] = {
-				type: INPUT_VALIDATION_RULES.pattern,
-				message,
-				ref,
-				...appendErrorsCurry(INPUT_VALIDATION_RULES.pattern, message)
-			};
-			if (!validateAllFieldCriteria) {
-				setCustomValidity(message);
-				return error;
-			}
-		}
-	}
-	if (validate) {
-		if (isFunction(validate)) {
-			const validateError = getValidateError(await validate(inputValue, formValues), inputRef);
-			if (validateError) {
-				error[name] = {
-					...validateError,
-					...appendErrorsCurry(INPUT_VALIDATION_RULES.validate, validateError.message)
-				};
-				if (!validateAllFieldCriteria) {
-					setCustomValidity(validateError.message);
-					return error;
-				}
-			}
-		} else if (isObject$1(validate)) {
-			let validationResult = {};
-			for (const key in validate) {
-				if (!isEmptyObject(validationResult) && !validateAllFieldCriteria) break;
-				const validateError = getValidateError(await validate[key](inputValue, formValues), inputRef, key);
-				if (validateError) {
-					validationResult = {
-						...validateError,
-						...appendErrorsCurry(key, validateError.message)
-					};
-					setCustomValidity(validateError.message);
-					if (validateAllFieldCriteria) error[name] = validationResult;
-				}
-			}
-			if (!isEmptyObject(validationResult)) {
-				error[name] = {
-					ref: inputRef,
-					...validationResult
-				};
-				if (!validateAllFieldCriteria) return error;
-			}
-		}
-	}
-	setCustomValidity(true);
-	return error;
-};
-var defaultOptions = {
-	mode: VALIDATION_MODE.onSubmit,
-	reValidateMode: VALIDATION_MODE.onChange,
-	shouldFocusError: true
-};
-function createFormControl(props = {}) {
-	let _options = {
-		...defaultOptions,
-		...props
-	};
-	let _formState = {
-		submitCount: 0,
-		isDirty: false,
-		isReady: false,
-		isLoading: isFunction(_options.defaultValues),
-		isValidating: false,
-		isSubmitted: false,
-		isSubmitting: false,
-		isSubmitSuccessful: false,
-		isValid: false,
-		touchedFields: {},
-		dirtyFields: {},
-		validatingFields: {},
-		errors: _options.errors || {},
-		disabled: _options.disabled || false
-	};
-	let _fields = {};
-	let _defaultValues = isObject$1(_options.defaultValues) || isObject$1(_options.values) ? cloneObject(_options.defaultValues || _options.values) || {} : {};
-	let _formValues = _options.shouldUnregister ? {} : cloneObject(_defaultValues);
-	let _state = {
-		action: false,
-		mount: false,
-		watch: false,
-		keepIsValid: false
-	};
-	let _names = {
-		mount: /* @__PURE__ */ new Set(),
-		disabled: /* @__PURE__ */ new Set(),
-		unMount: /* @__PURE__ */ new Set(),
-		array: /* @__PURE__ */ new Set(),
-		watch: /* @__PURE__ */ new Set()
-	};
-	let delayErrorCallback;
-	let timer = 0;
-	const defaultProxyFormState = {
-		isDirty: false,
-		dirtyFields: false,
-		validatingFields: false,
-		touchedFields: false,
-		isValidating: false,
-		isValid: false,
-		errors: false
-	};
-	const _proxyFormState = { ...defaultProxyFormState };
-	let _proxySubscribeFormState = { ..._proxyFormState };
-	const _subjects = {
-		array: createSubject(),
-		state: createSubject()
-	};
-	const shouldDisplayAllAssociatedErrors = _options.criteriaMode === VALIDATION_MODE.all;
-	const debounce = (callback) => (wait) => {
-		clearTimeout(timer);
-		timer = setTimeout(callback, wait);
-	};
-	const _setValid = async (shouldUpdateValid) => {
-		if (_state.keepIsValid) return;
-		if (!_options.disabled && (_proxyFormState.isValid || _proxySubscribeFormState.isValid || shouldUpdateValid)) {
-			let isValid;
-			if (_options.resolver) {
-				isValid = isEmptyObject((await _runSchema()).errors);
-				_updateIsValidating();
-			} else isValid = await executeBuiltInValidation(_fields, true);
-			if (isValid !== _formState.isValid) _subjects.state.next({ isValid });
-		}
-	};
-	const _updateIsValidating = (names, isValidating) => {
-		if (!_options.disabled && (_proxyFormState.isValidating || _proxyFormState.validatingFields || _proxySubscribeFormState.isValidating || _proxySubscribeFormState.validatingFields)) {
-			(names || Array.from(_names.mount)).forEach((name) => {
-				if (name) isValidating ? set(_formState.validatingFields, name, isValidating) : unset(_formState.validatingFields, name);
-			});
-			_subjects.state.next({
-				validatingFields: _formState.validatingFields,
-				isValidating: !isEmptyObject(_formState.validatingFields)
-			});
-		}
-	};
-	const _setFieldArray = (name, values = [], method, args, shouldSetValues = true, shouldUpdateFieldsAndState = true) => {
-		if (args && method && !_options.disabled) {
-			_state.action = true;
-			if (shouldUpdateFieldsAndState && Array.isArray(get(_fields, name))) {
-				const fieldValues = method(get(_fields, name), args.argA, args.argB);
-				shouldSetValues && set(_fields, name, fieldValues);
-			}
-			if (shouldUpdateFieldsAndState && Array.isArray(get(_formState.errors, name))) {
-				const errors = method(get(_formState.errors, name), args.argA, args.argB);
-				shouldSetValues && set(_formState.errors, name, errors);
-				unsetEmptyArray(_formState.errors, name);
-			}
-			if ((_proxyFormState.touchedFields || _proxySubscribeFormState.touchedFields) && shouldUpdateFieldsAndState && Array.isArray(get(_formState.touchedFields, name))) {
-				const touchedFields = method(get(_formState.touchedFields, name), args.argA, args.argB);
-				shouldSetValues && set(_formState.touchedFields, name, touchedFields);
-			}
-			if (_proxyFormState.dirtyFields || _proxySubscribeFormState.dirtyFields) _formState.dirtyFields = getDirtyFields(_defaultValues, _formValues);
-			_subjects.state.next({
-				name,
-				isDirty: _getDirty(name, values),
-				dirtyFields: _formState.dirtyFields,
-				errors: _formState.errors,
-				isValid: _formState.isValid
-			});
-		} else set(_formValues, name, values);
-	};
-	const updateErrors = (name, error) => {
-		set(_formState.errors, name, error);
-		_subjects.state.next({ errors: _formState.errors });
-	};
-	const _setErrors = (errors) => {
-		_formState.errors = errors;
-		_subjects.state.next({
-			errors: _formState.errors,
-			isValid: false
-		});
-	};
-	const updateValidAndValue = (name, shouldSkipSetValueAs, value, ref) => {
-		const field = get(_fields, name);
-		if (field) {
-			const defaultValue = get(_formValues, name, isUndefined(value) ? get(_defaultValues, name) : value);
-			isUndefined(defaultValue) || ref && ref.defaultChecked || shouldSkipSetValueAs ? set(_formValues, name, shouldSkipSetValueAs ? defaultValue : getFieldValue(field._f)) : setFieldValue(name, defaultValue);
-			_state.mount && !_state.action && _setValid();
-		}
-	};
-	const updateTouchAndDirty = (name, fieldValue, isBlurEvent, shouldDirty, shouldRender) => {
-		let shouldUpdateField = false;
-		let isPreviousDirty = false;
-		const output = { name };
-		if (!_options.disabled) {
-			if (!isBlurEvent || shouldDirty) {
-				if (_proxyFormState.isDirty || _proxySubscribeFormState.isDirty) {
-					isPreviousDirty = _formState.isDirty;
-					_formState.isDirty = output.isDirty = _getDirty();
-					shouldUpdateField = isPreviousDirty !== output.isDirty;
-				}
-				const isCurrentFieldPristine = deepEqual(get(_defaultValues, name), fieldValue);
-				isPreviousDirty = !!get(_formState.dirtyFields, name);
-				isCurrentFieldPristine ? unset(_formState.dirtyFields, name) : set(_formState.dirtyFields, name, true);
-				output.dirtyFields = _formState.dirtyFields;
-				shouldUpdateField = shouldUpdateField || (_proxyFormState.dirtyFields || _proxySubscribeFormState.dirtyFields) && isPreviousDirty !== !isCurrentFieldPristine;
-			}
-			if (isBlurEvent) {
-				const isPreviousFieldTouched = get(_formState.touchedFields, name);
-				if (!isPreviousFieldTouched) {
-					set(_formState.touchedFields, name, isBlurEvent);
-					output.touchedFields = _formState.touchedFields;
-					shouldUpdateField = shouldUpdateField || (_proxyFormState.touchedFields || _proxySubscribeFormState.touchedFields) && isPreviousFieldTouched !== isBlurEvent;
-				}
-			}
-			shouldUpdateField && shouldRender && _subjects.state.next(output);
-		}
-		return shouldUpdateField ? output : {};
-	};
-	const shouldRenderByError = (name, isValid, error, fieldState) => {
-		const previousFieldError = get(_formState.errors, name);
-		const shouldUpdateValid = (_proxyFormState.isValid || _proxySubscribeFormState.isValid) && isBoolean(isValid) && _formState.isValid !== isValid;
-		if (_options.delayError && error) {
-			delayErrorCallback = debounce(() => updateErrors(name, error));
-			delayErrorCallback(_options.delayError);
-		} else {
-			clearTimeout(timer);
-			delayErrorCallback = null;
-			error ? set(_formState.errors, name, error) : unset(_formState.errors, name);
-		}
-		if ((error ? !deepEqual(previousFieldError, error) : previousFieldError) || !isEmptyObject(fieldState) || shouldUpdateValid) {
-			const updatedFormState = {
-				...fieldState,
-				...shouldUpdateValid && isBoolean(isValid) ? { isValid } : {},
-				errors: _formState.errors,
-				name
-			};
-			_formState = {
-				..._formState,
-				...updatedFormState
-			};
-			_subjects.state.next(updatedFormState);
-		}
-	};
-	const _runSchema = async (name) => {
-		_updateIsValidating(name, true);
-		return await _options.resolver(_formValues, _options.context, getResolverOptions(name || _names.mount, _fields, _options.criteriaMode, _options.shouldUseNativeValidation));
-	};
-	const executeSchemaAndUpdateState = async (names) => {
-		const { errors } = await _runSchema(names);
-		_updateIsValidating(names);
-		if (names) for (const name of names) {
-			const error = get(errors, name);
-			error ? set(_formState.errors, name, error) : unset(_formState.errors, name);
-		}
-		else _formState.errors = errors;
-		return errors;
-	};
-	const executeBuiltInValidation = async (fields, shouldOnlyCheckValid, context = { valid: true }) => {
-		for (const name in fields) {
-			const field = fields[name];
-			if (field) {
-				const { _f, ...fieldValue } = field;
-				if (_f) {
-					const isFieldArrayRoot = _names.array.has(_f.name);
-					const isPromiseFunction = field._f && hasPromiseValidation(field._f);
-					if (isPromiseFunction && _proxyFormState.validatingFields) _updateIsValidating([_f.name], true);
-					const fieldError = await validateField(field, _names.disabled, _formValues, shouldDisplayAllAssociatedErrors, _options.shouldUseNativeValidation && !shouldOnlyCheckValid, isFieldArrayRoot);
-					if (isPromiseFunction && _proxyFormState.validatingFields) _updateIsValidating([_f.name]);
-					if (fieldError[_f.name]) {
-						context.valid = false;
-						if (shouldOnlyCheckValid || props.shouldUseNativeValidation) break;
-					}
-					!shouldOnlyCheckValid && (get(fieldError, _f.name) ? isFieldArrayRoot ? updateFieldArrayRootError(_formState.errors, fieldError, _f.name) : set(_formState.errors, _f.name, fieldError[_f.name]) : unset(_formState.errors, _f.name));
-				}
-				!isEmptyObject(fieldValue) && await executeBuiltInValidation(fieldValue, shouldOnlyCheckValid, context);
-			}
-		}
-		return context.valid;
-	};
-	const _removeUnmounted = () => {
-		for (const name of _names.unMount) {
-			const field = get(_fields, name);
-			field && (field._f.refs ? field._f.refs.every((ref) => !live(ref)) : !live(field._f.ref)) && unregister(name);
-		}
-		_names.unMount = /* @__PURE__ */ new Set();
-	};
-	const _getDirty = (name, data) => !_options.disabled && (name && data && set(_formValues, name, data), !deepEqual(getValues(), _defaultValues));
-	const _getWatch = (names, defaultValue, isGlobal) => generateWatchOutput(names, _names, { ..._state.mount ? _formValues : isUndefined(defaultValue) ? _defaultValues : isString(names) ? { [names]: defaultValue } : defaultValue }, isGlobal, defaultValue);
-	const _getFieldArray = (name) => compact(get(_state.mount ? _formValues : _defaultValues, name, _options.shouldUnregister ? get(_defaultValues, name, []) : []));
-	const setFieldValue = (name, value, options = {}) => {
-		const field = get(_fields, name);
-		let fieldValue = value;
-		if (field) {
-			const fieldReference = field._f;
-			if (fieldReference) {
-				!fieldReference.disabled && set(_formValues, name, getFieldValueAs(value, fieldReference));
-				fieldValue = isHTMLElement(fieldReference.ref) && isNullOrUndefined(value) ? "" : value;
-				if (isMultipleSelect(fieldReference.ref)) [...fieldReference.ref.options].forEach((optionRef) => optionRef.selected = fieldValue.includes(optionRef.value));
-				else if (fieldReference.refs) if (isCheckBoxInput(fieldReference.ref)) fieldReference.refs.forEach((checkboxRef) => {
-					if (!checkboxRef.defaultChecked || !checkboxRef.disabled) if (Array.isArray(fieldValue)) checkboxRef.checked = !!fieldValue.find((data) => data === checkboxRef.value);
-					else checkboxRef.checked = fieldValue === checkboxRef.value || !!fieldValue;
-				});
-				else fieldReference.refs.forEach((radioRef) => radioRef.checked = radioRef.value === fieldValue);
-				else if (isFileInput(fieldReference.ref)) fieldReference.ref.value = "";
-				else {
-					fieldReference.ref.value = fieldValue;
-					if (!fieldReference.ref.type) _subjects.state.next({
-						name,
-						values: cloneObject(_formValues)
-					});
-				}
-			}
-		}
-		(options.shouldDirty || options.shouldTouch) && updateTouchAndDirty(name, fieldValue, options.shouldTouch, options.shouldDirty, true);
-		options.shouldValidate && trigger(name);
-	};
-	const setValues = (name, value, options) => {
-		for (const fieldKey in value) {
-			if (!value.hasOwnProperty(fieldKey)) return;
-			const fieldValue = value[fieldKey];
-			const fieldName = name + "." + fieldKey;
-			const field = get(_fields, fieldName);
-			(_names.array.has(name) || isObject$1(fieldValue) || field && !field._f) && !isDateObject(fieldValue) ? setValues(fieldName, fieldValue, options) : setFieldValue(fieldName, fieldValue, options);
-		}
-	};
-	const setValue = (name, value, options = {}) => {
-		const field = get(_fields, name);
-		const isFieldArray = _names.array.has(name);
-		const cloneValue = cloneObject(value);
-		set(_formValues, name, cloneValue);
-		if (isFieldArray) {
-			_subjects.array.next({
-				name,
-				values: cloneObject(_formValues)
-			});
-			if ((_proxyFormState.isDirty || _proxyFormState.dirtyFields || _proxySubscribeFormState.isDirty || _proxySubscribeFormState.dirtyFields) && options.shouldDirty) _subjects.state.next({
-				name,
-				dirtyFields: getDirtyFields(_defaultValues, _formValues),
-				isDirty: _getDirty(name, cloneValue)
-			});
-		} else field && !field._f && !isNullOrUndefined(cloneValue) ? setValues(name, cloneValue, options) : setFieldValue(name, cloneValue, options);
-		if (isWatched(name, _names)) _subjects.state.next({
-			..._formState,
-			name,
-			values: cloneObject(_formValues)
-		});
-		else _subjects.state.next({
-			name: _state.mount ? name : void 0,
-			values: cloneObject(_formValues)
-		});
-	};
-	const onChange = async (event) => {
-		_state.mount = true;
-		const target = event.target;
-		let name = target.name;
-		let isFieldValueUpdated = true;
-		const field = get(_fields, name);
-		const _updateIsFieldValueUpdated = (fieldValue) => {
-			isFieldValueUpdated = Number.isNaN(fieldValue) || isDateObject(fieldValue) && isNaN(fieldValue.getTime()) || deepEqual(fieldValue, get(_formValues, name, fieldValue));
-		};
-		const validationModeBeforeSubmit = getValidationModes(_options.mode);
-		const validationModeAfterSubmit = getValidationModes(_options.reValidateMode);
-		if (field) {
-			let error;
-			let isValid;
-			const fieldValue = target.type ? getFieldValue(field._f) : getEventValue(event);
-			const isBlurEvent = event.type === EVENTS.BLUR || event.type === EVENTS.FOCUS_OUT;
-			const shouldSkipValidation = !hasValidation(field._f) && !_options.resolver && !get(_formState.errors, name) && !field._f.deps || skipValidation(isBlurEvent, get(_formState.touchedFields, name), _formState.isSubmitted, validationModeAfterSubmit, validationModeBeforeSubmit);
-			const watched = isWatched(name, _names, isBlurEvent);
-			set(_formValues, name, fieldValue);
-			if (isBlurEvent) {
-				if (!target || !target.readOnly) {
-					field._f.onBlur && field._f.onBlur(event);
-					delayErrorCallback && delayErrorCallback(0);
-				}
-			} else if (field._f.onChange) field._f.onChange(event);
-			const fieldState = updateTouchAndDirty(name, fieldValue, isBlurEvent);
-			const shouldRender = !isEmptyObject(fieldState) || watched;
-			!isBlurEvent && _subjects.state.next({
-				name,
-				type: event.type,
-				values: cloneObject(_formValues)
-			});
-			if (shouldSkipValidation) {
-				if (_proxyFormState.isValid || _proxySubscribeFormState.isValid) {
-					if (_options.mode === "onBlur") {
-						if (isBlurEvent) _setValid();
-					} else if (!isBlurEvent) _setValid();
-				}
-				return shouldRender && _subjects.state.next({
-					name,
-					...watched ? {} : fieldState
-				});
-			}
-			!isBlurEvent && watched && _subjects.state.next({ ..._formState });
-			if (_options.resolver) {
-				const { errors } = await _runSchema([name]);
-				_updateIsValidating([name]);
-				_updateIsFieldValueUpdated(fieldValue);
-				if (isFieldValueUpdated) {
-					const previousErrorLookupResult = schemaErrorLookup(_formState.errors, _fields, name);
-					const errorLookupResult = schemaErrorLookup(errors, _fields, previousErrorLookupResult.name || name);
-					error = errorLookupResult.error;
-					name = errorLookupResult.name;
-					isValid = isEmptyObject(errors);
-				}
-			} else {
-				_updateIsValidating([name], true);
-				error = (await validateField(field, _names.disabled, _formValues, shouldDisplayAllAssociatedErrors, _options.shouldUseNativeValidation))[name];
-				_updateIsValidating([name]);
-				_updateIsFieldValueUpdated(fieldValue);
-				if (isFieldValueUpdated) {
-					if (error) isValid = false;
-					else if (_proxyFormState.isValid || _proxySubscribeFormState.isValid) isValid = await executeBuiltInValidation(_fields, true);
-				}
-			}
-			if (isFieldValueUpdated) {
-				field._f.deps && (!Array.isArray(field._f.deps) || field._f.deps.length > 0) && trigger(field._f.deps);
-				shouldRenderByError(name, isValid, error, fieldState);
-			}
-		}
-	};
-	const _focusInput = (ref, key) => {
-		if (get(_formState.errors, key) && ref.focus) {
-			ref.focus();
-			return 1;
-		}
-	};
-	const trigger = async (name, options = {}) => {
-		let isValid;
-		let validationResult;
-		const fieldNames = convertToArrayPayload(name);
-		if (_options.resolver) {
-			const errors = await executeSchemaAndUpdateState(isUndefined(name) ? name : fieldNames);
-			isValid = isEmptyObject(errors);
-			validationResult = name ? !fieldNames.some((name) => get(errors, name)) : isValid;
-		} else if (name) {
-			validationResult = (await Promise.all(fieldNames.map(async (fieldName) => {
-				const field = get(_fields, fieldName);
-				return await executeBuiltInValidation(field && field._f ? { [fieldName]: field } : field);
-			}))).every(Boolean);
-			!(!validationResult && !_formState.isValid) && _setValid();
-		} else validationResult = isValid = await executeBuiltInValidation(_fields);
-		_subjects.state.next({
-			...!isString(name) || (_proxyFormState.isValid || _proxySubscribeFormState.isValid) && isValid !== _formState.isValid ? {} : { name },
-			..._options.resolver || !name ? { isValid } : {},
-			errors: _formState.errors
-		});
-		options.shouldFocus && !validationResult && iterateFieldsByAction(_fields, _focusInput, name ? fieldNames : _names.mount);
-		return validationResult;
-	};
-	const getValues = (fieldNames, config) => {
-		let values = { ..._state.mount ? _formValues : _defaultValues };
-		if (config) values = extractFormValues(config.dirtyFields ? _formState.dirtyFields : _formState.touchedFields, values);
-		return isUndefined(fieldNames) ? values : isString(fieldNames) ? get(values, fieldNames) : fieldNames.map((name) => get(values, name));
-	};
-	const getFieldState = (name, formState) => ({
-		invalid: !!get((formState || _formState).errors, name),
-		isDirty: !!get((formState || _formState).dirtyFields, name),
-		error: get((formState || _formState).errors, name),
-		isValidating: !!get(_formState.validatingFields, name),
-		isTouched: !!get((formState || _formState).touchedFields, name)
-	});
-	const clearErrors = (name) => {
-		const names = name ? convertToArrayPayload(name) : void 0;
-		names === null || names === void 0 || names.forEach((inputName) => unset(_formState.errors, inputName));
-		if (names) names.forEach((inputName) => {
-			_subjects.state.next({
-				name: inputName,
-				errors: _formState.errors
-			});
-		});
-		else _subjects.state.next({ errors: {} });
-	};
-	const setError = (name, error, options) => {
-		const ref = (get(_fields, name, { _f: {} })._f || {}).ref;
-		const { ref: currentRef, message, type, ...restOfErrorTree } = get(_formState.errors, name) || {};
-		set(_formState.errors, name, {
-			...restOfErrorTree,
-			...error,
-			ref
-		});
-		_subjects.state.next({
-			name,
-			errors: _formState.errors,
-			isValid: false
-		});
-		options && options.shouldFocus && ref && ref.focus && ref.focus();
-	};
-	const watch = (name, defaultValue) => isFunction(name) ? _subjects.state.subscribe({ next: (payload) => "values" in payload && name(_getWatch(void 0, defaultValue), payload) }) : _getWatch(name, defaultValue, true);
-	const _subscribe = (props) => _subjects.state.subscribe({ next: (formState) => {
-		if (shouldSubscribeByName(props.name, formState.name, props.exact) && shouldRenderFormState(formState, props.formState || _proxyFormState, _setFormState, props.reRenderRoot)) props.callback({
-			values: { ..._formValues },
-			..._formState,
-			...formState,
-			defaultValues: _defaultValues
-		});
-	} }).unsubscribe;
-	const subscribe = (props) => {
-		_state.mount = true;
-		_proxySubscribeFormState = {
-			..._proxySubscribeFormState,
-			...props.formState
-		};
-		return _subscribe({
-			...props,
-			formState: {
-				...defaultProxyFormState,
-				...props.formState
-			}
-		});
-	};
-	const unregister = (name, options = {}) => {
-		for (const fieldName of name ? convertToArrayPayload(name) : _names.mount) {
-			_names.mount.delete(fieldName);
-			_names.array.delete(fieldName);
-			if (!options.keepValue) {
-				unset(_fields, fieldName);
-				unset(_formValues, fieldName);
-			}
-			!options.keepError && unset(_formState.errors, fieldName);
-			!options.keepDirty && unset(_formState.dirtyFields, fieldName);
-			!options.keepTouched && unset(_formState.touchedFields, fieldName);
-			!options.keepIsValidating && unset(_formState.validatingFields, fieldName);
-			!_options.shouldUnregister && !options.keepDefaultValue && unset(_defaultValues, fieldName);
-		}
-		_subjects.state.next({ values: cloneObject(_formValues) });
-		_subjects.state.next({
-			..._formState,
-			...!options.keepDirty ? {} : { isDirty: _getDirty() }
-		});
-		!options.keepIsValid && _setValid();
-	};
-	const _setDisabledField = ({ disabled, name }) => {
-		if (isBoolean(disabled) && _state.mount || !!disabled || _names.disabled.has(name)) {
-			const disabledStateChanged = _names.disabled.has(name) !== !!disabled;
-			disabled ? _names.disabled.add(name) : _names.disabled.delete(name);
-			disabledStateChanged && _state.mount && !_state.action && _setValid();
-		}
-	};
-	const register = (name, options = {}) => {
-		let field = get(_fields, name);
-		const disabledIsDefined = isBoolean(options.disabled) || isBoolean(_options.disabled);
-		set(_fields, name, {
-			...field || {},
-			_f: {
-				...field && field._f ? field._f : { ref: { name } },
-				name,
-				mount: true,
-				...options
-			}
-		});
-		_names.mount.add(name);
-		if (field) _setDisabledField({
-			disabled: isBoolean(options.disabled) ? options.disabled : _options.disabled,
-			name
-		});
-		else updateValidAndValue(name, true, options.value);
-		return {
-			...disabledIsDefined ? { disabled: options.disabled || _options.disabled } : {},
-			..._options.progressive ? {
-				required: !!options.required,
-				min: getRuleValue(options.min),
-				max: getRuleValue(options.max),
-				minLength: getRuleValue(options.minLength),
-				maxLength: getRuleValue(options.maxLength),
-				pattern: getRuleValue(options.pattern)
-			} : {},
-			name,
-			onChange,
-			onBlur: onChange,
-			ref: (ref) => {
-				if (ref) {
-					register(name, options);
-					field = get(_fields, name);
-					const fieldRef = isUndefined(ref.value) ? ref.querySelectorAll ? ref.querySelectorAll("input,select,textarea")[0] || ref : ref : ref;
-					const radioOrCheckbox = isRadioOrCheckbox(fieldRef);
-					const refs = field._f.refs || [];
-					if (radioOrCheckbox ? refs.find((option) => option === fieldRef) : fieldRef === field._f.ref) return;
-					set(_fields, name, { _f: {
-						...field._f,
-						...radioOrCheckbox ? {
-							refs: [
-								...refs.filter(live),
-								fieldRef,
-								...Array.isArray(get(_defaultValues, name)) ? [{}] : []
-							],
-							ref: {
-								type: fieldRef.type,
-								name
-							}
-						} : { ref: fieldRef }
-					} });
-					updateValidAndValue(name, false, void 0, fieldRef);
-				} else {
-					field = get(_fields, name, {});
-					if (field._f) field._f.mount = false;
-					(_options.shouldUnregister || options.shouldUnregister) && !(isNameInFieldArray(_names.array, name) && _state.action) && _names.unMount.add(name);
-				}
-			}
-		};
-	};
-	const _focusError = () => _options.shouldFocusError && iterateFieldsByAction(_fields, _focusInput, _names.mount);
-	const _disableForm = (disabled) => {
-		if (isBoolean(disabled)) {
-			_subjects.state.next({ disabled });
-			iterateFieldsByAction(_fields, (ref, name) => {
-				const currentField = get(_fields, name);
-				if (currentField) {
-					ref.disabled = currentField._f.disabled || disabled;
-					if (Array.isArray(currentField._f.refs)) currentField._f.refs.forEach((inputRef) => {
-						inputRef.disabled = currentField._f.disabled || disabled;
-					});
-				}
-			}, 0, false);
-		}
-	};
-	const handleSubmit = (onValid, onInvalid) => async (e) => {
-		let onValidError = void 0;
-		if (e) {
-			e.preventDefault && e.preventDefault();
-			e.persist && e.persist();
-		}
-		let fieldValues = cloneObject(_formValues);
-		_subjects.state.next({ isSubmitting: true });
-		if (_options.resolver) {
-			const { errors, values } = await _runSchema();
-			_updateIsValidating();
-			_formState.errors = errors;
-			fieldValues = cloneObject(values);
-		} else await executeBuiltInValidation(_fields);
-		if (_names.disabled.size) for (const name of _names.disabled) unset(fieldValues, name);
-		unset(_formState.errors, "root");
-		if (isEmptyObject(_formState.errors)) {
-			_subjects.state.next({ errors: {} });
-			try {
-				await onValid(fieldValues, e);
-			} catch (error) {
-				onValidError = error;
-			}
-		} else {
-			if (onInvalid) await onInvalid({ ..._formState.errors }, e);
-			_focusError();
-			setTimeout(_focusError);
-		}
-		_subjects.state.next({
-			isSubmitted: true,
-			isSubmitting: false,
-			isSubmitSuccessful: isEmptyObject(_formState.errors) && !onValidError,
-			submitCount: _formState.submitCount + 1,
-			errors: _formState.errors
-		});
-		if (onValidError) throw onValidError;
-	};
-	const resetField = (name, options = {}) => {
-		if (get(_fields, name)) {
-			if (isUndefined(options.defaultValue)) setValue(name, cloneObject(get(_defaultValues, name)));
-			else {
-				setValue(name, options.defaultValue);
-				set(_defaultValues, name, cloneObject(options.defaultValue));
-			}
-			if (!options.keepTouched) unset(_formState.touchedFields, name);
-			if (!options.keepDirty) {
-				unset(_formState.dirtyFields, name);
-				_formState.isDirty = options.defaultValue ? _getDirty(name, cloneObject(get(_defaultValues, name))) : _getDirty();
-			}
-			if (!options.keepError) {
-				unset(_formState.errors, name);
-				_proxyFormState.isValid && _setValid();
-			}
-			_subjects.state.next({ ..._formState });
-		}
-	};
-	const _reset = (formValues, keepStateOptions = {}) => {
-		const updatedValues = formValues ? cloneObject(formValues) : _defaultValues;
-		const cloneUpdatedValues = cloneObject(updatedValues);
-		const isEmptyResetValues = isEmptyObject(formValues);
-		const values = isEmptyResetValues ? _defaultValues : cloneUpdatedValues;
-		if (!keepStateOptions.keepDefaultValues) _defaultValues = updatedValues;
-		if (!keepStateOptions.keepValues) {
-			if (keepStateOptions.keepDirtyValues) {
-				const fieldsToCheck = new Set([..._names.mount, ...Object.keys(getDirtyFields(_defaultValues, _formValues))]);
-				for (const fieldName of Array.from(fieldsToCheck)) {
-					const isDirty = get(_formState.dirtyFields, fieldName);
-					const existingValue = get(_formValues, fieldName);
-					const newValue = get(values, fieldName);
-					if (isDirty && !isUndefined(existingValue)) set(values, fieldName, existingValue);
-					else if (!isDirty && !isUndefined(newValue)) setValue(fieldName, newValue);
-				}
-			} else {
-				if (isWeb && isUndefined(formValues)) for (const name of _names.mount) {
-					const field = get(_fields, name);
-					if (field && field._f) {
-						const fieldReference = Array.isArray(field._f.refs) ? field._f.refs[0] : field._f.ref;
-						if (isHTMLElement(fieldReference)) {
-							const form = fieldReference.closest("form");
-							if (form) {
-								form.reset();
-								break;
-							}
-						}
-					}
-				}
-				if (keepStateOptions.keepFieldsRef) for (const fieldName of _names.mount) setValue(fieldName, get(values, fieldName));
-				else _fields = {};
-			}
-			_formValues = _options.shouldUnregister ? keepStateOptions.keepDefaultValues ? cloneObject(_defaultValues) : {} : cloneObject(values);
-			_subjects.array.next({ values: { ...values } });
-			_subjects.state.next({ values: { ...values } });
-		}
-		_names = {
-			mount: keepStateOptions.keepDirtyValues ? _names.mount : /* @__PURE__ */ new Set(),
-			unMount: /* @__PURE__ */ new Set(),
-			array: /* @__PURE__ */ new Set(),
-			disabled: /* @__PURE__ */ new Set(),
-			watch: /* @__PURE__ */ new Set(),
-			watchAll: false,
-			focus: ""
-		};
-		_state.mount = !_proxyFormState.isValid || !!keepStateOptions.keepIsValid || !!keepStateOptions.keepDirtyValues || !_options.shouldUnregister && !isEmptyObject(values);
-		_state.watch = !!_options.shouldUnregister;
-		_state.keepIsValid = !!keepStateOptions.keepIsValid;
-		_state.action = false;
-		if (!keepStateOptions.keepErrors) _formState.errors = {};
-		_subjects.state.next({
-			submitCount: keepStateOptions.keepSubmitCount ? _formState.submitCount : 0,
-			isDirty: isEmptyResetValues ? false : keepStateOptions.keepDirty ? _formState.isDirty : !!(keepStateOptions.keepDefaultValues && !deepEqual(formValues, _defaultValues)),
-			isSubmitted: keepStateOptions.keepIsSubmitted ? _formState.isSubmitted : false,
-			dirtyFields: isEmptyResetValues ? {} : keepStateOptions.keepDirtyValues ? keepStateOptions.keepDefaultValues && _formValues ? getDirtyFields(_defaultValues, _formValues) : _formState.dirtyFields : keepStateOptions.keepDefaultValues && formValues ? getDirtyFields(_defaultValues, formValues) : keepStateOptions.keepDirty ? _formState.dirtyFields : {},
-			touchedFields: keepStateOptions.keepTouched ? _formState.touchedFields : {},
-			errors: keepStateOptions.keepErrors ? _formState.errors : {},
-			isSubmitSuccessful: keepStateOptions.keepIsSubmitSuccessful ? _formState.isSubmitSuccessful : false,
-			isSubmitting: false,
-			defaultValues: _defaultValues
-		});
-	};
-	const reset = (formValues, keepStateOptions) => _reset(isFunction(formValues) ? formValues(_formValues) : formValues, {
-		..._options.resetOptions,
-		...keepStateOptions
-	});
-	const setFocus = (name, options = {}) => {
-		const field = get(_fields, name);
-		const fieldReference = field && field._f;
-		if (fieldReference) {
-			const fieldRef = fieldReference.refs ? fieldReference.refs[0] : fieldReference.ref;
-			if (fieldRef.focus) setTimeout(() => {
-				fieldRef.focus();
-				options.shouldSelect && isFunction(fieldRef.select) && fieldRef.select();
-			});
-		}
-	};
-	const _setFormState = (updatedFormState) => {
-		_formState = {
-			..._formState,
-			...updatedFormState
-		};
-	};
-	const _resetDefaultValues = () => isFunction(_options.defaultValues) && _options.defaultValues().then((values) => {
-		reset(values, _options.resetOptions);
-		_subjects.state.next({ isLoading: false });
-	});
-	const methods = {
-		control: {
-			register,
-			unregister,
-			getFieldState,
-			handleSubmit,
-			setError,
-			_subscribe,
-			_runSchema,
-			_updateIsValidating,
-			_focusError,
-			_getWatch,
-			_getDirty,
-			_setValid,
-			_setFieldArray,
-			_setDisabledField,
-			_setErrors,
-			_getFieldArray,
-			_reset,
-			_resetDefaultValues,
-			_removeUnmounted,
-			_disableForm,
-			_subjects,
-			_proxyFormState,
-			get _fields() {
-				return _fields;
-			},
-			get _formValues() {
-				return _formValues;
-			},
-			get _state() {
-				return _state;
-			},
-			set _state(value) {
-				_state = value;
-			},
-			get _defaultValues() {
-				return _defaultValues;
-			},
-			get _names() {
-				return _names;
-			},
-			set _names(value) {
-				_names = value;
-			},
-			get _formState() {
-				return _formState;
-			},
-			get _options() {
-				return _options;
-			},
-			set _options(value) {
-				_options = {
-					..._options,
-					...value
-				};
-			}
-		},
-		subscribe,
-		trigger,
-		register,
-		handleSubmit,
-		watch,
-		setValue,
-		getValues,
-		reset,
-		resetField,
-		clearErrors,
-		unregister,
-		setError,
-		setFocus,
-		getFieldState
-	};
-	return {
-		...methods,
-		formControl: methods
-	};
-}
-/**
-* Custom hook to manage the entire form.
-*
-* @remarks
-* [API](https://react-hook-form.com/docs/useform) • [Demo](https://codesandbox.io/s/react-hook-form-get-started-ts-5ksmm) • [Video](https://www.youtube.com/watch?v=RkXv4AXXC_4)
-*
-* @param props - form configuration and validation parameters.
-*
-* @returns methods - individual functions to manage the form state. {@link UseFormReturn}
-*
-* @example
-* ```tsx
-* function App() {
-*   const { register, handleSubmit, watch, formState: { errors } } = useForm();
-*   const onSubmit = data => console.log(data);
-*
-*   console.log(watch("example"));
-*
-*   return (
-*     <form onSubmit={handleSubmit(onSubmit)}>
-*       <input defaultValue="test" {...register("example")} />
-*       <input {...register("exampleRequired", { required: true })} />
-*       {errors.exampleRequired && <span>This field is required</span>}
-*       <button>Submit</button>
-*     </form>
-*   );
-* }
-* ```
-*/
-function useForm(props = {}) {
-	const _formControl = import_react.useRef(void 0);
-	const _values = import_react.useRef(void 0);
-	const [formState, updateFormState] = import_react.useState({
-		isDirty: false,
-		isValidating: false,
-		isLoading: isFunction(props.defaultValues),
-		isSubmitted: false,
-		isSubmitting: false,
-		isSubmitSuccessful: false,
-		isValid: false,
-		submitCount: 0,
-		dirtyFields: {},
-		touchedFields: {},
-		validatingFields: {},
-		errors: props.errors || {},
-		disabled: props.disabled || false,
-		isReady: false,
-		defaultValues: isFunction(props.defaultValues) ? void 0 : props.defaultValues
-	});
-	if (!_formControl.current) if (props.formControl) {
-		_formControl.current = {
-			...props.formControl,
-			formState
-		};
-		if (props.defaultValues && !isFunction(props.defaultValues)) props.formControl.reset(props.defaultValues, props.resetOptions);
-	} else {
-		const { formControl, ...rest } = createFormControl(props);
-		_formControl.current = {
-			...rest,
-			formState
-		};
-	}
-	const control = _formControl.current.control;
-	control._options = props;
-	useIsomorphicLayoutEffect$1(() => {
-		const sub = control._subscribe({
-			formState: control._proxyFormState,
-			callback: () => updateFormState({ ...control._formState }),
-			reRenderRoot: true
-		});
-		updateFormState((data) => ({
-			...data,
-			isReady: true
-		}));
-		control._formState.isReady = true;
-		return sub;
-	}, [control]);
-	import_react.useEffect(() => control._disableForm(props.disabled), [control, props.disabled]);
-	import_react.useEffect(() => {
-		if (props.mode) control._options.mode = props.mode;
-		if (props.reValidateMode) control._options.reValidateMode = props.reValidateMode;
-	}, [
-		control,
-		props.mode,
-		props.reValidateMode
-	]);
-	import_react.useEffect(() => {
-		if (props.errors) {
-			control._setErrors(props.errors);
-			control._focusError();
-		}
-	}, [control, props.errors]);
-	import_react.useEffect(() => {
-		props.shouldUnregister && control._subjects.state.next({ values: control._getWatch() });
-	}, [control, props.shouldUnregister]);
-	import_react.useEffect(() => {
-		if (control._proxyFormState.isDirty) {
-			const isDirty = control._getDirty();
-			if (isDirty !== formState.isDirty) control._subjects.state.next({ isDirty });
-		}
-	}, [control, formState.isDirty]);
-	import_react.useEffect(() => {
-		var _a;
-		if (props.values && !deepEqual(props.values, _values.current)) {
-			control._reset(props.values, {
-				keepFieldsRef: true,
-				...control._options.resetOptions
-			});
-			if (!((_a = control._options.resetOptions) === null || _a === void 0 ? void 0 : _a.keepIsValid)) control._setValid();
-			_values.current = props.values;
-			updateFormState((state) => ({ ...state }));
-		} else control._resetDefaultValues();
-	}, [control, props.values]);
-	import_react.useEffect(() => {
-		if (!control._state.mount) {
-			control._setValid();
-			control._state.mount = true;
-		}
-		if (control._state.watch) {
-			control._state.watch = false;
-			control._subjects.state.next({ ...control._formState });
-		}
-		control._removeUnmounted();
-	});
-	_formControl.current.formState = import_react.useMemo(() => getProxyFormState(formState, control), [control, formState]);
-	return _formControl.current;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@hookform+resolvers@5.2.2_react-hook-form@7.71.2_react@19.2.4_/node_modules/@hookform/resolvers/dist/resolvers.mjs
-var r = (t, r, o) => {
-	if (t && "reportValidity" in t) {
-		const s = get(o, r);
-		t.setCustomValidity(s && s.message || ""), t.reportValidity();
-	}
-}, o = (e, t) => {
-	for (const o in t.fields) {
-		const s = t.fields[o];
-		s && s.ref && "reportValidity" in s.ref ? r(s.ref, o, e) : s && s.refs && s.refs.forEach((t) => r(t, o, e));
-	}
-}, s$1 = (r, s) => {
-	s.shouldUseNativeValidation && o(r, s);
-	const n = {};
-	for (const o in r) {
-		const f = get(s.fields, o), c = Object.assign(r[o] || {}, { ref: f && f.ref });
-		if (i$1(s.names || Object.keys(r), o)) {
-			const r = Object.assign({}, get(n, o));
-			set(r, "root", c), set(n, o, r);
-		} else set(n, o, c);
-	}
-	return n;
-}, i$1 = (e, t) => {
-	const r = n(t);
-	return e.some((e) => n(e).match(`^${r}\\.\\d+`));
-};
-function n(e) {
-	return e.replace(/\]|\[/g, "");
-}
-Object.freeze({ status: "aborted" });
-function $constructor(name, initializer, params) {
-	function init(inst, def) {
-		if (!inst._zod) Object.defineProperty(inst, "_zod", {
-			value: {
-				def,
-				constr: _,
-				traits: /* @__PURE__ */ new Set()
-			},
-			enumerable: false
-		});
-		if (inst._zod.traits.has(name)) return;
-		inst._zod.traits.add(name);
-		initializer(inst, def);
-		const proto = _.prototype;
-		const keys = Object.keys(proto);
-		for (let i = 0; i < keys.length; i++) {
-			const k = keys[i];
-			if (!(k in inst)) inst[k] = proto[k].bind(inst);
-		}
-	}
-	const Parent = params?.Parent ?? Object;
-	class Definition extends Parent {}
-	Object.defineProperty(Definition, "name", { value: name });
-	function _(def) {
-		var _a;
-		const inst = params?.Parent ? new Definition() : this;
-		init(inst, def);
-		(_a = inst._zod).deferred ?? (_a.deferred = []);
-		for (const fn of inst._zod.deferred) fn();
-		return inst;
-	}
-	Object.defineProperty(_, "init", { value: init });
-	Object.defineProperty(_, Symbol.hasInstance, { value: (inst) => {
-		if (params?.Parent && inst instanceof params.Parent) return true;
-		return inst?._zod?.traits?.has(name);
-	} });
-	Object.defineProperty(_, "name", { value: name });
-	return _;
-}
-var $ZodAsyncError = class extends Error {
-	constructor() {
-		super(`Encountered Promise during synchronous parse. Use .parseAsync() instead.`);
-	}
-};
-var $ZodEncodeError = class extends Error {
-	constructor(name) {
-		super(`Encountered unidirectional transform during encode: ${name}`);
-		this.name = "ZodEncodeError";
-	}
-};
-var globalConfig = {};
-function config(newConfig) {
-	if (newConfig) Object.assign(globalConfig, newConfig);
-	return globalConfig;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/util.js
-function getEnumValues(entries) {
-	const numericValues = Object.values(entries).filter((v) => typeof v === "number");
-	return Object.entries(entries).filter(([k, _]) => numericValues.indexOf(+k) === -1).map(([_, v]) => v);
-}
-function jsonStringifyReplacer(_, value) {
-	if (typeof value === "bigint") return value.toString();
-	return value;
-}
-function cached(getter) {
-	return { get value() {
-		{
-			const value = getter();
-			Object.defineProperty(this, "value", { value });
-			return value;
-		}
-		throw new Error("cached value already set");
-	} };
-}
-function nullish(input) {
-	return input === null || input === void 0;
-}
-function cleanRegex(source) {
-	const start = source.startsWith("^") ? 1 : 0;
-	const end = source.endsWith("$") ? source.length - 1 : source.length;
-	return source.slice(start, end);
-}
-var EVALUATING = Symbol("evaluating");
-function defineLazy(object, key, getter) {
-	let value = void 0;
-	Object.defineProperty(object, key, {
-		get() {
-			if (value === EVALUATING) return;
-			if (value === void 0) {
-				value = EVALUATING;
-				value = getter();
-			}
-			return value;
-		},
-		set(v) {
-			Object.defineProperty(object, key, { value: v });
-		},
-		configurable: true
-	});
-}
-function assignProp(target, prop, value) {
-	Object.defineProperty(target, prop, {
-		value,
-		writable: true,
-		enumerable: true,
-		configurable: true
-	});
-}
-function mergeDefs(...defs) {
-	const mergedDescriptors = {};
-	for (const def of defs) {
-		const descriptors = Object.getOwnPropertyDescriptors(def);
-		Object.assign(mergedDescriptors, descriptors);
-	}
-	return Object.defineProperties({}, mergedDescriptors);
-}
-function esc(str) {
-	return JSON.stringify(str);
-}
-function slugify(input) {
-	return input.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
-}
-var captureStackTrace = "captureStackTrace" in Error ? Error.captureStackTrace : (..._args) => {};
-function isObject(data) {
-	return typeof data === "object" && data !== null && !Array.isArray(data);
-}
-var allowsEval = cached(() => {
-	if (typeof navigator !== "undefined" && navigator?.userAgent?.includes("Cloudflare")) return false;
-	try {
-		new Function("");
-		return true;
-	} catch (_) {
-		return false;
-	}
-});
-function isPlainObject(o) {
-	if (isObject(o) === false) return false;
-	const ctor = o.constructor;
-	if (ctor === void 0) return true;
-	if (typeof ctor !== "function") return true;
-	const prot = ctor.prototype;
-	if (isObject(prot) === false) return false;
-	if (Object.prototype.hasOwnProperty.call(prot, "isPrototypeOf") === false) return false;
-	return true;
-}
-function shallowClone(o) {
-	if (isPlainObject(o)) return { ...o };
-	if (Array.isArray(o)) return [...o];
-	return o;
-}
-var propertyKeyTypes = new Set([
-	"string",
-	"number",
-	"symbol"
-]);
-function escapeRegex(str) {
-	return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-function clone(inst, def, params) {
-	const cl = new inst._zod.constr(def ?? inst._zod.def);
-	if (!def || params?.parent) cl._zod.parent = inst;
-	return cl;
-}
-function normalizeParams(_params) {
-	const params = _params;
-	if (!params) return {};
-	if (typeof params === "string") return { error: () => params };
-	if (params?.message !== void 0) {
-		if (params?.error !== void 0) throw new Error("Cannot specify both `message` and `error` params");
-		params.error = params.message;
-	}
-	delete params.message;
-	if (typeof params.error === "string") return {
-		...params,
-		error: () => params.error
-	};
-	return params;
-}
-function optionalKeys(shape) {
-	return Object.keys(shape).filter((k) => {
-		return shape[k]._zod.optin === "optional" && shape[k]._zod.optout === "optional";
-	});
-}
-Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, -Number.MAX_VALUE, Number.MAX_VALUE;
-function pick(schema, mask) {
-	const currDef = schema._zod.def;
-	const checks = currDef.checks;
-	if (checks && checks.length > 0) throw new Error(".pick() cannot be used on object schemas containing refinements");
-	return clone(schema, mergeDefs(schema._zod.def, {
-		get shape() {
-			const newShape = {};
-			for (const key in mask) {
-				if (!(key in currDef.shape)) throw new Error(`Unrecognized key: "${key}"`);
-				if (!mask[key]) continue;
-				newShape[key] = currDef.shape[key];
-			}
-			assignProp(this, "shape", newShape);
-			return newShape;
-		},
-		checks: []
-	}));
-}
-function omit(schema, mask) {
-	const currDef = schema._zod.def;
-	const checks = currDef.checks;
-	if (checks && checks.length > 0) throw new Error(".omit() cannot be used on object schemas containing refinements");
-	return clone(schema, mergeDefs(schema._zod.def, {
-		get shape() {
-			const newShape = { ...schema._zod.def.shape };
-			for (const key in mask) {
-				if (!(key in currDef.shape)) throw new Error(`Unrecognized key: "${key}"`);
-				if (!mask[key]) continue;
-				delete newShape[key];
-			}
-			assignProp(this, "shape", newShape);
-			return newShape;
-		},
-		checks: []
-	}));
-}
-function extend(schema, shape) {
-	if (!isPlainObject(shape)) throw new Error("Invalid input to extend: expected a plain object");
-	const checks = schema._zod.def.checks;
-	if (checks && checks.length > 0) {
-		const existingShape = schema._zod.def.shape;
-		for (const key in shape) if (Object.getOwnPropertyDescriptor(existingShape, key) !== void 0) throw new Error("Cannot overwrite keys on object schemas containing refinements. Use `.safeExtend()` instead.");
-	}
-	return clone(schema, mergeDefs(schema._zod.def, { get shape() {
-		const _shape = {
-			...schema._zod.def.shape,
-			...shape
-		};
-		assignProp(this, "shape", _shape);
-		return _shape;
-	} }));
-}
-function safeExtend(schema, shape) {
-	if (!isPlainObject(shape)) throw new Error("Invalid input to safeExtend: expected a plain object");
-	return clone(schema, mergeDefs(schema._zod.def, { get shape() {
-		const _shape = {
-			...schema._zod.def.shape,
-			...shape
-		};
-		assignProp(this, "shape", _shape);
-		return _shape;
-	} }));
-}
-function merge(a, b) {
-	return clone(a, mergeDefs(a._zod.def, {
-		get shape() {
-			const _shape = {
-				...a._zod.def.shape,
-				...b._zod.def.shape
-			};
-			assignProp(this, "shape", _shape);
-			return _shape;
-		},
-		get catchall() {
-			return b._zod.def.catchall;
-		},
-		checks: []
-	}));
-}
-function partial(Class, schema, mask) {
-	const checks = schema._zod.def.checks;
-	if (checks && checks.length > 0) throw new Error(".partial() cannot be used on object schemas containing refinements");
-	return clone(schema, mergeDefs(schema._zod.def, {
-		get shape() {
-			const oldShape = schema._zod.def.shape;
-			const shape = { ...oldShape };
-			if (mask) for (const key in mask) {
-				if (!(key in oldShape)) throw new Error(`Unrecognized key: "${key}"`);
-				if (!mask[key]) continue;
-				shape[key] = Class ? new Class({
-					type: "optional",
-					innerType: oldShape[key]
-				}) : oldShape[key];
-			}
-			else for (const key in oldShape) shape[key] = Class ? new Class({
-				type: "optional",
-				innerType: oldShape[key]
-			}) : oldShape[key];
-			assignProp(this, "shape", shape);
-			return shape;
-		},
-		checks: []
-	}));
-}
-function required(Class, schema, mask) {
-	return clone(schema, mergeDefs(schema._zod.def, { get shape() {
-		const oldShape = schema._zod.def.shape;
-		const shape = { ...oldShape };
-		if (mask) for (const key in mask) {
-			if (!(key in shape)) throw new Error(`Unrecognized key: "${key}"`);
-			if (!mask[key]) continue;
-			shape[key] = new Class({
-				type: "nonoptional",
-				innerType: oldShape[key]
-			});
-		}
-		else for (const key in oldShape) shape[key] = new Class({
-			type: "nonoptional",
-			innerType: oldShape[key]
-		});
-		assignProp(this, "shape", shape);
-		return shape;
-	} }));
-}
-function aborted(x, startIndex = 0) {
-	if (x.aborted === true) return true;
-	for (let i = startIndex; i < x.issues.length; i++) if (x.issues[i]?.continue !== true) return true;
-	return false;
-}
-function prefixIssues(path, issues) {
-	return issues.map((iss) => {
-		var _a;
-		(_a = iss).path ?? (_a.path = []);
-		iss.path.unshift(path);
-		return iss;
-	});
-}
-function unwrapMessage(message) {
-	return typeof message === "string" ? message : message?.message;
-}
-function finalizeIssue(iss, ctx, config) {
-	const full = {
-		...iss,
-		path: iss.path ?? []
-	};
-	if (!iss.message) full.message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config.customError?.(iss)) ?? unwrapMessage(config.localeError?.(iss)) ?? "Invalid input";
-	delete full.inst;
-	delete full.continue;
-	if (!ctx?.reportInput) delete full.input;
-	return full;
-}
-function getLengthableOrigin(input) {
-	if (Array.isArray(input)) return "array";
-	if (typeof input === "string") return "string";
-	return "unknown";
-}
-function issue(...args) {
-	const [iss, input, inst] = args;
-	if (typeof iss === "string") return {
-		message: iss,
-		code: "custom",
-		input,
-		inst
-	};
-	return { ...iss };
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/errors.js
-var initializer$1 = (inst, def) => {
-	inst.name = "$ZodError";
-	Object.defineProperty(inst, "_zod", {
-		value: inst._zod,
-		enumerable: false
-	});
-	Object.defineProperty(inst, "issues", {
-		value: def,
-		enumerable: false
-	});
-	inst.message = JSON.stringify(def, jsonStringifyReplacer, 2);
-	Object.defineProperty(inst, "toString", {
-		value: () => inst.message,
-		enumerable: false
-	});
-};
-var $ZodError = $constructor("$ZodError", initializer$1);
-var $ZodRealError = $constructor("$ZodError", initializer$1, { Parent: Error });
-function flattenError(error, mapper = (issue) => issue.message) {
-	const fieldErrors = {};
-	const formErrors = [];
-	for (const sub of error.issues) if (sub.path.length > 0) {
-		fieldErrors[sub.path[0]] = fieldErrors[sub.path[0]] || [];
-		fieldErrors[sub.path[0]].push(mapper(sub));
-	} else formErrors.push(mapper(sub));
-	return {
-		formErrors,
-		fieldErrors
-	};
-}
-function formatError(error, mapper = (issue) => issue.message) {
-	const fieldErrors = { _errors: [] };
-	const processError = (error) => {
-		for (const issue of error.issues) if (issue.code === "invalid_union" && issue.errors.length) issue.errors.map((issues) => processError({ issues }));
-		else if (issue.code === "invalid_key") processError({ issues: issue.issues });
-		else if (issue.code === "invalid_element") processError({ issues: issue.issues });
-		else if (issue.path.length === 0) fieldErrors._errors.push(mapper(issue));
-		else {
-			let curr = fieldErrors;
-			let i = 0;
-			while (i < issue.path.length) {
-				const el = issue.path[i];
-				if (!(i === issue.path.length - 1)) curr[el] = curr[el] || { _errors: [] };
-				else {
-					curr[el] = curr[el] || { _errors: [] };
-					curr[el]._errors.push(mapper(issue));
-				}
-				curr = curr[el];
-				i++;
-			}
-		}
-	};
-	processError(error);
-	return fieldErrors;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/parse.js
-var _parse = (_Err) => (schema, value, _ctx, _params) => {
-	const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
-	const result = schema._zod.run({
-		value,
-		issues: []
-	}, ctx);
-	if (result instanceof Promise) throw new $ZodAsyncError();
-	if (result.issues.length) {
-		const e = new (_params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
-		captureStackTrace(e, _params?.callee);
-		throw e;
-	}
-	return result.value;
-};
-var parse$2 = /* @__PURE__ */ _parse($ZodRealError);
-var _parseAsync = (_Err) => async (schema, value, _ctx, params) => {
-	const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-	let result = schema._zod.run({
-		value,
-		issues: []
-	}, ctx);
-	if (result instanceof Promise) result = await result;
-	if (result.issues.length) {
-		const e = new (params?.Err ?? _Err)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())));
-		captureStackTrace(e, params?.callee);
-		throw e;
-	}
-	return result.value;
-};
-var parseAsync$1 = /* @__PURE__ */ _parseAsync($ZodRealError);
-var _safeParse = (_Err) => (schema, value, _ctx) => {
-	const ctx = _ctx ? {
-		..._ctx,
-		async: false
-	} : { async: false };
-	const result = schema._zod.run({
-		value,
-		issues: []
-	}, ctx);
-	if (result instanceof Promise) throw new $ZodAsyncError();
-	return result.issues.length ? {
-		success: false,
-		error: new (_Err ?? $ZodError)(result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
-	} : {
-		success: true,
-		data: result.value
-	};
-};
-var safeParse$1 = /* @__PURE__ */ _safeParse($ZodRealError);
-var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
-	const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
-	let result = schema._zod.run({
-		value,
-		issues: []
-	}, ctx);
-	if (result instanceof Promise) result = await result;
-	return result.issues.length ? {
-		success: false,
-		error: new _Err(result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
-	} : {
-		success: true,
-		data: result.value
-	};
-};
-var safeParseAsync$1 = /* @__PURE__ */ _safeParseAsync($ZodRealError);
-var _encode = (_Err) => (schema, value, _ctx) => {
-	const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-	return _parse(_Err)(schema, value, ctx);
-};
-var _decode = (_Err) => (schema, value, _ctx) => {
-	return _parse(_Err)(schema, value, _ctx);
-};
-var _encodeAsync = (_Err) => async (schema, value, _ctx) => {
-	const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-	return _parseAsync(_Err)(schema, value, ctx);
-};
-var _decodeAsync = (_Err) => async (schema, value, _ctx) => {
-	return _parseAsync(_Err)(schema, value, _ctx);
-};
-var _safeEncode = (_Err) => (schema, value, _ctx) => {
-	const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-	return _safeParse(_Err)(schema, value, ctx);
-};
-var _safeDecode = (_Err) => (schema, value, _ctx) => {
-	return _safeParse(_Err)(schema, value, _ctx);
-};
-var _safeEncodeAsync = (_Err) => async (schema, value, _ctx) => {
-	const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
-	return _safeParseAsync(_Err)(schema, value, ctx);
-};
-var _safeDecodeAsync = (_Err) => async (schema, value, _ctx) => {
-	return _safeParseAsync(_Err)(schema, value, _ctx);
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/regexes.js
-var cuid = /^[cC][^\s-]{8,}$/;
-var cuid2 = /^[0-9a-z]+$/;
-var ulid = /^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$/;
-var xid = /^[0-9a-vA-V]{20}$/;
-var ksuid = /^[A-Za-z0-9]{27}$/;
-var nanoid = /^[a-zA-Z0-9_-]{21}$/;
-/** ISO 8601-1 duration regex. Does not support the 8601-2 extensions like negative durations or fractional/negative components. */
-var duration$1 = /^P(?:(\d+W)|(?!.*W)(?=\d|T\d)(\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+([.,]\d+)?S)?)?)$/;
-/** A regex for any UUID-like identifier: 8-4-4-4-12 hex pattern */
-var guid = /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
-/** Returns a regex for validating an RFC 9562/4122 UUID.
-*
-* @param version Optionally specify a version 1-8. If no version is specified, all versions are supported. */
-var uuid = (version) => {
-	if (!version) return /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/;
-	return new RegExp(`^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${version}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`);
-};
-/** Practical email validation */
-var email = /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/;
-var _emoji$1 = `^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$`;
-function emoji() {
-	return new RegExp(_emoji$1, "u");
-}
-var ipv4 = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
-var ipv6 = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$/;
-var cidrv4 = /^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/([0-9]|[1-2][0-9]|3[0-2])$/;
-var cidrv6 = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|::|([0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:?){0,6})\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/;
-var base64 = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$/;
-var base64url = /^[A-Za-z0-9_-]*$/;
-var e164 = /^\+[1-9]\d{6,14}$/;
-var dateSource = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`;
-var date$1 = /* @__PURE__ */ new RegExp(`^${dateSource}$`);
-function timeSource(args) {
-	const hhmm = `(?:[01]\\d|2[0-3]):[0-5]\\d`;
-	return typeof args.precision === "number" ? args.precision === -1 ? `${hhmm}` : args.precision === 0 ? `${hhmm}:[0-5]\\d` : `${hhmm}:[0-5]\\d\\.\\d{${args.precision}}` : `${hhmm}(?::[0-5]\\d(?:\\.\\d+)?)?`;
-}
-function time$1(args) {
-	return new RegExp(`^${timeSource(args)}$`);
-}
-function datetime$1(args) {
-	const time = timeSource({ precision: args.precision });
-	const opts = ["Z"];
-	if (args.local) opts.push("");
-	if (args.offset) opts.push(`([+-](?:[01]\\d|2[0-3]):[0-5]\\d)`);
-	const timeRegex = `${time}(?:${opts.join("|")})`;
-	return new RegExp(`^${dateSource}T(?:${timeRegex})$`);
-}
-var string$1 = (params) => {
-	const regex = params ? `[\\s\\S]{${params?.minimum ?? 0},${params?.maximum ?? ""}}` : `[\\s\\S]*`;
-	return new RegExp(`^${regex}$`);
-};
-var lowercase = /^[^A-Z]*$/;
-var uppercase = /^[^a-z]*$/;
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/checks.js
-var $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
-	var _a;
-	inst._zod ?? (inst._zod = {});
-	inst._zod.def = def;
-	(_a = inst._zod).onattach ?? (_a.onattach = []);
-});
-var $ZodCheckMaxLength = /* @__PURE__ */ $constructor("$ZodCheckMaxLength", (inst, def) => {
-	var _a;
-	$ZodCheck.init(inst, def);
-	(_a = inst._zod.def).when ?? (_a.when = (payload) => {
-		const val = payload.value;
-		return !nullish(val) && val.length !== void 0;
-	});
-	inst._zod.onattach.push((inst) => {
-		const curr = inst._zod.bag.maximum ?? Number.POSITIVE_INFINITY;
-		if (def.maximum < curr) inst._zod.bag.maximum = def.maximum;
-	});
-	inst._zod.check = (payload) => {
-		const input = payload.value;
-		if (input.length <= def.maximum) return;
-		const origin = getLengthableOrigin(input);
-		payload.issues.push({
-			origin,
-			code: "too_big",
-			maximum: def.maximum,
-			inclusive: true,
-			input,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckMinLength = /* @__PURE__ */ $constructor("$ZodCheckMinLength", (inst, def) => {
-	var _a;
-	$ZodCheck.init(inst, def);
-	(_a = inst._zod.def).when ?? (_a.when = (payload) => {
-		const val = payload.value;
-		return !nullish(val) && val.length !== void 0;
-	});
-	inst._zod.onattach.push((inst) => {
-		const curr = inst._zod.bag.minimum ?? Number.NEGATIVE_INFINITY;
-		if (def.minimum > curr) inst._zod.bag.minimum = def.minimum;
-	});
-	inst._zod.check = (payload) => {
-		const input = payload.value;
-		if (input.length >= def.minimum) return;
-		const origin = getLengthableOrigin(input);
-		payload.issues.push({
-			origin,
-			code: "too_small",
-			minimum: def.minimum,
-			inclusive: true,
-			input,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckLengthEquals = /* @__PURE__ */ $constructor("$ZodCheckLengthEquals", (inst, def) => {
-	var _a;
-	$ZodCheck.init(inst, def);
-	(_a = inst._zod.def).when ?? (_a.when = (payload) => {
-		const val = payload.value;
-		return !nullish(val) && val.length !== void 0;
-	});
-	inst._zod.onattach.push((inst) => {
-		const bag = inst._zod.bag;
-		bag.minimum = def.length;
-		bag.maximum = def.length;
-		bag.length = def.length;
-	});
-	inst._zod.check = (payload) => {
-		const input = payload.value;
-		const length = input.length;
-		if (length === def.length) return;
-		const origin = getLengthableOrigin(input);
-		const tooBig = length > def.length;
-		payload.issues.push({
-			origin,
-			...tooBig ? {
-				code: "too_big",
-				maximum: def.length
-			} : {
-				code: "too_small",
-				minimum: def.length
-			},
-			inclusive: true,
-			exact: true,
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckStringFormat = /* @__PURE__ */ $constructor("$ZodCheckStringFormat", (inst, def) => {
-	var _a, _b;
-	$ZodCheck.init(inst, def);
-	inst._zod.onattach.push((inst) => {
-		const bag = inst._zod.bag;
-		bag.format = def.format;
-		if (def.pattern) {
-			bag.patterns ?? (bag.patterns = /* @__PURE__ */ new Set());
-			bag.patterns.add(def.pattern);
-		}
-	});
-	if (def.pattern) (_a = inst._zod).check ?? (_a.check = (payload) => {
-		def.pattern.lastIndex = 0;
-		if (def.pattern.test(payload.value)) return;
-		payload.issues.push({
-			origin: "string",
-			code: "invalid_format",
-			format: def.format,
-			input: payload.value,
-			...def.pattern ? { pattern: def.pattern.toString() } : {},
-			inst,
-			continue: !def.abort
-		});
-	});
-	else (_b = inst._zod).check ?? (_b.check = () => {});
-});
-var $ZodCheckRegex = /* @__PURE__ */ $constructor("$ZodCheckRegex", (inst, def) => {
-	$ZodCheckStringFormat.init(inst, def);
-	inst._zod.check = (payload) => {
-		def.pattern.lastIndex = 0;
-		if (def.pattern.test(payload.value)) return;
-		payload.issues.push({
-			origin: "string",
-			code: "invalid_format",
-			format: "regex",
-			input: payload.value,
-			pattern: def.pattern.toString(),
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckLowerCase = /* @__PURE__ */ $constructor("$ZodCheckLowerCase", (inst, def) => {
-	def.pattern ?? (def.pattern = lowercase);
-	$ZodCheckStringFormat.init(inst, def);
-});
-var $ZodCheckUpperCase = /* @__PURE__ */ $constructor("$ZodCheckUpperCase", (inst, def) => {
-	def.pattern ?? (def.pattern = uppercase);
-	$ZodCheckStringFormat.init(inst, def);
-});
-var $ZodCheckIncludes = /* @__PURE__ */ $constructor("$ZodCheckIncludes", (inst, def) => {
-	$ZodCheck.init(inst, def);
-	const escapedRegex = escapeRegex(def.includes);
-	const pattern = new RegExp(typeof def.position === "number" ? `^.{${def.position}}${escapedRegex}` : escapedRegex);
-	def.pattern = pattern;
-	inst._zod.onattach.push((inst) => {
-		const bag = inst._zod.bag;
-		bag.patterns ?? (bag.patterns = /* @__PURE__ */ new Set());
-		bag.patterns.add(pattern);
-	});
-	inst._zod.check = (payload) => {
-		if (payload.value.includes(def.includes, def.position)) return;
-		payload.issues.push({
-			origin: "string",
-			code: "invalid_format",
-			format: "includes",
-			includes: def.includes,
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckStartsWith = /* @__PURE__ */ $constructor("$ZodCheckStartsWith", (inst, def) => {
-	$ZodCheck.init(inst, def);
-	const pattern = new RegExp(`^${escapeRegex(def.prefix)}.*`);
-	def.pattern ?? (def.pattern = pattern);
-	inst._zod.onattach.push((inst) => {
-		const bag = inst._zod.bag;
-		bag.patterns ?? (bag.patterns = /* @__PURE__ */ new Set());
-		bag.patterns.add(pattern);
-	});
-	inst._zod.check = (payload) => {
-		if (payload.value.startsWith(def.prefix)) return;
-		payload.issues.push({
-			origin: "string",
-			code: "invalid_format",
-			format: "starts_with",
-			prefix: def.prefix,
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckEndsWith = /* @__PURE__ */ $constructor("$ZodCheckEndsWith", (inst, def) => {
-	$ZodCheck.init(inst, def);
-	const pattern = new RegExp(`.*${escapeRegex(def.suffix)}$`);
-	def.pattern ?? (def.pattern = pattern);
-	inst._zod.onattach.push((inst) => {
-		const bag = inst._zod.bag;
-		bag.patterns ?? (bag.patterns = /* @__PURE__ */ new Set());
-		bag.patterns.add(pattern);
-	});
-	inst._zod.check = (payload) => {
-		if (payload.value.endsWith(def.suffix)) return;
-		payload.issues.push({
-			origin: "string",
-			code: "invalid_format",
-			format: "ends_with",
-			suffix: def.suffix,
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodCheckOverwrite = /* @__PURE__ */ $constructor("$ZodCheckOverwrite", (inst, def) => {
-	$ZodCheck.init(inst, def);
-	inst._zod.check = (payload) => {
-		payload.value = def.tx(payload.value);
-	};
-});
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/doc.js
-var Doc = class {
-	constructor(args = []) {
-		this.content = [];
-		this.indent = 0;
-		if (this) this.args = args;
-	}
-	indented(fn) {
-		this.indent += 1;
-		fn(this);
-		this.indent -= 1;
-	}
-	write(arg) {
-		if (typeof arg === "function") {
-			arg(this, { execution: "sync" });
-			arg(this, { execution: "async" });
-			return;
-		}
-		const lines = arg.split("\n").filter((x) => x);
-		const minIndent = Math.min(...lines.map((x) => x.length - x.trimStart().length));
-		const dedented = lines.map((x) => x.slice(minIndent)).map((x) => " ".repeat(this.indent * 2) + x);
-		for (const line of dedented) this.content.push(line);
-	}
-	compile() {
-		const F = Function;
-		const args = this?.args;
-		const lines = [...(this?.content ?? [``]).map((x) => `  ${x}`)];
-		return new F(...args, lines.join("\n"));
-	}
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/versions.js
-var version = {
-	major: 4,
-	minor: 3,
-	patch: 6
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/schemas.js
-var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
-	var _a;
-	inst ?? (inst = {});
-	inst._zod.def = def;
-	inst._zod.bag = inst._zod.bag || {};
-	inst._zod.version = version;
-	const checks = [...inst._zod.def.checks ?? []];
-	if (inst._zod.traits.has("$ZodCheck")) checks.unshift(inst);
-	for (const ch of checks) for (const fn of ch._zod.onattach) fn(inst);
-	if (checks.length === 0) {
-		(_a = inst._zod).deferred ?? (_a.deferred = []);
-		inst._zod.deferred?.push(() => {
-			inst._zod.run = inst._zod.parse;
-		});
-	} else {
-		const runChecks = (payload, checks, ctx) => {
-			let isAborted = aborted(payload);
-			let asyncResult;
-			for (const ch of checks) {
-				if (ch._zod.def.when) {
-					if (!ch._zod.def.when(payload)) continue;
-				} else if (isAborted) continue;
-				const currLen = payload.issues.length;
-				const _ = ch._zod.check(payload);
-				if (_ instanceof Promise && ctx?.async === false) throw new $ZodAsyncError();
-				if (asyncResult || _ instanceof Promise) asyncResult = (asyncResult ?? Promise.resolve()).then(async () => {
-					await _;
-					if (payload.issues.length === currLen) return;
-					if (!isAborted) isAborted = aborted(payload, currLen);
-				});
-				else {
-					if (payload.issues.length === currLen) continue;
-					if (!isAborted) isAborted = aborted(payload, currLen);
-				}
-			}
-			if (asyncResult) return asyncResult.then(() => {
-				return payload;
-			});
-			return payload;
-		};
-		const handleCanaryResult = (canary, payload, ctx) => {
-			if (aborted(canary)) {
-				canary.aborted = true;
-				return canary;
-			}
-			const checkResult = runChecks(payload, checks, ctx);
-			if (checkResult instanceof Promise) {
-				if (ctx.async === false) throw new $ZodAsyncError();
-				return checkResult.then((checkResult) => inst._zod.parse(checkResult, ctx));
-			}
-			return inst._zod.parse(checkResult, ctx);
-		};
-		inst._zod.run = (payload, ctx) => {
-			if (ctx.skipChecks) return inst._zod.parse(payload, ctx);
-			if (ctx.direction === "backward") {
-				const canary = inst._zod.parse({
-					value: payload.value,
-					issues: []
-				}, {
-					...ctx,
-					skipChecks: true
-				});
-				if (canary instanceof Promise) return canary.then((canary) => {
-					return handleCanaryResult(canary, payload, ctx);
-				});
-				return handleCanaryResult(canary, payload, ctx);
-			}
-			const result = inst._zod.parse(payload, ctx);
-			if (result instanceof Promise) {
-				if (ctx.async === false) throw new $ZodAsyncError();
-				return result.then((result) => runChecks(result, checks, ctx));
-			}
-			return runChecks(result, checks, ctx);
-		};
-	}
-	defineLazy(inst, "~standard", () => ({
-		validate: (value) => {
-			try {
-				const r = safeParse$1(inst, value);
-				return r.success ? { value: r.data } : { issues: r.error?.issues };
-			} catch (_) {
-				return safeParseAsync$1(inst, value).then((r) => r.success ? { value: r.data } : { issues: r.error?.issues });
-			}
-		},
-		vendor: "zod",
-		version: 1
-	}));
-});
-var $ZodString = /* @__PURE__ */ $constructor("$ZodString", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.pattern = [...inst?._zod.bag?.patterns ?? []].pop() ?? string$1(inst._zod.bag);
-	inst._zod.parse = (payload, _) => {
-		if (def.coerce) try {
-			payload.value = String(payload.value);
-		} catch (_) {}
-		if (typeof payload.value === "string") return payload;
-		payload.issues.push({
-			expected: "string",
-			code: "invalid_type",
-			input: payload.value,
-			inst
-		});
-		return payload;
-	};
-});
-var $ZodStringFormat = /* @__PURE__ */ $constructor("$ZodStringFormat", (inst, def) => {
-	$ZodCheckStringFormat.init(inst, def);
-	$ZodString.init(inst, def);
-});
-var $ZodGUID = /* @__PURE__ */ $constructor("$ZodGUID", (inst, def) => {
-	def.pattern ?? (def.pattern = guid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodUUID = /* @__PURE__ */ $constructor("$ZodUUID", (inst, def) => {
-	if (def.version) {
-		const v = {
-			v1: 1,
-			v2: 2,
-			v3: 3,
-			v4: 4,
-			v5: 5,
-			v6: 6,
-			v7: 7,
-			v8: 8
-		}[def.version];
-		if (v === void 0) throw new Error(`Invalid UUID version: "${def.version}"`);
-		def.pattern ?? (def.pattern = uuid(v));
-	} else def.pattern ?? (def.pattern = uuid());
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodEmail = /* @__PURE__ */ $constructor("$ZodEmail", (inst, def) => {
-	def.pattern ?? (def.pattern = email);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodURL = /* @__PURE__ */ $constructor("$ZodURL", (inst, def) => {
-	$ZodStringFormat.init(inst, def);
-	inst._zod.check = (payload) => {
-		try {
-			const trimmed = payload.value.trim();
-			const url = new URL(trimmed);
-			if (def.hostname) {
-				def.hostname.lastIndex = 0;
-				if (!def.hostname.test(url.hostname)) payload.issues.push({
-					code: "invalid_format",
-					format: "url",
-					note: "Invalid hostname",
-					pattern: def.hostname.source,
-					input: payload.value,
-					inst,
-					continue: !def.abort
-				});
-			}
-			if (def.protocol) {
-				def.protocol.lastIndex = 0;
-				if (!def.protocol.test(url.protocol.endsWith(":") ? url.protocol.slice(0, -1) : url.protocol)) payload.issues.push({
-					code: "invalid_format",
-					format: "url",
-					note: "Invalid protocol",
-					pattern: def.protocol.source,
-					input: payload.value,
-					inst,
-					continue: !def.abort
-				});
-			}
-			if (def.normalize) payload.value = url.href;
-			else payload.value = trimmed;
-			return;
-		} catch (_) {
-			payload.issues.push({
-				code: "invalid_format",
-				format: "url",
-				input: payload.value,
-				inst,
-				continue: !def.abort
-			});
-		}
-	};
-});
-var $ZodEmoji = /* @__PURE__ */ $constructor("$ZodEmoji", (inst, def) => {
-	def.pattern ?? (def.pattern = emoji());
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodNanoID = /* @__PURE__ */ $constructor("$ZodNanoID", (inst, def) => {
-	def.pattern ?? (def.pattern = nanoid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodCUID = /* @__PURE__ */ $constructor("$ZodCUID", (inst, def) => {
-	def.pattern ?? (def.pattern = cuid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodCUID2 = /* @__PURE__ */ $constructor("$ZodCUID2", (inst, def) => {
-	def.pattern ?? (def.pattern = cuid2);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodULID = /* @__PURE__ */ $constructor("$ZodULID", (inst, def) => {
-	def.pattern ?? (def.pattern = ulid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodXID = /* @__PURE__ */ $constructor("$ZodXID", (inst, def) => {
-	def.pattern ?? (def.pattern = xid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodKSUID = /* @__PURE__ */ $constructor("$ZodKSUID", (inst, def) => {
-	def.pattern ?? (def.pattern = ksuid);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodISODateTime = /* @__PURE__ */ $constructor("$ZodISODateTime", (inst, def) => {
-	def.pattern ?? (def.pattern = datetime$1(def));
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodISODate = /* @__PURE__ */ $constructor("$ZodISODate", (inst, def) => {
-	def.pattern ?? (def.pattern = date$1);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodISOTime = /* @__PURE__ */ $constructor("$ZodISOTime", (inst, def) => {
-	def.pattern ?? (def.pattern = time$1(def));
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodISODuration = /* @__PURE__ */ $constructor("$ZodISODuration", (inst, def) => {
-	def.pattern ?? (def.pattern = duration$1);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodIPv4 = /* @__PURE__ */ $constructor("$ZodIPv4", (inst, def) => {
-	def.pattern ?? (def.pattern = ipv4);
-	$ZodStringFormat.init(inst, def);
-	inst._zod.bag.format = `ipv4`;
-});
-var $ZodIPv6 = /* @__PURE__ */ $constructor("$ZodIPv6", (inst, def) => {
-	def.pattern ?? (def.pattern = ipv6);
-	$ZodStringFormat.init(inst, def);
-	inst._zod.bag.format = `ipv6`;
-	inst._zod.check = (payload) => {
-		try {
-			new URL(`http://[${payload.value}]`);
-		} catch {
-			payload.issues.push({
-				code: "invalid_format",
-				format: "ipv6",
-				input: payload.value,
-				inst,
-				continue: !def.abort
-			});
-		}
-	};
-});
-var $ZodCIDRv4 = /* @__PURE__ */ $constructor("$ZodCIDRv4", (inst, def) => {
-	def.pattern ?? (def.pattern = cidrv4);
-	$ZodStringFormat.init(inst, def);
-});
-var $ZodCIDRv6 = /* @__PURE__ */ $constructor("$ZodCIDRv6", (inst, def) => {
-	def.pattern ?? (def.pattern = cidrv6);
-	$ZodStringFormat.init(inst, def);
-	inst._zod.check = (payload) => {
-		const parts = payload.value.split("/");
-		try {
-			if (parts.length !== 2) throw new Error();
-			const [address, prefix] = parts;
-			if (!prefix) throw new Error();
-			const prefixNum = Number(prefix);
-			if (`${prefixNum}` !== prefix) throw new Error();
-			if (prefixNum < 0 || prefixNum > 128) throw new Error();
-			new URL(`http://[${address}]`);
-		} catch {
-			payload.issues.push({
-				code: "invalid_format",
-				format: "cidrv6",
-				input: payload.value,
-				inst,
-				continue: !def.abort
-			});
-		}
-	};
-});
-function isValidBase64(data) {
-	if (data === "") return true;
-	if (data.length % 4 !== 0) return false;
-	try {
-		atob(data);
-		return true;
-	} catch {
-		return false;
-	}
-}
-var $ZodBase64 = /* @__PURE__ */ $constructor("$ZodBase64", (inst, def) => {
-	def.pattern ?? (def.pattern = base64);
-	$ZodStringFormat.init(inst, def);
-	inst._zod.bag.contentEncoding = "base64";
-	inst._zod.check = (payload) => {
-		if (isValidBase64(payload.value)) return;
-		payload.issues.push({
-			code: "invalid_format",
-			format: "base64",
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-function isValidBase64URL(data) {
-	if (!base64url.test(data)) return false;
-	const base64 = data.replace(/[-_]/g, (c) => c === "-" ? "+" : "/");
-	return isValidBase64(base64.padEnd(Math.ceil(base64.length / 4) * 4, "="));
-}
-var $ZodBase64URL = /* @__PURE__ */ $constructor("$ZodBase64URL", (inst, def) => {
-	def.pattern ?? (def.pattern = base64url);
-	$ZodStringFormat.init(inst, def);
-	inst._zod.bag.contentEncoding = "base64url";
-	inst._zod.check = (payload) => {
-		if (isValidBase64URL(payload.value)) return;
-		payload.issues.push({
-			code: "invalid_format",
-			format: "base64url",
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodE164 = /* @__PURE__ */ $constructor("$ZodE164", (inst, def) => {
-	def.pattern ?? (def.pattern = e164);
-	$ZodStringFormat.init(inst, def);
-});
-function isValidJWT(token, algorithm = null) {
-	try {
-		const tokensParts = token.split(".");
-		if (tokensParts.length !== 3) return false;
-		const [header] = tokensParts;
-		if (!header) return false;
-		const parsedHeader = JSON.parse(atob(header));
-		if ("typ" in parsedHeader && parsedHeader?.typ !== "JWT") return false;
-		if (!parsedHeader.alg) return false;
-		if (algorithm && (!("alg" in parsedHeader) || parsedHeader.alg !== algorithm)) return false;
-		return true;
-	} catch {
-		return false;
-	}
-}
-var $ZodJWT = /* @__PURE__ */ $constructor("$ZodJWT", (inst, def) => {
-	$ZodStringFormat.init(inst, def);
-	inst._zod.check = (payload) => {
-		if (isValidJWT(payload.value, def.alg)) return;
-		payload.issues.push({
-			code: "invalid_format",
-			format: "jwt",
-			input: payload.value,
-			inst,
-			continue: !def.abort
-		});
-	};
-});
-var $ZodUnknown = /* @__PURE__ */ $constructor("$ZodUnknown", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload) => payload;
-});
-var $ZodNever = /* @__PURE__ */ $constructor("$ZodNever", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload, _ctx) => {
-		payload.issues.push({
-			expected: "never",
-			code: "invalid_type",
-			input: payload.value,
-			inst
-		});
-		return payload;
-	};
-});
-function handleArrayResult(result, final, index) {
-	if (result.issues.length) final.issues.push(...prefixIssues(index, result.issues));
-	final.value[index] = result.value;
-}
-var $ZodArray = /* @__PURE__ */ $constructor("$ZodArray", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload, ctx) => {
-		const input = payload.value;
-		if (!Array.isArray(input)) {
-			payload.issues.push({
-				expected: "array",
-				code: "invalid_type",
-				input,
-				inst
-			});
-			return payload;
-		}
-		payload.value = Array(input.length);
-		const proms = [];
-		for (let i = 0; i < input.length; i++) {
-			const item = input[i];
-			const result = def.element._zod.run({
-				value: item,
-				issues: []
-			}, ctx);
-			if (result instanceof Promise) proms.push(result.then((result) => handleArrayResult(result, payload, i)));
-			else handleArrayResult(result, payload, i);
-		}
-		if (proms.length) return Promise.all(proms).then(() => payload);
-		return payload;
-	};
-});
-function handlePropertyResult(result, final, key, input, isOptionalOut) {
-	if (result.issues.length) {
-		if (isOptionalOut && !(key in input)) return;
-		final.issues.push(...prefixIssues(key, result.issues));
-	}
-	if (result.value === void 0) {
-		if (key in input) final.value[key] = void 0;
-	} else final.value[key] = result.value;
-}
-function normalizeDef(def) {
-	const keys = Object.keys(def.shape);
-	for (const k of keys) if (!def.shape?.[k]?._zod?.traits?.has("$ZodType")) throw new Error(`Invalid element at key "${k}": expected a Zod schema`);
-	const okeys = optionalKeys(def.shape);
-	return {
-		...def,
-		keys,
-		keySet: new Set(keys),
-		numKeys: keys.length,
-		optionalKeys: new Set(okeys)
-	};
-}
-function handleCatchall(proms, input, payload, ctx, def, inst) {
-	const unrecognized = [];
-	const keySet = def.keySet;
-	const _catchall = def.catchall._zod;
-	const t = _catchall.def.type;
-	const isOptionalOut = _catchall.optout === "optional";
-	for (const key in input) {
-		if (keySet.has(key)) continue;
-		if (t === "never") {
-			unrecognized.push(key);
-			continue;
-		}
-		const r = _catchall.run({
-			value: input[key],
-			issues: []
-		}, ctx);
-		if (r instanceof Promise) proms.push(r.then((r) => handlePropertyResult(r, payload, key, input, isOptionalOut)));
-		else handlePropertyResult(r, payload, key, input, isOptionalOut);
-	}
-	if (unrecognized.length) payload.issues.push({
-		code: "unrecognized_keys",
-		keys: unrecognized,
-		input,
-		inst
-	});
-	if (!proms.length) return payload;
-	return Promise.all(proms).then(() => {
-		return payload;
-	});
-}
-var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
-	$ZodType.init(inst, def);
-	if (!Object.getOwnPropertyDescriptor(def, "shape")?.get) {
-		const sh = def.shape;
-		Object.defineProperty(def, "shape", { get: () => {
-			const newSh = { ...sh };
-			Object.defineProperty(def, "shape", { value: newSh });
-			return newSh;
-		} });
-	}
-	const _normalized = cached(() => normalizeDef(def));
-	defineLazy(inst._zod, "propValues", () => {
-		const shape = def.shape;
-		const propValues = {};
-		for (const key in shape) {
-			const field = shape[key]._zod;
-			if (field.values) {
-				propValues[key] ?? (propValues[key] = /* @__PURE__ */ new Set());
-				for (const v of field.values) propValues[key].add(v);
-			}
-		}
-		return propValues;
-	});
-	const isObject$5 = isObject;
-	const catchall = def.catchall;
-	let value;
-	inst._zod.parse = (payload, ctx) => {
-		value ?? (value = _normalized.value);
-		const input = payload.value;
-		if (!isObject$5(input)) {
-			payload.issues.push({
-				expected: "object",
-				code: "invalid_type",
-				input,
-				inst
-			});
-			return payload;
-		}
-		payload.value = {};
-		const proms = [];
-		const shape = value.shape;
-		for (const key of value.keys) {
-			const el = shape[key];
-			const isOptionalOut = el._zod.optout === "optional";
-			const r = el._zod.run({
-				value: input[key],
-				issues: []
-			}, ctx);
-			if (r instanceof Promise) proms.push(r.then((r) => handlePropertyResult(r, payload, key, input, isOptionalOut)));
-			else handlePropertyResult(r, payload, key, input, isOptionalOut);
-		}
-		if (!catchall) return proms.length ? Promise.all(proms).then(() => payload) : payload;
-		return handleCatchall(proms, input, payload, ctx, _normalized.value, inst);
-	};
-});
-var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) => {
-	$ZodObject.init(inst, def);
-	const superParse = inst._zod.parse;
-	const _normalized = cached(() => normalizeDef(def));
-	const generateFastpass = (shape) => {
-		const doc = new Doc([
-			"shape",
-			"payload",
-			"ctx"
-		]);
-		const normalized = _normalized.value;
-		const parseStr = (key) => {
-			const k = esc(key);
-			return `shape[${k}]._zod.run({ value: input[${k}], issues: [] }, ctx)`;
-		};
-		doc.write(`const input = payload.value;`);
-		const ids = Object.create(null);
-		let counter = 0;
-		for (const key of normalized.keys) ids[key] = `key_${counter++}`;
-		doc.write(`const newResult = {};`);
-		for (const key of normalized.keys) {
-			const id = ids[key];
-			const k = esc(key);
-			const isOptionalOut = shape[key]?._zod?.optout === "optional";
-			doc.write(`const ${id} = ${parseStr(key)};`);
-			if (isOptionalOut) doc.write(`
-        if (${id}.issues.length) {
-          if (${k} in input) {
-            payload.issues = payload.issues.concat(${id}.issues.map(iss => ({
-              ...iss,
-              path: iss.path ? [${k}, ...iss.path] : [${k}]
-            })));
-          }
-        }
-        
-        if (${id}.value === undefined) {
-          if (${k} in input) {
-            newResult[${k}] = undefined;
-          }
-        } else {
-          newResult[${k}] = ${id}.value;
-        }
-        
-      `);
-			else doc.write(`
-        if (${id}.issues.length) {
-          payload.issues = payload.issues.concat(${id}.issues.map(iss => ({
-            ...iss,
-            path: iss.path ? [${k}, ...iss.path] : [${k}]
-          })));
-        }
-        
-        if (${id}.value === undefined) {
-          if (${k} in input) {
-            newResult[${k}] = undefined;
-          }
-        } else {
-          newResult[${k}] = ${id}.value;
-        }
-        
-      `);
-		}
-		doc.write(`payload.value = newResult;`);
-		doc.write(`return payload;`);
-		const fn = doc.compile();
-		return (payload, ctx) => fn(shape, payload, ctx);
-	};
-	let fastpass;
-	const isObject$4 = isObject;
-	const jit = !globalConfig.jitless;
-	const fastEnabled = jit && allowsEval.value;
-	const catchall = def.catchall;
-	let value;
-	inst._zod.parse = (payload, ctx) => {
-		value ?? (value = _normalized.value);
-		const input = payload.value;
-		if (!isObject$4(input)) {
-			payload.issues.push({
-				expected: "object",
-				code: "invalid_type",
-				input,
-				inst
-			});
-			return payload;
-		}
-		if (jit && fastEnabled && ctx?.async === false && ctx.jitless !== true) {
-			if (!fastpass) fastpass = generateFastpass(def.shape);
-			payload = fastpass(payload, ctx);
-			if (!catchall) return payload;
-			return handleCatchall([], input, payload, ctx, value, inst);
-		}
-		return superParse(payload, ctx);
-	};
-});
-function handleUnionResults(results, final, inst, ctx) {
-	for (const result of results) if (result.issues.length === 0) {
-		final.value = result.value;
-		return final;
-	}
-	const nonaborted = results.filter((r) => !aborted(r));
-	if (nonaborted.length === 1) {
-		final.value = nonaborted[0].value;
-		return nonaborted[0];
-	}
-	final.issues.push({
-		code: "invalid_union",
-		input: final.value,
-		inst,
-		errors: results.map((result) => result.issues.map((iss) => finalizeIssue(iss, ctx, config())))
-	});
-	return final;
-}
-var $ZodUnion = /* @__PURE__ */ $constructor("$ZodUnion", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "optin", () => def.options.some((o) => o._zod.optin === "optional") ? "optional" : void 0);
-	defineLazy(inst._zod, "optout", () => def.options.some((o) => o._zod.optout === "optional") ? "optional" : void 0);
-	defineLazy(inst._zod, "values", () => {
-		if (def.options.every((o) => o._zod.values)) return new Set(def.options.flatMap((option) => Array.from(option._zod.values)));
-	});
-	defineLazy(inst._zod, "pattern", () => {
-		if (def.options.every((o) => o._zod.pattern)) {
-			const patterns = def.options.map((o) => o._zod.pattern);
-			return new RegExp(`^(${patterns.map((p) => cleanRegex(p.source)).join("|")})$`);
-		}
-	});
-	const single = def.options.length === 1;
-	const first = def.options[0]._zod.run;
-	inst._zod.parse = (payload, ctx) => {
-		if (single) return first(payload, ctx);
-		let async = false;
-		const results = [];
-		for (const option of def.options) {
-			const result = option._zod.run({
-				value: payload.value,
-				issues: []
-			}, ctx);
-			if (result instanceof Promise) {
-				results.push(result);
-				async = true;
-			} else {
-				if (result.issues.length === 0) return result;
-				results.push(result);
-			}
-		}
-		if (!async) return handleUnionResults(results, payload, inst, ctx);
-		return Promise.all(results).then((results) => {
-			return handleUnionResults(results, payload, inst, ctx);
-		});
-	};
-});
-var $ZodIntersection = /* @__PURE__ */ $constructor("$ZodIntersection", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload, ctx) => {
-		const input = payload.value;
-		const left = def.left._zod.run({
-			value: input,
-			issues: []
-		}, ctx);
-		const right = def.right._zod.run({
-			value: input,
-			issues: []
-		}, ctx);
-		if (left instanceof Promise || right instanceof Promise) return Promise.all([left, right]).then(([left, right]) => {
-			return handleIntersectionResults(payload, left, right);
-		});
-		return handleIntersectionResults(payload, left, right);
-	};
-});
-function mergeValues(a, b) {
-	if (a === b) return {
-		valid: true,
-		data: a
-	};
-	if (a instanceof Date && b instanceof Date && +a === +b) return {
-		valid: true,
-		data: a
-	};
-	if (isPlainObject(a) && isPlainObject(b)) {
-		const bKeys = Object.keys(b);
-		const sharedKeys = Object.keys(a).filter((key) => bKeys.indexOf(key) !== -1);
-		const newObj = {
-			...a,
-			...b
-		};
-		for (const key of sharedKeys) {
-			const sharedValue = mergeValues(a[key], b[key]);
-			if (!sharedValue.valid) return {
-				valid: false,
-				mergeErrorPath: [key, ...sharedValue.mergeErrorPath]
-			};
-			newObj[key] = sharedValue.data;
-		}
-		return {
-			valid: true,
-			data: newObj
-		};
-	}
-	if (Array.isArray(a) && Array.isArray(b)) {
-		if (a.length !== b.length) return {
-			valid: false,
-			mergeErrorPath: []
-		};
-		const newArray = [];
-		for (let index = 0; index < a.length; index++) {
-			const itemA = a[index];
-			const itemB = b[index];
-			const sharedValue = mergeValues(itemA, itemB);
-			if (!sharedValue.valid) return {
-				valid: false,
-				mergeErrorPath: [index, ...sharedValue.mergeErrorPath]
-			};
-			newArray.push(sharedValue.data);
-		}
-		return {
-			valid: true,
-			data: newArray
-		};
-	}
-	return {
-		valid: false,
-		mergeErrorPath: []
-	};
-}
-function handleIntersectionResults(result, left, right) {
-	const unrecKeys = /* @__PURE__ */ new Map();
-	let unrecIssue;
-	for (const iss of left.issues) if (iss.code === "unrecognized_keys") {
-		unrecIssue ?? (unrecIssue = iss);
-		for (const k of iss.keys) {
-			if (!unrecKeys.has(k)) unrecKeys.set(k, {});
-			unrecKeys.get(k).l = true;
-		}
-	} else result.issues.push(iss);
-	for (const iss of right.issues) if (iss.code === "unrecognized_keys") for (const k of iss.keys) {
-		if (!unrecKeys.has(k)) unrecKeys.set(k, {});
-		unrecKeys.get(k).r = true;
-	}
-	else result.issues.push(iss);
-	const bothKeys = [...unrecKeys].filter(([, f]) => f.l && f.r).map(([k]) => k);
-	if (bothKeys.length && unrecIssue) result.issues.push({
-		...unrecIssue,
-		keys: bothKeys
-	});
-	if (aborted(result)) return result;
-	const merged = mergeValues(left.value, right.value);
-	if (!merged.valid) throw new Error(`Unmergable intersection. Error path: ${JSON.stringify(merged.mergeErrorPath)}`);
-	result.value = merged.data;
-	return result;
-}
-var $ZodEnum = /* @__PURE__ */ $constructor("$ZodEnum", (inst, def) => {
-	$ZodType.init(inst, def);
-	const values = getEnumValues(def.entries);
-	const valuesSet = new Set(values);
-	inst._zod.values = valuesSet;
-	inst._zod.pattern = new RegExp(`^(${values.filter((k) => propertyKeyTypes.has(typeof k)).map((o) => typeof o === "string" ? escapeRegex(o) : o.toString()).join("|")})$`);
-	inst._zod.parse = (payload, _ctx) => {
-		const input = payload.value;
-		if (valuesSet.has(input)) return payload;
-		payload.issues.push({
-			code: "invalid_value",
-			values,
-			input,
-			inst
-		});
-		return payload;
-	};
-});
-var $ZodTransform = /* @__PURE__ */ $constructor("$ZodTransform", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") throw new $ZodEncodeError(inst.constructor.name);
-		const _out = def.transform(payload.value, payload);
-		if (ctx.async) return (_out instanceof Promise ? _out : Promise.resolve(_out)).then((output) => {
-			payload.value = output;
-			return payload;
-		});
-		if (_out instanceof Promise) throw new $ZodAsyncError();
-		payload.value = _out;
-		return payload;
-	};
-});
-function handleOptionalResult(result, input) {
-	if (result.issues.length && input === void 0) return {
-		issues: [],
-		value: void 0
-	};
-	return result;
-}
-var $ZodOptional = /* @__PURE__ */ $constructor("$ZodOptional", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.optin = "optional";
-	inst._zod.optout = "optional";
-	defineLazy(inst._zod, "values", () => {
-		return def.innerType._zod.values ? new Set([...def.innerType._zod.values, void 0]) : void 0;
-	});
-	defineLazy(inst._zod, "pattern", () => {
-		const pattern = def.innerType._zod.pattern;
-		return pattern ? new RegExp(`^(${cleanRegex(pattern.source)})?$`) : void 0;
-	});
-	inst._zod.parse = (payload, ctx) => {
-		if (def.innerType._zod.optin === "optional") {
-			const result = def.innerType._zod.run(payload, ctx);
-			if (result instanceof Promise) return result.then((r) => handleOptionalResult(r, payload.value));
-			return handleOptionalResult(result, payload.value);
-		}
-		if (payload.value === void 0) return payload;
-		return def.innerType._zod.run(payload, ctx);
-	};
-});
-var $ZodExactOptional = /* @__PURE__ */ $constructor("$ZodExactOptional", (inst, def) => {
-	$ZodOptional.init(inst, def);
-	defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-	defineLazy(inst._zod, "pattern", () => def.innerType._zod.pattern);
-	inst._zod.parse = (payload, ctx) => {
-		return def.innerType._zod.run(payload, ctx);
-	};
-});
-var $ZodNullable = /* @__PURE__ */ $constructor("$ZodNullable", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "optin", () => def.innerType._zod.optin);
-	defineLazy(inst._zod, "optout", () => def.innerType._zod.optout);
-	defineLazy(inst._zod, "pattern", () => {
-		const pattern = def.innerType._zod.pattern;
-		return pattern ? new RegExp(`^(${cleanRegex(pattern.source)}|null)$`) : void 0;
-	});
-	defineLazy(inst._zod, "values", () => {
-		return def.innerType._zod.values ? new Set([...def.innerType._zod.values, null]) : void 0;
-	});
-	inst._zod.parse = (payload, ctx) => {
-		if (payload.value === null) return payload;
-		return def.innerType._zod.run(payload, ctx);
-	};
-});
-var $ZodDefault = /* @__PURE__ */ $constructor("$ZodDefault", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.optin = "optional";
-	defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") return def.innerType._zod.run(payload, ctx);
-		if (payload.value === void 0) {
-			payload.value = def.defaultValue;
-			/**
-			* $ZodDefault returns the default value immediately in forward direction.
-			* It doesn't pass the default value into the validator ("prefault"). There's no reason to pass the default value through validation. The validity of the default is enforced by TypeScript statically. Otherwise, it's the responsibility of the user to ensure the default is valid. In the case of pipes with divergent in/out types, you can specify the default on the `in` schema of your ZodPipe to set a "prefault" for the pipe.   */
-			return payload;
-		}
-		const result = def.innerType._zod.run(payload, ctx);
-		if (result instanceof Promise) return result.then((result) => handleDefaultResult(result, def));
-		return handleDefaultResult(result, def);
-	};
-});
-function handleDefaultResult(payload, def) {
-	if (payload.value === void 0) payload.value = def.defaultValue;
-	return payload;
-}
-var $ZodPrefault = /* @__PURE__ */ $constructor("$ZodPrefault", (inst, def) => {
-	$ZodType.init(inst, def);
-	inst._zod.optin = "optional";
-	defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") return def.innerType._zod.run(payload, ctx);
-		if (payload.value === void 0) payload.value = def.defaultValue;
-		return def.innerType._zod.run(payload, ctx);
-	};
-});
-var $ZodNonOptional = /* @__PURE__ */ $constructor("$ZodNonOptional", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "values", () => {
-		const v = def.innerType._zod.values;
-		return v ? new Set([...v].filter((x) => x !== void 0)) : void 0;
-	});
-	inst._zod.parse = (payload, ctx) => {
-		const result = def.innerType._zod.run(payload, ctx);
-		if (result instanceof Promise) return result.then((result) => handleNonOptionalResult(result, inst));
-		return handleNonOptionalResult(result, inst);
-	};
-});
-function handleNonOptionalResult(payload, inst) {
-	if (!payload.issues.length && payload.value === void 0) payload.issues.push({
-		code: "invalid_type",
-		expected: "nonoptional",
-		input: payload.value,
-		inst
-	});
-	return payload;
-}
-var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "optin", () => def.innerType._zod.optin);
-	defineLazy(inst._zod, "optout", () => def.innerType._zod.optout);
-	defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") return def.innerType._zod.run(payload, ctx);
-		const result = def.innerType._zod.run(payload, ctx);
-		if (result instanceof Promise) return result.then((result) => {
-			payload.value = result.value;
-			if (result.issues.length) {
-				payload.value = def.catchValue({
-					...payload,
-					error: { issues: result.issues.map((iss) => finalizeIssue(iss, ctx, config())) },
-					input: payload.value
-				});
-				payload.issues = [];
-			}
-			return payload;
-		});
-		payload.value = result.value;
-		if (result.issues.length) {
-			payload.value = def.catchValue({
-				...payload,
-				error: { issues: result.issues.map((iss) => finalizeIssue(iss, ctx, config())) },
-				input: payload.value
-			});
-			payload.issues = [];
-		}
-		return payload;
-	};
-});
-var $ZodPipe = /* @__PURE__ */ $constructor("$ZodPipe", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "values", () => def.in._zod.values);
-	defineLazy(inst._zod, "optin", () => def.in._zod.optin);
-	defineLazy(inst._zod, "optout", () => def.out._zod.optout);
-	defineLazy(inst._zod, "propValues", () => def.in._zod.propValues);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") {
-			const right = def.out._zod.run(payload, ctx);
-			if (right instanceof Promise) return right.then((right) => handlePipeResult(right, def.in, ctx));
-			return handlePipeResult(right, def.in, ctx);
-		}
-		const left = def.in._zod.run(payload, ctx);
-		if (left instanceof Promise) return left.then((left) => handlePipeResult(left, def.out, ctx));
-		return handlePipeResult(left, def.out, ctx);
-	};
-});
-function handlePipeResult(left, next, ctx) {
-	if (left.issues.length) {
-		left.aborted = true;
-		return left;
-	}
-	return next._zod.run({
-		value: left.value,
-		issues: left.issues
-	}, ctx);
-}
-var $ZodReadonly = /* @__PURE__ */ $constructor("$ZodReadonly", (inst, def) => {
-	$ZodType.init(inst, def);
-	defineLazy(inst._zod, "propValues", () => def.innerType._zod.propValues);
-	defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-	defineLazy(inst._zod, "optin", () => def.innerType?._zod?.optin);
-	defineLazy(inst._zod, "optout", () => def.innerType?._zod?.optout);
-	inst._zod.parse = (payload, ctx) => {
-		if (ctx.direction === "backward") return def.innerType._zod.run(payload, ctx);
-		const result = def.innerType._zod.run(payload, ctx);
-		if (result instanceof Promise) return result.then(handleReadonlyResult);
-		return handleReadonlyResult(result);
-	};
-});
-function handleReadonlyResult(payload) {
-	payload.value = Object.freeze(payload.value);
-	return payload;
-}
-var $ZodCustom = /* @__PURE__ */ $constructor("$ZodCustom", (inst, def) => {
-	$ZodCheck.init(inst, def);
-	$ZodType.init(inst, def);
-	inst._zod.parse = (payload, _) => {
-		return payload;
-	};
-	inst._zod.check = (payload) => {
-		const input = payload.value;
-		const r = def.fn(input);
-		if (r instanceof Promise) return r.then((r) => handleRefineResult(r, payload, input, inst));
-		handleRefineResult(r, payload, input, inst);
-	};
-});
-function handleRefineResult(result, payload, input, inst) {
-	if (!result) {
-		const _iss = {
-			code: "custom",
-			input,
-			inst,
-			path: [...inst._zod.def.path ?? []],
-			continue: !inst._zod.def.abort
-		};
-		if (inst._zod.def.params) _iss.params = inst._zod.def.params;
-		payload.issues.push(issue(_iss));
-	}
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/registries.js
-var _a;
-var $ZodRegistry = class {
-	constructor() {
-		this._map = /* @__PURE__ */ new WeakMap();
-		this._idmap = /* @__PURE__ */ new Map();
-	}
-	add(schema, ..._meta) {
-		const meta = _meta[0];
-		this._map.set(schema, meta);
-		if (meta && typeof meta === "object" && "id" in meta) this._idmap.set(meta.id, schema);
-		return this;
-	}
-	clear() {
-		this._map = /* @__PURE__ */ new WeakMap();
-		this._idmap = /* @__PURE__ */ new Map();
-		return this;
-	}
-	remove(schema) {
-		const meta = this._map.get(schema);
-		if (meta && typeof meta === "object" && "id" in meta) this._idmap.delete(meta.id);
-		this._map.delete(schema);
-		return this;
-	}
-	get(schema) {
-		const p = schema._zod.parent;
-		if (p) {
-			const pm = { ...this.get(p) ?? {} };
-			delete pm.id;
-			const f = {
-				...pm,
-				...this._map.get(schema)
-			};
-			return Object.keys(f).length ? f : void 0;
-		}
-		return this._map.get(schema);
-	}
-	has(schema) {
-		return this._map.has(schema);
-	}
-};
-function registry() {
-	return new $ZodRegistry();
-}
-(_a = globalThis).__zod_globalRegistry ?? (_a.__zod_globalRegistry = registry());
-var globalRegistry = globalThis.__zod_globalRegistry;
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/api.js
-/* @__NO_SIDE_EFFECTS__ */
-function _string(Class, params) {
-	return new Class({
-		type: "string",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _email(Class, params) {
-	return new Class({
-		type: "string",
-		format: "email",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _guid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "guid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _uuid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "uuid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _uuidv4(Class, params) {
-	return new Class({
-		type: "string",
-		format: "uuid",
-		check: "string_format",
-		abort: false,
-		version: "v4",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _uuidv6(Class, params) {
-	return new Class({
-		type: "string",
-		format: "uuid",
-		check: "string_format",
-		abort: false,
-		version: "v6",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _uuidv7(Class, params) {
-	return new Class({
-		type: "string",
-		format: "uuid",
-		check: "string_format",
-		abort: false,
-		version: "v7",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _url(Class, params) {
-	return new Class({
-		type: "string",
-		format: "url",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _emoji(Class, params) {
-	return new Class({
-		type: "string",
-		format: "emoji",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _nanoid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "nanoid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _cuid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "cuid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _cuid2(Class, params) {
-	return new Class({
-		type: "string",
-		format: "cuid2",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _ulid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "ulid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _xid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "xid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _ksuid(Class, params) {
-	return new Class({
-		type: "string",
-		format: "ksuid",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _ipv4(Class, params) {
-	return new Class({
-		type: "string",
-		format: "ipv4",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _ipv6(Class, params) {
-	return new Class({
-		type: "string",
-		format: "ipv6",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _cidrv4(Class, params) {
-	return new Class({
-		type: "string",
-		format: "cidrv4",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _cidrv6(Class, params) {
-	return new Class({
-		type: "string",
-		format: "cidrv6",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _base64(Class, params) {
-	return new Class({
-		type: "string",
-		format: "base64",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _base64url(Class, params) {
-	return new Class({
-		type: "string",
-		format: "base64url",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _e164(Class, params) {
-	return new Class({
-		type: "string",
-		format: "e164",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _jwt(Class, params) {
-	return new Class({
-		type: "string",
-		format: "jwt",
-		check: "string_format",
-		abort: false,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _isoDateTime(Class, params) {
-	return new Class({
-		type: "string",
-		format: "datetime",
-		check: "string_format",
-		offset: false,
-		local: false,
-		precision: null,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _isoDate(Class, params) {
-	return new Class({
-		type: "string",
-		format: "date",
-		check: "string_format",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _isoTime(Class, params) {
-	return new Class({
-		type: "string",
-		format: "time",
-		check: "string_format",
-		precision: null,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _isoDuration(Class, params) {
-	return new Class({
-		type: "string",
-		format: "duration",
-		check: "string_format",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _unknown(Class) {
-	return new Class({ type: "unknown" });
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _never(Class, params) {
-	return new Class({
-		type: "never",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _maxLength(maximum, params) {
-	return new $ZodCheckMaxLength({
-		check: "max_length",
-		...normalizeParams(params),
-		maximum
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _minLength(minimum, params) {
-	return new $ZodCheckMinLength({
-		check: "min_length",
-		...normalizeParams(params),
-		minimum
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _length(length, params) {
-	return new $ZodCheckLengthEquals({
-		check: "length_equals",
-		...normalizeParams(params),
-		length
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _regex(pattern, params) {
-	return new $ZodCheckRegex({
-		check: "string_format",
-		format: "regex",
-		...normalizeParams(params),
-		pattern
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _lowercase(params) {
-	return new $ZodCheckLowerCase({
-		check: "string_format",
-		format: "lowercase",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _uppercase(params) {
-	return new $ZodCheckUpperCase({
-		check: "string_format",
-		format: "uppercase",
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _includes(includes, params) {
-	return new $ZodCheckIncludes({
-		check: "string_format",
-		format: "includes",
-		...normalizeParams(params),
-		includes
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _startsWith(prefix, params) {
-	return new $ZodCheckStartsWith({
-		check: "string_format",
-		format: "starts_with",
-		...normalizeParams(params),
-		prefix
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _endsWith(suffix, params) {
-	return new $ZodCheckEndsWith({
-		check: "string_format",
-		format: "ends_with",
-		...normalizeParams(params),
-		suffix
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _overwrite(tx) {
-	return new $ZodCheckOverwrite({
-		check: "overwrite",
-		tx
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _normalize(form) {
-	return /* @__PURE__ */ _overwrite((input) => input.normalize(form));
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _trim() {
-	return /* @__PURE__ */ _overwrite((input) => input.trim());
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _toLowerCase() {
-	return /* @__PURE__ */ _overwrite((input) => input.toLowerCase());
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _toUpperCase() {
-	return /* @__PURE__ */ _overwrite((input) => input.toUpperCase());
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _slugify() {
-	return /* @__PURE__ */ _overwrite((input) => slugify(input));
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _array(Class, element, params) {
-	return new Class({
-		type: "array",
-		element,
-		...normalizeParams(params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _refine(Class, fn, _params) {
-	return new Class({
-		type: "custom",
-		check: "custom",
-		fn,
-		...normalizeParams(_params)
-	});
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _superRefine(fn) {
-	const ch = /* @__PURE__ */ _check((payload) => {
-		payload.addIssue = (issue$2) => {
-			if (typeof issue$2 === "string") payload.issues.push(issue(issue$2, payload.value, ch._zod.def));
-			else {
-				const _issue = issue$2;
-				if (_issue.fatal) _issue.continue = false;
-				_issue.code ?? (_issue.code = "custom");
-				_issue.input ?? (_issue.input = payload.value);
-				_issue.inst ?? (_issue.inst = ch);
-				_issue.continue ?? (_issue.continue = !ch._zod.def.abort);
-				payload.issues.push(issue(_issue));
-			}
-		};
-		return fn(payload.value, payload);
-	});
-	return ch;
-}
-/* @__NO_SIDE_EFFECTS__ */
-function _check(fn, params) {
-	const ch = new $ZodCheck({
-		check: "custom",
-		...normalizeParams(params)
-	});
-	ch._zod.check = fn;
-	return ch;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/to-json-schema.js
-function initializeContext(params) {
-	let target = params?.target ?? "draft-2020-12";
-	if (target === "draft-4") target = "draft-04";
-	if (target === "draft-7") target = "draft-07";
-	return {
-		processors: params.processors ?? {},
-		metadataRegistry: params?.metadata ?? globalRegistry,
-		target,
-		unrepresentable: params?.unrepresentable ?? "throw",
-		override: params?.override ?? (() => {}),
-		io: params?.io ?? "output",
-		counter: 0,
-		seen: /* @__PURE__ */ new Map(),
-		cycles: params?.cycles ?? "ref",
-		reused: params?.reused ?? "inline",
-		external: params?.external ?? void 0
-	};
-}
-function process$1(schema, ctx, _params = {
-	path: [],
-	schemaPath: []
-}) {
-	var _a;
-	const def = schema._zod.def;
-	const seen = ctx.seen.get(schema);
-	if (seen) {
-		seen.count++;
-		if (_params.schemaPath.includes(schema)) seen.cycle = _params.path;
-		return seen.schema;
-	}
-	const result = {
-		schema: {},
-		count: 1,
-		cycle: void 0,
-		path: _params.path
-	};
-	ctx.seen.set(schema, result);
-	const overrideSchema = schema._zod.toJSONSchema?.();
-	if (overrideSchema) result.schema = overrideSchema;
-	else {
-		const params = {
-			..._params,
-			schemaPath: [..._params.schemaPath, schema],
-			path: _params.path
-		};
-		if (schema._zod.processJSONSchema) schema._zod.processJSONSchema(ctx, result.schema, params);
-		else {
-			const _json = result.schema;
-			const processor = ctx.processors[def.type];
-			if (!processor) throw new Error(`[toJSONSchema]: Non-representable type encountered: ${def.type}`);
-			processor(schema, ctx, _json, params);
-		}
-		const parent = schema._zod.parent;
-		if (parent) {
-			if (!result.ref) result.ref = parent;
-			process$1(parent, ctx, params);
-			ctx.seen.get(parent).isParent = true;
-		}
-	}
-	const meta = ctx.metadataRegistry.get(schema);
-	if (meta) Object.assign(result.schema, meta);
-	if (ctx.io === "input" && isTransforming(schema)) {
-		delete result.schema.examples;
-		delete result.schema.default;
-	}
-	if (ctx.io === "input" && result.schema._prefault) (_a = result.schema).default ?? (_a.default = result.schema._prefault);
-	delete result.schema._prefault;
-	return ctx.seen.get(schema).schema;
-}
-function extractDefs(ctx, schema) {
-	const root = ctx.seen.get(schema);
-	if (!root) throw new Error("Unprocessed schema. This is a bug in Zod.");
-	const idToSchema = /* @__PURE__ */ new Map();
-	for (const entry of ctx.seen.entries()) {
-		const id = ctx.metadataRegistry.get(entry[0])?.id;
-		if (id) {
-			const existing = idToSchema.get(id);
-			if (existing && existing !== entry[0]) throw new Error(`Duplicate schema id "${id}" detected during JSON Schema conversion. Two different schemas cannot share the same id when converted together.`);
-			idToSchema.set(id, entry[0]);
-		}
-	}
-	const makeURI = (entry) => {
-		const defsSegment = ctx.target === "draft-2020-12" ? "$defs" : "definitions";
-		if (ctx.external) {
-			const externalId = ctx.external.registry.get(entry[0])?.id;
-			const uriGenerator = ctx.external.uri ?? ((id) => id);
-			if (externalId) return { ref: uriGenerator(externalId) };
-			const id = entry[1].defId ?? entry[1].schema.id ?? `schema${ctx.counter++}`;
-			entry[1].defId = id;
-			return {
-				defId: id,
-				ref: `${uriGenerator("__shared")}#/${defsSegment}/${id}`
-			};
-		}
-		if (entry[1] === root) return { ref: "#" };
-		const defUriPrefix = `#/${defsSegment}/`;
-		const defId = entry[1].schema.id ?? `__schema${ctx.counter++}`;
-		return {
-			defId,
-			ref: defUriPrefix + defId
-		};
-	};
-	const extractToDef = (entry) => {
-		if (entry[1].schema.$ref) return;
-		const seen = entry[1];
-		const { ref, defId } = makeURI(entry);
-		seen.def = { ...seen.schema };
-		if (defId) seen.defId = defId;
-		const schema = seen.schema;
-		for (const key in schema) delete schema[key];
-		schema.$ref = ref;
-	};
-	if (ctx.cycles === "throw") for (const entry of ctx.seen.entries()) {
-		const seen = entry[1];
-		if (seen.cycle) throw new Error(`Cycle detected: #/${seen.cycle?.join("/")}/<root>
-
-Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.`);
-	}
-	for (const entry of ctx.seen.entries()) {
-		const seen = entry[1];
-		if (schema === entry[0]) {
-			extractToDef(entry);
-			continue;
-		}
-		if (ctx.external) {
-			const ext = ctx.external.registry.get(entry[0])?.id;
-			if (schema !== entry[0] && ext) {
-				extractToDef(entry);
-				continue;
-			}
-		}
-		if (ctx.metadataRegistry.get(entry[0])?.id) {
-			extractToDef(entry);
-			continue;
-		}
-		if (seen.cycle) {
-			extractToDef(entry);
-			continue;
-		}
-		if (seen.count > 1) {
-			if (ctx.reused === "ref") {
-				extractToDef(entry);
-				continue;
-			}
-		}
-	}
-}
-function finalize(ctx, schema) {
-	const root = ctx.seen.get(schema);
-	if (!root) throw new Error("Unprocessed schema. This is a bug in Zod.");
-	const flattenRef = (zodSchema) => {
-		const seen = ctx.seen.get(zodSchema);
-		if (seen.ref === null) return;
-		const schema = seen.def ?? seen.schema;
-		const _cached = { ...schema };
-		const ref = seen.ref;
-		seen.ref = null;
-		if (ref) {
-			flattenRef(ref);
-			const refSeen = ctx.seen.get(ref);
-			const refSchema = refSeen.schema;
-			if (refSchema.$ref && (ctx.target === "draft-07" || ctx.target === "draft-04" || ctx.target === "openapi-3.0")) {
-				schema.allOf = schema.allOf ?? [];
-				schema.allOf.push(refSchema);
-			} else Object.assign(schema, refSchema);
-			Object.assign(schema, _cached);
-			if (zodSchema._zod.parent === ref) for (const key in schema) {
-				if (key === "$ref" || key === "allOf") continue;
-				if (!(key in _cached)) delete schema[key];
-			}
-			if (refSchema.$ref && refSeen.def) for (const key in schema) {
-				if (key === "$ref" || key === "allOf") continue;
-				if (key in refSeen.def && JSON.stringify(schema[key]) === JSON.stringify(refSeen.def[key])) delete schema[key];
-			}
-		}
-		const parent = zodSchema._zod.parent;
-		if (parent && parent !== ref) {
-			flattenRef(parent);
-			const parentSeen = ctx.seen.get(parent);
-			if (parentSeen?.schema.$ref) {
-				schema.$ref = parentSeen.schema.$ref;
-				if (parentSeen.def) for (const key in schema) {
-					if (key === "$ref" || key === "allOf") continue;
-					if (key in parentSeen.def && JSON.stringify(schema[key]) === JSON.stringify(parentSeen.def[key])) delete schema[key];
-				}
-			}
-		}
-		ctx.override({
-			zodSchema,
-			jsonSchema: schema,
-			path: seen.path ?? []
-		});
-	};
-	for (const entry of [...ctx.seen.entries()].reverse()) flattenRef(entry[0]);
-	const result = {};
-	if (ctx.target === "draft-2020-12") result.$schema = "https://json-schema.org/draft/2020-12/schema";
-	else if (ctx.target === "draft-07") result.$schema = "http://json-schema.org/draft-07/schema#";
-	else if (ctx.target === "draft-04") result.$schema = "http://json-schema.org/draft-04/schema#";
-	else if (ctx.target === "openapi-3.0") {}
-	if (ctx.external?.uri) {
-		const id = ctx.external.registry.get(schema)?.id;
-		if (!id) throw new Error("Schema is missing an `id` property");
-		result.$id = ctx.external.uri(id);
-	}
-	Object.assign(result, root.def ?? root.schema);
-	const defs = ctx.external?.defs ?? {};
-	for (const entry of ctx.seen.entries()) {
-		const seen = entry[1];
-		if (seen.def && seen.defId) defs[seen.defId] = seen.def;
-	}
-	if (ctx.external) {} else if (Object.keys(defs).length > 0) if (ctx.target === "draft-2020-12") result.$defs = defs;
-	else result.definitions = defs;
-	try {
-		const finalized = JSON.parse(JSON.stringify(result));
-		Object.defineProperty(finalized, "~standard", {
-			value: {
-				...schema["~standard"],
-				jsonSchema: {
-					input: createStandardJSONSchemaMethod(schema, "input", ctx.processors),
-					output: createStandardJSONSchemaMethod(schema, "output", ctx.processors)
-				}
-			},
-			enumerable: false,
-			writable: false
-		});
-		return finalized;
-	} catch (_err) {
-		throw new Error("Error converting schema to JSON.");
-	}
-}
-function isTransforming(_schema, _ctx) {
-	const ctx = _ctx ?? { seen: /* @__PURE__ */ new Set() };
-	if (ctx.seen.has(_schema)) return false;
-	ctx.seen.add(_schema);
-	const def = _schema._zod.def;
-	if (def.type === "transform") return true;
-	if (def.type === "array") return isTransforming(def.element, ctx);
-	if (def.type === "set") return isTransforming(def.valueType, ctx);
-	if (def.type === "lazy") return isTransforming(def.getter(), ctx);
-	if (def.type === "promise" || def.type === "optional" || def.type === "nonoptional" || def.type === "nullable" || def.type === "readonly" || def.type === "default" || def.type === "prefault") return isTransforming(def.innerType, ctx);
-	if (def.type === "intersection") return isTransforming(def.left, ctx) || isTransforming(def.right, ctx);
-	if (def.type === "record" || def.type === "map") return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
-	if (def.type === "pipe") return isTransforming(def.in, ctx) || isTransforming(def.out, ctx);
-	if (def.type === "object") {
-		for (const key in def.shape) if (isTransforming(def.shape[key], ctx)) return true;
-		return false;
-	}
-	if (def.type === "union") {
-		for (const option of def.options) if (isTransforming(option, ctx)) return true;
-		return false;
-	}
-	if (def.type === "tuple") {
-		for (const item of def.items) if (isTransforming(item, ctx)) return true;
-		if (def.rest && isTransforming(def.rest, ctx)) return true;
-		return false;
-	}
-	return false;
-}
-/**
-* Creates a toJSONSchema method for a schema instance.
-* This encapsulates the logic of initializing context, processing, extracting defs, and finalizing.
-*/
-var createToJSONSchemaMethod = (schema, processors = {}) => (params) => {
-	const ctx = initializeContext({
-		...params,
-		processors
-	});
-	process$1(schema, ctx);
-	extractDefs(ctx, schema);
-	return finalize(ctx, schema);
-};
-var createStandardJSONSchemaMethod = (schema, io, processors = {}) => (params) => {
-	const { libraryOptions, target } = params ?? {};
-	const ctx = initializeContext({
-		...libraryOptions ?? {},
-		target,
-		io,
-		processors
-	});
-	process$1(schema, ctx);
-	extractDefs(ctx, schema);
-	return finalize(ctx, schema);
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/core/json-schema-processors.js
-var formatMap = {
-	guid: "uuid",
-	url: "uri",
-	datetime: "date-time",
-	json_string: "json-string",
-	regex: ""
-};
-var stringProcessor = (schema, ctx, _json, _params) => {
-	const json = _json;
-	json.type = "string";
-	const { minimum, maximum, format, patterns, contentEncoding } = schema._zod.bag;
-	if (typeof minimum === "number") json.minLength = minimum;
-	if (typeof maximum === "number") json.maxLength = maximum;
-	if (format) {
-		json.format = formatMap[format] ?? format;
-		if (json.format === "") delete json.format;
-		if (format === "time") delete json.format;
-	}
-	if (contentEncoding) json.contentEncoding = contentEncoding;
-	if (patterns && patterns.size > 0) {
-		const regexes = [...patterns];
-		if (regexes.length === 1) json.pattern = regexes[0].source;
-		else if (regexes.length > 1) json.allOf = [...regexes.map((regex) => ({
-			...ctx.target === "draft-07" || ctx.target === "draft-04" || ctx.target === "openapi-3.0" ? { type: "string" } : {},
-			pattern: regex.source
-		}))];
-	}
-};
-var neverProcessor = (_schema, _ctx, json, _params) => {
-	json.not = {};
-};
-var unknownProcessor = (_schema, _ctx, _json, _params) => {};
-var enumProcessor = (schema, _ctx, json, _params) => {
-	const def = schema._zod.def;
-	const values = getEnumValues(def.entries);
-	if (values.every((v) => typeof v === "number")) json.type = "number";
-	if (values.every((v) => typeof v === "string")) json.type = "string";
-	json.enum = values;
-};
-var customProcessor = (_schema, ctx, _json, _params) => {
-	if (ctx.unrepresentable === "throw") throw new Error("Custom types cannot be represented in JSON Schema");
-};
-var transformProcessor = (_schema, ctx, _json, _params) => {
-	if (ctx.unrepresentable === "throw") throw new Error("Transforms cannot be represented in JSON Schema");
-};
-var arrayProcessor = (schema, ctx, _json, params) => {
-	const json = _json;
-	const def = schema._zod.def;
-	const { minimum, maximum } = schema._zod.bag;
-	if (typeof minimum === "number") json.minItems = minimum;
-	if (typeof maximum === "number") json.maxItems = maximum;
-	json.type = "array";
-	json.items = process$1(def.element, ctx, {
-		...params,
-		path: [...params.path, "items"]
-	});
-};
-var objectProcessor = (schema, ctx, _json, params) => {
-	const json = _json;
-	const def = schema._zod.def;
-	json.type = "object";
-	json.properties = {};
-	const shape = def.shape;
-	for (const key in shape) json.properties[key] = process$1(shape[key], ctx, {
-		...params,
-		path: [
-			...params.path,
-			"properties",
-			key
-		]
-	});
-	const allKeys = new Set(Object.keys(shape));
-	const requiredKeys = new Set([...allKeys].filter((key) => {
-		const v = def.shape[key]._zod;
-		if (ctx.io === "input") return v.optin === void 0;
-		else return v.optout === void 0;
-	}));
-	if (requiredKeys.size > 0) json.required = Array.from(requiredKeys);
-	if (def.catchall?._zod.def.type === "never") json.additionalProperties = false;
-	else if (!def.catchall) {
-		if (ctx.io === "output") json.additionalProperties = false;
-	} else if (def.catchall) json.additionalProperties = process$1(def.catchall, ctx, {
-		...params,
-		path: [...params.path, "additionalProperties"]
-	});
-};
-var unionProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	const isExclusive = def.inclusive === false;
-	const options = def.options.map((x, i) => process$1(x, ctx, {
-		...params,
-		path: [
-			...params.path,
-			isExclusive ? "oneOf" : "anyOf",
-			i
-		]
-	}));
-	if (isExclusive) json.oneOf = options;
-	else json.anyOf = options;
-};
-var intersectionProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	const a = process$1(def.left, ctx, {
-		...params,
-		path: [
-			...params.path,
-			"allOf",
-			0
-		]
-	});
-	const b = process$1(def.right, ctx, {
-		...params,
-		path: [
-			...params.path,
-			"allOf",
-			1
-		]
-	});
-	const isSimpleIntersection = (val) => "allOf" in val && Object.keys(val).length === 1;
-	json.allOf = [...isSimpleIntersection(a) ? a.allOf : [a], ...isSimpleIntersection(b) ? b.allOf : [b]];
-};
-var nullableProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	const inner = process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	if (ctx.target === "openapi-3.0") {
-		seen.ref = def.innerType;
-		json.nullable = true;
-	} else json.anyOf = [inner, { type: "null" }];
-};
-var nonoptionalProcessor = (schema, ctx, _json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-};
-var defaultProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-	json.default = JSON.parse(JSON.stringify(def.defaultValue));
-};
-var prefaultProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-	if (ctx.io === "input") json._prefault = JSON.parse(JSON.stringify(def.defaultValue));
-};
-var catchProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-	let catchValue;
-	try {
-		catchValue = def.catchValue(void 0);
-	} catch {
-		throw new Error("Dynamic catch values are not supported in JSON Schema");
-	}
-	json.default = catchValue;
-};
-var pipeProcessor = (schema, ctx, _json, params) => {
-	const def = schema._zod.def;
-	const innerType = ctx.io === "input" ? def.in._zod.def.type === "transform" ? def.out : def.in : def.out;
-	process$1(innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = innerType;
-};
-var readonlyProcessor = (schema, ctx, json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-	json.readOnly = true;
-};
-var optionalProcessor = (schema, ctx, _json, params) => {
-	const def = schema._zod.def;
-	process$1(def.innerType, ctx, params);
-	const seen = ctx.seen.get(schema);
-	seen.ref = def.innerType;
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@hookform+resolvers@5.2.2_react-hook-form@7.71.2_react@19.2.4_/node_modules/@hookform/resolvers/zod/dist/zod.mjs
-function t(r, e) {
-	try {
-		var o = r();
-	} catch (r) {
-		return e(r);
-	}
-	return o && o.then ? o.then(void 0, e) : o;
-}
-function s(r, e) {
-	for (var n = {}; r.length;) {
-		var t = r[0], s = t.code, i = t.message, a = t.path.join(".");
-		if (!n[a]) if ("unionErrors" in t) {
-			var u = t.unionErrors[0].errors[0];
-			n[a] = {
-				message: u.message,
-				type: u.code
-			};
-		} else n[a] = {
-			message: i,
-			type: s
-		};
-		if ("unionErrors" in t && t.unionErrors.forEach(function(e) {
-			return e.errors.forEach(function(e) {
-				return r.push(e);
-			});
-		}), e) {
-			var c = n[a].types, f = c && c[t.code];
-			n[a] = appendErrors(a, e, n, s, f ? [].concat(f, t.message) : t.message);
-		}
-		r.shift();
-	}
-	return n;
-}
-function i(r, e) {
-	for (var n = {}; r.length;) {
-		var t = r[0], s = t.code, i = t.message, a = t.path.join(".");
-		if (!n[a]) if ("invalid_union" === t.code && t.errors.length > 0) {
-			var u = t.errors[0][0];
-			n[a] = {
-				message: u.message,
-				type: u.code
-			};
-		} else n[a] = {
-			message: i,
-			type: s
-		};
-		if ("invalid_union" === t.code && t.errors.forEach(function(e) {
-			return e.forEach(function(e) {
-				return r.push(e);
-			});
-		}), e) {
-			var c = n[a].types, f = c && c[t.code];
-			n[a] = appendErrors(a, e, n, s, f ? [].concat(f, t.message) : t.message);
-		}
-		r.shift();
-	}
-	return n;
-}
-function a(o$1, a, u) {
-	if (void 0 === u && (u = {}), function(r) {
-		return "_def" in r && "object" == typeof r._def && "typeName" in r._def;
-	}(o$1)) return function(n, i, c) {
-		try {
-			return Promise.resolve(t(function() {
-				return Promise.resolve(o$1["sync" === u.mode ? "parse" : "parseAsync"](n, a)).then(function(e) {
-					return c.shouldUseNativeValidation && o({}, c), {
-						errors: {},
-						values: u.raw ? Object.assign({}, n) : e
-					};
-				});
-			}, function(r) {
-				if (function(r) {
-					return Array.isArray(null == r ? void 0 : r.issues);
-				}(r)) return {
-					values: {},
-					errors: s$1(s(r.errors, !c.shouldUseNativeValidation && "all" === c.criteriaMode), c)
-				};
-				throw r;
-			}));
-		} catch (r) {
-			return Promise.reject(r);
-		}
-	};
-	if (function(r) {
-		return "_zod" in r && "object" == typeof r._zod;
-	}(o$1)) return function(s, c, f) {
-		try {
-			return Promise.resolve(t(function() {
-				return Promise.resolve(("sync" === u.mode ? parse$2 : parseAsync$1)(o$1, s, a)).then(function(e) {
-					return f.shouldUseNativeValidation && o({}, f), {
-						errors: {},
-						values: u.raw ? Object.assign({}, s) : e
-					};
-				});
-			}, function(r) {
-				if (function(r) {
-					return r instanceof $ZodError;
-				}(r)) return {
-					values: {},
-					errors: s$1(i(r.issues, !f.shouldUseNativeValidation && "all" === f.criteriaMode), f)
-				};
-				throw r;
-			}));
-		} catch (r) {
-			return Promise.reject(r);
-		}
-	};
-	throw new Error("Invalid input: not a Zod schema");
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/classic/iso.js
-var ZodISODateTime = /* @__PURE__ */ $constructor("ZodISODateTime", (inst, def) => {
-	$ZodISODateTime.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-function datetime(params) {
-	return /* @__PURE__ */ _isoDateTime(ZodISODateTime, params);
-}
-var ZodISODate = /* @__PURE__ */ $constructor("ZodISODate", (inst, def) => {
-	$ZodISODate.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-function date(params) {
-	return /* @__PURE__ */ _isoDate(ZodISODate, params);
-}
-var ZodISOTime = /* @__PURE__ */ $constructor("ZodISOTime", (inst, def) => {
-	$ZodISOTime.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-function time(params) {
-	return /* @__PURE__ */ _isoTime(ZodISOTime, params);
-}
-var ZodISODuration = /* @__PURE__ */ $constructor("ZodISODuration", (inst, def) => {
-	$ZodISODuration.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-function duration(params) {
-	return /* @__PURE__ */ _isoDuration(ZodISODuration, params);
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/classic/errors.js
-var initializer = (inst, issues) => {
-	$ZodError.init(inst, issues);
-	inst.name = "ZodError";
-	Object.defineProperties(inst, {
-		format: { value: (mapper) => formatError(inst, mapper) },
-		flatten: { value: (mapper) => flattenError(inst, mapper) },
-		addIssue: { value: (issue) => {
-			inst.issues.push(issue);
-			inst.message = JSON.stringify(inst.issues, jsonStringifyReplacer, 2);
-		} },
-		addIssues: { value: (issues) => {
-			inst.issues.push(...issues);
-			inst.message = JSON.stringify(inst.issues, jsonStringifyReplacer, 2);
-		} },
-		isEmpty: { get() {
-			return inst.issues.length === 0;
-		} }
-	});
-};
-$constructor("ZodError", initializer);
-var ZodRealError = $constructor("ZodError", initializer, { Parent: Error });
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/classic/parse.js
-var parse$1 = /* @__PURE__ */ _parse(ZodRealError);
-var parseAsync = /* @__PURE__ */ _parseAsync(ZodRealError);
-var safeParse = /* @__PURE__ */ _safeParse(ZodRealError);
-var safeParseAsync = /* @__PURE__ */ _safeParseAsync(ZodRealError);
-var encode = /* @__PURE__ */ _encode(ZodRealError);
-var decode = /* @__PURE__ */ _decode(ZodRealError);
-var encodeAsync = /* @__PURE__ */ _encodeAsync(ZodRealError);
-var decodeAsync = /* @__PURE__ */ _decodeAsync(ZodRealError);
-var safeEncode = /* @__PURE__ */ _safeEncode(ZodRealError);
-var safeDecode = /* @__PURE__ */ _safeDecode(ZodRealError);
-var safeEncodeAsync = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
-var safeDecodeAsync = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/zod@4.3.6/node_modules/zod/v4/classic/schemas.js
-var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
-	$ZodType.init(inst, def);
-	Object.assign(inst["~standard"], { jsonSchema: {
-		input: createStandardJSONSchemaMethod(inst, "input"),
-		output: createStandardJSONSchemaMethod(inst, "output")
-	} });
-	inst.toJSONSchema = createToJSONSchemaMethod(inst, {});
-	inst.def = def;
-	inst.type = def.type;
-	Object.defineProperty(inst, "_def", { value: def });
-	inst.check = (...checks) => {
-		return inst.clone(mergeDefs(def, { checks: [...def.checks ?? [], ...checks.map((ch) => typeof ch === "function" ? { _zod: {
-			check: ch,
-			def: { check: "custom" },
-			onattach: []
-		} } : ch)] }), { parent: true });
-	};
-	inst.with = inst.check;
-	inst.clone = (def, params) => clone(inst, def, params);
-	inst.brand = () => inst;
-	inst.register = ((reg, meta) => {
-		reg.add(inst, meta);
-		return inst;
-	});
-	inst.parse = (data, params) => parse$1(inst, data, params, { callee: inst.parse });
-	inst.safeParse = (data, params) => safeParse(inst, data, params);
-	inst.parseAsync = async (data, params) => parseAsync(inst, data, params, { callee: inst.parseAsync });
-	inst.safeParseAsync = async (data, params) => safeParseAsync(inst, data, params);
-	inst.spa = inst.safeParseAsync;
-	inst.encode = (data, params) => encode(inst, data, params);
-	inst.decode = (data, params) => decode(inst, data, params);
-	inst.encodeAsync = async (data, params) => encodeAsync(inst, data, params);
-	inst.decodeAsync = async (data, params) => decodeAsync(inst, data, params);
-	inst.safeEncode = (data, params) => safeEncode(inst, data, params);
-	inst.safeDecode = (data, params) => safeDecode(inst, data, params);
-	inst.safeEncodeAsync = async (data, params) => safeEncodeAsync(inst, data, params);
-	inst.safeDecodeAsync = async (data, params) => safeDecodeAsync(inst, data, params);
-	inst.refine = (check, params) => inst.check(refine(check, params));
-	inst.superRefine = (refinement) => inst.check(superRefine(refinement));
-	inst.overwrite = (fn) => inst.check(/* @__PURE__ */ _overwrite(fn));
-	inst.optional = () => optional(inst);
-	inst.exactOptional = () => exactOptional(inst);
-	inst.nullable = () => nullable(inst);
-	inst.nullish = () => optional(nullable(inst));
-	inst.nonoptional = (params) => nonoptional(inst, params);
-	inst.array = () => array(inst);
-	inst.or = (arg) => union([inst, arg]);
-	inst.and = (arg) => intersection(inst, arg);
-	inst.transform = (tx) => pipe(inst, transform(tx));
-	inst.default = (def) => _default(inst, def);
-	inst.prefault = (def) => prefault(inst, def);
-	inst.catch = (params) => _catch(inst, params);
-	inst.pipe = (target) => pipe(inst, target);
-	inst.readonly = () => readonly(inst);
-	inst.describe = (description) => {
-		const cl = inst.clone();
-		globalRegistry.add(cl, { description });
-		return cl;
-	};
-	Object.defineProperty(inst, "description", {
-		get() {
-			return globalRegistry.get(inst)?.description;
-		},
-		configurable: true
-	});
-	inst.meta = (...args) => {
-		if (args.length === 0) return globalRegistry.get(inst);
-		const cl = inst.clone();
-		globalRegistry.add(cl, args[0]);
-		return cl;
-	};
-	inst.isOptional = () => inst.safeParse(void 0).success;
-	inst.isNullable = () => inst.safeParse(null).success;
-	inst.apply = (fn) => fn(inst);
-	return inst;
-});
-/** @internal */
-var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
-	$ZodString.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => stringProcessor(inst, ctx, json, params);
-	const bag = inst._zod.bag;
-	inst.format = bag.format ?? null;
-	inst.minLength = bag.minimum ?? null;
-	inst.maxLength = bag.maximum ?? null;
-	inst.regex = (...args) => inst.check(/* @__PURE__ */ _regex(...args));
-	inst.includes = (...args) => inst.check(/* @__PURE__ */ _includes(...args));
-	inst.startsWith = (...args) => inst.check(/* @__PURE__ */ _startsWith(...args));
-	inst.endsWith = (...args) => inst.check(/* @__PURE__ */ _endsWith(...args));
-	inst.min = (...args) => inst.check(/* @__PURE__ */ _minLength(...args));
-	inst.max = (...args) => inst.check(/* @__PURE__ */ _maxLength(...args));
-	inst.length = (...args) => inst.check(/* @__PURE__ */ _length(...args));
-	inst.nonempty = (...args) => inst.check(/* @__PURE__ */ _minLength(1, ...args));
-	inst.lowercase = (params) => inst.check(/* @__PURE__ */ _lowercase(params));
-	inst.uppercase = (params) => inst.check(/* @__PURE__ */ _uppercase(params));
-	inst.trim = () => inst.check(/* @__PURE__ */ _trim());
-	inst.normalize = (...args) => inst.check(/* @__PURE__ */ _normalize(...args));
-	inst.toLowerCase = () => inst.check(/* @__PURE__ */ _toLowerCase());
-	inst.toUpperCase = () => inst.check(/* @__PURE__ */ _toUpperCase());
-	inst.slugify = () => inst.check(/* @__PURE__ */ _slugify());
-});
-var ZodString = /* @__PURE__ */ $constructor("ZodString", (inst, def) => {
-	$ZodString.init(inst, def);
-	_ZodString.init(inst, def);
-	inst.email = (params) => inst.check(/* @__PURE__ */ _email(ZodEmail, params));
-	inst.url = (params) => inst.check(/* @__PURE__ */ _url(ZodURL, params));
-	inst.jwt = (params) => inst.check(/* @__PURE__ */ _jwt(ZodJWT, params));
-	inst.emoji = (params) => inst.check(/* @__PURE__ */ _emoji(ZodEmoji, params));
-	inst.guid = (params) => inst.check(/* @__PURE__ */ _guid(ZodGUID, params));
-	inst.uuid = (params) => inst.check(/* @__PURE__ */ _uuid(ZodUUID, params));
-	inst.uuidv4 = (params) => inst.check(/* @__PURE__ */ _uuidv4(ZodUUID, params));
-	inst.uuidv6 = (params) => inst.check(/* @__PURE__ */ _uuidv6(ZodUUID, params));
-	inst.uuidv7 = (params) => inst.check(/* @__PURE__ */ _uuidv7(ZodUUID, params));
-	inst.nanoid = (params) => inst.check(/* @__PURE__ */ _nanoid(ZodNanoID, params));
-	inst.guid = (params) => inst.check(/* @__PURE__ */ _guid(ZodGUID, params));
-	inst.cuid = (params) => inst.check(/* @__PURE__ */ _cuid(ZodCUID, params));
-	inst.cuid2 = (params) => inst.check(/* @__PURE__ */ _cuid2(ZodCUID2, params));
-	inst.ulid = (params) => inst.check(/* @__PURE__ */ _ulid(ZodULID, params));
-	inst.base64 = (params) => inst.check(/* @__PURE__ */ _base64(ZodBase64, params));
-	inst.base64url = (params) => inst.check(/* @__PURE__ */ _base64url(ZodBase64URL, params));
-	inst.xid = (params) => inst.check(/* @__PURE__ */ _xid(ZodXID, params));
-	inst.ksuid = (params) => inst.check(/* @__PURE__ */ _ksuid(ZodKSUID, params));
-	inst.ipv4 = (params) => inst.check(/* @__PURE__ */ _ipv4(ZodIPv4, params));
-	inst.ipv6 = (params) => inst.check(/* @__PURE__ */ _ipv6(ZodIPv6, params));
-	inst.cidrv4 = (params) => inst.check(/* @__PURE__ */ _cidrv4(ZodCIDRv4, params));
-	inst.cidrv6 = (params) => inst.check(/* @__PURE__ */ _cidrv6(ZodCIDRv6, params));
-	inst.e164 = (params) => inst.check(/* @__PURE__ */ _e164(ZodE164, params));
-	inst.datetime = (params) => inst.check(datetime(params));
-	inst.date = (params) => inst.check(date(params));
-	inst.time = (params) => inst.check(time(params));
-	inst.duration = (params) => inst.check(duration(params));
-});
-function string(params) {
-	return /* @__PURE__ */ _string(ZodString, params);
-}
-var ZodStringFormat = /* @__PURE__ */ $constructor("ZodStringFormat", (inst, def) => {
-	$ZodStringFormat.init(inst, def);
-	_ZodString.init(inst, def);
-});
-var ZodEmail = /* @__PURE__ */ $constructor("ZodEmail", (inst, def) => {
-	$ZodEmail.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodGUID = /* @__PURE__ */ $constructor("ZodGUID", (inst, def) => {
-	$ZodGUID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodUUID = /* @__PURE__ */ $constructor("ZodUUID", (inst, def) => {
-	$ZodUUID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodURL = /* @__PURE__ */ $constructor("ZodURL", (inst, def) => {
-	$ZodURL.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodEmoji = /* @__PURE__ */ $constructor("ZodEmoji", (inst, def) => {
-	$ZodEmoji.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodNanoID = /* @__PURE__ */ $constructor("ZodNanoID", (inst, def) => {
-	$ZodNanoID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodCUID = /* @__PURE__ */ $constructor("ZodCUID", (inst, def) => {
-	$ZodCUID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodCUID2 = /* @__PURE__ */ $constructor("ZodCUID2", (inst, def) => {
-	$ZodCUID2.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodULID = /* @__PURE__ */ $constructor("ZodULID", (inst, def) => {
-	$ZodULID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodXID = /* @__PURE__ */ $constructor("ZodXID", (inst, def) => {
-	$ZodXID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodKSUID = /* @__PURE__ */ $constructor("ZodKSUID", (inst, def) => {
-	$ZodKSUID.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodIPv4 = /* @__PURE__ */ $constructor("ZodIPv4", (inst, def) => {
-	$ZodIPv4.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodIPv6 = /* @__PURE__ */ $constructor("ZodIPv6", (inst, def) => {
-	$ZodIPv6.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodCIDRv4 = /* @__PURE__ */ $constructor("ZodCIDRv4", (inst, def) => {
-	$ZodCIDRv4.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodCIDRv6 = /* @__PURE__ */ $constructor("ZodCIDRv6", (inst, def) => {
-	$ZodCIDRv6.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodBase64 = /* @__PURE__ */ $constructor("ZodBase64", (inst, def) => {
-	$ZodBase64.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodBase64URL = /* @__PURE__ */ $constructor("ZodBase64URL", (inst, def) => {
-	$ZodBase64URL.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodE164 = /* @__PURE__ */ $constructor("ZodE164", (inst, def) => {
-	$ZodE164.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodJWT = /* @__PURE__ */ $constructor("ZodJWT", (inst, def) => {
-	$ZodJWT.init(inst, def);
-	ZodStringFormat.init(inst, def);
-});
-var ZodUnknown = /* @__PURE__ */ $constructor("ZodUnknown", (inst, def) => {
-	$ZodUnknown.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => unknownProcessor(inst, ctx, json, params);
-});
-function unknown() {
-	return /* @__PURE__ */ _unknown(ZodUnknown);
-}
-var ZodNever = /* @__PURE__ */ $constructor("ZodNever", (inst, def) => {
-	$ZodNever.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => neverProcessor(inst, ctx, json, params);
-});
-function never(params) {
-	return /* @__PURE__ */ _never(ZodNever, params);
-}
-var ZodArray = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
-	$ZodArray.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => arrayProcessor(inst, ctx, json, params);
-	inst.element = def.element;
-	inst.min = (minLength, params) => inst.check(/* @__PURE__ */ _minLength(minLength, params));
-	inst.nonempty = (params) => inst.check(/* @__PURE__ */ _minLength(1, params));
-	inst.max = (maxLength, params) => inst.check(/* @__PURE__ */ _maxLength(maxLength, params));
-	inst.length = (len, params) => inst.check(/* @__PURE__ */ _length(len, params));
-	inst.unwrap = () => inst.element;
-});
-function array(element, params) {
-	return /* @__PURE__ */ _array(ZodArray, element, params);
-}
-var ZodObject = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
-	$ZodObjectJIT.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => objectProcessor(inst, ctx, json, params);
-	defineLazy(inst, "shape", () => {
-		return def.shape;
-	});
-	inst.keyof = () => _enum(Object.keys(inst._zod.def.shape));
-	inst.catchall = (catchall) => inst.clone({
-		...inst._zod.def,
-		catchall
-	});
-	inst.passthrough = () => inst.clone({
-		...inst._zod.def,
-		catchall: unknown()
-	});
-	inst.loose = () => inst.clone({
-		...inst._zod.def,
-		catchall: unknown()
-	});
-	inst.strict = () => inst.clone({
-		...inst._zod.def,
-		catchall: never()
-	});
-	inst.strip = () => inst.clone({
-		...inst._zod.def,
-		catchall: void 0
-	});
-	inst.extend = (incoming) => {
-		return extend(inst, incoming);
-	};
-	inst.safeExtend = (incoming) => {
-		return safeExtend(inst, incoming);
-	};
-	inst.merge = (other) => merge(inst, other);
-	inst.pick = (mask) => pick(inst, mask);
-	inst.omit = (mask) => omit(inst, mask);
-	inst.partial = (...args) => partial(ZodOptional, inst, args[0]);
-	inst.required = (...args) => required(ZodNonOptional, inst, args[0]);
-});
-function object(shape, params) {
-	return new ZodObject({
-		type: "object",
-		shape: shape ?? {},
-		...normalizeParams(params)
-	});
-}
-var ZodUnion = /* @__PURE__ */ $constructor("ZodUnion", (inst, def) => {
-	$ZodUnion.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => unionProcessor(inst, ctx, json, params);
-	inst.options = def.options;
-});
-function union(options, params) {
-	return new ZodUnion({
-		type: "union",
-		options,
-		...normalizeParams(params)
-	});
-}
-var ZodIntersection = /* @__PURE__ */ $constructor("ZodIntersection", (inst, def) => {
-	$ZodIntersection.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => intersectionProcessor(inst, ctx, json, params);
-});
-function intersection(left, right) {
-	return new ZodIntersection({
-		type: "intersection",
-		left,
-		right
-	});
-}
-var ZodEnum = /* @__PURE__ */ $constructor("ZodEnum", (inst, def) => {
-	$ZodEnum.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => enumProcessor(inst, ctx, json, params);
-	inst.enum = def.entries;
-	inst.options = Object.values(def.entries);
-	const keys = new Set(Object.keys(def.entries));
-	inst.extract = (values, params) => {
-		const newEntries = {};
-		for (const value of values) if (keys.has(value)) newEntries[value] = def.entries[value];
-		else throw new Error(`Key ${value} not found in enum`);
-		return new ZodEnum({
-			...def,
-			checks: [],
-			...normalizeParams(params),
-			entries: newEntries
-		});
-	};
-	inst.exclude = (values, params) => {
-		const newEntries = { ...def.entries };
-		for (const value of values) if (keys.has(value)) delete newEntries[value];
-		else throw new Error(`Key ${value} not found in enum`);
-		return new ZodEnum({
-			...def,
-			checks: [],
-			...normalizeParams(params),
-			entries: newEntries
-		});
-	};
-});
-function _enum(values, params) {
-	return new ZodEnum({
-		type: "enum",
-		entries: Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values,
-		...normalizeParams(params)
-	});
-}
-var ZodTransform = /* @__PURE__ */ $constructor("ZodTransform", (inst, def) => {
-	$ZodTransform.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => transformProcessor(inst, ctx, json, params);
-	inst._zod.parse = (payload, _ctx) => {
-		if (_ctx.direction === "backward") throw new $ZodEncodeError(inst.constructor.name);
-		payload.addIssue = (issue$1) => {
-			if (typeof issue$1 === "string") payload.issues.push(issue(issue$1, payload.value, def));
-			else {
-				const _issue = issue$1;
-				if (_issue.fatal) _issue.continue = false;
-				_issue.code ?? (_issue.code = "custom");
-				_issue.input ?? (_issue.input = payload.value);
-				_issue.inst ?? (_issue.inst = inst);
-				payload.issues.push(issue(_issue));
-			}
-		};
-		const output = def.transform(payload.value, payload);
-		if (output instanceof Promise) return output.then((output) => {
-			payload.value = output;
-			return payload;
-		});
-		payload.value = output;
-		return payload;
-	};
-});
-function transform(fn) {
-	return new ZodTransform({
-		type: "transform",
-		transform: fn
-	});
-}
-var ZodOptional = /* @__PURE__ */ $constructor("ZodOptional", (inst, def) => {
-	$ZodOptional.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => optionalProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function optional(innerType) {
-	return new ZodOptional({
-		type: "optional",
-		innerType
-	});
-}
-var ZodExactOptional = /* @__PURE__ */ $constructor("ZodExactOptional", (inst, def) => {
-	$ZodExactOptional.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => optionalProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function exactOptional(innerType) {
-	return new ZodExactOptional({
-		type: "optional",
-		innerType
-	});
-}
-var ZodNullable = /* @__PURE__ */ $constructor("ZodNullable", (inst, def) => {
-	$ZodNullable.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => nullableProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function nullable(innerType) {
-	return new ZodNullable({
-		type: "nullable",
-		innerType
-	});
-}
-var ZodDefault = /* @__PURE__ */ $constructor("ZodDefault", (inst, def) => {
-	$ZodDefault.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => defaultProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-	inst.removeDefault = inst.unwrap;
-});
-function _default(innerType, defaultValue) {
-	return new ZodDefault({
-		type: "default",
-		innerType,
-		get defaultValue() {
-			return typeof defaultValue === "function" ? defaultValue() : shallowClone(defaultValue);
-		}
-	});
-}
-var ZodPrefault = /* @__PURE__ */ $constructor("ZodPrefault", (inst, def) => {
-	$ZodPrefault.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => prefaultProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function prefault(innerType, defaultValue) {
-	return new ZodPrefault({
-		type: "prefault",
-		innerType,
-		get defaultValue() {
-			return typeof defaultValue === "function" ? defaultValue() : shallowClone(defaultValue);
-		}
-	});
-}
-var ZodNonOptional = /* @__PURE__ */ $constructor("ZodNonOptional", (inst, def) => {
-	$ZodNonOptional.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => nonoptionalProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function nonoptional(innerType, params) {
-	return new ZodNonOptional({
-		type: "nonoptional",
-		innerType,
-		...normalizeParams(params)
-	});
-}
-var ZodCatch = /* @__PURE__ */ $constructor("ZodCatch", (inst, def) => {
-	$ZodCatch.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => catchProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-	inst.removeCatch = inst.unwrap;
-});
-function _catch(innerType, catchValue) {
-	return new ZodCatch({
-		type: "catch",
-		innerType,
-		catchValue: typeof catchValue === "function" ? catchValue : () => catchValue
-	});
-}
-var ZodPipe = /* @__PURE__ */ $constructor("ZodPipe", (inst, def) => {
-	$ZodPipe.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => pipeProcessor(inst, ctx, json, params);
-	inst.in = def.in;
-	inst.out = def.out;
-});
-function pipe(in_, out) {
-	return new ZodPipe({
-		type: "pipe",
-		in: in_,
-		out
-	});
-}
-var ZodReadonly = /* @__PURE__ */ $constructor("ZodReadonly", (inst, def) => {
-	$ZodReadonly.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => readonlyProcessor(inst, ctx, json, params);
-	inst.unwrap = () => inst._zod.def.innerType;
-});
-function readonly(innerType) {
-	return new ZodReadonly({
-		type: "readonly",
-		innerType
-	});
-}
-var ZodCustom = /* @__PURE__ */ $constructor("ZodCustom", (inst, def) => {
-	$ZodCustom.init(inst, def);
-	ZodType.init(inst, def);
-	inst._zod.processJSONSchema = (ctx, json, params) => customProcessor(inst, ctx, json, params);
-});
-function refine(fn, _params = {}) {
-	return /* @__PURE__ */ _refine(ZodCustom, fn, _params);
-}
-function superRefine(fn) {
-	return /* @__PURE__ */ _superRefine(fn);
 }
 //#endregion
 //#region src/components/ui/input.tsx
@@ -32204,7 +25509,7 @@ var Primitive = [
 }, {});
 //#endregion
 //#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-label@2.1.8_@types+react-dom@19.2.3_@types+react@19.2.14__@types+react@_55fa612a976b7bdfbf4dcdd93d861aab/node_modules/@radix-ui/react-label/dist/index.mjs
-var NAME$1 = "Label";
+var NAME = "Label";
 var Label$1 = import_react.forwardRef((props, forwardedRef) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.label, {
 		...props,
@@ -32216,484 +25521,367 @@ var Label$1 = import_react.forwardRef((props, forwardedRef) => {
 		}
 	});
 });
-Label$1.displayName = NAME$1;
-var Root$2 = Label$1;
+Label$1.displayName = NAME;
+var Root = Label$1;
 //#endregion
 //#region src/components/ui/label.tsx
 var labelVariants = cva("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70");
-var Label = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root$2, {
+var Label = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root, {
 	"data-uid": "src/components/ui/label.tsx:16:3",
 	"data-prohibitions": "[editContent]",
 	ref,
 	className: cn$1(labelVariants(), className),
 	...props
 }));
-Label.displayName = Root$2.displayName;
-//#endregion
-//#region src/components/ui/form.tsx
-var Form = FormProvider;
-var FormFieldContext = import_react.createContext({});
-var FormField = ({ ...props }) => {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormFieldContext.Provider, {
-		"data-uid": "src/components/ui/form.tsx:35:5",
-		"data-prohibitions": "[]",
-		value: { name: props.name },
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Controller, {
-			"data-uid": "src/components/ui/form.tsx:36:7",
-			"data-prohibitions": "[editContent]",
-			...props
-		})
-	});
-};
-var useFormField = () => {
-	const fieldContext = import_react.useContext(FormFieldContext);
-	const itemContext = import_react.useContext(FormItemContext);
-	const { getFieldState, formState } = useFormContext();
-	const fieldState = getFieldState(fieldContext.name, formState);
-	if (!fieldContext) throw new Error("useFormField should be used within <FormField>");
-	const { id } = itemContext;
-	return {
-		id,
-		name: fieldContext.name,
-		formItemId: `${id}-form-item`,
-		formDescriptionId: `${id}-form-item-description`,
-		formMessageId: `${id}-form-item-message`,
-		...fieldState
-	};
-};
-var FormItemContext = import_react.createContext({});
-var FormItem = import_react.forwardRef(({ className, ...props }, ref) => {
-	const id = import_react.useId();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormItemContext.Provider, {
-		"data-uid": "src/components/ui/form.tsx:75:7",
-		"data-prohibitions": "[editContent]",
-		value: { id },
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/ui/form.tsx:76:9",
-			"data-prohibitions": "[editContent]",
-			ref,
-			className: cn$1("space-y-2", className),
-			...props
-		})
-	});
-});
-FormItem.displayName = "FormItem";
-var FormLabel = import_react.forwardRef(({ className, ...props }, ref) => {
-	const { error, formItemId } = useFormField();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-		"data-uid": "src/components/ui/form.tsx:90:5",
-		"data-prohibitions": "[editContent]",
-		ref,
-		className: cn$1(error && "text-destructive", className),
-		htmlFor: formItemId,
-		...props
-	});
-});
-FormLabel.displayName = "FormLabel";
-var FormControl = import_react.forwardRef(({ ...props }, ref) => {
-	const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Slot$1, {
-		"data-uid": "src/components/ui/form.tsx:107:5",
-		"data-prohibitions": "[editContent]",
-		ref,
-		id: formItemId,
-		"aria-describedby": !error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`,
-		"aria-invalid": !!error,
-		...props
-	});
-});
-FormControl.displayName = "FormControl";
-var FormDescription = import_react.forwardRef(({ className, ...props }, ref) => {
-	const { formDescriptionId } = useFormField();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-		"data-uid": "src/components/ui/form.tsx:125:5",
-		"data-prohibitions": "[editContent]",
-		ref,
-		id: formDescriptionId,
-		className: cn$1("text-sm text-muted-foreground", className),
-		...props
-	});
-});
-FormDescription.displayName = "FormDescription";
-var FormMessage = import_react.forwardRef(({ className, children, ...props }, ref) => {
-	const { error, formMessageId } = useFormField();
-	const body = error ? String(error?.message ?? "") : children;
-	if (!body) return null;
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-		"data-uid": "src/components/ui/form.tsx:147:5",
-		"data-prohibitions": "[editContent]",
-		ref,
-		id: formMessageId,
-		className: cn$1("text-sm font-medium text-destructive", className),
-		...props,
-		children: body
-	});
-});
-FormMessage.displayName = "FormMessage";
+Label.displayName = Root.displayName;
 //#endregion
 //#region src/components/sections/Contact.tsx
-var contactSchema = object({
-	name: string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-	company: string().min(2, "Empresa é obrigatória"),
-	phone: string().min(10, "Telefone inválido"),
-	email: string().email("E-mail inválido"),
-	message: string().min(10, "A mensagem deve ter no mínimo 10 caracteres")
-});
 function Contact() {
-	const { toast } = useToast();
-	const [isSubmitting, setIsSubmitting] = (0, import_react.useState)(false);
-	const form = useForm({
-		resolver: a(contactSchema),
-		defaultValues: {
-			name: "",
-			company: "",
-			phone: "",
-			email: "",
-			message: ""
-		}
-	});
-	const onSubmit = (data) => {
-		setIsSubmitting(true);
-		setTimeout(() => {
-			setIsSubmitting(false);
-			toast({
-				title: "Mensagem enviada com sucesso!",
-				description: "Nossa equipe comercial entrará em contato em breve.",
-				className: "bg-green-50 border-green-200 text-green-900"
-			});
-			form.reset();
-		}, 1500);
-	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-		"data-uid": "src/components/sections/Contact.tsx:62:5",
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+		"data-uid": "src/components/sections/Contact.tsx:10:5",
 		"data-prohibitions": "[editContent]",
 		id: "contato",
-		className: "py-24 bg-primary relative overflow-hidden",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/sections/Contact.tsx:64:7",
-			"data-prohibitions": "[]",
-			className: "absolute inset-0 opacity-5",
-			style: {
-				backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
-				backgroundSize: "32px 32px"
-			}
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/sections/Contact.tsx:72:7",
+		className: "py-24 bg-gray-50 relative overflow-hidden",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			"data-uid": "src/components/sections/Contact.tsx:11:7",
 			"data-prohibitions": "[editContent]",
-			className: "container px-4 relative z-10",
+			className: "container mx-auto px-4 md:px-6 relative z-10",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/sections/Contact.tsx:73:9",
+				"data-uid": "src/components/sections/Contact.tsx:12:9",
 				"data-prohibitions": "[editContent]",
-				className: "grid grid-cols-1 lg:grid-cols-2 gap-16 items-center",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/components/sections/Contact.tsx:74:11",
+				className: "max-w-5xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					"data-uid": "src/components/sections/Contact.tsx:14:11",
 					"data-prohibitions": "[]",
-					direction: "right",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/sections/Contact.tsx:75:13",
+					className: "bg-brand-navy text-white p-10 lg:w-2/5 flex flex-col justify-between",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+						"data-uid": "src/components/sections/Contact.tsx:15:13",
 						"data-prohibitions": "[]",
-						className: "text-white space-y-6",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-								"data-uid": "src/components/sections/Contact.tsx:76:15",
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+								"data-uid": "src/components/sections/Contact.tsx:16:15",
 								"data-prohibitions": "[]",
-								className: "font-poppins font-bold text-4xl lg:text-5xl leading-tight",
-								children: [
-									"Vamos",
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/sections/Contact.tsx:78:17",
-										"data-prohibitions": "[editContent]"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/sections/Contact.tsx:79:17",
-										"data-prohibitions": "[]",
-										className: "text-accent",
-										children: "conversar?"
-									})
-								]
+								className: "text-3xl font-extrabold mb-2",
+								children: "Fale Conosco"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/sections/Contact.tsx:81:15",
+								"data-uid": "src/components/sections/Contact.tsx:17:15",
 								"data-prohibitions": "[]",
-								className: "text-white/80 text-lg max-w-md leading-relaxed",
-								children: "Solicite um orçamento sem compromisso. Nossa equipe técnica analisará sua demanda e apresentará a melhor solução em engenharia e manutenção."
+								className: "text-gray-300 mb-10 text-sm",
+								children: "Estamos prontos para entender as necessidades da sua obra e propor a melhor solução. Solicite um orçamento sem compromisso."
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/sections/Contact.tsx:85:15",
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								"data-uid": "src/components/sections/Contact.tsx:22:15",
 								"data-prohibitions": "[]",
-								className: "hidden lg:block pt-8",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/sections/Contact.tsx:86:17",
-									"data-prohibitions": "[]",
-									className: "p-6 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 inline-block",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Contact.tsx:87:19",
+								className: "space-y-6",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:23:17",
 										"data-prohibitions": "[]",
-										className: "text-sm text-white/60 uppercase tracking-wider font-semibold mb-2",
-										children: "Atendimento Imediato"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Contact.tsx:90:19",
+										className: "flex items-start gap-4",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:24:19",
+											"data-prohibitions": "[]",
+											className: "bg-white/10 p-3 rounded-full shrink-0",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
+												"data-uid": "src/components/sections/Contact.tsx:25:21",
+												"data-prohibitions": "[editContent]",
+												className: "h-6 w-6 text-brand-orange"
+											})
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:27:19",
+											"data-prohibitions": "[]",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												"data-uid": "src/components/sections/Contact.tsx:28:21",
+												"data-prohibitions": "[]",
+												className: "font-semibold text-lg",
+												children: "Telefone / WhatsApp"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												"data-uid": "src/components/sections/Contact.tsx:29:21",
+												"data-prohibitions": "[]",
+												className: "text-gray-300 text-sm mt-1",
+												children: "(11) 99999-9999"
+											})]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:33:17",
 										"data-prohibitions": "[]",
-										className: "text-2xl font-bold font-mono text-white",
-										children: "(11) 94003-7545"
-									})]
-								})
+										className: "flex items-start gap-4",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:34:19",
+											"data-prohibitions": "[]",
+											className: "bg-white/10 p-3 rounded-full shrink-0",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
+												"data-uid": "src/components/sections/Contact.tsx:35:21",
+												"data-prohibitions": "[editContent]",
+												className: "h-6 w-6 text-brand-orange"
+											})
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:37:19",
+											"data-prohibitions": "[]",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												"data-uid": "src/components/sections/Contact.tsx:38:21",
+												"data-prohibitions": "[]",
+												className: "font-semibold text-lg",
+												children: "E-mail"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												"data-uid": "src/components/sections/Contact.tsx:39:21",
+												"data-prohibitions": "[]",
+												className: "text-gray-300 text-sm mt-1",
+												children: "contato@jtobras.com.br"
+											})]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:43:17",
+										"data-prohibitions": "[]",
+										className: "flex items-start gap-4",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:44:19",
+											"data-prohibitions": "[]",
+											className: "bg-white/10 p-3 rounded-full shrink-0",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
+												"data-uid": "src/components/sections/Contact.tsx:45:21",
+												"data-prohibitions": "[editContent]",
+												className: "h-6 w-6 text-brand-orange"
+											})
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:47:19",
+											"data-prohibitions": "[]",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												"data-uid": "src/components/sections/Contact.tsx:48:21",
+												"data-prohibitions": "[]",
+												className: "font-semibold text-lg",
+												children: "Escritório"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+												"data-uid": "src/components/sections/Contact.tsx:49:21",
+												"data-prohibitions": "[]",
+												className: "text-gray-300 text-sm mt-1",
+												children: [
+													"Av. Paulista, 1000 - Bela Vista",
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
+														"data-uid": "src/components/sections/Contact.tsx:51:23",
+														"data-prohibitions": "[editContent]"
+													}),
+													"São Paulo - SP, 01310-100"
+												]
+											})]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:57:17",
+										"data-prohibitions": "[]",
+										className: "flex items-start gap-4",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:58:19",
+											"data-prohibitions": "[]",
+											className: "bg-white/10 p-3 rounded-full shrink-0",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
+												"data-uid": "src/components/sections/Contact.tsx:59:21",
+												"data-prohibitions": "[editContent]",
+												className: "h-6 w-6 text-brand-orange"
+											})
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											"data-uid": "src/components/sections/Contact.tsx:61:19",
+											"data-prohibitions": "[]",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												"data-uid": "src/components/sections/Contact.tsx:62:21",
+												"data-prohibitions": "[]",
+												className: "font-semibold text-lg",
+												children: "Horário de Atendimento"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												"data-uid": "src/components/sections/Contact.tsx:63:21",
+												"data-prohibitions": "[]",
+												className: "text-gray-300 text-sm mt-1",
+												children: "Segunda a Sexta: 08h às 18h"
+											})]
+										})]
+									})
+								]
 							})
 						]
 					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/components/sections/Contact.tsx:96:11",
-					"data-prohibitions": "[editContent]",
-					direction: "left",
-					delay: 200,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
-						"data-uid": "src/components/sections/Contact.tsx:97:13",
-						"data-prohibitions": "[editContent]",
-						className: "border-0 shadow-2xl bg-white rounded-2xl",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/components/sections/Contact.tsx:98:15",
-							"data-prohibitions": "[editContent]",
-							className: "p-8",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Form, {
-								"data-uid": "src/components/sections/Contact.tsx:99:17",
-								"data-prohibitions": "[editContent]",
-								...form,
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-									"data-uid": "src/components/sections/Contact.tsx:100:19",
-									"data-prohibitions": "[editContent]",
-									onSubmit: form.handleSubmit(onSubmit),
-									className: "space-y-6",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormField, {
-											"data-uid": "src/components/sections/Contact.tsx:101:21",
-											"data-prohibitions": "[editContent]",
-											control: form.control,
-											name: "name",
-											render: ({ field }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FormItem, {
-												"data-uid": "src/components/sections/Contact.tsx:105:25",
-												"data-prohibitions": "[]",
-												children: [
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormLabel, {
-														"data-uid": "src/components/sections/Contact.tsx:106:27",
-														"data-prohibitions": "[]",
-														className: "text-slate-700 font-semibold",
-														children: "Nome Completo"
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormControl, {
-														"data-uid": "src/components/sections/Contact.tsx:109:27",
-														"data-prohibitions": "[]",
-														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-															"data-uid": "src/components/sections/Contact.tsx:110:29",
-															"data-prohibitions": "[editContent]",
-															placeholder: "João da Silva",
-															className: "h-12 bg-slate-50",
-															...field
-														})
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormMessage, {
-														"data-uid": "src/components/sections/Contact.tsx:116:27",
-														"data-prohibitions": "[editContent]"
-													})
-												]
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:121:21",
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					"data-uid": "src/components/sections/Contact.tsx:71:11",
+					"data-prohibitions": "[]",
+					className: "p-10 lg:w-3/5",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+						"data-uid": "src/components/sections/Contact.tsx:72:13",
+						"data-prohibitions": "[]",
+						delay: .2,
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/sections/Contact.tsx:73:15",
+							"data-prohibitions": "[]",
+							className: "text-2xl font-bold text-brand-navy mb-6",
+							children: "Envie sua mensagem"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+							"data-uid": "src/components/sections/Contact.tsx:75:15",
+							"data-prohibitions": "[]",
+							className: "space-y-6",
+							onSubmit: (e) => e.preventDefault(),
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/sections/Contact.tsx:76:17",
+									"data-prohibitions": "[]",
+									className: "grid grid-cols-1 sm:grid-cols-2 gap-6",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:77:19",
+										"data-prohibitions": "[]",
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+											"data-uid": "src/components/sections/Contact.tsx:78:21",
 											"data-prohibitions": "[]",
-											className: "grid grid-cols-1 md:grid-cols-2 gap-6",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormField, {
-												"data-uid": "src/components/sections/Contact.tsx:122:23",
-												"data-prohibitions": "[editContent]",
-												control: form.control,
-												name: "company",
-												render: ({ field }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FormItem, {
-													"data-uid": "src/components/sections/Contact.tsx:126:27",
-													"data-prohibitions": "[]",
-													children: [
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormLabel, {
-															"data-uid": "src/components/sections/Contact.tsx:127:29",
-															"data-prohibitions": "[]",
-															className: "text-slate-700 font-semibold",
-															children: "Empresa"
-														}),
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormControl, {
-															"data-uid": "src/components/sections/Contact.tsx:128:29",
-															"data-prohibitions": "[]",
-															children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-																"data-uid": "src/components/sections/Contact.tsx:129:31",
-																"data-prohibitions": "[editContent]",
-																placeholder: "Sua empresa",
-																className: "h-12 bg-slate-50",
-																...field
-															})
-														}),
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormMessage, {
-															"data-uid": "src/components/sections/Contact.tsx:135:29",
-															"data-prohibitions": "[editContent]"
-														})
-													]
-												})
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormField, {
-												"data-uid": "src/components/sections/Contact.tsx:139:23",
-												"data-prohibitions": "[editContent]",
-												control: form.control,
-												name: "phone",
-												render: ({ field }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FormItem, {
-													"data-uid": "src/components/sections/Contact.tsx:143:27",
-													"data-prohibitions": "[]",
-													children: [
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormLabel, {
-															"data-uid": "src/components/sections/Contact.tsx:144:29",
-															"data-prohibitions": "[]",
-															className: "text-slate-700 font-semibold",
-															children: "Telefone / WhatsApp"
-														}),
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormControl, {
-															"data-uid": "src/components/sections/Contact.tsx:147:29",
-															"data-prohibitions": "[]",
-															children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-																"data-uid": "src/components/sections/Contact.tsx:148:31",
-																"data-prohibitions": "[editContent]",
-																placeholder: "(11) 90000-0000",
-																className: "h-12 bg-slate-50",
-																...field
-															})
-														}),
-														/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormMessage, {
-															"data-uid": "src/components/sections/Contact.tsx:154:29",
-															"data-prohibitions": "[editContent]"
-														})
-													]
-												})
-											})]
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormField, {
-											"data-uid": "src/components/sections/Contact.tsx:160:21",
+											htmlFor: "name",
+											className: "text-gray-700 font-medium",
+											children: "Nome Completo"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											"data-uid": "src/components/sections/Contact.tsx:81:21",
 											"data-prohibitions": "[editContent]",
-											control: form.control,
-											name: "email",
-											render: ({ field }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FormItem, {
-												"data-uid": "src/components/sections/Contact.tsx:164:25",
-												"data-prohibitions": "[]",
-												children: [
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormLabel, {
-														"data-uid": "src/components/sections/Contact.tsx:165:27",
-														"data-prohibitions": "[]",
-														className: "text-slate-700 font-semibold",
-														children: "E-mail Profissional"
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormControl, {
-														"data-uid": "src/components/sections/Contact.tsx:168:27",
-														"data-prohibitions": "[]",
-														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-															"data-uid": "src/components/sections/Contact.tsx:169:29",
-															"data-prohibitions": "[editContent]",
-															placeholder: "joao@empresa.com.br",
-															className: "h-12 bg-slate-50",
-															...field
-														})
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormMessage, {
-														"data-uid": "src/components/sections/Contact.tsx:175:27",
-														"data-prohibitions": "[editContent]"
-													})
-												]
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormField, {
-											"data-uid": "src/components/sections/Contact.tsx:180:21",
+											id: "name",
+											placeholder: "João da Silva",
+											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:87:19",
+										"data-prohibitions": "[]",
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+											"data-uid": "src/components/sections/Contact.tsx:88:21",
+											"data-prohibitions": "[]",
+											htmlFor: "company",
+											className: "text-gray-700 font-medium",
+											children: "Empresa"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											"data-uid": "src/components/sections/Contact.tsx:91:21",
 											"data-prohibitions": "[editContent]",
-											control: form.control,
-											name: "message",
-											render: ({ field }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FormItem, {
-												"data-uid": "src/components/sections/Contact.tsx:184:25",
-												"data-prohibitions": "[]",
-												children: [
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormLabel, {
-														"data-uid": "src/components/sections/Contact.tsx:185:27",
-														"data-prohibitions": "[]",
-														className: "text-slate-700 font-semibold",
-														children: "Detalhes do Projeto"
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormControl, {
-														"data-uid": "src/components/sections/Contact.tsx:188:27",
-														"data-prohibitions": "[]",
-														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
-															"data-uid": "src/components/sections/Contact.tsx:189:29",
-															"data-prohibitions": "[editContent]",
-															placeholder: "Descreva brevemente a obra ou serviço necessário...",
-															className: "min-h-[120px] bg-slate-50 resize-y",
-															...field
-														})
-													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormMessage, {
-														"data-uid": "src/components/sections/Contact.tsx:195:27",
-														"data-prohibitions": "[editContent]"
-													})
-												]
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-											"data-uid": "src/components/sections/Contact.tsx:200:21",
+											id: "company",
+											placeholder: "Sua Empresa LTDA",
+											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/sections/Contact.tsx:99:17",
+									"data-prohibitions": "[]",
+									className: "grid grid-cols-1 sm:grid-cols-2 gap-6",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:100:19",
+										"data-prohibitions": "[]",
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+											"data-uid": "src/components/sections/Contact.tsx:101:21",
+											"data-prohibitions": "[]",
+											htmlFor: "email",
+											className: "text-gray-700 font-medium",
+											children: "E-mail"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											"data-uid": "src/components/sections/Contact.tsx:104:21",
 											"data-prohibitions": "[editContent]",
-											type: "submit",
-											className: "w-full h-14 text-lg bg-secondary hover:bg-primary transition-colors",
-											disabled: isSubmitting,
-											children: isSubmitting ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoaderCircle, {
-												"data-uid": "src/components/sections/Contact.tsx:207:27",
-												"data-prohibitions": "[editContent]",
-												className: "mr-2 h-5 w-5 animate-spin"
-											}), "Enviando..."] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: ["Solicitar Orçamento", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Send, {
-												"data-uid": "src/components/sections/Contact.tsx:213:27",
-												"data-prohibitions": "[editContent]",
-												className: "ml-2 h-5 w-5"
-											})] })
-										})
-									]
+											id: "email",
+											type: "email",
+											placeholder: "joao@empresa.com.br",
+											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Contact.tsx:111:19",
+										"data-prohibitions": "[]",
+										className: "space-y-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+											"data-uid": "src/components/sections/Contact.tsx:112:21",
+											"data-prohibitions": "[]",
+											htmlFor: "phone",
+											className: "text-gray-700 font-medium",
+											children: "Telefone"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
+											"data-uid": "src/components/sections/Contact.tsx:115:21",
+											"data-prohibitions": "[editContent]",
+											id: "phone",
+											type: "tel",
+											placeholder: "(11) 90000-0000",
+											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/sections/Contact.tsx:124:17",
+									"data-prohibitions": "[]",
+									className: "space-y-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
+										"data-uid": "src/components/sections/Contact.tsx:125:19",
+										"data-prohibitions": "[]",
+										htmlFor: "message",
+										className: "text-gray-700 font-medium",
+										children: "Mensagem ou Detalhes do Projeto"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
+										"data-uid": "src/components/sections/Contact.tsx:128:19",
+										"data-prohibitions": "[editContent]",
+										id: "message",
+										placeholder: "Descreva brevemente o que você precisa...",
+										className: "min-h-[120px] bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+									"data-uid": "src/components/sections/Contact.tsx:135:17",
+									"data-prohibitions": "[]",
+									type: "submit",
+									className: "w-full bg-brand-orange hover:bg-[#cf6d18] text-white h-12 text-lg font-medium",
+									children: "Solicitar Orçamento Agora"
 								})
-							})
-						})
+							]
+						})]
 					})
 				})]
 			})
-		})]
+		})
 	});
 }
 //#endregion
 //#region src/pages/Index.tsx
-var Index = () => {
+function Index() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Index.tsx:10:5",
+		"data-uid": "src/pages/Index.tsx:11:5",
 		"data-prohibitions": "[]",
-		className: "flex flex-col min-h-screen w-full",
+		className: "min-h-screen flex flex-col",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Hero, {
-				"data-uid": "src/pages/Index.tsx:11:7",
-				"data-prohibitions": "[editContent]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Safety, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header, {
 				"data-uid": "src/pages/Index.tsx:12:7",
 				"data-prohibitions": "[editContent]"
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Services, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
 				"data-uid": "src/pages/Index.tsx:13:7",
-				"data-prohibitions": "[editContent]"
+				"data-prohibitions": "[]",
+				className: "flex-1",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Hero, {
+						"data-uid": "src/pages/Index.tsx:14:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Services, {
+						"data-uid": "src/pages/Index.tsx:15:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clients, {
+						"data-uid": "src/pages/Index.tsx:16:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompanyProfile, {
+						"data-uid": "src/pages/Index.tsx:17:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Contact, {
+						"data-uid": "src/pages/Index.tsx:18:9",
+						"data-prohibitions": "[editContent]"
+					})
+				]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clients, {
-				"data-uid": "src/pages/Index.tsx:14:7",
-				"data-prohibitions": "[editContent]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompanyProfile, {
-				"data-uid": "src/pages/Index.tsx:15:7",
-				"data-prohibitions": "[editContent]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Contact, {
-				"data-uid": "src/pages/Index.tsx:16:7",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Footer, {
+				"data-uid": "src/pages/Index.tsx:20:7",
 				"data-prohibitions": "[editContent]"
 			})
 		]
 	});
-};
+}
 //#endregion
 //#region src/pages/Portfolio.tsx
 var PORTFOLIO_ITEMS = [
@@ -32912,1953 +26100,6 @@ var NotFound = () => {
 	});
 };
 //#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-focus-scope@1.1.7_@types+react-dom@19.2.3_@types+react@19.2.14__@types+_f62f3af4ca2ba305a7aecf04c8534604/node_modules/@radix-ui/react-focus-scope/dist/index.mjs
-var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
-var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
-var EVENT_OPTIONS = {
-	bubbles: false,
-	cancelable: true
-};
-var FOCUS_SCOPE_NAME = "FocusScope";
-var FocusScope = import_react.forwardRef((props, forwardedRef) => {
-	const { loop = false, trapped = false, onMountAutoFocus: onMountAutoFocusProp, onUnmountAutoFocus: onUnmountAutoFocusProp, ...scopeProps } = props;
-	const [container, setContainer] = import_react.useState(null);
-	const onMountAutoFocus = useCallbackRef$1(onMountAutoFocusProp);
-	const onUnmountAutoFocus = useCallbackRef$1(onUnmountAutoFocusProp);
-	const lastFocusedElementRef = import_react.useRef(null);
-	const composedRefs = useComposedRefs(forwardedRef, (node) => setContainer(node));
-	const focusScope = import_react.useRef({
-		paused: false,
-		pause() {
-			this.paused = true;
-		},
-		resume() {
-			this.paused = false;
-		}
-	}).current;
-	import_react.useEffect(() => {
-		if (trapped) {
-			let handleFocusIn2 = function(event) {
-				if (focusScope.paused || !container) return;
-				const target = event.target;
-				if (container.contains(target)) lastFocusedElementRef.current = target;
-				else focus(lastFocusedElementRef.current, { select: true });
-			}, handleFocusOut2 = function(event) {
-				if (focusScope.paused || !container) return;
-				const relatedTarget = event.relatedTarget;
-				if (relatedTarget === null) return;
-				if (!container.contains(relatedTarget)) focus(lastFocusedElementRef.current, { select: true });
-			}, handleMutations2 = function(mutations) {
-				if (document.activeElement !== document.body) return;
-				for (const mutation of mutations) if (mutation.removedNodes.length > 0) focus(container);
-			};
-			document.addEventListener("focusin", handleFocusIn2);
-			document.addEventListener("focusout", handleFocusOut2);
-			const mutationObserver = new MutationObserver(handleMutations2);
-			if (container) mutationObserver.observe(container, {
-				childList: true,
-				subtree: true
-			});
-			return () => {
-				document.removeEventListener("focusin", handleFocusIn2);
-				document.removeEventListener("focusout", handleFocusOut2);
-				mutationObserver.disconnect();
-			};
-		}
-	}, [
-		trapped,
-		container,
-		focusScope.paused
-	]);
-	import_react.useEffect(() => {
-		if (container) {
-			focusScopesStack.add(focusScope);
-			const previouslyFocusedElement = document.activeElement;
-			if (!container.contains(previouslyFocusedElement)) {
-				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
-				container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
-				container.dispatchEvent(mountEvent);
-				if (!mountEvent.defaultPrevented) {
-					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
-					if (document.activeElement === previouslyFocusedElement) focus(container);
-				}
-			}
-			return () => {
-				container.removeEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
-				setTimeout(() => {
-					const unmountEvent = new CustomEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS);
-					container.addEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
-					container.dispatchEvent(unmountEvent);
-					if (!unmountEvent.defaultPrevented) focus(previouslyFocusedElement ?? document.body, { select: true });
-					container.removeEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
-					focusScopesStack.remove(focusScope);
-				}, 0);
-			};
-		}
-	}, [
-		container,
-		onMountAutoFocus,
-		onUnmountAutoFocus,
-		focusScope
-	]);
-	const handleKeyDown = import_react.useCallback((event) => {
-		if (!loop && !trapped) return;
-		if (focusScope.paused) return;
-		const isTabKey = event.key === "Tab" && !event.altKey && !event.ctrlKey && !event.metaKey;
-		const focusedElement = document.activeElement;
-		if (isTabKey && focusedElement) {
-			const container2 = event.currentTarget;
-			const [first, last] = getTabbableEdges(container2);
-			if (!(first && last)) {
-				if (focusedElement === container2) event.preventDefault();
-			} else if (!event.shiftKey && focusedElement === last) {
-				event.preventDefault();
-				if (loop) focus(first, { select: true });
-			} else if (event.shiftKey && focusedElement === first) {
-				event.preventDefault();
-				if (loop) focus(last, { select: true });
-			}
-		}
-	}, [
-		loop,
-		trapped,
-		focusScope.paused
-	]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
-		tabIndex: -1,
-		...scopeProps,
-		ref: composedRefs,
-		onKeyDown: handleKeyDown
-	});
-});
-FocusScope.displayName = FOCUS_SCOPE_NAME;
-function focusFirst(candidates, { select = false } = {}) {
-	const previouslyFocusedElement = document.activeElement;
-	for (const candidate of candidates) {
-		focus(candidate, { select });
-		if (document.activeElement !== previouslyFocusedElement) return;
-	}
-}
-function getTabbableEdges(container) {
-	const candidates = getTabbableCandidates(container);
-	return [findVisible(candidates, container), findVisible(candidates.reverse(), container)];
-}
-function getTabbableCandidates(container) {
-	const nodes = [];
-	const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, { acceptNode: (node) => {
-		const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
-		if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
-		return node.tabIndex >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-	} });
-	while (walker.nextNode()) nodes.push(walker.currentNode);
-	return nodes;
-}
-function findVisible(elements, container) {
-	for (const element of elements) if (!isHidden(element, { upTo: container })) return element;
-}
-function isHidden(node, { upTo }) {
-	if (getComputedStyle(node).visibility === "hidden") return true;
-	while (node) {
-		if (upTo !== void 0 && node === upTo) return false;
-		if (getComputedStyle(node).display === "none") return true;
-		node = node.parentElement;
-	}
-	return false;
-}
-function isSelectableInput(element) {
-	return element instanceof HTMLInputElement && "select" in element;
-}
-function focus(element, { select = false } = {}) {
-	if (element && element.focus) {
-		const previouslyFocusedElement = document.activeElement;
-		element.focus({ preventScroll: true });
-		if (element !== previouslyFocusedElement && isSelectableInput(element) && select) element.select();
-	}
-}
-var focusScopesStack = createFocusScopesStack();
-function createFocusScopesStack() {
-	let stack = [];
-	return {
-		add(focusScope) {
-			const activeFocusScope = stack[0];
-			if (focusScope !== activeFocusScope) activeFocusScope?.pause();
-			stack = arrayRemove(stack, focusScope);
-			stack.unshift(focusScope);
-		},
-		remove(focusScope) {
-			stack = arrayRemove(stack, focusScope);
-			stack[0]?.resume();
-		}
-	};
-}
-function arrayRemove(array, item) {
-	const updatedArray = [...array];
-	const index = updatedArray.indexOf(item);
-	if (index !== -1) updatedArray.splice(index, 1);
-	return updatedArray;
-}
-function removeLinks(items) {
-	return items.filter((item) => item.tagName !== "A");
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-focus-guards@1.1.3_@types+react@19.2.14_react@19.2.4/node_modules/@radix-ui/react-focus-guards/dist/index.mjs
-var count = 0;
-function useFocusGuards() {
-	import_react.useEffect(() => {
-		const edgeGuards = document.querySelectorAll("[data-radix-focus-guard]");
-		document.body.insertAdjacentElement("afterbegin", edgeGuards[0] ?? createFocusGuard());
-		document.body.insertAdjacentElement("beforeend", edgeGuards[1] ?? createFocusGuard());
-		count++;
-		return () => {
-			if (count === 1) document.querySelectorAll("[data-radix-focus-guard]").forEach((node) => node.remove());
-			count--;
-		};
-	}, []);
-}
-function createFocusGuard() {
-	const element = document.createElement("span");
-	element.setAttribute("data-radix-focus-guard", "");
-	element.tabIndex = 0;
-	element.style.outline = "none";
-	element.style.opacity = "0";
-	element.style.position = "fixed";
-	element.style.pointerEvents = "none";
-	return element;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.es6.mjs
-var __assign = function() {
-	__assign = Object.assign || function __assign(t) {
-		for (var s, i = 1, n = arguments.length; i < n; i++) {
-			s = arguments[i];
-			for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-		}
-		return t;
-	};
-	return __assign.apply(this, arguments);
-};
-function __rest(s, e) {
-	var t = {};
-	for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-	if (s != null && typeof Object.getOwnPropertySymbols === "function") {
-		for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-	}
-	return t;
-}
-function __spreadArray(to, from, pack) {
-	if (pack || arguments.length === 2) {
-		for (var i = 0, l = from.length, ar; i < l; i++) if (ar || !(i in from)) {
-			if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-			ar[i] = from[i];
-		}
-	}
-	return to.concat(ar || Array.prototype.slice.call(from));
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll-bar@2.3.8_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll-bar/dist/es2015/constants.js
-var zeroRightClassName = "right-scroll-bar-position";
-var fullWidthClassName = "width-before-scroll-bar";
-var noScrollbarsClassName = "with-scroll-bars-hidden";
-/**
-* Name of a CSS variable containing the amount of "hidden" scrollbar
-* ! might be undefined ! use will fallback!
-*/
-var removedBarSizeVariable = "--removed-body-scroll-bar-size";
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.2.14_react@19.2.4/node_modules/use-callback-ref/dist/es2015/assignRef.js
-/**
-* Assigns a value for a given ref, no matter of the ref format
-* @param {RefObject} ref - a callback function or ref object
-* @param value - a new value
-*
-* @see https://github.com/theKashey/use-callback-ref#assignref
-* @example
-* const refObject = useRef();
-* const refFn = (ref) => {....}
-*
-* assignRef(refObject, "refValue");
-* assignRef(refFn, "refValue");
-*/
-function assignRef(ref, value) {
-	if (typeof ref === "function") ref(value);
-	else if (ref) ref.current = value;
-	return ref;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.2.14_react@19.2.4/node_modules/use-callback-ref/dist/es2015/useRef.js
-/**
-* creates a MutableRef with ref change callback
-* @param initialValue - initial ref value
-* @param {Function} callback - a callback to run when value changes
-*
-* @example
-* const ref = useCallbackRef(0, (newValue, oldValue) => console.log(oldValue, '->', newValue);
-* ref.current = 1;
-* // prints 0 -> 1
-*
-* @see https://reactjs.org/docs/hooks-reference.html#useref
-* @see https://github.com/theKashey/use-callback-ref#usecallbackref---to-replace-reactuseref
-* @returns {MutableRefObject}
-*/
-function useCallbackRef(initialValue, callback) {
-	var ref = (0, import_react.useState)(function() {
-		return {
-			value: initialValue,
-			callback,
-			facade: {
-				get current() {
-					return ref.value;
-				},
-				set current(value) {
-					var last = ref.value;
-					if (last !== value) {
-						ref.value = value;
-						ref.callback(value, last);
-					}
-				}
-			}
-		};
-	})[0];
-	ref.callback = callback;
-	return ref.facade;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.2.14_react@19.2.4/node_modules/use-callback-ref/dist/es2015/useMergeRef.js
-var useIsomorphicLayoutEffect = typeof window !== "undefined" ? import_react.useLayoutEffect : import_react.useEffect;
-var currentValues = /* @__PURE__ */ new WeakMap();
-/**
-* Merges two or more refs together providing a single interface to set their value
-* @param {RefObject|Ref} refs
-* @returns {MutableRefObject} - a new ref, which translates all changes to {refs}
-*
-* @see {@link mergeRefs} a version without buit-in memoization
-* @see https://github.com/theKashey/use-callback-ref#usemergerefs
-* @example
-* const Component = React.forwardRef((props, ref) => {
-*   const ownRef = useRef();
-*   const domRef = useMergeRefs([ref, ownRef]); // 👈 merge together
-*   return <div ref={domRef}>...</div>
-* }
-*/
-function useMergeRefs(refs, defaultValue) {
-	var callbackRef = useCallbackRef(defaultValue || null, function(newValue) {
-		return refs.forEach(function(ref) {
-			return assignRef(ref, newValue);
-		});
-	});
-	useIsomorphicLayoutEffect(function() {
-		var oldValue = currentValues.get(callbackRef);
-		if (oldValue) {
-			var prevRefs_1 = new Set(oldValue);
-			var nextRefs_1 = new Set(refs);
-			var current_1 = callbackRef.current;
-			prevRefs_1.forEach(function(ref) {
-				if (!nextRefs_1.has(ref)) assignRef(ref, null);
-			});
-			nextRefs_1.forEach(function(ref) {
-				if (!prevRefs_1.has(ref)) assignRef(ref, current_1);
-			});
-		}
-		currentValues.set(callbackRef, refs);
-	}, [refs]);
-	return callbackRef;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.2.14_react@19.2.4/node_modules/use-sidecar/dist/es2015/medium.js
-function ItoI(a) {
-	return a;
-}
-function innerCreateMedium(defaults, middleware) {
-	if (middleware === void 0) middleware = ItoI;
-	var buffer = [];
-	var assigned = false;
-	return {
-		read: function() {
-			if (assigned) throw new Error("Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.");
-			if (buffer.length) return buffer[buffer.length - 1];
-			return defaults;
-		},
-		useMedium: function(data) {
-			var item = middleware(data, assigned);
-			buffer.push(item);
-			return function() {
-				buffer = buffer.filter(function(x) {
-					return x !== item;
-				});
-			};
-		},
-		assignSyncMedium: function(cb) {
-			assigned = true;
-			while (buffer.length) {
-				var cbs = buffer;
-				buffer = [];
-				cbs.forEach(cb);
-			}
-			buffer = {
-				push: function(x) {
-					return cb(x);
-				},
-				filter: function() {
-					return buffer;
-				}
-			};
-		},
-		assignMedium: function(cb) {
-			assigned = true;
-			var pendingQueue = [];
-			if (buffer.length) {
-				var cbs = buffer;
-				buffer = [];
-				cbs.forEach(cb);
-				pendingQueue = buffer;
-			}
-			var executeQueue = function() {
-				var cbs = pendingQueue;
-				pendingQueue = [];
-				cbs.forEach(cb);
-			};
-			var cycle = function() {
-				return Promise.resolve().then(executeQueue);
-			};
-			cycle();
-			buffer = {
-				push: function(x) {
-					pendingQueue.push(x);
-					cycle();
-				},
-				filter: function(filter) {
-					pendingQueue = pendingQueue.filter(filter);
-					return buffer;
-				}
-			};
-		}
-	};
-}
-function createSidecarMedium(options) {
-	if (options === void 0) options = {};
-	var medium = innerCreateMedium(null);
-	medium.options = __assign({
-		async: true,
-		ssr: false
-	}, options);
-	return medium;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.2.14_react@19.2.4/node_modules/use-sidecar/dist/es2015/exports.js
-var SideCar = function(_a) {
-	var sideCar = _a.sideCar, rest = __rest(_a, ["sideCar"]);
-	if (!sideCar) throw new Error("Sidecar: please provide `sideCar` property to import the right car");
-	var Target = sideCar.read();
-	if (!Target) throw new Error("Sidecar medium not found");
-	return import_react.createElement(Target, __assign({}, rest));
-};
-SideCar.isSideCarExport = true;
-function exportSidecar(medium, exported) {
-	medium.useMedium(exported);
-	return SideCar;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/medium.js
-var effectCar = createSidecarMedium();
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/UI.js
-var nothing = function() {};
-/**
-* Removes scrollbar from the page and contain the scroll within the Lock
-*/
-var RemoveScroll = import_react.forwardRef(function(props, parentRef) {
-	var ref = import_react.useRef(null);
-	var _a = import_react.useState({
-		onScrollCapture: nothing,
-		onWheelCapture: nothing,
-		onTouchMoveCapture: nothing
-	}), callbacks = _a[0], setCallbacks = _a[1];
-	var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b = props.as, Container = _b === void 0 ? "div" : _b, gapMode = props.gapMode, rest = __rest(props, [
-		"forwardProps",
-		"children",
-		"className",
-		"removeScrollBar",
-		"enabled",
-		"shards",
-		"sideCar",
-		"noRelative",
-		"noIsolation",
-		"inert",
-		"allowPinchZoom",
-		"as",
-		"gapMode"
-	]);
-	var SideCar = sideCar;
-	var containerRef = useMergeRefs([ref, parentRef]);
-	var containerProps = __assign(__assign({}, rest), callbacks);
-	return import_react.createElement(import_react.Fragment, null, enabled && import_react.createElement(SideCar, {
-		sideCar: effectCar,
-		removeScrollBar,
-		shards,
-		noRelative,
-		noIsolation,
-		inert,
-		setCallbacks,
-		allowPinchZoom: !!allowPinchZoom,
-		lockRef: ref,
-		gapMode
-	}), forwardProps ? import_react.cloneElement(import_react.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : import_react.createElement(Container, __assign({}, containerProps, {
-		className,
-		ref: containerRef
-	}), children));
-});
-RemoveScroll.defaultProps = {
-	enabled: true,
-	removeScrollBar: true,
-	inert: false
-};
-RemoveScroll.classNames = {
-	fullWidth: fullWidthClassName,
-	zeroRight: zeroRightClassName
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/get-nonce@1.0.1/node_modules/get-nonce/dist/es2015/index.js
-var currentNonce;
-var getNonce = function() {
-	if (currentNonce) return currentNonce;
-	if (typeof __webpack_nonce__ !== "undefined") return __webpack_nonce__;
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.2.14_react@19.2.4/node_modules/react-style-singleton/dist/es2015/singleton.js
-function makeStyleTag() {
-	if (!document) return null;
-	var tag = document.createElement("style");
-	tag.type = "text/css";
-	var nonce = getNonce();
-	if (nonce) tag.setAttribute("nonce", nonce);
-	return tag;
-}
-function injectStyles(tag, css) {
-	if (tag.styleSheet) tag.styleSheet.cssText = css;
-	else tag.appendChild(document.createTextNode(css));
-}
-function insertStyleTag(tag) {
-	(document.head || document.getElementsByTagName("head")[0]).appendChild(tag);
-}
-var stylesheetSingleton = function() {
-	var counter = 0;
-	var stylesheet = null;
-	return {
-		add: function(style) {
-			if (counter == 0) {
-				if (stylesheet = makeStyleTag()) {
-					injectStyles(stylesheet, style);
-					insertStyleTag(stylesheet);
-				}
-			}
-			counter++;
-		},
-		remove: function() {
-			counter--;
-			if (!counter && stylesheet) {
-				stylesheet.parentNode && stylesheet.parentNode.removeChild(stylesheet);
-				stylesheet = null;
-			}
-		}
-	};
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.2.14_react@19.2.4/node_modules/react-style-singleton/dist/es2015/hook.js
-/**
-* creates a hook to control style singleton
-* @see {@link styleSingleton} for a safer component version
-* @example
-* ```tsx
-* const useStyle = styleHookSingleton();
-* ///
-* useStyle('body { overflow: hidden}');
-*/
-var styleHookSingleton = function() {
-	var sheet = stylesheetSingleton();
-	return function(styles, isDynamic) {
-		import_react.useEffect(function() {
-			sheet.add(styles);
-			return function() {
-				sheet.remove();
-			};
-		}, [styles && isDynamic]);
-	};
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.2.14_react@19.2.4/node_modules/react-style-singleton/dist/es2015/component.js
-/**
-* create a Component to add styles on demand
-* - styles are added when first instance is mounted
-* - styles are removed when the last instance is unmounted
-* - changing styles in runtime does nothing unless dynamic is set. But with multiple components that can lead to the undefined behavior
-*/
-var styleSingleton = function() {
-	var useStyle = styleHookSingleton();
-	var Sheet = function(_a) {
-		var styles = _a.styles, dynamic = _a.dynamic;
-		useStyle(styles, dynamic);
-		return null;
-	};
-	return Sheet;
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll-bar@2.3.8_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll-bar/dist/es2015/utils.js
-var zeroGap = {
-	left: 0,
-	top: 0,
-	right: 0,
-	gap: 0
-};
-var parse = function(x) {
-	return parseInt(x || "", 10) || 0;
-};
-var getOffset = function(gapMode) {
-	var cs = window.getComputedStyle(document.body);
-	var left = cs[gapMode === "padding" ? "paddingLeft" : "marginLeft"];
-	var top = cs[gapMode === "padding" ? "paddingTop" : "marginTop"];
-	var right = cs[gapMode === "padding" ? "paddingRight" : "marginRight"];
-	return [
-		parse(left),
-		parse(top),
-		parse(right)
-	];
-};
-var getGapWidth = function(gapMode) {
-	if (gapMode === void 0) gapMode = "margin";
-	if (typeof window === "undefined") return zeroGap;
-	var offsets = getOffset(gapMode);
-	var documentWidth = document.documentElement.clientWidth;
-	var windowWidth = window.innerWidth;
-	return {
-		left: offsets[0],
-		top: offsets[1],
-		right: offsets[2],
-		gap: Math.max(0, windowWidth - documentWidth + offsets[2] - offsets[0])
-	};
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll-bar@2.3.8_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll-bar/dist/es2015/component.js
-var Style = styleSingleton();
-var lockAttribute = "data-scroll-locked";
-var getStyles = function(_a, allowRelative, gapMode, important) {
-	var left = _a.left, top = _a.top, right = _a.right, gap = _a.gap;
-	if (gapMode === void 0) gapMode = "margin";
-	return "\n  .".concat(noScrollbarsClassName, " {\n   overflow: hidden ").concat(important, ";\n   padding-right: ").concat(gap, "px ").concat(important, ";\n  }\n  body[").concat(lockAttribute, "] {\n    overflow: hidden ").concat(important, ";\n    overscroll-behavior: contain;\n    ").concat([
-		allowRelative && "position: relative ".concat(important, ";"),
-		gapMode === "margin" && "\n    padding-left: ".concat(left, "px;\n    padding-top: ").concat(top, "px;\n    padding-right: ").concat(right, "px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ").concat(gap, "px ").concat(important, ";\n    "),
-		gapMode === "padding" && "padding-right: ".concat(gap, "px ").concat(important, ";")
-	].filter(Boolean).join(""), "\n  }\n  \n  .").concat(zeroRightClassName, " {\n    right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " {\n    margin-right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(zeroRightClassName, " .").concat(zeroRightClassName, " {\n    right: 0 ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " .").concat(fullWidthClassName, " {\n    margin-right: 0 ").concat(important, ";\n  }\n  \n  body[").concat(lockAttribute, "] {\n    ").concat(removedBarSizeVariable, ": ").concat(gap, "px;\n  }\n");
-};
-var getCurrentUseCounter = function() {
-	var counter = parseInt(document.body.getAttribute("data-scroll-locked") || "0", 10);
-	return isFinite(counter) ? counter : 0;
-};
-var useLockAttribute = function() {
-	import_react.useEffect(function() {
-		document.body.setAttribute(lockAttribute, (getCurrentUseCounter() + 1).toString());
-		return function() {
-			var newCounter = getCurrentUseCounter() - 1;
-			if (newCounter <= 0) document.body.removeAttribute(lockAttribute);
-			else document.body.setAttribute(lockAttribute, newCounter.toString());
-		};
-	}, []);
-};
-/**
-* Removes page scrollbar and blocks page scroll when mounted
-*/
-var RemoveScrollBar = function(_a) {
-	var noRelative = _a.noRelative, noImportant = _a.noImportant, _b = _a.gapMode, gapMode = _b === void 0 ? "margin" : _b;
-	useLockAttribute();
-	var gap = import_react.useMemo(function() {
-		return getGapWidth(gapMode);
-	}, [gapMode]);
-	return import_react.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/aggresiveCapture.js
-var passiveSupported = false;
-if (typeof window !== "undefined") try {
-	var options = Object.defineProperty({}, "passive", { get: function() {
-		passiveSupported = true;
-		return true;
-	} });
-	window.addEventListener("test", options, options);
-	window.removeEventListener("test", options, options);
-} catch (err) {
-	passiveSupported = false;
-}
-var nonPassive = passiveSupported ? { passive: false } : false;
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/handleScroll.js
-var alwaysContainsScroll = function(node) {
-	return node.tagName === "TEXTAREA";
-};
-var elementCanBeScrolled = function(node, overflow) {
-	if (!(node instanceof Element)) return false;
-	var styles = window.getComputedStyle(node);
-	return styles[overflow] !== "hidden" && !(styles.overflowY === styles.overflowX && !alwaysContainsScroll(node) && styles[overflow] === "visible");
-};
-var elementCouldBeVScrolled = function(node) {
-	return elementCanBeScrolled(node, "overflowY");
-};
-var elementCouldBeHScrolled = function(node) {
-	return elementCanBeScrolled(node, "overflowX");
-};
-var locationCouldBeScrolled = function(axis, node) {
-	var ownerDocument = node.ownerDocument;
-	var current = node;
-	do {
-		if (typeof ShadowRoot !== "undefined" && current instanceof ShadowRoot) current = current.host;
-		if (elementCouldBeScrolled(axis, current)) {
-			var _a = getScrollVariables(axis, current);
-			if (_a[1] > _a[2]) return true;
-		}
-		current = current.parentNode;
-	} while (current && current !== ownerDocument.body);
-	return false;
-};
-var getVScrollVariables = function(_a) {
-	return [
-		_a.scrollTop,
-		_a.scrollHeight,
-		_a.clientHeight
-	];
-};
-var getHScrollVariables = function(_a) {
-	return [
-		_a.scrollLeft,
-		_a.scrollWidth,
-		_a.clientWidth
-	];
-};
-var elementCouldBeScrolled = function(axis, node) {
-	return axis === "v" ? elementCouldBeVScrolled(node) : elementCouldBeHScrolled(node);
-};
-var getScrollVariables = function(axis, node) {
-	return axis === "v" ? getVScrollVariables(node) : getHScrollVariables(node);
-};
-var getDirectionFactor = function(axis, direction) {
-	/**
-	* If the element's direction is rtl (right-to-left), then scrollLeft is 0 when the scrollbar is at its rightmost position,
-	* and then increasingly negative as you scroll towards the end of the content.
-	* @see https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft
-	*/
-	return axis === "h" && direction === "rtl" ? -1 : 1;
-};
-var handleScroll = function(axis, endTarget, event, sourceDelta, noOverscroll) {
-	var directionFactor = getDirectionFactor(axis, window.getComputedStyle(endTarget).direction);
-	var delta = directionFactor * sourceDelta;
-	var target = event.target;
-	var targetInLock = endTarget.contains(target);
-	var shouldCancelScroll = false;
-	var isDeltaPositive = delta > 0;
-	var availableScroll = 0;
-	var availableScrollTop = 0;
-	do {
-		if (!target) break;
-		var _a = getScrollVariables(axis, target), position = _a[0];
-		var elementScroll = _a[1] - _a[2] - directionFactor * position;
-		if (position || elementScroll) {
-			if (elementCouldBeScrolled(axis, target)) {
-				availableScroll += elementScroll;
-				availableScrollTop += position;
-			}
-		}
-		var parent_1 = target.parentNode;
-		target = parent_1 && parent_1.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? parent_1.host : parent_1;
-	} while (!targetInLock && target !== document.body || targetInLock && (endTarget.contains(target) || endTarget === target));
-	if (isDeltaPositive && (noOverscroll && Math.abs(availableScroll) < 1 || !noOverscroll && delta > availableScroll)) shouldCancelScroll = true;
-	else if (!isDeltaPositive && (noOverscroll && Math.abs(availableScrollTop) < 1 || !noOverscroll && -delta > availableScrollTop)) shouldCancelScroll = true;
-	return shouldCancelScroll;
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/SideEffect.js
-var getTouchXY = function(event) {
-	return "changedTouches" in event ? [event.changedTouches[0].clientX, event.changedTouches[0].clientY] : [0, 0];
-};
-var getDeltaXY = function(event) {
-	return [event.deltaX, event.deltaY];
-};
-var extractRef = function(ref) {
-	return ref && "current" in ref ? ref.current : ref;
-};
-var deltaCompare = function(x, y) {
-	return x[0] === y[0] && x[1] === y[1];
-};
-var generateStyle = function(id) {
-	return "\n  .block-interactivity-".concat(id, " {pointer-events: none;}\n  .allow-interactivity-").concat(id, " {pointer-events: all;}\n");
-};
-var idCounter = 0;
-var lockStack = [];
-function RemoveScrollSideCar(props) {
-	var shouldPreventQueue = import_react.useRef([]);
-	var touchStartRef = import_react.useRef([0, 0]);
-	var activeAxis = import_react.useRef();
-	var id = import_react.useState(idCounter++)[0];
-	var Style = import_react.useState(styleSingleton)[0];
-	var lastProps = import_react.useRef(props);
-	import_react.useEffect(function() {
-		lastProps.current = props;
-	}, [props]);
-	import_react.useEffect(function() {
-		if (props.inert) {
-			document.body.classList.add("block-interactivity-".concat(id));
-			var allow_1 = __spreadArray([props.lockRef.current], (props.shards || []).map(extractRef), true).filter(Boolean);
-			allow_1.forEach(function(el) {
-				return el.classList.add("allow-interactivity-".concat(id));
-			});
-			return function() {
-				document.body.classList.remove("block-interactivity-".concat(id));
-				allow_1.forEach(function(el) {
-					return el.classList.remove("allow-interactivity-".concat(id));
-				});
-			};
-		}
-	}, [
-		props.inert,
-		props.lockRef.current,
-		props.shards
-	]);
-	var shouldCancelEvent = import_react.useCallback(function(event, parent) {
-		if ("touches" in event && event.touches.length === 2 || event.type === "wheel" && event.ctrlKey) return !lastProps.current.allowPinchZoom;
-		var touch = getTouchXY(event);
-		var touchStart = touchStartRef.current;
-		var deltaX = "deltaX" in event ? event.deltaX : touchStart[0] - touch[0];
-		var deltaY = "deltaY" in event ? event.deltaY : touchStart[1] - touch[1];
-		var currentAxis;
-		var target = event.target;
-		var moveDirection = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
-		if ("touches" in event && moveDirection === "h" && target.type === "range") return false;
-		var selection = window.getSelection();
-		var anchorNode = selection && selection.anchorNode;
-		if (anchorNode ? anchorNode === target || anchorNode.contains(target) : false) return false;
-		var canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
-		if (!canBeScrolledInMainDirection) return true;
-		if (canBeScrolledInMainDirection) currentAxis = moveDirection;
-		else {
-			currentAxis = moveDirection === "v" ? "h" : "v";
-			canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
-		}
-		if (!canBeScrolledInMainDirection) return false;
-		if (!activeAxis.current && "changedTouches" in event && (deltaX || deltaY)) activeAxis.current = currentAxis;
-		if (!currentAxis) return true;
-		var cancelingAxis = activeAxis.current || currentAxis;
-		return handleScroll(cancelingAxis, parent, event, cancelingAxis === "h" ? deltaX : deltaY, true);
-	}, []);
-	var shouldPrevent = import_react.useCallback(function(_event) {
-		var event = _event;
-		if (!lockStack.length || lockStack[lockStack.length - 1] !== Style) return;
-		var delta = "deltaY" in event ? getDeltaXY(event) : getTouchXY(event);
-		var sourceEvent = shouldPreventQueue.current.filter(function(e) {
-			return e.name === event.type && (e.target === event.target || event.target === e.shadowParent) && deltaCompare(e.delta, delta);
-		})[0];
-		if (sourceEvent && sourceEvent.should) {
-			if (event.cancelable) event.preventDefault();
-			return;
-		}
-		if (!sourceEvent) {
-			var shardNodes = (lastProps.current.shards || []).map(extractRef).filter(Boolean).filter(function(node) {
-				return node.contains(event.target);
-			});
-			if (shardNodes.length > 0 ? shouldCancelEvent(event, shardNodes[0]) : !lastProps.current.noIsolation) {
-				if (event.cancelable) event.preventDefault();
-			}
-		}
-	}, []);
-	var shouldCancel = import_react.useCallback(function(name, delta, target, should) {
-		var event = {
-			name,
-			delta,
-			target,
-			should,
-			shadowParent: getOutermostShadowParent(target)
-		};
-		shouldPreventQueue.current.push(event);
-		setTimeout(function() {
-			shouldPreventQueue.current = shouldPreventQueue.current.filter(function(e) {
-				return e !== event;
-			});
-		}, 1);
-	}, []);
-	var scrollTouchStart = import_react.useCallback(function(event) {
-		touchStartRef.current = getTouchXY(event);
-		activeAxis.current = void 0;
-	}, []);
-	var scrollWheel = import_react.useCallback(function(event) {
-		shouldCancel(event.type, getDeltaXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
-	}, []);
-	var scrollTouchMove = import_react.useCallback(function(event) {
-		shouldCancel(event.type, getTouchXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
-	}, []);
-	import_react.useEffect(function() {
-		lockStack.push(Style);
-		props.setCallbacks({
-			onScrollCapture: scrollWheel,
-			onWheelCapture: scrollWheel,
-			onTouchMoveCapture: scrollTouchMove
-		});
-		document.addEventListener("wheel", shouldPrevent, nonPassive);
-		document.addEventListener("touchmove", shouldPrevent, nonPassive);
-		document.addEventListener("touchstart", scrollTouchStart, nonPassive);
-		return function() {
-			lockStack = lockStack.filter(function(inst) {
-				return inst !== Style;
-			});
-			document.removeEventListener("wheel", shouldPrevent, nonPassive);
-			document.removeEventListener("touchmove", shouldPrevent, nonPassive);
-			document.removeEventListener("touchstart", scrollTouchStart, nonPassive);
-		};
-	}, []);
-	var removeScrollBar = props.removeScrollBar, inert = props.inert;
-	return import_react.createElement(import_react.Fragment, null, inert ? import_react.createElement(Style, { styles: generateStyle(id) }) : null, removeScrollBar ? import_react.createElement(RemoveScrollBar, {
-		noRelative: props.noRelative,
-		gapMode: props.gapMode
-	}) : null);
-}
-function getOutermostShadowParent(node) {
-	var shadowParent = null;
-	while (node !== null) {
-		if (node instanceof ShadowRoot) {
-			shadowParent = node.host;
-			node = node.host;
-		}
-		node = node.parentNode;
-	}
-	return shadowParent;
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/sidecar.js
-var sidecar_default = exportSidecar(effectCar, RemoveScrollSideCar);
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.2.14_react@19.2.4/node_modules/react-remove-scroll/dist/es2015/Combination.js
-var ReactRemoveScroll = import_react.forwardRef(function(props, ref) {
-	return import_react.createElement(RemoveScroll, __assign({}, props, {
-		ref,
-		sideCar: sidecar_default
-	}));
-});
-ReactRemoveScroll.classNames = RemoveScroll.classNames;
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/aria-hidden@1.2.6/node_modules/aria-hidden/dist/es2015/index.js
-var getDefaultParent = function(originalTarget) {
-	if (typeof document === "undefined") return null;
-	return (Array.isArray(originalTarget) ? originalTarget[0] : originalTarget).ownerDocument.body;
-};
-var counterMap = /* @__PURE__ */ new WeakMap();
-var uncontrolledNodes = /* @__PURE__ */ new WeakMap();
-var markerMap = {};
-var lockCount = 0;
-var unwrapHost = function(node) {
-	return node && (node.host || unwrapHost(node.parentNode));
-};
-var correctTargets = function(parent, targets) {
-	return targets.map(function(target) {
-		if (parent.contains(target)) return target;
-		var correctedTarget = unwrapHost(target);
-		if (correctedTarget && parent.contains(correctedTarget)) return correctedTarget;
-		console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
-		return null;
-	}).filter(function(x) {
-		return Boolean(x);
-	});
-};
-/**
-* Marks everything except given node(or nodes) as aria-hidden
-* @param {Element | Element[]} originalTarget - elements to keep on the page
-* @param [parentNode] - top element, defaults to document.body
-* @param {String} [markerName] - a special attribute to mark every node
-* @param {String} [controlAttribute] - html Attribute to control
-* @return {Undo} undo command
-*/
-var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
-	var targets = correctTargets(parentNode, Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
-	if (!markerMap[markerName]) markerMap[markerName] = /* @__PURE__ */ new WeakMap();
-	var markerCounter = markerMap[markerName];
-	var hiddenNodes = [];
-	var elementsToKeep = /* @__PURE__ */ new Set();
-	var elementsToStop = new Set(targets);
-	var keep = function(el) {
-		if (!el || elementsToKeep.has(el)) return;
-		elementsToKeep.add(el);
-		keep(el.parentNode);
-	};
-	targets.forEach(keep);
-	var deep = function(parent) {
-		if (!parent || elementsToStop.has(parent)) return;
-		Array.prototype.forEach.call(parent.children, function(node) {
-			if (elementsToKeep.has(node)) deep(node);
-			else try {
-				var attr = node.getAttribute(controlAttribute);
-				var alreadyHidden = attr !== null && attr !== "false";
-				var counterValue = (counterMap.get(node) || 0) + 1;
-				var markerValue = (markerCounter.get(node) || 0) + 1;
-				counterMap.set(node, counterValue);
-				markerCounter.set(node, markerValue);
-				hiddenNodes.push(node);
-				if (counterValue === 1 && alreadyHidden) uncontrolledNodes.set(node, true);
-				if (markerValue === 1) node.setAttribute(markerName, "true");
-				if (!alreadyHidden) node.setAttribute(controlAttribute, "true");
-			} catch (e) {
-				console.error("aria-hidden: cannot operate on ", node, e);
-			}
-		});
-	};
-	deep(parentNode);
-	elementsToKeep.clear();
-	lockCount++;
-	return function() {
-		hiddenNodes.forEach(function(node) {
-			var counterValue = counterMap.get(node) - 1;
-			var markerValue = markerCounter.get(node) - 1;
-			counterMap.set(node, counterValue);
-			markerCounter.set(node, markerValue);
-			if (!counterValue) {
-				if (!uncontrolledNodes.has(node)) node.removeAttribute(controlAttribute);
-				uncontrolledNodes.delete(node);
-			}
-			if (!markerValue) node.removeAttribute(markerName);
-		});
-		lockCount--;
-		if (!lockCount) {
-			counterMap = /* @__PURE__ */ new WeakMap();
-			counterMap = /* @__PURE__ */ new WeakMap();
-			uncontrolledNodes = /* @__PURE__ */ new WeakMap();
-			markerMap = {};
-		}
-	};
-};
-/**
-* Marks everything except given node(or nodes) as aria-hidden
-* @param {Element | Element[]} originalTarget - elements to keep on the page
-* @param [parentNode] - top element, defaults to document.body
-* @param {String} [markerName] - a special attribute to mark every node
-* @return {Undo} undo command
-*/
-var hideOthers = function(originalTarget, parentNode, markerName) {
-	if (markerName === void 0) markerName = "data-aria-hidden";
-	var targets = Array.from(Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
-	var activeParentNode = parentNode || getDefaultParent(originalTarget);
-	if (!activeParentNode) return function() {
-		return null;
-	};
-	targets.push.apply(targets, Array.from(activeParentNode.querySelectorAll("[aria-live], script")));
-	return applyAttributeToOthers(targets, activeParentNode, markerName, "aria-hidden");
-};
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-dialog@1.1.15_@types+react-dom@19.2.3_@types+react@19.2.14__@types+reac_779045218dc2799d336e7197abef9d38/node_modules/@radix-ui/react-dialog/dist/index.mjs
-var DIALOG_NAME = "Dialog";
-var [createDialogContext, createDialogScope] = createContextScope(DIALOG_NAME);
-var [DialogProvider, useDialogContext] = createDialogContext(DIALOG_NAME);
-var Dialog = (props) => {
-	const { __scopeDialog, children, open: openProp, defaultOpen, onOpenChange, modal = true } = props;
-	const triggerRef = import_react.useRef(null);
-	const contentRef = import_react.useRef(null);
-	const [open, setOpen] = useControllableState({
-		prop: openProp,
-		defaultProp: defaultOpen ?? false,
-		onChange: onOpenChange,
-		caller: DIALOG_NAME
-	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogProvider, {
-		scope: __scopeDialog,
-		triggerRef,
-		contentRef,
-		contentId: useId(),
-		titleId: useId(),
-		descriptionId: useId(),
-		open,
-		onOpenChange: setOpen,
-		onOpenToggle: import_react.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
-		modal,
-		children
-	});
-};
-Dialog.displayName = DIALOG_NAME;
-var TRIGGER_NAME = "DialogTrigger";
-var DialogTrigger = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, ...triggerProps } = props;
-	const context = useDialogContext(TRIGGER_NAME, __scopeDialog);
-	const composedTriggerRef = useComposedRefs(forwardedRef, context.triggerRef);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
-		type: "button",
-		"aria-haspopup": "dialog",
-		"aria-expanded": context.open,
-		"aria-controls": context.contentId,
-		"data-state": getState(context.open),
-		...triggerProps,
-		ref: composedTriggerRef,
-		onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
-	});
-});
-DialogTrigger.displayName = TRIGGER_NAME;
-var PORTAL_NAME = "DialogPortal";
-var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME, { forceMount: void 0 });
-var DialogPortal = (props) => {
-	const { __scopeDialog, forceMount, children, container } = props;
-	const context = useDialogContext(PORTAL_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PortalProvider, {
-		scope: __scopeDialog,
-		forceMount,
-		children: import_react.Children.map(children, (child) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
-			present: forceMount || context.open,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Portal$1, {
-				asChild: true,
-				container,
-				children: child
-			})
-		}))
-	});
-};
-DialogPortal.displayName = PORTAL_NAME;
-var OVERLAY_NAME = "DialogOverlay";
-var DialogOverlay = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext(OVERLAY_NAME, props.__scopeDialog);
-	const { forceMount = portalContext.forceMount, ...overlayProps } = props;
-	const context = useDialogContext(OVERLAY_NAME, props.__scopeDialog);
-	return context.modal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
-		present: forceMount || context.open,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogOverlayImpl, {
-			...overlayProps,
-			ref: forwardedRef
-		})
-	}) : null;
-});
-DialogOverlay.displayName = OVERLAY_NAME;
-var Slot = /* @__PURE__ */ createSlot$1("DialogOverlay.RemoveScroll");
-var DialogOverlayImpl = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, ...overlayProps } = props;
-	const context = useDialogContext(OVERLAY_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ReactRemoveScroll, {
-		as: Slot,
-		allowPinchZoom: true,
-		shards: [context.contentRef],
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.div, {
-			"data-state": getState(context.open),
-			...overlayProps,
-			ref: forwardedRef,
-			style: {
-				pointerEvents: "auto",
-				...overlayProps.style
-			}
-		})
-	});
-});
-var CONTENT_NAME = "DialogContent";
-var DialogContent = import_react.forwardRef((props, forwardedRef) => {
-	const portalContext = usePortalContext(CONTENT_NAME, props.__scopeDialog);
-	const { forceMount = portalContext.forceMount, ...contentProps } = props;
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Presence, {
-		present: forceMount || context.open,
-		children: context.modal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentModal, {
-			...contentProps,
-			ref: forwardedRef
-		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentNonModal, {
-			...contentProps,
-			ref: forwardedRef
-		})
-	});
-});
-DialogContent.displayName = CONTENT_NAME;
-var DialogContentModal = import_react.forwardRef((props, forwardedRef) => {
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
-	const contentRef = import_react.useRef(null);
-	const composedRefs = useComposedRefs(forwardedRef, context.contentRef, contentRef);
-	import_react.useEffect(() => {
-		const content = contentRef.current;
-		if (content) return hideOthers(content);
-	}, []);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentImpl, {
-		...props,
-		ref: composedRefs,
-		trapFocus: context.open,
-		disableOutsidePointerEvents: true,
-		onCloseAutoFocus: composeEventHandlers(props.onCloseAutoFocus, (event) => {
-			event.preventDefault();
-			context.triggerRef.current?.focus();
-		}),
-		onPointerDownOutside: composeEventHandlers(props.onPointerDownOutside, (event) => {
-			const originalEvent = event.detail.originalEvent;
-			const ctrlLeftClick = originalEvent.button === 0 && originalEvent.ctrlKey === true;
-			if (originalEvent.button === 2 || ctrlLeftClick) event.preventDefault();
-		}),
-		onFocusOutside: composeEventHandlers(props.onFocusOutside, (event) => event.preventDefault())
-	});
-});
-var DialogContentNonModal = import_react.forwardRef((props, forwardedRef) => {
-	const context = useDialogContext(CONTENT_NAME, props.__scopeDialog);
-	const hasInteractedOutsideRef = import_react.useRef(false);
-	const hasPointerDownOutsideRef = import_react.useRef(false);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DialogContentImpl, {
-		...props,
-		ref: forwardedRef,
-		trapFocus: false,
-		disableOutsidePointerEvents: false,
-		onCloseAutoFocus: (event) => {
-			props.onCloseAutoFocus?.(event);
-			if (!event.defaultPrevented) {
-				if (!hasInteractedOutsideRef.current) context.triggerRef.current?.focus();
-				event.preventDefault();
-			}
-			hasInteractedOutsideRef.current = false;
-			hasPointerDownOutsideRef.current = false;
-		},
-		onInteractOutside: (event) => {
-			props.onInteractOutside?.(event);
-			if (!event.defaultPrevented) {
-				hasInteractedOutsideRef.current = true;
-				if (event.detail.originalEvent.type === "pointerdown") hasPointerDownOutsideRef.current = true;
-			}
-			const target = event.target;
-			if (context.triggerRef.current?.contains(target)) event.preventDefault();
-			if (event.detail.originalEvent.type === "focusin" && hasPointerDownOutsideRef.current) event.preventDefault();
-		}
-	});
-});
-var DialogContentImpl = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, trapFocus, onOpenAutoFocus, onCloseAutoFocus, ...contentProps } = props;
-	const context = useDialogContext(CONTENT_NAME, __scopeDialog);
-	const contentRef = import_react.useRef(null);
-	const composedRefs = useComposedRefs(forwardedRef, contentRef);
-	useFocusGuards();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FocusScope, {
-		asChild: true,
-		loop: true,
-		trapped: trapFocus,
-		onMountAutoFocus: onOpenAutoFocus,
-		onUnmountAutoFocus: onCloseAutoFocus,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DismissableLayer, {
-			role: "dialog",
-			id: context.contentId,
-			"aria-describedby": context.descriptionId,
-			"aria-labelledby": context.titleId,
-			"data-state": getState(context.open),
-			...contentProps,
-			ref: composedRefs,
-			onDismiss: () => context.onOpenChange(false)
-		})
-	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TitleWarning, { titleId: context.titleId }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DescriptionWarning, {
-		contentRef,
-		descriptionId: context.descriptionId
-	})] })] });
-});
-var TITLE_NAME = "DialogTitle";
-var DialogTitle = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, ...titleProps } = props;
-	const context = useDialogContext(TITLE_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.h2, {
-		id: context.titleId,
-		...titleProps,
-		ref: forwardedRef
-	});
-});
-DialogTitle.displayName = TITLE_NAME;
-var DESCRIPTION_NAME = "DialogDescription";
-var DialogDescription = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, ...descriptionProps } = props;
-	const context = useDialogContext(DESCRIPTION_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.p, {
-		id: context.descriptionId,
-		...descriptionProps,
-		ref: forwardedRef
-	});
-});
-DialogDescription.displayName = DESCRIPTION_NAME;
-var CLOSE_NAME = "DialogClose";
-var DialogClose = import_react.forwardRef((props, forwardedRef) => {
-	const { __scopeDialog, ...closeProps } = props;
-	const context = useDialogContext(CLOSE_NAME, __scopeDialog);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive$1.button, {
-		type: "button",
-		...closeProps,
-		ref: forwardedRef,
-		onClick: composeEventHandlers(props.onClick, () => context.onOpenChange(false))
-	});
-});
-DialogClose.displayName = CLOSE_NAME;
-function getState(open) {
-	return open ? "open" : "closed";
-}
-var TITLE_WARNING_NAME = "DialogTitleWarning";
-var [WarningProvider, useWarningContext] = createContext2(TITLE_WARNING_NAME, {
-	contentName: CONTENT_NAME,
-	titleName: TITLE_NAME,
-	docsSlug: "dialog"
-});
-var TitleWarning = ({ titleId }) => {
-	const titleWarningContext = useWarningContext(TITLE_WARNING_NAME);
-	const MESSAGE = `\`${titleWarningContext.contentName}\` requires a \`${titleWarningContext.titleName}\` for the component to be accessible for screen reader users.
-
-If you want to hide the \`${titleWarningContext.titleName}\`, you can wrap it with our VisuallyHidden component.
-
-For more information, see https://radix-ui.com/primitives/docs/components/${titleWarningContext.docsSlug}`;
-	import_react.useEffect(() => {
-		if (titleId) {
-			if (!document.getElementById(titleId)) console.error(MESSAGE);
-		}
-	}, [MESSAGE, titleId]);
-	return null;
-};
-var DESCRIPTION_WARNING_NAME = "DialogDescriptionWarning";
-var DescriptionWarning = ({ contentRef, descriptionId }) => {
-	const MESSAGE = `Warning: Missing \`Description\` or \`aria-describedby={undefined}\` for {${useWarningContext(DESCRIPTION_WARNING_NAME).contentName}}.`;
-	import_react.useEffect(() => {
-		const describedById = contentRef.current?.getAttribute("aria-describedby");
-		if (descriptionId && describedById) {
-			if (!document.getElementById(descriptionId)) console.warn(MESSAGE);
-		}
-	}, [
-		MESSAGE,
-		contentRef,
-		descriptionId
-	]);
-	return null;
-};
-var Root$1 = Dialog;
-var Trigger = DialogTrigger;
-var Portal = DialogPortal;
-var Overlay = DialogOverlay;
-var Content = DialogContent;
-var Title = DialogTitle;
-var Description = DialogDescription;
-var Close = DialogClose;
-//#endregion
-//#region src/components/ui/sheet.tsx
-var Sheet = Root$1;
-var SheetTrigger = Trigger;
-var SheetPortal = Portal;
-var SheetOverlay = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Overlay, {
-	"data-uid": "src/components/ui/sheet.tsx:21:3",
-	"data-prohibitions": "[editContent]",
-	className: cn$1("fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0", className),
-	...props,
-	ref
-}));
-SheetOverlay.displayName = Overlay.displayName;
-var sheetVariants = cva("fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500", {
-	variants: { side: {
-		top: "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
-		bottom: "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-		left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
-		right: "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
-	} },
-	defaultVariants: { side: "right" }
-});
-var SheetContent = import_react.forwardRef(({ side = "right", className, children, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SheetPortal, {
-	"data-uid": "src/components/ui/sheet.tsx:60:3",
-	"data-prohibitions": "[editContent]",
-	children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetOverlay, {
-		"data-uid": "src/components/ui/sheet.tsx:61:5",
-		"data-prohibitions": "[editContent]"
-	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Content, {
-		"data-uid": "src/components/ui/sheet.tsx:62:5",
-		"data-prohibitions": "[editContent]",
-		ref,
-		className: cn$1(sheetVariants({ side }), className),
-		...props,
-		children: [children, /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Close, {
-			"data-uid": "src/components/ui/sheet.tsx:64:7",
-			"data-prohibitions": "[]",
-			className: "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, {
-				"data-uid": "src/components/ui/sheet.tsx:65:9",
-				"data-prohibitions": "[editContent]",
-				className: "h-4 w-4"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				"data-uid": "src/components/ui/sheet.tsx:66:9",
-				"data-prohibitions": "[]",
-				className: "sr-only",
-				children: "Close"
-			})]
-		})]
-	})]
-}));
-SheetContent.displayName = Content.displayName;
-var SheetHeader = ({ className, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-	"data-uid": "src/components/ui/sheet.tsx:74:3",
-	"data-prohibitions": "[editContent]",
-	className: cn$1("flex flex-col space-y-2 text-center sm:text-left", className),
-	...props
-});
-SheetHeader.displayName = "SheetHeader";
-var SheetFooter = ({ className, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-	"data-uid": "src/components/ui/sheet.tsx:79:3",
-	"data-prohibitions": "[editContent]",
-	className: cn$1("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className),
-	...props
-});
-SheetFooter.displayName = "SheetFooter";
-var SheetTitle = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Title, {
-	"data-uid": "src/components/ui/sheet.tsx:90:3",
-	"data-prohibitions": "[editContent]",
-	ref,
-	className: cn$1("text-lg font-semibold text-foreground", className),
-	...props
-}));
-SheetTitle.displayName = Title.displayName;
-var SheetDescription = import_react.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Description, {
-	"data-uid": "src/components/ui/sheet.tsx:102:3",
-	"data-prohibitions": "[editContent]",
-	ref,
-	className: cn$1("text-sm text-muted-foreground", className),
-	...props
-}));
-SheetDescription.displayName = Description.displayName;
-//#endregion
-//#region src/components/layout/Header.tsx
-var NAV_LINKS = [
-	{
-		name: "Início",
-		href: "/#inicio"
-	},
-	{
-		name: "Projetos",
-		href: "/portfolio"
-	},
-	{
-		name: "Clientes",
-		href: "/#clientes"
-	},
-	{
-		name: "Sobre",
-		href: "/#sobre"
-	},
-	{
-		name: "Contato",
-		href: "/#contato"
-	}
-];
-function Header() {
-	const [isScrolled, setIsScrolled] = (0, import_react.useState)(false);
-	const [isOpen, setIsOpen] = (0, import_react.useState)(false);
-	const location = useLocation();
-	(0, import_react.useEffect)(() => {
-		const handleScroll = () => setIsScrolled(window.scrollY > 20);
-		window.addEventListener("scroll", handleScroll);
-		return () => window.removeEventListener("scroll", handleScroll);
-	}, []);
-	(0, import_react.useEffect)(() => {
-		if (location.hash) {
-			const id = location.hash.replace("#", "");
-			const element = document.getElementById(id);
-			if (element) setTimeout(() => {
-				element.scrollIntoView({ behavior: "smooth" });
-			}, 100);
-		} else if (location.pathname === "/") window.scrollTo({
-			top: 0,
-			behavior: "smooth"
-		});
-	}, [location]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", {
-		"data-uid": "src/components/layout/Header.tsx:42:5",
-		"data-prohibitions": "[editContent]",
-		className: cn$1("fixed top-0 left-0 right-0 z-50 transition-all duration-300", isScrolled ? "glassmorphism py-3 shadow-sm" : "bg-transparent py-5"),
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Header.tsx:48:7",
-			"data-prohibitions": "[editContent]",
-			className: "container mx-auto px-4 flex items-center justify-between",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-					"data-uid": "src/components/layout/Header.tsx:49:9",
-					"data-prohibitions": "[editContent]",
-					to: "/",
-					className: "flex items-center gap-2 group",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/layout/Header.tsx:50:11",
-						"data-prohibitions": "[]",
-						className: "bg-primary p-2 rounded-lg text-white group-hover:bg-secondary transition-colors",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HardHat, {
-							"data-uid": "src/components/layout/Header.tsx:51:13",
-							"data-prohibitions": "[editContent]",
-							size: 28
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Header.tsx:53:11",
-						"data-prohibitions": "[editContent]",
-						className: "flex flex-col",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/components/layout/Header.tsx:54:13",
-							"data-prohibitions": "[editContent]",
-							className: cn$1("text-heading text-lg leading-tight transition-colors", isScrolled ? "text-primary group-hover:text-secondary" : "text-white group-hover:text-secondary"),
-							children: "JT OBRAS E"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/components/layout/Header.tsx:64:13",
-							"data-prohibitions": "[editContent]",
-							className: cn$1("text-heading text-sm leading-tight transition-colors", isScrolled ? "text-accent group-hover:text-primary" : "text-secondary group-hover:text-white"),
-							children: "MANUTENÇÕES"
-						})]
-					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-					"data-uid": "src/components/layout/Header.tsx:78:9",
-					"data-prohibitions": "[editContent]",
-					className: "hidden md:flex items-center gap-8",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						"data-uid": "src/components/layout/Header.tsx:79:11",
-						"data-prohibitions": "[editContent]",
-						className: "flex items-center gap-6",
-						children: NAV_LINKS.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-							"data-uid": "src/components/layout/Header.tsx:81:15",
-							"data-prohibitions": "[editContent]",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-								"data-uid": "src/components/layout/Header.tsx:82:17",
-								"data-prohibitions": "[editContent]",
-								to: link.href,
-								className: cn$1("text-sm font-medium transition-colors hover:text-secondary hover:underline underline-offset-4", isScrolled ? "text-foreground/80" : "text-white/90 hover:text-white"),
-								children: link.name
-							})
-						}, link.name))
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						"data-uid": "src/components/layout/Header.tsx:94:11",
-						"data-prohibitions": "[]",
-						asChild: true,
-						className: "bg-accent hover:bg-primary text-white shadow-soft hover:shadow-hover hover:-translate-y-0.5 transition-all duration-300",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							"data-uid": "src/components/layout/Header.tsx:98:13",
-							"data-prohibitions": "[]",
-							href: "/#contato",
-							children: "Solicitar Orçamento"
-						})
-					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, {
-					"data-uid": "src/components/layout/Header.tsx:103:9",
-					"data-prohibitions": "[editContent]",
-					open: isOpen,
-					onOpenChange: setIsOpen,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTrigger, {
-						"data-uid": "src/components/layout/Header.tsx:104:11",
-						"data-prohibitions": "[editContent]",
-						asChild: true,
-						className: "md:hidden",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-							"data-uid": "src/components/layout/Header.tsx:105:13",
-							"data-prohibitions": "[editContent]",
-							variant: "ghost",
-							size: "icon",
-							className: isScrolled ? "text-foreground" : "text-white",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
-								"data-uid": "src/components/layout/Header.tsx:110:15",
-								"data-prohibitions": "[editContent]",
-								className: "h-6 w-6"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/layout/Header.tsx:111:15",
-								"data-prohibitions": "[]",
-								className: "sr-only",
-								children: "Toggle Menu"
-							})]
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SheetContent, {
-						"data-uid": "src/components/layout/Header.tsx:114:11",
-						"data-prohibitions": "[editContent]",
-						side: "right",
-						className: "w-[300px] sm:w-[400px]",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTitle, {
-							"data-uid": "src/components/layout/Header.tsx:115:13",
-							"data-prohibitions": "[]",
-							className: "sr-only",
-							children: "Menu de Navegação"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-							"data-uid": "src/components/layout/Header.tsx:116:13",
-							"data-prohibitions": "[editContent]",
-							className: "flex flex-col gap-6 mt-8",
-							children: [NAV_LINKS.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-								"data-uid": "src/components/layout/Header.tsx:118:17",
-								"data-prohibitions": "[editContent]",
-								to: link.href,
-								onClick: () => setIsOpen(false),
-								className: "text-lg font-medium text-foreground/80 hover:text-primary transition-colors",
-								children: link.name
-							}, link.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/components/layout/Header.tsx:127:15",
-								"data-prohibitions": "[]",
-								asChild: true,
-								className: "mt-4 bg-accent w-full",
-								onClick: () => setIsOpen(false),
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/layout/Header.tsx:128:17",
-									"data-prohibitions": "[]",
-									href: "/#contato",
-									children: "Solicitar Orçamento"
-								})
-							})]
-						})]
-					})]
-				})
-			]
-		})
-	});
-}
-//#endregion
-//#region ../../cache/modules/jt-obras-e-projetos-6a441/node_modules/.pnpm/@radix-ui+react-separator@1.1.8_@types+react-dom@19.2.3_@types+react@19.2.14__@types+re_aa2d5d85a81bb702303f0548763b9797/node_modules/@radix-ui/react-separator/dist/index.mjs
-var NAME = "Separator";
-var DEFAULT_ORIENTATION = "horizontal";
-var ORIENTATIONS = ["horizontal", "vertical"];
-var Separator$1 = import_react.forwardRef((props, forwardedRef) => {
-	const { decorative, orientation: orientationProp = DEFAULT_ORIENTATION, ...domProps } = props;
-	const orientation = isValidOrientation(orientationProp) ? orientationProp : DEFAULT_ORIENTATION;
-	const ariaOrientation = orientation === "vertical" ? orientation : void 0;
-	const semanticProps = decorative ? { role: "none" } : {
-		"aria-orientation": ariaOrientation,
-		role: "separator"
-	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Primitive.div, {
-		"data-orientation": orientation,
-		...semanticProps,
-		...domProps,
-		ref: forwardedRef
-	});
-});
-Separator$1.displayName = NAME;
-function isValidOrientation(orientation) {
-	return ORIENTATIONS.includes(orientation);
-}
-var Root = Separator$1;
-//#endregion
-//#region src/components/ui/separator.tsx
-var Separator = import_react.forwardRef(({ className, orientation = "horizontal", decorative = true, ...props }, ref) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Root, {
-	"data-uid": "src/components/ui/separator.tsx:11:3",
-	"data-prohibitions": "[editContent]",
-	ref,
-	decorative,
-	orientation,
-	className: cn$1("shrink-0 bg-border", orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]", className),
-	...props
-}));
-Separator.displayName = Root.displayName;
-//#endregion
-//#region src/components/layout/Footer.tsx
-function Footer() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-		"data-uid": "src/components/layout/Footer.tsx:7:5",
-		"data-prohibitions": "[editContent]",
-		className: "bg-primary text-primary-foreground pt-16 pb-8",
-		id: "footer",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Footer.tsx:8:7",
-			"data-prohibitions": "[editContent]",
-			className: "container mx-auto px-4",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/Footer.tsx:9:9",
-					"data-prohibitions": "[editContent]",
-					className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/layout/Footer.tsx:10:11",
-							"data-prohibitions": "[editContent]",
-							className: "space-y-4",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-									"data-uid": "src/components/layout/Footer.tsx:11:13",
-									"data-prohibitions": "[]",
-									to: "/",
-									className: "flex items-center gap-2",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/layout/Footer.tsx:12:15",
-										"data-prohibitions": "[]",
-										className: "bg-white/10 p-2 rounded-lg text-secondary",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HardHat, {
-											"data-uid": "src/components/layout/Footer.tsx:13:17",
-											"data-prohibitions": "[editContent]",
-											size: 28
-										})
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/layout/Footer.tsx:15:15",
-										"data-prohibitions": "[]",
-										className: "flex flex-col",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/components/layout/Footer.tsx:16:17",
-											"data-prohibitions": "[]",
-											className: "font-poppins font-bold text-lg leading-tight",
-											children: "JT OBRAS E"
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											"data-uid": "src/components/layout/Footer.tsx:17:17",
-											"data-prohibitions": "[]",
-											className: "font-poppins font-bold text-sm text-secondary leading-tight",
-											children: "MANUTENÇÕES"
-										})]
-									})]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-									"data-uid": "src/components/layout/Footer.tsx:22:13",
-									"data-prohibitions": "[]",
-									className: "text-primary-foreground/70 text-sm mt-4",
-									children: "Excelência e segurança em obras complexas, manutenção industrial e infraestrutura. Especialistas em NR 10, NR 35, NR 18 e NR 01."
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/layout/Footer.tsx:27:13",
-									"data-prohibitions": "[]",
-									className: "flex gap-4 pt-2",
-									children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:28:15",
-											"data-prohibitions": "[]",
-											href: "#",
-											className: "text-primary-foreground/70 hover:text-accent transition-colors",
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Instagram, {
-												"data-uid": "src/components/layout/Footer.tsx:32:17",
-												"data-prohibitions": "[editContent]",
-												size: 20
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:34:15",
-											"data-prohibitions": "[]",
-											href: "#",
-											className: "text-primary-foreground/70 hover:text-accent transition-colors",
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Facebook, {
-												"data-uid": "src/components/layout/Footer.tsx:38:17",
-												"data-prohibitions": "[editContent]",
-												size: 20
-											})
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:40:15",
-											"data-prohibitions": "[]",
-											href: "#",
-											className: "text-primary-foreground/70 hover:text-accent transition-colors",
-											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Linkedin, {
-												"data-uid": "src/components/layout/Footer.tsx:44:17",
-												"data-prohibitions": "[editContent]",
-												size: 20
-											})
-										})
-									]
-								})
-							]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/layout/Footer.tsx:49:11",
-							"data-prohibitions": "[]",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/components/layout/Footer.tsx:50:13",
-								"data-prohibitions": "[]",
-								className: "font-poppins font-bold text-lg mb-4",
-								children: "Links Rápidos"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-								"data-uid": "src/components/layout/Footer.tsx:51:13",
-								"data-prohibitions": "[]",
-								className: "space-y-2",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:52:15",
-										"data-prohibitions": "[]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/layout/Footer.tsx:53:17",
-											"data-prohibitions": "[]",
-											to: "/#inicio",
-											className: "text-primary-foreground/70 hover:text-white transition-colors text-sm",
-											children: "Início"
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:60:15",
-										"data-prohibitions": "[]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/layout/Footer.tsx:61:17",
-											"data-prohibitions": "[]",
-											to: "/#sobre",
-											className: "text-primary-foreground/70 hover:text-white transition-colors text-sm",
-											children: "Sobre"
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:68:15",
-										"data-prohibitions": "[]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/layout/Footer.tsx:69:17",
-											"data-prohibitions": "[]",
-											to: "/portfolio",
-											className: "text-primary-foreground/70 hover:text-white transition-colors text-sm",
-											children: "Projetos"
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:76:15",
-										"data-prohibitions": "[]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/layout/Footer.tsx:77:17",
-											"data-prohibitions": "[]",
-											to: "/#clientes",
-											className: "text-primary-foreground/70 hover:text-white transition-colors text-sm",
-											children: "Clientes"
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:84:15",
-										"data-prohibitions": "[]",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:85:17",
-											"data-prohibitions": "[]",
-											href: "#contato",
-											className: "text-primary-foreground/70 hover:text-white transition-colors text-sm",
-											children: "Contato"
-										})
-									})
-								]
-							})]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/layout/Footer.tsx:95:11",
-							"data-prohibitions": "[]",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/components/layout/Footer.tsx:96:13",
-								"data-prohibitions": "[]",
-								className: "font-poppins font-bold text-lg mb-4",
-								children: "Contato"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-								"data-uid": "src/components/layout/Footer.tsx:97:13",
-								"data-prohibitions": "[]",
-								className: "space-y-4",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:98:15",
-										"data-prohibitions": "[]",
-										className: "flex items-start gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
-											"data-uid": "src/components/layout/Footer.tsx:99:17",
-											"data-prohibitions": "[editContent]",
-											className: "text-secondary shrink-0 mt-0.5",
-											size: 18
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-											"data-uid": "src/components/layout/Footer.tsx:100:17",
-											"data-prohibitions": "[]",
-											className: "text-primary-foreground/70 text-sm",
-											children: [
-												"Rua Tommaso Giordani, 371",
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-													"data-uid": "src/components/layout/Footer.tsx:102:19",
-													"data-prohibitions": "[editContent]"
-												}),
-												"Vila Guacuri - São Paulo - SP",
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-													"data-uid": "src/components/layout/Footer.tsx:104:19",
-													"data-prohibitions": "[editContent]"
-												}),
-												"CEP: 04.475-210"
-											]
-										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:108:15",
-										"data-prohibitions": "[]",
-										className: "flex items-center gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-											"data-uid": "src/components/layout/Footer.tsx:109:17",
-											"data-prohibitions": "[editContent]",
-											className: "text-secondary shrink-0",
-											size: 18
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:110:17",
-											"data-prohibitions": "[]",
-											href: "mailto:jt.obrasemanutencao@gmail.com",
-											className: "text-primary-foreground/70 hover:text-white text-sm break-all",
-											children: "jt.obrasemanutencao@gmail.com"
-										})]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-										"data-uid": "src/components/layout/Footer.tsx:117:15",
-										"data-prohibitions": "[]",
-										className: "flex items-center gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
-											"data-uid": "src/components/layout/Footer.tsx:118:17",
-											"data-prohibitions": "[editContent]",
-											className: "text-secondary shrink-0",
-											size: 18
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:119:17",
-											"data-prohibitions": "[]",
-											href: "tel:+5511940037545",
-											className: "text-primary-foreground/70 hover:text-white text-sm",
-											children: "(11) 94003-7545"
-										})]
-									})
-								]
-							})]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/layout/Footer.tsx:129:11",
-							"data-prohibitions": "[]",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/components/layout/Footer.tsx:130:13",
-								"data-prohibitions": "[]",
-								className: "font-poppins font-bold text-lg mb-4",
-								children: "Dados Jurídicos"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/layout/Footer.tsx:131:13",
-								"data-prohibitions": "[]",
-								className: "space-y-2 text-sm text-primary-foreground/70",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-										"data-uid": "src/components/layout/Footer.tsx:132:15",
-										"data-prohibitions": "[]",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-											"data-uid": "src/components/layout/Footer.tsx:133:17",
-											"data-prohibitions": "[]",
-											className: "text-white",
-											children: "Nome:"
-										}), " JT Obras e Manutenções"]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-										"data-uid": "src/components/layout/Footer.tsx:135:15",
-										"data-prohibitions": "[]",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-											"data-uid": "src/components/layout/Footer.tsx:136:17",
-											"data-prohibitions": "[]",
-											className: "text-white",
-											children: "CNPJ:"
-										}), " 63.243.791/0001-09"]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-										"data-uid": "src/components/layout/Footer.tsx:138:15",
-										"data-prohibitions": "[]",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-											"data-uid": "src/components/layout/Footer.tsx:139:17",
-											"data-prohibitions": "[]",
-											className: "text-white",
-											children: "Diretor:"
-										}), " Joel Nascimento de Paula"]
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-										"data-uid": "src/components/layout/Footer.tsx:141:15",
-										"data-prohibitions": "[]",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-											"data-uid": "src/components/layout/Footer.tsx:142:17",
-											"data-prohibitions": "[]",
-											className: "text-white",
-											children: "Regime:"
-										}), " Simples Nacional"]
-									})
-								]
-							})]
-						})
-					]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Separator, {
-					"data-uid": "src/components/layout/Footer.tsx:148:9",
-					"data-prohibitions": "[editContent]",
-					className: "bg-white/10 mb-8"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/layout/Footer.tsx:150:9",
-					"data-prohibitions": "[editContent]",
-					className: "text-center text-primary-foreground/50 text-xs",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						"data-uid": "src/components/layout/Footer.tsx:151:11",
-						"data-prohibitions": "[editContent]",
-						children: [
-							"© ",
-							(/* @__PURE__ */ new Date()).getFullYear(),
-							" JT Obras e Manutenções. Todos os direitos reservados."
-						]
-					})
-				})
-			]
-		})
-	});
-}
-//#endregion
 //#region src/components/layout/WhatsAppFAB.tsx
 function WhatsAppFAB() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
@@ -34977,4 +26218,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-CI0UB6rh.js.map
+//# sourceMappingURL=index-DOYoeSg8.js.map

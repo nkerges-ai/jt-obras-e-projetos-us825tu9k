@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss'
-import animatePlugin from 'tailwindcss-animate'
-import typographyPlugin from '@tailwindcss/typography'
-import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
+import tailwindcssAnimate from 'tailwindcss-animate'
+import typography from '@tailwindcss/typography'
 
 export default {
   darkMode: ['class'],
@@ -17,20 +16,16 @@ export default {
       center: true,
       padding: '2rem',
       screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
         '2xl': '1400px',
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
-        montserrat: ['Poppins', 'system-ui', 'sans-serif'],
-        poppins: ['Poppins', 'system-ui', 'sans-serif'],
-      },
       colors: {
+        brand: {
+          navy: '#1a3a52',
+          light: '#3498db',
+          orange: '#e67e22',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -47,10 +42,6 @@ export default {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
-        },
-        warning: {
-          DEFAULT: 'hsl(var(--warning))',
-          foreground: 'hsl(var(--warning-foreground))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -74,11 +65,21 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      boxShadow: {
-        soft: '0 10px 40px -10px rgba(26,58,82,0.08)',
-        hover: '0 20px 40px -10px rgba(26,58,82,0.15)',
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [animatePlugin, typographyPlugin, aspectRatioPlugin],
+  plugins: [tailwindcssAnimate, typography],
 } satisfies Config

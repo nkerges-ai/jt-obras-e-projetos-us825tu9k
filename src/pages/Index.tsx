@@ -1,21 +1,23 @@
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
 import { Hero } from '@/components/sections/Hero'
-import { Safety } from '@/components/sections/Safety'
 import { Services } from '@/components/sections/Services'
 import { Clients } from '@/components/sections/Clients'
 import { CompanyProfile } from '@/components/sections/CompanyProfile'
 import { Contact } from '@/components/sections/Contact'
 
-const Index = () => {
+export default function Index() {
   return (
-    <div className="flex flex-col min-h-screen w-full">
-      <Hero />
-      <Safety />
-      <Services />
-      <Clients />
-      <CompanyProfile />
-      <Contact />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Hero />
+        <Services />
+        <Clients />
+        <CompanyProfile />
+        <Contact />
+      </main>
+      <Footer />
     </div>
   )
 }
-
-export default Index

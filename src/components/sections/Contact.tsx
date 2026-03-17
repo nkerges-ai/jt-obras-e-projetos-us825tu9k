@@ -1,224 +1,146 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { FadeIn } from '@/components/animations/FadeIn'
-import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { useToast } from '@/hooks/use-toast'
-import { Send, Loader2 } from 'lucide-react'
-
-const contactSchema = z.object({
-  name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  company: z.string().min(2, 'Empresa é obrigatória'),
-  phone: z.string().min(10, 'Telefone inválido'),
-  email: z.string().email('E-mail inválido'),
-  message: z.string().min(10, 'A mensagem deve ter no mínimo 10 caracteres'),
-})
-
-type ContactFormValues = z.infer<typeof contactSchema>
+import { Label } from '@/components/ui/label'
+import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 
 export function Contact() {
-  const { toast } = useToast()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: {
-      name: '',
-      company: '',
-      phone: '',
-      email: '',
-      message: '',
-    },
-  })
-
-  const onSubmit = (data: ContactFormValues) => {
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast({
-        title: 'Mensagem enviada com sucesso!',
-        description: 'Nossa equipe comercial entrará em contato em breve.',
-        className: 'bg-green-50 border-green-200 text-green-900',
-      })
-      form.reset()
-    }, 1500)
-  }
-
   return (
-    <section id="contato" className="py-24 bg-primary relative overflow-hidden">
-      {/* Background pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-          backgroundSize: '32px 32px',
-        }}
-      ></div>
-
-      <div className="container px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <FadeIn direction="right">
-            <div className="text-white space-y-6">
-              <h2 className="font-poppins font-bold text-4xl lg:text-5xl leading-tight">
-                Vamos
-                <br />
-                <span className="text-accent">conversar?</span>
-              </h2>
-              <p className="text-white/80 text-lg max-w-md leading-relaxed">
-                Solicite um orçamento sem compromisso. Nossa equipe técnica analisará sua demanda e
-                apresentará a melhor solução em engenharia e manutenção.
+    <section id="contato" className="py-24 bg-gray-50 relative overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+          {/* Contact Info Side */}
+          <div className="bg-brand-navy text-white p-10 lg:w-2/5 flex flex-col justify-between">
+            <FadeIn>
+              <h2 className="text-3xl font-extrabold mb-2">Fale Conosco</h2>
+              <p className="text-gray-300 mb-10 text-sm">
+                Estamos prontos para entender as necessidades da sua obra e propor a melhor solução.
+                Solicite um orçamento sem compromisso.
               </p>
-              <div className="hidden lg:block pt-8">
-                <div className="p-6 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 inline-block">
-                  <p className="text-sm text-white/60 uppercase tracking-wider font-semibold mb-2">
-                    Atendimento Imediato
-                  </p>
-                  <p className="text-2xl font-bold font-mono text-white">(11) 94003-7545</p>
+
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-white/10 p-3 rounded-full shrink-0">
+                    <Phone className="h-6 w-6 text-brand-orange" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Telefone / WhatsApp</h4>
+                    <p className="text-gray-300 text-sm mt-1">(11) 99999-9999</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="bg-white/10 p-3 rounded-full shrink-0">
+                    <Mail className="h-6 w-6 text-brand-orange" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">E-mail</h4>
+                    <p className="text-gray-300 text-sm mt-1">contato@jtobras.com.br</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="bg-white/10 p-3 rounded-full shrink-0">
+                    <MapPin className="h-6 w-6 text-brand-orange" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Escritório</h4>
+                    <p className="text-gray-300 text-sm mt-1">
+                      Av. Paulista, 1000 - Bela Vista
+                      <br />
+                      São Paulo - SP, 01310-100
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="bg-white/10 p-3 rounded-full shrink-0">
+                    <Clock className="h-6 w-6 text-brand-orange" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Horário de Atendimento</h4>
+                    <p className="text-gray-300 text-sm mt-1">Segunda a Sexta: 08h às 18h</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </div>
 
-          <FadeIn direction="left" delay={200}>
-            <Card className="border-0 shadow-2xl bg-white rounded-2xl">
-              <CardContent className="p-8">
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-slate-700 font-semibold">
-                            Nome Completo
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="João da Silva"
-                              className="h-12 bg-slate-50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+          {/* Form Side */}
+          <div className="p-10 lg:w-3/5">
+            <FadeIn delay={0.2}>
+              <h3 className="text-2xl font-bold text-brand-navy mb-6">Envie sua mensagem</h3>
+
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-gray-700 font-medium">
+                      Nome Completo
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="João da Silva"
+                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
                     />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="company"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-semibold">Empresa</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Sua empresa"
-                                className="h-12 bg-slate-50"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-semibold">
-                              Telefone / WhatsApp
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="(11) 90000-0000"
-                                className="h-12 bg-slate-50"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-slate-700 font-semibold">
-                            E-mail Profissional
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="joao@empresa.com.br"
-                              className="h-12 bg-slate-50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-gray-700 font-medium">
+                      Empresa
+                    </Label>
+                    <Input
+                      id="company"
+                      placeholder="Sua Empresa LTDA"
+                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
                     />
+                  </div>
+                </div>
 
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-slate-700 font-semibold">
-                            Detalhes do Projeto
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Descreva brevemente a obra ou serviço necessário..."
-                              className="min-h-[120px] bg-slate-50 resize-y"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-gray-700 font-medium">
+                      E-mail
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="joao@empresa.com.br"
+                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-gray-700 font-medium">
+                      Telefone
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="(11) 90000-0000"
+                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                    />
+                  </div>
+                </div>
 
-                    <Button
-                      type="submit"
-                      className="w-full h-14 text-lg bg-secondary hover:bg-primary transition-colors"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Enviando...
-                        </>
-                      ) : (
-                        <>
-                          Solicitar Orçamento
-                          <Send className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </FadeIn>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-gray-700 font-medium">
+                    Mensagem ou Detalhes do Projeto
+                  </Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Descreva brevemente o que você precisa..."
+                    className="min-h-[120px] bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-brand-orange hover:bg-[#cf6d18] text-white h-12 text-lg font-medium"
+                >
+                  Solicitar Orçamento Agora
+                </Button>
+              </form>
+            </FadeIn>
+          </div>
         </div>
       </div>
     </section>

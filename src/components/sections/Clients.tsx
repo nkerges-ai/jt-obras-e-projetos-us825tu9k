@@ -1,71 +1,59 @@
 import { FadeIn } from '@/components/animations/FadeIn'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
 
-const CLIENTS = [
-  { name: 'ETEC', url: 'https://img.usecurling.com/i?q=school&shape=outline&color=blue' },
-  { name: 'SESI', url: 'https://img.usecurling.com/i?q=industry&shape=outline&color=red' },
-  { name: 'SENAI', url: 'https://img.usecurling.com/i?q=education&shape=outline&color=red' },
+const clients = [
   {
-    name: 'Prefeitura de São Bernardo',
-    url: 'https://img.usecurling.com/i?q=government&shape=outline&color=blue',
+    name: 'Empresa A',
+    logo: 'https://img.usecurling.com/i?q=corporate%20logo&shape=outline&color=gray',
   },
   {
-    name: 'Condomínios de Alto Padrão',
-    url: 'https://img.usecurling.com/i?q=building&shape=outline&color=black',
+    name: 'Empresa B',
+    logo: 'https://img.usecurling.com/i?q=tech%20company%20logo&shape=outline&color=gray',
+  },
+  {
+    name: 'Empresa C',
+    logo: 'https://img.usecurling.com/i?q=industrial%20logo&shape=outline&color=gray',
+  },
+  {
+    name: 'Empresa D',
+    logo: 'https://img.usecurling.com/i?q=retail%20logo&shape=outline&color=gray',
+  },
+  {
+    name: 'Empresa E',
+    logo: 'https://img.usecurling.com/i?q=healthcare%20logo&shape=outline&color=gray',
+  },
+  {
+    name: 'Empresa F',
+    logo: 'https://img.usecurling.com/i?q=logistics%20logo&shape=outline&color=gray',
   },
 ]
 
 export function Clients() {
   return (
-    <section id="clientes" className="py-24 bg-white">
-      <div className="container px-4">
-        <FadeIn className="text-center mb-16">
-          <h2 className="text-heading text-3xl md:text-4xl mb-4">Empresas que Confiam em Nós</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Nosso histórico de sucesso é construído sobre parcerias sólidas com grandes
-            instituições.
-          </p>
-        </FadeIn>
+    <section id="clientes" className="py-20 bg-white border-t border-gray-100">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center mb-12">
+          <FadeIn>
+            <h2 className="text-brand-orange font-bold tracking-wider uppercase text-sm mb-2">
+              Quem Confia em Nós
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-extrabold text-brand-navy">Nossos Clientes</h3>
+          </FadeIn>
+        </div>
 
-        <FadeIn delay={200}>
-          <div className="px-12 relative">
-            <Carousel
-              opts={{
-                align: 'start',
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {CLIENTS.map((client, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4"
-                  >
-                    <div className="p-6 h-32 flex items-center justify-center border rounded-xl bg-slate-50 group hover:border-primary/50 transition-colors">
-                      <div className="flex flex-col items-center gap-3 opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                        <img
-                          src={client.url}
-                          alt={`Logo ${client.name}`}
-                          className="h-12 w-auto object-contain"
-                        />
-                        <span className="text-xs font-medium text-center text-slate-600 font-montserrat">
-                          {client.name}
-                        </span>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-4 bg-white hover:bg-slate-100" />
-              <CarouselNext className="hidden md:flex -right-4 bg-white hover:bg-slate-100" />
-            </Carousel>
+        <FadeIn delay={0.2} className="w-full">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center justify-items-center opacity-60 hover:opacity-100 transition-opacity duration-500">
+            {clients.map((client, index) => (
+              <div
+                key={index}
+                className="w-32 h-20 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300"
+              >
+                <img
+                  src={client.logo}
+                  alt={`Logo ${client.name}`}
+                  className="max-w-full max-h-full object-contain mix-blend-multiply"
+                />
+              </div>
+            ))}
           </div>
         </FadeIn>
       </div>

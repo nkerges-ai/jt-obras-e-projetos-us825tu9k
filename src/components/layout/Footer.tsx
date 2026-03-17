@@ -1,155 +1,132 @@
-import { HardHat, MapPin, Mail, Phone, Instagram, Facebook, Linkedin } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { Separator } from '@/components/ui/separator'
+import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook } from 'lucide-react'
+import logo from '@/assets/logotipo-c129e.jpg'
 
 export function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <footer className="bg-primary text-primary-foreground pt-16 pb-8" id="footer">
-      <div className="container mx-auto px-4">
+    <footer className="bg-brand-navy text-white pt-16 pb-8">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          {/* Company Info */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="bg-white/10 p-2 rounded-lg text-secondary">
-                <HardHat size={28} />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-poppins font-bold text-lg leading-tight">JT OBRAS E</span>
-                <span className="font-poppins font-bold text-sm text-secondary leading-tight">
-                  MANUTENÇÕES
-                </span>
-              </div>
-            </Link>
-            <p className="text-primary-foreground/70 text-sm mt-4">
-              Excelência e segurança em obras complexas, manutenção industrial e infraestrutura.
-              Especialistas em NR 10, NR 35, NR 18 e NR 01.
+            <h3 className="text-xl font-bold mb-4 text-brand-light">JT Obras e Projetos</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Especialistas em obras complexas, reformas comerciais e manutenções com rígido padrão
+              de segurança e excelência.
             </p>
-            {/* Social icons */}
             <div className="flex gap-4 pt-2">
-              <a
-                href="#"
-                className="text-primary-foreground/70 hover:text-accent transition-colors"
-              >
+              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
                 <Instagram size={20} />
               </a>
-              <a
-                href="#"
-                className="text-primary-foreground/70 hover:text-accent transition-colors"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-primary-foreground/70 hover:text-accent transition-colors"
-              >
+              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
                 <Linkedin size={20} />
+              </a>
+              <a href="#" className="text-gray-300 hover:text-brand-orange transition-colors">
+                <Facebook size={20} />
               </a>
             </div>
           </div>
 
+          {/* Quick Links */}
           <div>
-            <h3 className="font-poppins font-bold text-lg mb-4">Links Rápidos</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-bold mb-4 text-brand-light">Links Rápidos</h3>
+            <ul className="space-y-3">
               <li>
-                <Link
-                  to="/#inicio"
-                  className="text-primary-foreground/70 hover:text-white transition-colors text-sm"
+                <a
+                  href="#inicio"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Início
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/#sobre"
-                  className="text-primary-foreground/70 hover:text-white transition-colors text-sm"
+                <a
+                  href="#projetos"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Sobre
-                </Link>
+                  Nossos Projetos
+                </a>
               </li>
               <li>
-                <Link
-                  to="/portfolio"
-                  className="text-primary-foreground/70 hover:text-white transition-colors text-sm"
+                <a
+                  href="#sobre"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Projetos
-                </Link>
+                  Sobre Nós
+                </a>
               </li>
               <li>
-                <Link
-                  to="/#clientes"
-                  className="text-primary-foreground/70 hover:text-white transition-colors text-sm"
+                <a
+                  href="#clientes"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Clientes
-                </Link>
+                </a>
               </li>
               <li>
                 <a
                   href="#contato"
-                  className="text-primary-foreground/70 hover:text-white transition-colors text-sm"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Contato
+                  Fale Conosco
                 </a>
               </li>
             </ul>
           </div>
 
+          {/* Services */}
           <div>
-            <h3 className="font-poppins font-bold text-lg mb-4">Contato</h3>
+            <h3 className="text-lg font-bold mb-4 text-brand-light">Especialidades</h3>
+            <ul className="space-y-3">
+              <li className="text-gray-300 text-sm">Reformas Comerciais</li>
+              <li className="text-gray-300 text-sm">Manutenção Predial</li>
+              <li className="text-gray-300 text-sm">Adequação NR 10 e NR 35</li>
+              <li className="text-gray-300 text-sm">Projetos Estruturais</li>
+              <li className="text-gray-300 text-sm">Gestão de Obras</li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-lg font-bold mb-4 text-brand-light">Contato</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="text-secondary shrink-0 mt-0.5" size={18} />
-                <span className="text-primary-foreground/70 text-sm">
-                  Rua Tommaso Giordani, 371
-                  <br />
-                  Vila Guacuri - São Paulo - SP
-                  <br />
-                  CEP: 04.475-210
+                <MapPin className="text-brand-orange shrink-0 mt-0.5" size={18} />
+                <span className="text-gray-300 text-sm">
+                  São Paulo, SP - Atendimento em todo Brasil
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="text-secondary shrink-0" size={18} />
-                <a
-                  href="mailto:jt.obrasemanutencao@gmail.com"
-                  className="text-primary-foreground/70 hover:text-white text-sm break-all"
-                >
-                  jt.obrasemanutencao@gmail.com
-                </a>
+                <Phone className="text-brand-orange shrink-0" size={18} />
+                <span className="text-gray-300 text-sm">(11) 99999-9999</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="text-secondary shrink-0" size={18} />
-                <a
-                  href="tel:+5511940037545"
-                  className="text-primary-foreground/70 hover:text-white text-sm"
-                >
-                  (11) 94003-7545
-                </a>
+                <Mail className="text-brand-orange shrink-0" size={18} />
+                <span className="text-gray-300 text-sm">contato@jtobras.com.br</span>
               </li>
             </ul>
           </div>
-
-          <div>
-            <h3 className="font-poppins font-bold text-lg mb-4">Dados Jurídicos</h3>
-            <div className="space-y-2 text-sm text-primary-foreground/70">
-              <p>
-                <strong className="text-white">Nome:</strong> JT Obras e Manutenções
-              </p>
-              <p>
-                <strong className="text-white">CNPJ:</strong> 63.243.791/0001-09
-              </p>
-              <p>
-                <strong className="text-white">Diretor:</strong> Joel Nascimento de Paula
-              </p>
-              <p>
-                <strong className="text-white">Regime:</strong> Simples Nacional
-              </p>
-            </div>
-          </div>
         </div>
 
-        <Separator className="bg-white/10 mb-8" />
+        {/* Bottom Bar with Logo and CNPJ */}
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-4 flex-col md:flex-row text-center md:text-left">
+            <div className="bg-white p-2 rounded shadow-sm">
+              <img
+                src={logo}
+                alt="Logo JT Obras e Manutenções"
+                className="h-10 w-auto object-contain"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400 font-medium">JT Obras e Manutenções LTDA</p>
+              <p className="text-xs text-gray-500 mt-1">CNPJ: 63.243.791/0001-09</p>
+            </div>
+          </div>
 
-        <div className="text-center text-primary-foreground/50 text-xs">
-          <p>
-            &copy; {new Date().getFullYear()} JT Obras e Manutenções. Todos os direitos reservados.
+          <p className="text-xs text-gray-500 text-center md:text-right">
+            &copy; {currentYear} Todos os direitos reservados.
           </p>
         </div>
       </div>

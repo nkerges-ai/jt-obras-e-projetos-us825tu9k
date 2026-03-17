@@ -1,135 +1,102 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, HardHat } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import logo from '@/assets/logotipo-c129e.jpg'
 
-const NAV_LINKS = [
-  { name: 'Início', href: '/#inicio' },
-  { name: 'Projetos', href: '/portfolio' },
-  { name: 'Clientes', href: '/#clientes' },
-  { name: 'Sobre', href: '/#sobre' },
-  { name: 'Contato', href: '/#contato' },
+const navLinks = [
+  { name: 'Início', href: '#inicio' },
+  { name: 'Projetos', href: '#projetos' },
+  { name: 'Clientes', href: '#clientes' },
+  { name: 'Sobre', href: '#sobre' },
+  { name: 'Contato', href: '#contato' },
 ]
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const location = useLocation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace('#', '')
-      const element = document.getElementById(id)
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }, 100)
-      }
-    } else if (location.pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [location])
+  const closeMenu = () => setIsMobileMenuOpen(false)
 
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'glassmorphism py-3 shadow-sm' : 'bg-transparent py-5',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white border-b',
+        isScrolled ? 'py-3 shadow-md border-transparent' : 'py-5 border-gray-100',
       )}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="bg-primary p-2 rounded-lg text-white group-hover:bg-secondary transition-colors">
-            <HardHat size={28} />
-          </div>
-          <div className="flex flex-col">
-            <span
-              className={cn(
-                'text-heading text-lg leading-tight transition-colors',
-                isScrolled
-                  ? 'text-primary group-hover:text-secondary'
-                  : 'text-white group-hover:text-secondary',
-              )}
-            >
-              JT OBRAS E
-            </span>
-            <span
-              className={cn(
-                'text-heading text-sm leading-tight transition-colors',
-                isScrolled
-                  ? 'text-accent group-hover:text-primary'
-                  : 'text-secondary group-hover:text-white',
-              )}
-            >
-              MANUTENÇÕES
-            </span>
-          </div>
-        </Link>
+      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+        {/* Logo Placement (Header) */}
+        <a href="#inicio" className="flex items-center flex-shrink-0 z-50" onClick={closeMenu}>
+          <img
+            src={logo}
+            alt="JT Obras e Manutenções"
+            className="w-auto object-contain transition-all duration-300"
+            style={{ maxHeight: '40px' }} // Ensures maximum height of 40px
+          />
+        </a>
 
-        {/* Desktop Nav */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <ul className="flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <li key={link.name}>
-                <Link
-                  to={link.href}
-                  className={cn(
-                    'text-sm font-medium transition-colors hover:text-secondary hover:underline underline-offset-4',
-                    isScrolled ? 'text-foreground/80' : 'text-white/90 hover:text-white',
-                  )}
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
+            >
+              {link.name}
+            </a>
+          ))}
           <Button
             asChild
-            className="bg-accent hover:bg-primary text-white shadow-soft hover:shadow-hover hover:-translate-y-0.5 transition-all duration-300"
+            className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm"
           >
-            <a href="/#contato">Solicitar Orçamento</a>
+            <a href="#contato">Solicitar Orçamento</a>
           </Button>
         </nav>
 
-        {/* Mobile Nav */}
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={isScrolled ? 'text-foreground' : 'text-white'}
-            >
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
-            <nav className="flex flex-col gap-6 mt-8">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium text-foreground/80 hover:text-primary transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Button asChild className="mt-4 bg-accent w-full" onClick={() => setIsOpen(false)}>
-                <a href="/#contato">Solicitar Orçamento</a>
-              </Button>
-            </nav>
-          </SheetContent>
-        </Sheet>
+        {/* Mobile Menu Toggle */}
+        <button
+          className="md:hidden z-50 p-2 text-brand-navy focus:outline-none"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div
+        className={cn(
+          'fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 md:hidden transition-transform duration-300 ease-in-out',
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full',
+        )}
+      >
+        {navLinks.map((link) => (
+          <a
+            key={link.name}
+            href={link.href}
+            onClick={closeMenu}
+            className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
+          >
+            {link.name}
+          </a>
+        ))}
+        <Button
+          asChild
+          className="bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg"
+          onClick={closeMenu}
+        >
+          <a href="#contato">Solicitar Orçamento</a>
+        </Button>
       </div>
     </header>
   )

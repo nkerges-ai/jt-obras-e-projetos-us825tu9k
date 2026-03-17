@@ -1,68 +1,107 @@
 import { Button } from '@/components/ui/button'
+import { ArrowRight, HardHat, ShieldCheck, Ruler } from 'lucide-react'
 import { FadeIn } from '@/components/animations/FadeIn'
-import { ArrowRight, ShieldCheck } from 'lucide-react'
 
 export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative min-h-[85vh] flex items-center justify-center overflow-hidden"
+      className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-brand-navy"
     >
+      {/* Background with overlay */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-          backgroundImage:
-            'url(https://img.usecurling.com/p/1920/1080?q=modern%20construction%20site&color=blue)',
+          backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site&color=black')`,
         }}
       />
-      <div className="absolute inset-0 z-10 bg-primary/80 mix-blend-multiply" />
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
 
-      <div className="container relative z-20 px-4 py-32 text-center md:text-left text-white">
-        <div className="max-w-3xl">
-          <FadeIn>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6">
-              <ShieldCheck size={16} className="text-secondary" />
-              <span className="text-sm font-medium">
-                Especialistas em NR 10, NR 35, NR 18 e NR 01
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <FadeIn className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6">
+              <span className="flex h-2 w-2 rounded-full bg-brand-orange animate-pulse"></span>
+              <span className="text-sm font-medium text-white">
+                Especialistas em Obras Complexas
               </span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+              Construindo Soluções com <span className="text-brand-light">Excelência</span> e
+              Segurança
+            </h1>
+
+            <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+              Qualidade, confiança e inovação em reformas e construções. Especialistas certificados
+              em NR 10, NR 35 e NR 18 para garantir o sucesso do seu projeto.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                size="lg"
+                className="bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8"
+                asChild
+              >
+                <a href="#contato">
+                  Solicitar Orçamento <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8"
+                asChild
+              >
+                <a href="#projetos">Conheça Nossos Projetos</a>
+              </Button>
             </div>
           </FadeIn>
 
-          <FadeIn delay={200}>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-poppins font-extrabold tracking-tight mb-6 leading-[1.1]">
-              Transformando Ideias em <span className="text-secondary">Realidade</span>
-            </h1>
-          </FadeIn>
-
-          <FadeIn delay={400}>
-            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl font-light leading-relaxed">
-              Qualidade, confiança e inovação em cada projeto. Sua satisfação é a nossa prioridade.
-            </p>
-          </FadeIn>
-
-          <FadeIn
-            delay={600}
-            className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-          >
-            <Button
-              size="lg"
-              className="bg-accent hover:bg-white hover:text-accent text-lg h-14 px-8 rounded-md transition-all duration-300 shadow-lg hover:shadow-xl group"
-            >
-              <a href="#contato" className="flex items-center">
-                Solicitar Orçamento
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-white border-white/30 hover:bg-white/10 hover:text-white text-lg h-14 px-8 backdrop-blur-sm"
-            >
-              <a href="/portfolio">Ver Projetos</a>
-            </Button>
+          <FadeIn direction="left" delay={0.2} className="hidden lg:grid grid-cols-2 gap-4">
+            <div className="space-y-4 translate-y-8">
+              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <HardHat className="h-10 w-10 text-brand-orange mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">Engenharia</h3>
+                <p className="text-gray-400 text-sm">
+                  Projetos estruturais e execução precisa para sua obra.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <Ruler className="h-10 w-10 text-brand-light mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">Reformas</h3>
+                <p className="text-gray-400 text-sm">
+                  Modernização e adequação de espaços comerciais.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <ShieldCheck className="h-10 w-10 text-green-400 mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">Segurança (NRs)</h3>
+                <p className="text-gray-400 text-sm">
+                  Rigoroso cumprimento das normas NR 10, 18 e 35.
+                </p>
+              </div>
+              <div className="rounded-2xl overflow-hidden h-48 border border-white/10 relative">
+                <img
+                  src="https://img.usecurling.com/p/400/400?q=architect%20blueprint"
+                  alt="Projeto"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply"></div>
+              </div>
+            </div>
           </FadeIn>
         </div>
+      </div>
+
+      {/* Scroll Down Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <a href="#projetos" className="text-white/50 hover:text-white transition-colors">
+          <div className="w-[30px] h-[50px] rounded-full border-2 border-current flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-current rounded-full animate-scroll-down"></div>
+          </div>
+        </a>
       </div>
     </section>
   )
