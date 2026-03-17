@@ -24700,30 +24700,64 @@ function Footer() {
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
 									"data-uid": "src/components/layout/Footer.tsx:100:15",
 									"data-prohibitions": "[]",
-									className: "flex items-center gap-3",
+									className: "flex items-start gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
 										"data-uid": "src/components/layout/Footer.tsx:101:17",
 										"data-prohibitions": "[editContent]",
-										className: "text-brand-orange shrink-0",
+										className: "text-brand-orange shrink-0 mt-0.5",
 										size: 18
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										"data-uid": "src/components/layout/Footer.tsx:102:17",
 										"data-prohibitions": "[]",
-										className: "text-gray-300 text-sm",
-										children: "(11) 99999-9999"
+										className: "flex flex-col gap-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+											"data-uid": "src/components/layout/Footer.tsx:103:19",
+											"data-prohibitions": "[]",
+											href: "https://wa.me/5511940037575",
+											target: "_blank",
+											rel: "noopener noreferrer",
+											className: "flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
+												"data-uid": "src/components/layout/Footer.tsx:109:21",
+												"data-prohibitions": "[editContent]",
+												size: 14,
+												className: "text-brand-light group-hover:text-brand-orange"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												"data-uid": "src/components/layout/Footer.tsx:113:21",
+												"data-prohibitions": "[]",
+												children: "Joel: (11) 94003-7575"
+											})]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+											"data-uid": "src/components/layout/Footer.tsx:115:19",
+											"data-prohibitions": "[]",
+											href: "https://wa.me/5511947069293",
+											target: "_blank",
+											rel: "noopener noreferrer",
+											className: "flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
+												"data-uid": "src/components/layout/Footer.tsx:121:21",
+												"data-prohibitions": "[editContent]",
+												size: 14,
+												className: "text-brand-light group-hover:text-brand-orange"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												"data-uid": "src/components/layout/Footer.tsx:125:21",
+												"data-prohibitions": "[]",
+												children: "Tatiana (Financeiro): (11) 94706-9293"
+											})]
+										})]
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:104:15",
+									"data-uid": "src/components/layout/Footer.tsx:129:15",
 									"data-prohibitions": "[]",
 									className: "flex items-center gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-										"data-uid": "src/components/layout/Footer.tsx:105:17",
+										"data-uid": "src/components/layout/Footer.tsx:130:17",
 										"data-prohibitions": "[editContent]",
 										className: "text-brand-orange shrink-0",
 										size: 18
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/layout/Footer.tsx:106:17",
+										"data-uid": "src/components/layout/Footer.tsx:131:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-300 text-sm",
 										children: "contato@jtobras.com.br"
@@ -24734,41 +24768,41 @@ function Footer() {
 					})
 				]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/Footer.tsx:113:9",
+				"data-uid": "src/components/layout/Footer.tsx:138:9",
 				"data-prohibitions": "[editContent]",
 				className: "pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/Footer.tsx:114:11",
+					"data-uid": "src/components/layout/Footer.tsx:139:11",
 					"data-prohibitions": "[]",
 					className: "flex items-center gap-4 flex-col md:flex-row text-center md:text-left",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:115:13",
+						"data-uid": "src/components/layout/Footer.tsx:140:13",
 						"data-prohibitions": "[]",
 						className: "bg-white p-2 rounded shadow-sm",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-							"data-uid": "src/components/layout/Footer.tsx:116:15",
+							"data-uid": "src/components/layout/Footer.tsx:141:15",
 							"data-prohibitions": "[editContent]",
 							src: logotipo_c129e_default,
 							alt: "Logo JT Obras e Manutenções",
 							className: "h-10 w-auto object-contain"
 						})
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:122:13",
+						"data-uid": "src/components/layout/Footer.tsx:147:13",
 						"data-prohibitions": "[]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/layout/Footer.tsx:123:15",
+							"data-uid": "src/components/layout/Footer.tsx:148:15",
 							"data-prohibitions": "[]",
 							className: "text-sm text-gray-400 font-medium",
 							children: "JT Obras e Manutenções LTDA"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/layout/Footer.tsx:124:15",
+							"data-uid": "src/components/layout/Footer.tsx:149:15",
 							"data-prohibitions": "[]",
 							className: "text-xs text-gray-500 mt-1",
 							children: "CNPJ: 63.243.791/0001-09"
 						})]
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					"data-uid": "src/components/layout/Footer.tsx:128:11",
+					"data-uid": "src/components/layout/Footer.tsx:153:11",
 					"data-prohibitions": "[editContent]",
 					className: "text-xs text-gray-500 text-center md:text-right",
 					children: [
@@ -25586,7 +25620,7 @@ function Contact() {
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
 												"data-uid": "src/components/sections/Contact.tsx:25:21",
 												"data-prohibitions": "[editContent]",
-												className: "h-6 w-6 text-brand-orange"
+												className: "h-6 w-6 text-brand-light"
 											})
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 											"data-uid": "src/components/sections/Contact.tsx:27:19",
@@ -25595,38 +25629,88 @@ function Contact() {
 												"data-uid": "src/components/sections/Contact.tsx:28:21",
 												"data-prohibitions": "[]",
 												className: "font-semibold text-lg",
-												children: "Telefone / WhatsApp"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												children: "Telefones / WhatsApp"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 												"data-uid": "src/components/sections/Contact.tsx:29:21",
 												"data-prohibitions": "[]",
-												className: "text-gray-300 text-sm mt-1",
-												children: "(11) 99999-9999"
+												className: "mt-3 space-y-4",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+													"data-uid": "src/components/sections/Contact.tsx:30:23",
+													"data-prohibitions": "[]",
+													href: "https://wa.me/5511940037575",
+													target: "_blank",
+													rel: "noopener noreferrer",
+													className: "flex items-center gap-3 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
+														"data-uid": "src/components/sections/Contact.tsx:36:25",
+														"data-prohibitions": "[editContent]",
+														className: "h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														"data-uid": "src/components/sections/Contact.tsx:37:25",
+														"data-prohibitions": "[]",
+														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															"data-uid": "src/components/sections/Contact.tsx:38:27",
+															"data-prohibitions": "[]",
+															className: "font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5",
+															children: "Joel"
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															"data-uid": "src/components/sections/Contact.tsx:41:27",
+															"data-prohibitions": "[]",
+															children: "+55 11 94003-7575"
+														})]
+													})]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+													"data-uid": "src/components/sections/Contact.tsx:44:23",
+													"data-prohibitions": "[]",
+													href: "https://wa.me/5511947069293",
+													target: "_blank",
+													rel: "noopener noreferrer",
+													className: "flex items-center gap-3 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
+														"data-uid": "src/components/sections/Contact.tsx:50:25",
+														"data-prohibitions": "[editContent]",
+														className: "h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														"data-uid": "src/components/sections/Contact.tsx:51:25",
+														"data-prohibitions": "[]",
+														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															"data-uid": "src/components/sections/Contact.tsx:52:27",
+															"data-prohibitions": "[]",
+															className: "font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5",
+															children: "Tatiana (Financeiro)"
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															"data-uid": "src/components/sections/Contact.tsx:55:27",
+															"data-prohibitions": "[]",
+															children: "+55 11 94706-9293"
+														})]
+													})]
+												})]
 											})]
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:33:17",
+										"data-uid": "src/components/sections/Contact.tsx:62:17",
 										"data-prohibitions": "[]",
 										className: "flex items-start gap-4",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:34:19",
+											"data-uid": "src/components/sections/Contact.tsx:63:19",
 											"data-prohibitions": "[]",
 											className: "bg-white/10 p-3 rounded-full shrink-0",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-												"data-uid": "src/components/sections/Contact.tsx:35:21",
+												"data-uid": "src/components/sections/Contact.tsx:64:21",
 												"data-prohibitions": "[editContent]",
 												className: "h-6 w-6 text-brand-orange"
 											})
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:37:19",
+											"data-uid": "src/components/sections/Contact.tsx:66:19",
 											"data-prohibitions": "[]",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												"data-uid": "src/components/sections/Contact.tsx:38:21",
+												"data-uid": "src/components/sections/Contact.tsx:67:21",
 												"data-prohibitions": "[]",
 												className: "font-semibold text-lg",
 												children: "E-mail"
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/Contact.tsx:39:21",
+												"data-uid": "src/components/sections/Contact.tsx:68:21",
 												"data-prohibitions": "[]",
 												className: "text-gray-300 text-sm mt-1",
 												children: "contato@jtobras.com.br"
@@ -25634,34 +25718,34 @@ function Contact() {
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:43:17",
+										"data-uid": "src/components/sections/Contact.tsx:72:17",
 										"data-prohibitions": "[]",
 										className: "flex items-start gap-4",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:44:19",
+											"data-uid": "src/components/sections/Contact.tsx:73:19",
 											"data-prohibitions": "[]",
 											className: "bg-white/10 p-3 rounded-full shrink-0",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
-												"data-uid": "src/components/sections/Contact.tsx:45:21",
+												"data-uid": "src/components/sections/Contact.tsx:74:21",
 												"data-prohibitions": "[editContent]",
-												className: "h-6 w-6 text-brand-orange"
+												className: "h-6 w-6 text-brand-light"
 											})
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:47:19",
+											"data-uid": "src/components/sections/Contact.tsx:76:19",
 											"data-prohibitions": "[]",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												"data-uid": "src/components/sections/Contact.tsx:48:21",
+												"data-uid": "src/components/sections/Contact.tsx:77:21",
 												"data-prohibitions": "[]",
 												className: "font-semibold text-lg",
 												children: "Escritório"
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-												"data-uid": "src/components/sections/Contact.tsx:49:21",
+												"data-uid": "src/components/sections/Contact.tsx:78:21",
 												"data-prohibitions": "[]",
 												className: "text-gray-300 text-sm mt-1",
 												children: [
 													"Av. Paulista, 1000 - Bela Vista",
 													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-														"data-uid": "src/components/sections/Contact.tsx:51:23",
+														"data-uid": "src/components/sections/Contact.tsx:80:23",
 														"data-prohibitions": "[editContent]"
 													}),
 													"São Paulo - SP, 01310-100"
@@ -25670,28 +25754,28 @@ function Contact() {
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:57:17",
+										"data-uid": "src/components/sections/Contact.tsx:86:17",
 										"data-prohibitions": "[]",
 										className: "flex items-start gap-4",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:58:19",
+											"data-uid": "src/components/sections/Contact.tsx:87:19",
 											"data-prohibitions": "[]",
 											className: "bg-white/10 p-3 rounded-full shrink-0",
 											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, {
-												"data-uid": "src/components/sections/Contact.tsx:59:21",
+												"data-uid": "src/components/sections/Contact.tsx:88:21",
 												"data-prohibitions": "[editContent]",
 												className: "h-6 w-6 text-brand-orange"
 											})
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											"data-uid": "src/components/sections/Contact.tsx:61:19",
+											"data-uid": "src/components/sections/Contact.tsx:90:19",
 											"data-prohibitions": "[]",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												"data-uid": "src/components/sections/Contact.tsx:62:21",
+												"data-uid": "src/components/sections/Contact.tsx:91:21",
 												"data-prohibitions": "[]",
 												className: "font-semibold text-lg",
 												children: "Horário de Atendimento"
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												"data-uid": "src/components/sections/Contact.tsx:63:21",
+												"data-uid": "src/components/sections/Contact.tsx:92:21",
 												"data-prohibitions": "[]",
 												className: "text-gray-300 text-sm mt-1",
 												children: "Segunda a Sexta: 08h às 18h"
@@ -25703,57 +25787,57 @@ function Contact() {
 						]
 					})
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/sections/Contact.tsx:71:11",
+					"data-uid": "src/components/sections/Contact.tsx:100:11",
 					"data-prohibitions": "[]",
 					className: "p-10 lg:w-3/5",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-						"data-uid": "src/components/sections/Contact.tsx:72:13",
+						"data-uid": "src/components/sections/Contact.tsx:101:13",
 						"data-prohibitions": "[]",
 						delay: .2,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-							"data-uid": "src/components/sections/Contact.tsx:73:15",
+							"data-uid": "src/components/sections/Contact.tsx:102:15",
 							"data-prohibitions": "[]",
 							className: "text-2xl font-bold text-brand-navy mb-6",
 							children: "Envie sua mensagem"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-							"data-uid": "src/components/sections/Contact.tsx:75:15",
+							"data-uid": "src/components/sections/Contact.tsx:104:15",
 							"data-prohibitions": "[]",
 							className: "space-y-6",
 							onSubmit: (e) => e.preventDefault(),
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/sections/Contact.tsx:76:17",
+									"data-uid": "src/components/sections/Contact.tsx:105:17",
 									"data-prohibitions": "[]",
 									className: "grid grid-cols-1 sm:grid-cols-2 gap-6",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:77:19",
+										"data-uid": "src/components/sections/Contact.tsx:106:19",
 										"data-prohibitions": "[]",
 										className: "space-y-2",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-											"data-uid": "src/components/sections/Contact.tsx:78:21",
+											"data-uid": "src/components/sections/Contact.tsx:107:21",
 											"data-prohibitions": "[]",
 											htmlFor: "name",
 											className: "text-gray-700 font-medium",
 											children: "Nome Completo"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-											"data-uid": "src/components/sections/Contact.tsx:81:21",
+											"data-uid": "src/components/sections/Contact.tsx:110:21",
 											"data-prohibitions": "[editContent]",
 											id: "name",
 											placeholder: "João da Silva",
 											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
 										})]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:87:19",
+										"data-uid": "src/components/sections/Contact.tsx:116:19",
 										"data-prohibitions": "[]",
 										className: "space-y-2",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-											"data-uid": "src/components/sections/Contact.tsx:88:21",
+											"data-uid": "src/components/sections/Contact.tsx:117:21",
 											"data-prohibitions": "[]",
 											htmlFor: "company",
 											className: "text-gray-700 font-medium",
 											children: "Empresa"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-											"data-uid": "src/components/sections/Contact.tsx:91:21",
+											"data-uid": "src/components/sections/Contact.tsx:120:21",
 											"data-prohibitions": "[editContent]",
 											id: "company",
 											placeholder: "Sua Empresa LTDA",
@@ -25762,21 +25846,21 @@ function Contact() {
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/sections/Contact.tsx:99:17",
+									"data-uid": "src/components/sections/Contact.tsx:128:17",
 									"data-prohibitions": "[]",
 									className: "grid grid-cols-1 sm:grid-cols-2 gap-6",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:100:19",
+										"data-uid": "src/components/sections/Contact.tsx:129:19",
 										"data-prohibitions": "[]",
 										className: "space-y-2",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-											"data-uid": "src/components/sections/Contact.tsx:101:21",
+											"data-uid": "src/components/sections/Contact.tsx:130:21",
 											"data-prohibitions": "[]",
 											htmlFor: "email",
 											className: "text-gray-700 font-medium",
 											children: "E-mail"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-											"data-uid": "src/components/sections/Contact.tsx:104:21",
+											"data-uid": "src/components/sections/Contact.tsx:133:21",
 											"data-prohibitions": "[editContent]",
 											id: "email",
 											type: "email",
@@ -25784,17 +25868,17 @@ function Contact() {
 											className: "bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
 										})]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/sections/Contact.tsx:111:19",
+										"data-uid": "src/components/sections/Contact.tsx:140:19",
 										"data-prohibitions": "[]",
 										className: "space-y-2",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-											"data-uid": "src/components/sections/Contact.tsx:112:21",
+											"data-uid": "src/components/sections/Contact.tsx:141:21",
 											"data-prohibitions": "[]",
 											htmlFor: "phone",
 											className: "text-gray-700 font-medium",
 											children: "Telefone"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Input, {
-											"data-uid": "src/components/sections/Contact.tsx:115:21",
+											"data-uid": "src/components/sections/Contact.tsx:144:21",
 											"data-prohibitions": "[editContent]",
 											id: "phone",
 											type: "tel",
@@ -25804,17 +25888,17 @@ function Contact() {
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/components/sections/Contact.tsx:124:17",
+									"data-uid": "src/components/sections/Contact.tsx:153:17",
 									"data-prohibitions": "[]",
 									className: "space-y-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Label, {
-										"data-uid": "src/components/sections/Contact.tsx:125:19",
+										"data-uid": "src/components/sections/Contact.tsx:154:19",
 										"data-prohibitions": "[]",
 										htmlFor: "message",
 										className: "text-gray-700 font-medium",
 										children: "Mensagem ou Detalhes do Projeto"
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Textarea, {
-										"data-uid": "src/components/sections/Contact.tsx:128:19",
+										"data-uid": "src/components/sections/Contact.tsx:157:19",
 										"data-prohibitions": "[editContent]",
 										id: "message",
 										placeholder: "Descreva brevemente o que você precisa...",
@@ -25822,7 +25906,7 @@ function Contact() {
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-									"data-uid": "src/components/sections/Contact.tsx:135:17",
+									"data-uid": "src/components/sections/Contact.tsx:164:17",
 									"data-prohibitions": "[]",
 									type: "submit",
 									className: "w-full bg-brand-orange hover:bg-[#cf6d18] text-white h-12 text-lg font-medium",
@@ -26105,7 +26189,7 @@ function WhatsAppFAB() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 		"data-uid": "src/components/layout/WhatsAppFAB.tsx:5:5",
 		"data-prohibitions": "[]",
-		href: "https://wa.me/5511940037545",
+		href: "https://wa.me/5511940037575",
 		target: "_blank",
 		rel: "noopener noreferrer",
 		className: "fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:bg-[#20bd5a] transition-colors animate-pulse-soft hover:scale-110 duration-300",
@@ -26218,4 +26302,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-DOYoeSg8.js.map
+//# sourceMappingURL=index-DFavEWXi.js.map

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react'
 
 export function Contact() {
   return (
@@ -22,11 +22,40 @@ export function Contact() {
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/10 p-3 rounded-full shrink-0">
-                    <Phone className="h-6 w-6 text-brand-orange" />
+                    <Phone className="h-6 w-6 text-brand-light" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-lg">Telefone / WhatsApp</h4>
-                    <p className="text-gray-300 text-sm mt-1">(11) 99999-9999</p>
+                    <h4 className="font-semibold text-lg">Telefones / WhatsApp</h4>
+                    <div className="mt-3 space-y-4">
+                      <a
+                        href="https://wa.me/5511940037575"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
+                      >
+                        <MessageCircle className="h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0" />
+                        <div>
+                          <span className="font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5">
+                            Joel
+                          </span>
+                          <span>+55 11 94003-7575</span>
+                        </div>
+                      </a>
+                      <a
+                        href="https://wa.me/5511947069293"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
+                      >
+                        <MessageCircle className="h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0" />
+                        <div>
+                          <span className="font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5">
+                            Tatiana (Financeiro)
+                          </span>
+                          <span>+55 11 94706-9293</span>
+                        </div>
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -42,7 +71,7 @@ export function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="bg-white/10 p-3 rounded-full shrink-0">
-                    <MapPin className="h-6 w-6 text-brand-orange" />
+                    <MapPin className="h-6 w-6 text-brand-light" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-lg">Escritório</h4>

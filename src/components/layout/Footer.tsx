@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook } from 'lucide-react'
+import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook, MessageCircle } from 'lucide-react'
 import logo from '@/assets/logotipo-c129e.jpg'
 
 export function Footer() {
@@ -97,9 +97,34 @@ export function Footer() {
                   São Paulo, SP - Atendimento em todo Brasil
                 </span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-brand-orange shrink-0" size={18} />
-                <span className="text-gray-300 text-sm">(11) 99999-9999</span>
+              <li className="flex items-start gap-3">
+                <Phone className="text-brand-orange shrink-0 mt-0.5" size={18} />
+                <div className="flex flex-col gap-2">
+                  <a
+                    href="https://wa.me/5511940037575"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
+                  >
+                    <MessageCircle
+                      size={14}
+                      className="text-brand-light group-hover:text-brand-orange"
+                    />
+                    <span>Joel: (11) 94003-7575</span>
+                  </a>
+                  <a
+                    href="https://wa.me/5511947069293"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
+                  >
+                    <MessageCircle
+                      size={14}
+                      className="text-brand-light group-hover:text-brand-orange"
+                    />
+                    <span>Tatiana (Financeiro): (11) 94706-9293</span>
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-brand-orange shrink-0" size={18} />
