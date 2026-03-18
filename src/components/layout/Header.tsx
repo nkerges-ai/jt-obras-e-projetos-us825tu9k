@@ -3,12 +3,14 @@ import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/logotipo-c129e.jpg'
+import { QuoteModal } from '@/components/sections/QuoteModal'
 
 const navLinks = [
   { name: 'Início', href: '#inicio' },
   { name: 'Projetos', href: '#projetos' },
   { name: 'Clientes', href: '#clientes' },
   { name: 'Sobre', href: '#sobre' },
+  { name: 'FAQ', href: '#faq' },
   { name: 'Contato', href: '#contato' },
 ]
 
@@ -61,12 +63,11 @@ export function Header() {
               {link.name}
             </a>
           ))}
-          <Button
-            asChild
-            className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm"
-          >
-            <a href="#contato">Solicitar Orçamento</a>
-          </Button>
+          <QuoteModal>
+            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm">
+              Solicitar Orçamento
+            </Button>
+          </QuoteModal>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -96,13 +97,14 @@ export function Header() {
             {link.name}
           </a>
         ))}
-        <Button
-          asChild
-          className="bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg"
-          onClick={closeMenu}
-        >
-          <a href="#contato">Solicitar Orçamento</a>
-        </Button>
+        <QuoteModal>
+          <Button
+            className="bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg"
+            onClick={closeMenu}
+          >
+            Solicitar Orçamento
+          </Button>
+        </QuoteModal>
       </div>
     </header>
   )

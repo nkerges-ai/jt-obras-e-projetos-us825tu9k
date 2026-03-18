@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, HardHat, ShieldCheck, Ruler } from 'lucide-react'
 import { FadeIn } from '@/components/animations/FadeIn'
+import { QuoteModal } from '@/components/sections/QuoteModal'
 
 export function Hero() {
   return (
@@ -37,15 +38,14 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8"
-                asChild
-              >
-                <a href="#contato">
+              <QuoteModal>
+                <Button
+                  size="lg"
+                  className="bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8"
+                >
                   Solicitar Orçamento <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              </Button>
+                </Button>
+              </QuoteModal>
               <Button
                 size="lg"
                 variant="outline"

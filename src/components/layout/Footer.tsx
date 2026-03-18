@@ -91,11 +91,8 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#clientes"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Clientes
+                <a href="#faq" className="text-gray-300 hover:text-white transition-colors text-sm">
+                  Dúvidas (FAQ)
                 </a>
               </li>
               <li>

@@ -2,10 +2,48 @@ import { FadeIn } from '@/components/animations/FadeIn'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { useToast } from '@/hooks/use-toast'
+
+const contactFormSchema = z.object({
+  name: z.string().min(2, 'Nome é obrigatório'),
+  email: z.string().email('E-mail inválido'),
+  subject: z.string().min(2, 'Assunto é obrigatório'),
+  message: z.string().min(10, 'A mensagem deve ter pelo menos 10 caracteres'),
+})
 
 export function Contact() {
+  const { toast } = useToast()
+
+  const form = useForm<z.infer<typeof contactFormSchema>>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof contactFormSchema>) {
+    toast({
+      title: 'Mensagem enviada com sucesso!',
+      description: 'Recebemos seu contato e retornaremos em breve.',
+    })
+    form.reset()
+  }
+
   return (
     <section id="contato" className="py-24 bg-gray-50 relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -15,8 +53,8 @@ export function Contact() {
             <FadeIn>
               <h2 className="text-3xl font-extrabold mb-2">Fale Conosco</h2>
               <p className="text-gray-300 mb-10 text-sm">
-                Estamos prontos para entender as necessidades da sua obra e propor a melhor solução.
-                Solicite um orçamento sem compromisso.
+                Tem dúvidas adicionais ou prefere um contato direto? Preencha o formulário ou use
+                nossos canais de atendimento.
               </p>
 
               <div className="space-y-6">
@@ -101,73 +139,89 @@ export function Contact() {
             <FadeIn delay={0.2}>
               <h3 className="text-2xl font-bold text-brand-navy mb-6">Envie sua mensagem</h3>
 
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-gray-700 font-medium">
-                      Nome Completo
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="João da Silva"
-                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700 font-medium">Nome</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Seu nome completo"
+                              className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700 font-medium">E-mail</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="seu@email.com"
+                              className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="company" className="text-gray-700 font-medium">
-                      Empresa
-                    </Label>
-                    <Input
-                      id="company"
-                      placeholder="Sua Empresa LTDA"
-                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700 font-medium">
-                      E-mail
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="joao@empresa.com.br"
-                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-gray-700 font-medium">
-                      Telefone
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="(11) 90000-0000"
-                      className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-gray-700 font-medium">
-                    Mensagem ou Detalhes do Projeto
-                  </Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Descreva brevemente o que você precisa..."
-                    className="min-h-[120px] bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                  <FormField
+                    control={form.control}
+                    name="subject"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">Assunto</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Sobre o que deseja falar?"
+                            className="bg-gray-50 border-gray-200 focus-visible:ring-brand-light"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <Button
-                  type="submit"
-                  className="w-full bg-brand-orange hover:bg-[#cf6d18] text-white h-12 text-lg font-medium"
-                >
-                  Solicitar Orçamento Agora
-                </Button>
-              </form>
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700 font-medium">Mensagem</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Escreva sua mensagem aqui..."
+                            className="min-h-[120px] bg-gray-50 border-gray-200 focus-visible:ring-brand-light resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-brand-orange hover:bg-[#cf6d18] text-white h-12 text-lg font-medium"
+                  >
+                    Enviar Mensagem
+                  </Button>
+                </form>
+              </Form>
             </FadeIn>
           </div>
         </div>
