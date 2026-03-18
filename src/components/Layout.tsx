@@ -1,17 +1,19 @@
 import { Outlet } from 'react-router-dom'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
-import { WhatsAppFAB } from '@/components/layout/WhatsAppFAB'
+import { Header } from './layout/Header'
+import { Footer } from './layout/Footer'
+import { WhatsAppFAB } from './layout/WhatsAppFAB'
+import { Toaster } from '@/components/ui/sonner'
 
-export default function Layout() {
+export function Layout() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground font-sans selection:bg-accent selection:text-white">
+    <div className="flex min-h-screen flex-col bg-background font-sans antialiased">
       <Header />
-      <main className="flex-grow flex flex-col pt-20">
+      <main className="flex-1">
         <Outlet />
       </main>
       <Footer />
       <WhatsAppFAB />
+      <Toaster />
     </div>
   )
 }

@@ -1,160 +1,109 @@
-import { useState, useEffect } from 'react'
-import { Menu, X } from 'lucide-react'
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { Menu, X, HardHat } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import logo from '@/assets/logotipo-c129e.jpg'
-import { QuoteModal } from '@/components/sections/QuoteModal'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-const navLinks = [
+const navigation = [
   { name: 'Início', href: '/' },
-  { name: 'Projetos', href: '/portfolio' },
-  { name: 'Dicas', href: '/#dicas' },
-  { name: 'Depoimentos', href: '/#depoimentos' },
-  { name: 'Contato', href: '/#contato' },
+  { name: 'Portfólio', href: '/portfolio' },
 ]
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const closeMenu = () => setIsMobileMenuOpen(false)
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith('/#')) {
-      e.preventDefault()
-      const targetId = href.replace('/#', '')
-      if (location.pathname !== '/') {
-        navigate('/')
-        setTimeout(() => {
-          const element = document.getElementById(targetId)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' })
-          }
-        }, 100)
-      } else {
-        const element = document.getElementById(targetId)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-    }
-    closeMenu()
-  }
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white border-b',
-        isScrolled ? 'py-3 shadow-md border-transparent' : 'py-5 border-gray-100',
-      )}
-    >
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        {/* Logo Placement (Header) */}
-        <Link
-          to="/"
-          className="flex items-center gap-4 flex-shrink-0 z-50 lg:mr-auto"
-          onClick={closeMenu}
-        >
-          <img
-            src={logo}
-            alt="JT Obras e Manutenções"
-            className="w-auto object-contain transition-all duration-300 h-12 md:h-16"
-          />
-          <span className="font-poppins font-extrabold text-brand-navy text-xl md:text-2xl leading-tight hidden xl:block uppercase tracking-wider">
-            JT OBRAS E<br /> MANUTENÇÕES
-          </span>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-6 py-5 md:px-12 md:py-7 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-4 group">
+          <div className="bg-primary p-3 rounded-xl group-hover:bg-primary/90 transition-colors shadow-sm">
+            <HardHat className="h-8 w-8 text-primary-foreground" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xl md:text-2xl font-extrabold tracking-tight leading-none">
+              JT Obras
+            </span>
+            <span className="text-xs md:text-sm text-muted-foreground font-medium mt-1">
+              e Projetos
+            </span>
+          </div>
         </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8 ml-auto">
-          {navLinks.map((link) => {
-            const isHash = link.href.startsWith('/#')
-            return isHash ? (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
-              >
-                {link.name}
-              </a>
-            ) : (
-              <Link
-                key={link.name}
-                to={link.href}
-                onClick={closeMenu}
-                className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
-              >
-                {link.name}
-              </Link>
-            )
-          })}
-          <QuoteModal>
-            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-4">
-              Solicitar Orçamento
-            </Button>
-          </QuoteModal>
-        </nav>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className="lg:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div
-        className={cn(
-          'fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 lg:hidden transition-transform duration-300 ease-in-out',
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full',
-        )}
-      >
-        {navLinks.map((link) => {
-          const isHash = link.href.startsWith('/#')
-          return isHash ? (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
-            >
-              {link.name}
-            </a>
-          ) : (
+        <div className="hidden md:flex md:items-center md:gap-x-12">
+          {navigation.map((item) => (
             <Link
-              key={link.name}
-              to={link.href}
-              onClick={closeMenu}
-              className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
+              key={item.name}
+              to={item.href}
+              className={cn(
+                'text-base font-semibold transition-colors hover:text-primary',
+                location.pathname === item.href ? 'text-primary' : 'text-muted-foreground',
+              )}
             >
-              {link.name}
+              {item.name}
             </Link>
-          )
-        })}
-        <QuoteModal>
-          <Button
-            className="bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg"
-            onClick={closeMenu}
-          >
+          ))}
+          <Button size="lg" className="font-bold rounded-full px-8 shadow-md">
             Solicitar Orçamento
           </Button>
-        </QuoteModal>
+        </div>
+        <div className="flex md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(true)}
+            className="h-12 w-12"
+          >
+            <span className="sr-only">Abrir menu</span>
+            <Menu className="h-8 w-8" aria-hidden="true" />
+          </Button>
+        </div>
       </div>
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-background md:hidden px-6 py-6 overflow-y-auto">
+          <div className="flex items-center justify-between mb-10">
+            <Link
+              to="/"
+              className="flex items-center gap-4"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <div className="bg-primary p-3 rounded-xl">
+                <HardHat className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-extrabold leading-none">JT Obras</span>
+                <span className="text-xs text-muted-foreground font-medium mt-1">e Projetos</span>
+              </div>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+              className="h-12 w-12"
+            >
+              <span className="sr-only">Fechar menu</span>
+              <X className="h-8 w-8" aria-hidden="true" />
+            </Button>
+          </div>
+          <div className="flex flex-col gap-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  'text-2xl font-bold',
+                  location.pathname === item.href ? 'text-primary' : 'text-foreground',
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+            <Button size="lg" className="w-full mt-8 font-bold rounded-full py-6 text-lg">
+              Solicitar Orçamento
+            </Button>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

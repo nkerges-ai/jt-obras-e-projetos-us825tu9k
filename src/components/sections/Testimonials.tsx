@@ -1,83 +1,66 @@
 import { FadeIn } from '@/components/animations/FadeIn'
+import { Star } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Quote, Star } from 'lucide-react'
 
 const testimonials = [
   {
-    name: 'Carlos Almeida',
-    role: 'Síndico Profissional',
-    content:
-      'A equipe da JT Obras foi impecável na reforma da fachada do nosso condomínio. Cumpriram o prazo e todas as normas de segurança rigorosamente.',
-    avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1',
+    name: 'Carlos Silva',
+    role: 'Síndico Comercial',
+    text: 'A JT Obras resolveu nosso problema crônico de infiltração na fachada. Trabalho impecável, equipe extremamente profissional e entrega rigorosamente dentro do prazo estipulado.',
+    rating: 5,
   },
   {
     name: 'Mariana Costa',
-    role: 'Gerente Administrativa',
-    content:
-      'Tínhamos um problema sério de infiltração. Eles realizaram a limpeza de calhas e o reparo do telhado com extrema eficiência e organização.',
-    avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2',
+    role: 'Diretora Escolar',
+    text: 'Contratamos a manutenção preventiva para os aparelhos de ar condicionado da unidade. O serviço foi rápido, limpo e não atrapalhou a rotina das aulas. Excelente atendimento!',
+    rating: 5,
   },
   {
-    name: 'Roberto Silva',
-    role: 'Diretor de Operações',
-    content:
-      'Excelente serviço de adequação elétrica (NR 10). Profissionais altamente capacitados e transparentes em todas as etapas do projeto.',
-    avatar: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3',
+    name: 'Roberto Almeida',
+    role: 'Gerente de Facilities',
+    text: 'A pintura externa do nosso prédio ficou perfeita. A atenção às normas de segurança para trabalho em altura nos deu muita tranquilidade durante toda a execução da obra.',
+    rating: 5,
   },
 ]
 
 export function Testimonials() {
   return (
-    <section
-      id="depoimentos"
-      className="py-24 bg-brand-navy text-white border-t border-brand-navy/90"
-    >
+    <section className="py-20 md:py-32 bg-background">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <FadeIn>
-            <h2 className="text-brand-orange font-bold tracking-wider uppercase text-sm mb-2">
+        <FadeIn>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
               O que nossos clientes dizem
             </h2>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Depoimentos</h3>
-            <p className="text-gray-300 text-lg">
-              A satisfação dos nossos clientes é o maior reflexo da qualidade e do compromisso que
-              entregamos em cada obra realizada.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A satisfação dos nossos parceiros é o maior reflexo da qualidade, segurança e do
+              compromisso que entregamos em cada projeto.
             </p>
-          </FadeIn>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <FadeIn key={index} delay={index * 0.1} direction="up">
-              <Card className="h-full border-0 bg-white/5 backdrop-blur-sm shadow-xl hover:bg-white/10 transition-all duration-300">
-                <CardContent className="pt-8 relative">
-                  <Quote className="absolute top-6 right-6 h-10 w-10 text-brand-orange/20" />
-                  <div className="flex gap-1 mb-6 text-brand-orange">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-4 w-4 fill-current" />
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {testimonials.map((testimonial, index) => (
+              <Card
+                key={index}
+                className="bg-secondary/20 border-none shadow-sm transition-all hover:shadow-lg hover:-translate-y-1"
+              >
+                <CardContent className="pt-10 px-8 pb-10 flex flex-col items-center text-center gap-6">
+                  <div className="flex gap-1 text-yellow-400">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-6 w-6 fill-current" />
                     ))}
                   </div>
-                  <p className="text-gray-300 mb-8 italic leading-relaxed text-sm md:text-base">
-                    "{testimonial.content}"
+                  <p className="text-muted-foreground italic leading-relaxed text-lg">
+                    "{testimonial.text}"
                   </p>
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full border-2 border-brand-light object-cover"
-                    />
-                    <div>
-                      <h4 className="font-bold text-white text-sm md:text-base">
-                        {testimonial.name}
-                      </h4>
-                      <p className="text-xs md:text-sm text-gray-400">{testimonial.role}</p>
-                    </div>
+                  <div className="mt-auto pt-4">
+                    <p className="font-bold text-foreground text-lg">{testimonial.name}</p>
+                    <p className="text-sm font-medium text-primary mt-1">{testimonial.role}</p>
                   </div>
                 </CardContent>
               </Card>
-            </FadeIn>
-          ))}
-        </div>
+            ))}
+          </div>
+        </FadeIn>
       </div>
     </section>
   )

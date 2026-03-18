@@ -1,59 +1,44 @@
 import { FadeIn } from '@/components/animations/FadeIn'
+import { Building2, GraduationCap, Landmark, Briefcase } from 'lucide-react'
 
 const clients = [
-  {
-    name: 'Empresa A',
-    logo: 'https://img.usecurling.com/i?q=corporate%20logo&shape=outline&color=gray',
-  },
-  {
-    name: 'Empresa B',
-    logo: 'https://img.usecurling.com/i?q=tech%20company%20logo&shape=outline&color=gray',
-  },
-  {
-    name: 'Empresa C',
-    logo: 'https://img.usecurling.com/i?q=industrial%20logo&shape=outline&color=gray',
-  },
-  {
-    name: 'Empresa D',
-    logo: 'https://img.usecurling.com/i?q=retail%20logo&shape=outline&color=gray',
-  },
-  {
-    name: 'Empresa E',
-    logo: 'https://img.usecurling.com/i?q=healthcare%20logo&shape=outline&color=gray',
-  },
-  {
-    name: 'Empresa F',
-    logo: 'https://img.usecurling.com/i?q=logistics%20logo&shape=outline&color=gray',
-  },
+  { name: 'ETEC', icon: GraduationCap },
+  { name: 'SENAI', icon: Briefcase },
+  { name: 'SESI', icon: Building2 },
+  { name: 'Prefeitura de São Bernardo', icon: Landmark },
 ]
 
 export function Clients() {
   return (
-    <section id="clientes" className="py-20 bg-white border-t border-gray-100">
+    <section className="bg-secondary/40 py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-12">
-          <FadeIn>
-            <h2 className="text-brand-orange font-bold tracking-wider uppercase text-sm mb-2">
-              Quem Confia em Nós
+        <FadeIn>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+              Clientes de Confiança
             </h2>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-brand-navy">Nossos Clientes</h3>
-          </FadeIn>
-        </div>
-
-        <FadeIn delay={0.2} className="w-full">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center justify-items-center opacity-60 hover:opacity-100 transition-opacity duration-500">
-            {clients.map((client, index) => (
-              <div
-                key={index}
-                className="w-32 h-20 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300"
-              >
-                <img
-                  src={client.logo}
-                  alt={`Logo ${client.name}`}
-                  className="max-w-full max-h-full object-contain mix-blend-multiply"
-                />
-              </div>
-            ))}
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Temos orgulho em prestar serviços de excelência para grandes instituições que confiam
+              em nosso trabalho.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:gap-8">
+            {clients.map((client, index) => {
+              const Icon = client.icon
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col items-center justify-center gap-4 rounded-2xl bg-background p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Icon className="h-8 w-8" />
+                  </div>
+                  <span className="text-center font-bold text-foreground text-lg">
+                    {client.name}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         </FadeIn>
       </div>
