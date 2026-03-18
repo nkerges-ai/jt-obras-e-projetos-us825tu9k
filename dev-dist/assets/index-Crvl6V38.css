@@ -1644,6 +1644,10 @@ video {
 .bg-secondary\/90 {
   background-color: hsl(var(--secondary) / 0.9);
 }
+.bg-slate-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 232 240 / var(--tw-bg-opacity, 1));
+}
 .bg-slate-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(248 250 252 / var(--tw-bg-opacity, 1));

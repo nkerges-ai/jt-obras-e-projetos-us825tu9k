@@ -34906,43 +34906,43 @@ var PORTFOLIO_ITEMS = [
 		id: 1,
 		title: "Manutenção Preventiva Industrial",
 		category: "Indústria",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=factory%20maintenance%20machine",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20ppe%20factory%20inspection"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=factory%20machinery%20old&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20helmet%20factory&dpr=2"
 	},
 	{
 		id: 2,
 		title: "Construção de Galpão Logístico",
 		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20dirt%20land%20construction",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=warehouse%20construction%20workers%20ppe"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20dirt%20site&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20helmet&dpr=2"
 	},
 	{
 		id: 3,
 		title: "Adequação Elétrica NR 10",
 		category: "Projetos Elétricos",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=old%20electrical%20panel",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20ppe%20panel%20wiring"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=old%20electrical%20panel&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20helmet%20panel&dpr=2"
 	},
 	{
 		id: 4,
 		title: "Pintura e Reforma em Altura (NR 35)",
 		category: "Manutenção Predial",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=worn%20building%20facade",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold%20ppe"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=building%20old%20facade&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold&dpr=2"
 	},
 	{
 		id: 5,
 		title: "Infraestrutura Hidráulica",
 		category: "Infraestrutura",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=broken%20pipes%20leaking",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20ppe%20fixing%20pipes"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=broken%20water%20pipes&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20helmet%20pipes&dpr=2"
 	},
 	{
 		id: 6,
 		title: "Reforma de Refeitório Corporativo",
 		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20old%20room",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20ppe%20indoor"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20old%20room&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=builder%20helmet%20indoor&dpr=2"
 	}
 ];
 var Portfolio = () => {
@@ -35012,48 +35012,50 @@ var Portfolio = () => {
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							"data-uid": "src/pages/Portfolio.tsx:79:17",
 							"data-prohibitions": "[editContent]",
-							className: "relative h-72 overflow-hidden",
+							className: "relative h-72 overflow-hidden bg-slate-200",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 									"data-uid": "src/pages/Portfolio.tsx:81:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageBefore,
 									alt: `${item.title} Antes`,
-									className: "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-100 group-hover:opacity-0"
+									className: "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-100 group-hover:opacity-0",
+									loading: "lazy"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/pages/Portfolio.tsx:87:19",
+									"data-uid": "src/pages/Portfolio.tsx:88:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageAfter,
 									alt: `${item.title} Depois`,
-									className: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+									className: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105",
+									loading: "lazy"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:94:19",
+									"data-uid": "src/pages/Portfolio.tsx:96:19",
 									"data-prohibitions": "[editContent]",
 									className: "absolute top-4 left-4 z-20",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:95:21",
+										"data-uid": "src/pages/Portfolio.tsx:97:21",
 										"data-prohibitions": "[editContent]",
 										className: "bg-white/90 backdrop-blur text-primary text-xs font-bold px-3 py-1 rounded shadow-sm",
 										children: item.category
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:101:19",
+									"data-uid": "src/pages/Portfolio.tsx:103:19",
 									"data-prohibitions": "[]",
 									className: "absolute top-4 right-4 z-20 flex gap-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:102:21",
+										"data-uid": "src/pages/Portfolio.tsx:104:21",
 										"data-prohibitions": "[]",
 										className: "bg-black/70 text-white text-xs px-2 py-1 rounded opacity-100 group-hover:opacity-0 transition-opacity flex items-center gap-1",
 										children: ["Antes ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeftRight, {
-											"data-uid": "src/pages/Portfolio.tsx:103:29",
+											"data-uid": "src/pages/Portfolio.tsx:105:29",
 											"data-prohibitions": "[editContent]",
 											size: 12
 										})]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:105:21",
+										"data-uid": "src/pages/Portfolio.tsx:107:21",
 										"data-prohibitions": "[]",
 										className: "bg-secondary/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity",
 										children: "Depois"
@@ -35061,11 +35063,11 @@ var Portfolio = () => {
 								})
 							]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/Portfolio.tsx:110:17",
+							"data-uid": "src/pages/Portfolio.tsx:112:17",
 							"data-prohibitions": "[editContent]",
 							className: "p-6",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/pages/Portfolio.tsx:111:19",
+								"data-uid": "src/pages/Portfolio.tsx:113:19",
 								"data-prohibitions": "[editContent]",
 								className: "font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors",
 								children: item.title
@@ -35235,4 +35237,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-DBmFlxTN.js.map
+//# sourceMappingURL=index-RsQrSKzY.js.map
