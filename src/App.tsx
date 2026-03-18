@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Index from './pages/Index'
 import Portfolio from './pages/Portfolio'
 import NotFound from './pages/NotFound'
-import Layout from './components/Layout'
+import { Layout } from './components/Layout'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
