@@ -32699,32 +32699,34 @@ function QuoteModal({ children }) {
 var navLinks = [
 	{
 		name: "Início",
-		href: "#inicio"
+		href: "/"
 	},
 	{
 		name: "Projetos",
-		href: "#projetos"
+		href: "/portfolio"
 	},
 	{
 		name: "Clientes",
-		href: "#clientes"
+		href: "/#clientes"
 	},
 	{
 		name: "Sobre",
-		href: "#sobre"
+		href: "/#sobre"
 	},
 	{
 		name: "FAQ",
-		href: "#faq"
+		href: "/#faq"
 	},
 	{
 		name: "Contato",
-		href: "#contato"
+		href: "/#contato"
 	}
 ];
 function Header$1() {
 	const [isScrolled, setIsScrolled] = (0, import_react.useState)(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, import_react.useState)(false);
+	const location = useLocation();
+	const navigate = useNavigate();
 	(0, import_react.useEffect)(() => {
 		const handleScroll = () => {
 			setIsScrolled(window.scrollY > 20);
@@ -32733,96 +32735,132 @@ function Header$1() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 	const closeMenu = () => setIsMobileMenuOpen(false);
+	const handleNavClick = (e, href) => {
+		if (href.startsWith("/#")) {
+			e.preventDefault();
+			const targetId = href.replace("/#", "");
+			if (location.pathname !== "/") {
+				navigate("/");
+				setTimeout(() => {
+					const element = document.getElementById(targetId);
+					if (element) element.scrollIntoView({ behavior: "smooth" });
+				}, 100);
+			} else {
+				const element = document.getElementById(targetId);
+				if (element) element.scrollIntoView({ behavior: "smooth" });
+			}
+		}
+		closeMenu();
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		"data-uid": "src/components/layout/Header.tsx:32:5",
+		"data-uid": "src/components/layout/Header.tsx:57:5",
 		"data-prohibitions": "[editContent]",
 		className: cn$1("fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white border-b", isScrolled ? "py-3 shadow-md border-transparent" : "py-5 border-gray-100"),
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Header.tsx:38:7",
+			"data-uid": "src/components/layout/Header.tsx:63:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 md:px-6 flex items-center justify-between",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-					"data-uid": "src/components/layout/Header.tsx:40:9",
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+					"data-uid": "src/components/layout/Header.tsx:65:9",
 					"data-prohibitions": "[]",
-					href: "#inicio",
-					className: "flex items-center gap-3 flex-shrink-0 z-50",
+					to: "/",
+					className: "flex items-center gap-4 flex-shrink-0 z-50 lg:mr-16",
 					onClick: closeMenu,
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						"data-uid": "src/components/layout/Header.tsx:45:11",
+						"data-uid": "src/components/layout/Header.tsx:70:11",
 						"data-prohibitions": "[editContent]",
 						src: logotipo_c129e_default,
 						alt: "JT Obras e Manutenções",
 						className: "w-auto object-contain transition-all duration-300 h-12 md:h-16"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/components/layout/Header.tsx:50:11",
+						"data-uid": "src/components/layout/Header.tsx:75:11",
 						"data-prohibitions": "[]",
-						className: "font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block",
+						className: "font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block uppercase tracking-wide",
 						children: [
-							"JT Obras e",
+							"JT OBRAS E",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-								"data-uid": "src/components/layout/Header.tsx:51:23",
+								"data-uid": "src/components/layout/Header.tsx:76:23",
 								"data-prohibitions": "[editContent]",
 								className: "hidden lg:block"
 							}),
-							" Manutenções"
+							" MANUTENÇÕES"
 						]
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-					"data-uid": "src/components/layout/Header.tsx:56:9",
+					"data-uid": "src/components/layout/Header.tsx:81:9",
 					"data-prohibitions": "[editContent]",
-					className: "hidden md:flex items-center gap-8",
-					children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-						"data-uid": "src/components/layout/Header.tsx:58:13",
-						"data-prohibitions": "[editContent]",
-						href: link.href,
-						className: "text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200",
-						children: link.name
-					}, link.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
-						"data-uid": "src/components/layout/Header.tsx:66:11",
+					className: "hidden md:flex items-center gap-8 xl:gap-10 ml-auto",
+					children: [navLinks.map((link) => {
+						return link.href.startsWith("/#") ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+							"data-uid": "src/components/layout/Header.tsx:85:15",
+							"data-prohibitions": "[editContent]",
+							href: link.href,
+							onClick: (e) => handleNavClick(e, link.href),
+							className: "text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200",
+							children: link.name
+						}, link.name) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+							"data-uid": "src/components/layout/Header.tsx:94:15",
+							"data-prohibitions": "[editContent]",
+							to: link.href,
+							onClick: closeMenu,
+							className: "text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200",
+							children: link.name
+						}, link.name);
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
+						"data-uid": "src/components/layout/Header.tsx:104:11",
 						"data-prohibitions": "[]",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							"data-uid": "src/components/layout/Header.tsx:67:13",
+							"data-uid": "src/components/layout/Header.tsx:105:13",
 							"data-prohibitions": "[]",
-							className: "bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm",
+							className: "bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-2",
 							children: "Solicitar Orçamento"
 						})
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					"data-uid": "src/components/layout/Header.tsx:74:9",
+					"data-uid": "src/components/layout/Header.tsx:112:9",
 					"data-prohibitions": "[editContent]",
-					className: "md:hidden z-50 p-2 text-brand-navy focus:outline-none",
+					className: "md:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto",
 					onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
 					"aria-label": "Toggle menu",
 					children: isMobileMenuOpen ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, {
-						"data-uid": "src/components/layout/Header.tsx:79:31",
+						"data-uid": "src/components/layout/Header.tsx:117:31",
 						"data-prohibitions": "[editContent]",
 						size: 24
 					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
-						"data-uid": "src/components/layout/Header.tsx:79:49",
+						"data-uid": "src/components/layout/Header.tsx:117:49",
 						"data-prohibitions": "[editContent]",
 						size: 24
 					})
 				})
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Header.tsx:84:7",
+			"data-uid": "src/components/layout/Header.tsx:122:7",
 			"data-prohibitions": "[editContent]",
 			className: cn$1("fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 md:hidden transition-transform duration-300 ease-in-out", isMobileMenuOpen ? "translate-x-0" : "translate-x-full"),
-			children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-				"data-uid": "src/components/layout/Header.tsx:91:11",
-				"data-prohibitions": "[editContent]",
-				href: link.href,
-				onClick: closeMenu,
-				className: "text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4",
-				children: link.name
-			}, link.name)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
-				"data-uid": "src/components/layout/Header.tsx:100:9",
+			children: [navLinks.map((link) => {
+				return link.href.startsWith("/#") ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+					"data-uid": "src/components/layout/Header.tsx:131:13",
+					"data-prohibitions": "[editContent]",
+					href: link.href,
+					onClick: (e) => handleNavClick(e, link.href),
+					className: "text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4",
+					children: link.name
+				}, link.name) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+					"data-uid": "src/components/layout/Header.tsx:140:13",
+					"data-prohibitions": "[editContent]",
+					to: link.href,
+					onClick: closeMenu,
+					className: "text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4",
+					children: link.name
+				}, link.name);
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
+				"data-uid": "src/components/layout/Header.tsx:150:9",
 				"data-prohibitions": "[]",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					"data-uid": "src/components/layout/Header.tsx:101:11",
+					"data-uid": "src/components/layout/Header.tsx:151:11",
 					"data-prohibitions": "[]",
 					className: "bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg",
 					onClick: closeMenu,
@@ -32835,7 +32873,7 @@ function Header$1() {
 //#endregion
 //#region src/components/layout/Footer.tsx
 var TikTokIcon = ({ size = 20 }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
-	"data-uid": "src/components/layout/Footer.tsx:5:3",
+	"data-uid": "src/components/layout/Footer.tsx:6:3",
 	"data-prohibitions": "[]",
 	width: size,
 	height: size,
@@ -32846,92 +32884,110 @@ var TikTokIcon = ({ size = 20 }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
 	strokeLinecap: "round",
 	strokeLinejoin: "round",
 	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-		"data-uid": "src/components/layout/Footer.tsx:15:5",
+		"data-uid": "src/components/layout/Footer.tsx:16:5",
 		"data-prohibitions": "[editContent]",
 		d: "M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"
 	})
 });
 function Footer() {
 	const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const handleNavClick = (e, href) => {
+		if (href.startsWith("/#")) {
+			e.preventDefault();
+			const targetId = href.replace("/#", "");
+			if (location.pathname !== "/") {
+				navigate("/");
+				setTimeout(() => {
+					const element = document.getElementById(targetId);
+					if (element) element.scrollIntoView({ behavior: "smooth" });
+				}, 100);
+			} else {
+				const element = document.getElementById(targetId);
+				if (element) element.scrollIntoView({ behavior: "smooth" });
+			}
+		}
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-		"data-uid": "src/components/layout/Footer.tsx:23:5",
+		"data-uid": "src/components/layout/Footer.tsx:47:5",
 		"data-prohibitions": "[editContent]",
 		className: "bg-brand-navy text-white pt-16 pb-8",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Footer.tsx:24:7",
+			"data-uid": "src/components/layout/Footer.tsx:48:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 md:px-6",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/Footer.tsx:25:9",
+				"data-uid": "src/components/layout/Footer.tsx:49:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:27:11",
+						"data-uid": "src/components/layout/Footer.tsx:51:11",
 						"data-prohibitions": "[]",
 						className: "space-y-4",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/components/layout/Footer.tsx:28:13",
+								"data-uid": "src/components/layout/Footer.tsx:52:13",
 								"data-prohibitions": "[]",
 								className: "text-xl font-bold mb-4 text-brand-light",
 								children: "JT Obras e manutenções ltda"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/layout/Footer.tsx:29:13",
+								"data-uid": "src/components/layout/Footer.tsx:53:13",
 								"data-prohibitions": "[]",
 								className: "text-gray-300 text-sm leading-relaxed",
 								children: "Especialistas em obras complexas, reformas comerciais e manutenções com rígido padrão de segurança e excelência."
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/layout/Footer.tsx:33:13",
+								"data-uid": "src/components/layout/Footer.tsx:57:13",
 								"data-prohibitions": "[]",
 								className: "flex gap-4 pt-2",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:34:15",
+										"data-uid": "src/components/layout/Footer.tsx:58:15",
 										"data-prohibitions": "[]",
 										href: "#",
 										className: "text-gray-300 hover:text-brand-orange transition-colors",
 										"aria-label": "Instagram",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Instagram, {
-											"data-uid": "src/components/layout/Footer.tsx:39:17",
+											"data-uid": "src/components/layout/Footer.tsx:63:17",
 											"data-prohibitions": "[editContent]",
 											size: 20
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:41:15",
+										"data-uid": "src/components/layout/Footer.tsx:65:15",
 										"data-prohibitions": "[]",
 										href: "#",
 										className: "text-gray-300 hover:text-brand-orange transition-colors",
 										"aria-label": "Facebook",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Facebook, {
-											"data-uid": "src/components/layout/Footer.tsx:46:17",
+											"data-uid": "src/components/layout/Footer.tsx:70:17",
 											"data-prohibitions": "[editContent]",
 											size: 20
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:48:15",
+										"data-uid": "src/components/layout/Footer.tsx:72:15",
 										"data-prohibitions": "[]",
 										href: "#",
 										className: "text-gray-300 hover:text-brand-orange transition-colors",
 										"aria-label": "TikTok",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TikTokIcon, {
-											"data-uid": "src/components/layout/Footer.tsx:53:17",
+											"data-uid": "src/components/layout/Footer.tsx:77:17",
 											"data-prohibitions": "[editContent]",
 											size: 20
 										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:55:15",
+										"data-uid": "src/components/layout/Footer.tsx:79:15",
 										"data-prohibitions": "[]",
 										href: "#",
 										className: "text-gray-300 hover:text-brand-orange transition-colors",
 										"aria-label": "LinkedIn",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Linkedin, {
-											"data-uid": "src/components/layout/Footer.tsx:60:17",
+											"data-uid": "src/components/layout/Footer.tsx:84:17",
 											"data-prohibitions": "[editContent]",
 											size: 20
 										})
@@ -32941,69 +32997,72 @@ function Footer() {
 						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:66:11",
+						"data-uid": "src/components/layout/Footer.tsx:90:11",
 						"data-prohibitions": "[]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-							"data-uid": "src/components/layout/Footer.tsx:67:13",
+							"data-uid": "src/components/layout/Footer.tsx:91:13",
 							"data-prohibitions": "[]",
 							className: "text-lg font-bold mb-4 text-brand-light",
 							children: "Links Rápidos"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-							"data-uid": "src/components/layout/Footer.tsx:68:13",
+							"data-uid": "src/components/layout/Footer.tsx:92:13",
 							"data-prohibitions": "[]",
 							className: "space-y-3",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:69:15",
+									"data-uid": "src/components/layout/Footer.tsx:93:15",
 									"data-prohibitions": "[]",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:70:17",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+										"data-uid": "src/components/layout/Footer.tsx:94:17",
 										"data-prohibitions": "[]",
-										href: "#inicio",
+										to: "/",
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
 										children: "Início"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:77:15",
+									"data-uid": "src/components/layout/Footer.tsx:98:15",
 									"data-prohibitions": "[]",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:78:17",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+										"data-uid": "src/components/layout/Footer.tsx:99:17",
 										"data-prohibitions": "[]",
-										href: "#projetos",
+										to: "/portfolio",
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
-										children: "Nossos Projetos"
+										children: "Exemplos de Obras"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:85:15",
+									"data-uid": "src/components/layout/Footer.tsx:106:15",
 									"data-prohibitions": "[]",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:86:17",
+										"data-uid": "src/components/layout/Footer.tsx:107:17",
 										"data-prohibitions": "[]",
-										href: "#sobre",
+										href: "/#sobre",
+										onClick: (e) => handleNavClick(e, "/#sobre"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
 										children: "Sobre Nós"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:93:15",
+									"data-uid": "src/components/layout/Footer.tsx:115:15",
 									"data-prohibitions": "[]",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:94:17",
+										"data-uid": "src/components/layout/Footer.tsx:116:17",
 										"data-prohibitions": "[]",
-										href: "#faq",
+										href: "/#faq",
+										onClick: (e) => handleNavClick(e, "/#faq"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
 										children: "Dúvidas (FAQ)"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:98:15",
+									"data-uid": "src/components/layout/Footer.tsx:124:15",
 									"data-prohibitions": "[]",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/layout/Footer.tsx:99:17",
+										"data-uid": "src/components/layout/Footer.tsx:125:17",
 										"data-prohibitions": "[]",
-										href: "#contato",
+										href: "/#contato",
+										onClick: (e) => handleNavClick(e, "/#contato"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
 										children: "Fale Conosco"
 									})
@@ -33012,44 +33071,44 @@ function Footer() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:110:11",
+						"data-uid": "src/components/layout/Footer.tsx:137:11",
 						"data-prohibitions": "[]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-							"data-uid": "src/components/layout/Footer.tsx:111:13",
+							"data-uid": "src/components/layout/Footer.tsx:138:13",
 							"data-prohibitions": "[]",
 							className: "text-lg font-bold mb-4 text-brand-light",
 							children: "Especialidades"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-							"data-uid": "src/components/layout/Footer.tsx:112:13",
+							"data-uid": "src/components/layout/Footer.tsx:139:13",
 							"data-prohibitions": "[]",
 							className: "space-y-3",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:113:15",
+									"data-uid": "src/components/layout/Footer.tsx:140:15",
 									"data-prohibitions": "[]",
 									className: "text-gray-300 text-sm",
 									children: "Reformas Comerciais"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:114:15",
+									"data-uid": "src/components/layout/Footer.tsx:141:15",
 									"data-prohibitions": "[]",
 									className: "text-gray-300 text-sm",
 									children: "Manutenção Predial"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:115:15",
+									"data-uid": "src/components/layout/Footer.tsx:142:15",
 									"data-prohibitions": "[]",
 									className: "text-gray-300 text-sm",
 									children: "Adequação NR 10 e NR 35"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:116:15",
+									"data-uid": "src/components/layout/Footer.tsx:143:15",
 									"data-prohibitions": "[]",
 									className: "text-gray-300 text-sm",
 									children: "Projetos Estruturais"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:117:15",
+									"data-uid": "src/components/layout/Footer.tsx:144:15",
 									"data-prohibitions": "[]",
 									className: "text-gray-300 text-sm",
 									children: "Gestão de Obras"
@@ -33058,35 +33117,35 @@ function Footer() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:122:11",
+						"data-uid": "src/components/layout/Footer.tsx:149:11",
 						"data-prohibitions": "[]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-							"data-uid": "src/components/layout/Footer.tsx:123:13",
+							"data-uid": "src/components/layout/Footer.tsx:150:13",
 							"data-prohibitions": "[]",
 							className: "text-lg font-bold mb-4 text-brand-light",
 							children: "Contato"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-							"data-uid": "src/components/layout/Footer.tsx:124:13",
+							"data-uid": "src/components/layout/Footer.tsx:151:13",
 							"data-prohibitions": "[]",
 							className: "space-y-4",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:125:15",
+									"data-uid": "src/components/layout/Footer.tsx:152:15",
 									"data-prohibitions": "[]",
 									className: "flex items-start gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
-										"data-uid": "src/components/layout/Footer.tsx:126:17",
+										"data-uid": "src/components/layout/Footer.tsx:153:17",
 										"data-prohibitions": "[editContent]",
 										className: "text-brand-orange shrink-0 mt-0.5",
 										size: 18
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/components/layout/Footer.tsx:127:17",
+										"data-uid": "src/components/layout/Footer.tsx:154:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-300 text-sm",
 										children: [
 											"Rua Tommaso Giordani, 371, Vila Guacuri",
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-												"data-uid": "src/components/layout/Footer.tsx:129:19",
+												"data-uid": "src/components/layout/Footer.tsx:156:19",
 												"data-prohibitions": "[editContent]"
 											}),
 											"São Paulo – SP, CEP 04.475-210"
@@ -33094,66 +33153,66 @@ function Footer() {
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:133:15",
+									"data-uid": "src/components/layout/Footer.tsx:160:15",
 									"data-prohibitions": "[]",
 									className: "flex items-start gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
-										"data-uid": "src/components/layout/Footer.tsx:134:17",
+										"data-uid": "src/components/layout/Footer.tsx:161:17",
 										"data-prohibitions": "[editContent]",
 										className: "text-brand-orange shrink-0 mt-0.5",
 										size: 18
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										"data-uid": "src/components/layout/Footer.tsx:135:17",
+										"data-uid": "src/components/layout/Footer.tsx:162:17",
 										"data-prohibitions": "[]",
 										className: "flex flex-col gap-2",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:136:19",
+											"data-uid": "src/components/layout/Footer.tsx:163:19",
 											"data-prohibitions": "[]",
 											href: "https://wa.me/5511940037545",
 											target: "_blank",
 											rel: "noopener noreferrer",
 											className: "flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
-												"data-uid": "src/components/layout/Footer.tsx:142:21",
+												"data-uid": "src/components/layout/Footer.tsx:169:21",
 												"data-prohibitions": "[editContent]",
 												size: 14,
 												className: "text-brand-light group-hover:text-brand-orange"
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												"data-uid": "src/components/layout/Footer.tsx:146:21",
+												"data-uid": "src/components/layout/Footer.tsx:173:21",
 												"data-prohibitions": "[]",
-												children: "Joel Nascimento: (11) 94003-7545"
+												children: "Joel Nascimento: +55 11 94003-7545"
 											})]
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-											"data-uid": "src/components/layout/Footer.tsx:148:19",
+											"data-uid": "src/components/layout/Footer.tsx:175:19",
 											"data-prohibitions": "[]",
 											href: "https://wa.me/5511947069293",
 											target: "_blank",
 											rel: "noopener noreferrer",
 											className: "flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
-												"data-uid": "src/components/layout/Footer.tsx:154:21",
+												"data-uid": "src/components/layout/Footer.tsx:181:21",
 												"data-prohibitions": "[editContent]",
 												size: 14,
 												className: "text-brand-light group-hover:text-brand-orange"
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												"data-uid": "src/components/layout/Footer.tsx:158:21",
+												"data-uid": "src/components/layout/Footer.tsx:185:21",
 												"data-prohibitions": "[]",
-												children: "Tatiana (Financeiro): (11) 94706-9293"
+												children: "Tatiana (Financeiro): +55 11 94706-9293"
 											})]
 										})]
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-									"data-uid": "src/components/layout/Footer.tsx:162:15",
+									"data-uid": "src/components/layout/Footer.tsx:189:15",
 									"data-prohibitions": "[]",
 									className: "flex items-center gap-3",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-										"data-uid": "src/components/layout/Footer.tsx:163:17",
+										"data-uid": "src/components/layout/Footer.tsx:190:17",
 										"data-prohibitions": "[editContent]",
 										className: "text-brand-orange shrink-0",
 										size: 18
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/layout/Footer.tsx:164:17",
+										"data-uid": "src/components/layout/Footer.tsx:191:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-300 text-sm",
 										children: "jt.obrasemanutencao@gmail.com"
@@ -33164,40 +33223,40 @@ function Footer() {
 					})
 				]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/layout/Footer.tsx:171:9",
+				"data-uid": "src/components/layout/Footer.tsx:198:9",
 				"data-prohibitions": "[editContent]",
 				className: "pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/layout/Footer.tsx:172:11",
+					"data-uid": "src/components/layout/Footer.tsx:199:11",
 					"data-prohibitions": "[]",
 					className: "flex items-center gap-4 flex-col md:flex-row text-center md:text-left",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:173:13",
+						"data-uid": "src/components/layout/Footer.tsx:200:13",
 						"data-prohibitions": "[]",
 						className: "bg-white p-3 rounded shadow-sm",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-							"data-uid": "src/components/layout/Footer.tsx:174:15",
+							"data-uid": "src/components/layout/Footer.tsx:201:15",
 							"data-prohibitions": "[editContent]",
 							src: logotipo_c129e_default,
 							alt: "Logo JT Obras e manutenções ltda",
 							className: "h-16 md:h-20 w-auto object-contain"
 						})
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						"data-uid": "src/components/layout/Footer.tsx:180:13",
+						"data-uid": "src/components/layout/Footer.tsx:207:13",
 						"data-prohibitions": "[]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/layout/Footer.tsx:181:15",
+							"data-uid": "src/components/layout/Footer.tsx:208:15",
 							"data-prohibitions": "[]",
 							className: "text-sm text-gray-400 font-medium",
 							children: "JT Obras e manutenções ltda"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-							"data-uid": "src/components/layout/Footer.tsx:182:15",
+							"data-uid": "src/components/layout/Footer.tsx:209:15",
 							"data-prohibitions": "[]",
 							className: "text-xs text-gray-500 mt-1",
 							children: [
 								"CNPJ: 63.243.791/0001-09 | IE: 156.392.261.116",
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-									"data-uid": "src/components/layout/Footer.tsx:184:17",
+									"data-uid": "src/components/layout/Footer.tsx:211:17",
 									"data-prohibitions": "[editContent]"
 								}),
 								"Regime: Simples Nacional | Diretor: Joel Nascimento de Paula"
@@ -33205,7 +33264,7 @@ function Footer() {
 						})]
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					"data-uid": "src/components/layout/Footer.tsx:190:11",
+					"data-uid": "src/components/layout/Footer.tsx:217:11",
 					"data-prohibitions": "[editContent]",
 					className: "text-xs text-gray-500 text-center md:text-right",
 					children: [
@@ -33248,54 +33307,59 @@ function FadeIn({ children, className, delay = 0, direction = "up" }) {
 //#endregion
 //#region src/components/sections/Hero.tsx
 function Hero() {
+	const handleScrollDown = (e) => {
+		e.preventDefault();
+		const element = document.getElementById("servicos");
+		if (element) element.scrollIntoView({ behavior: "smooth" });
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-		"data-uid": "src/components/sections/Hero.tsx:8:5",
+		"data-uid": "src/components/sections/Hero.tsx:17:5",
 		"data-prohibitions": "[editContent]",
 		id: "inicio",
 		className: "relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-brand-navy",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:13:7",
+				"data-uid": "src/components/sections/Hero.tsx:22:7",
 				"data-prohibitions": "[editContent]",
 				className: "absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20",
-				style: { backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20workers%20ppe&color=black')` }
+				style: { backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site%20workers%20ppe')` }
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:20:7",
+				"data-uid": "src/components/sections/Hero.tsx:29:7",
 				"data-prohibitions": "[]",
 				className: "container mx-auto px-4 md:px-6 relative z-10",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/sections/Hero.tsx:21:9",
+					"data-uid": "src/components/sections/Hero.tsx:30:9",
 					"data-prohibitions": "[]",
 					className: "grid lg:grid-cols-2 gap-12 items-center",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-						"data-uid": "src/components/sections/Hero.tsx:22:11",
+						"data-uid": "src/components/sections/Hero.tsx:31:11",
 						"data-prohibitions": "[]",
 						className: "max-w-2xl",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:23:13",
+								"data-uid": "src/components/sections/Hero.tsx:32:13",
 								"data-prohibitions": "[]",
 								className: "inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/sections/Hero.tsx:24:15",
+									"data-uid": "src/components/sections/Hero.tsx:33:15",
 									"data-prohibitions": "[]",
 									className: "flex h-2 w-2 rounded-full bg-brand-orange animate-pulse"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/sections/Hero.tsx:25:15",
+									"data-uid": "src/components/sections/Hero.tsx:34:15",
 									"data-prohibitions": "[]",
 									className: "text-sm font-medium text-white",
 									children: "Especialistas em Obras Complexas"
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
-								"data-uid": "src/components/sections/Hero.tsx:30:13",
+								"data-uid": "src/components/sections/Hero.tsx:39:13",
 								"data-prohibitions": "[]",
 								className: "text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6",
 								children: [
 									"Construindo Soluções com ",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/components/sections/Hero.tsx:31:40",
+										"data-uid": "src/components/sections/Hero.tsx:40:40",
 										"data-prohibitions": "[]",
 										className: "text-brand-light",
 										children: "Excelência"
@@ -33304,96 +33368,96 @@ function Hero() {
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/sections/Hero.tsx:35:13",
+								"data-uid": "src/components/sections/Hero.tsx:44:13",
 								"data-prohibitions": "[]",
 								className: "text-lg md:text-xl text-gray-300 mb-8 leading-relaxed",
 								children: "Qualidade, confiança e inovação em reformas e construções. Especialistas certificados em NR 10, NR 35 e NR 18 para garantir o sucesso do seu projeto."
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:40:13",
+								"data-uid": "src/components/sections/Hero.tsx:49:13",
 								"data-prohibitions": "[]",
 								className: "flex flex-col sm:flex-row gap-4",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
-									"data-uid": "src/components/sections/Hero.tsx:41:15",
+									"data-uid": "src/components/sections/Hero.tsx:50:15",
 									"data-prohibitions": "[]",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-										"data-uid": "src/components/sections/Hero.tsx:42:17",
+										"data-uid": "src/components/sections/Hero.tsx:51:17",
 										"data-prohibitions": "[]",
 										size: "lg",
-										className: "bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8",
+										className: "bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8 w-full sm:w-auto",
 										children: ["Solicitar Orçamento ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowRight, {
-											"data-uid": "src/components/sections/Hero.tsx:46:39",
+											"data-uid": "src/components/sections/Hero.tsx:55:39",
 											"data-prohibitions": "[editContent]",
 											className: "ml-2 h-5 w-5"
 										})]
 									})
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-									"data-uid": "src/components/sections/Hero.tsx:49:15",
+									"data-uid": "src/components/sections/Hero.tsx:58:15",
 									"data-prohibitions": "[]",
 									size: "lg",
 									variant: "outline",
-									className: "text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8",
+									className: "text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8 w-full sm:w-auto",
 									asChild: true,
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										"data-uid": "src/components/sections/Hero.tsx:55:17",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+										"data-uid": "src/components/sections/Hero.tsx:64:17",
 										"data-prohibitions": "[]",
-										href: "#projetos",
+										to: "/portfolio",
 										children: "Conheça Nossos Projetos"
 									})
 								})]
 							})
 						]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-						"data-uid": "src/components/sections/Hero.tsx:60:11",
+						"data-uid": "src/components/sections/Hero.tsx:69:11",
 						"data-prohibitions": "[]",
 						direction: "left",
 						delay: .2,
 						className: "hidden lg:grid grid-cols-2 gap-4",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/sections/Hero.tsx:61:13",
+							"data-uid": "src/components/sections/Hero.tsx:70:13",
 							"data-prohibitions": "[]",
 							className: "space-y-4 translate-y-8",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:62:15",
+								"data-uid": "src/components/sections/Hero.tsx:71:15",
 								"data-prohibitions": "[]",
 								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HardHat, {
-										"data-uid": "src/components/sections/Hero.tsx:63:17",
+										"data-uid": "src/components/sections/Hero.tsx:72:17",
 										"data-prohibitions": "[editContent]",
 										className: "h-10 w-10 text-brand-orange mb-4"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-										"data-uid": "src/components/sections/Hero.tsx:64:17",
+										"data-uid": "src/components/sections/Hero.tsx:73:17",
 										"data-prohibitions": "[]",
 										className: "text-xl font-bold text-white mb-2",
 										children: "Engenharia"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Hero.tsx:65:17",
+										"data-uid": "src/components/sections/Hero.tsx:74:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-400 text-sm",
 										children: "Projetos estruturais e execução precisa para sua obra."
 									})
 								]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:69:15",
+								"data-uid": "src/components/sections/Hero.tsx:78:15",
 								"data-prohibitions": "[]",
 								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ruler, {
-										"data-uid": "src/components/sections/Hero.tsx:70:17",
+										"data-uid": "src/components/sections/Hero.tsx:79:17",
 										"data-prohibitions": "[editContent]",
 										className: "h-10 w-10 text-brand-light mb-4"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-										"data-uid": "src/components/sections/Hero.tsx:71:17",
+										"data-uid": "src/components/sections/Hero.tsx:80:17",
 										"data-prohibitions": "[]",
 										className: "text-xl font-bold text-white mb-2",
 										children: "Reformas"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Hero.tsx:72:17",
+										"data-uid": "src/components/sections/Hero.tsx:81:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-400 text-sm",
 										children: "Modernização e adequação de espaços comerciais."
@@ -33401,44 +33465,44 @@ function Hero() {
 								]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/sections/Hero.tsx:77:13",
+							"data-uid": "src/components/sections/Hero.tsx:86:13",
 							"data-prohibitions": "[]",
 							className: "space-y-4",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:78:15",
+								"data-uid": "src/components/sections/Hero.tsx:87:15",
 								"data-prohibitions": "[]",
 								className: "bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShieldCheck, {
-										"data-uid": "src/components/sections/Hero.tsx:79:17",
+										"data-uid": "src/components/sections/Hero.tsx:88:17",
 										"data-prohibitions": "[editContent]",
 										className: "h-10 w-10 text-green-400 mb-4"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-										"data-uid": "src/components/sections/Hero.tsx:80:17",
+										"data-uid": "src/components/sections/Hero.tsx:89:17",
 										"data-prohibitions": "[]",
 										className: "text-xl font-bold text-white mb-2",
 										children: "Segurança (NRs)"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										"data-uid": "src/components/sections/Hero.tsx:81:17",
+										"data-uid": "src/components/sections/Hero.tsx:90:17",
 										"data-prohibitions": "[]",
 										className: "text-gray-400 text-sm",
 										children: "Rigoroso cumprimento das normas NR 10, 18 e 35."
 									})
 								]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Hero.tsx:85:15",
+								"data-uid": "src/components/sections/Hero.tsx:94:15",
 								"data-prohibitions": "[]",
 								className: "rounded-2xl overflow-hidden h-48 border border-white/10 relative",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/components/sections/Hero.tsx:86:17",
+									"data-uid": "src/components/sections/Hero.tsx:95:17",
 									"data-prohibitions": "[editContent]",
-									src: "https://img.usecurling.com/p/400/400?q=engineer%20helmet%20ppe",
-									alt: "Projeto",
+									src: "https://img.usecurling.com/p/400/400?q=engineer%20helmet%20safety",
+									alt: "Projeto Seguro",
 									className: "w-full h-full object-cover"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/components/sections/Hero.tsx:91:17",
+									"data-uid": "src/components/sections/Hero.tsx:100:17",
 									"data-prohibitions": "[]",
 									className: "absolute inset-0 bg-brand-navy/40 mix-blend-multiply"
 								})]
@@ -33448,20 +33512,21 @@ function Hero() {
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Hero.tsx:99:7",
+				"data-uid": "src/components/sections/Hero.tsx:108:7",
 				"data-prohibitions": "[]",
 				className: "absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-					"data-uid": "src/components/sections/Hero.tsx:100:9",
+					"data-uid": "src/components/sections/Hero.tsx:109:9",
 					"data-prohibitions": "[]",
-					href: "#projetos",
+					href: "#servicos",
+					onClick: handleScrollDown,
 					className: "text-white/50 hover:text-white transition-colors",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/sections/Hero.tsx:101:11",
+						"data-uid": "src/components/sections/Hero.tsx:114:11",
 						"data-prohibitions": "[]",
 						className: "w-[30px] h-[50px] rounded-full border-2 border-current flex justify-center pt-2",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							"data-uid": "src/components/sections/Hero.tsx:102:13",
+							"data-uid": "src/components/sections/Hero.tsx:115:13",
 							"data-prohibitions": "[]",
 							className: "w-1.5 h-3 bg-current rounded-full animate-scroll-down"
 						})
@@ -33528,71 +33593,71 @@ var services = [
 		title: "Obras Corporativas",
 		description: "Construção e reforma de escritórios, galpões e lajes corporativas com foco em prazo e qualidade.",
 		icon: Building2,
-		image: "https://img.usecurling.com/p/600/400?q=construction%20worker%20helmet%20office&color=blue"
+		image: "https://img.usecurling.com/p/600/400?q=office%20construction%20worker%20ppe"
 	},
 	{
 		title: "Manutenção Industrial",
 		description: "Serviços preventivos e corretivos em plantas industriais, garantindo operação contínua.",
 		icon: Wrench,
-		image: "https://img.usecurling.com/p/600/400?q=industrial%20worker%20ppe&color=orange"
+		image: "https://img.usecurling.com/p/600/400?q=industrial%20maintenance%20worker%20ppe"
 	},
 	{
 		title: "Instalações Elétricas",
 		description: "Projetos e execução de baixa e média tensão, painéis e adequação à NR 10.",
 		icon: Zap,
-		image: "https://img.usecurling.com/p/600/400?q=electrician%20ppe%20panel&color=black"
+		image: "https://img.usecurling.com/p/600/400?q=electrician%20wiring%20ppe"
 	},
 	{
 		title: "Acabamentos Finos",
 		description: "Revestimentos, pintura, gesso e marcenaria de alto padrão para ambientes exigentes.",
 		icon: PaintRoller,
-		image: "https://img.usecurling.com/p/600/400?q=painter%20construction%20ppe"
+		image: "https://img.usecurling.com/p/600/400?q=painter%20wall%20ppe"
 	},
 	{
 		title: "Trabalho em Altura",
 		description: "Equipe especializada e certificada em NR 35 para fachadas e coberturas.",
 		icon: ShieldAlert,
-		image: "https://img.usecurling.com/p/600/400?q=construction%20worker%20height%20ppe&color=gray"
+		image: "https://img.usecurling.com/p/600/400?q=worker%20harness%20scaffold%20ppe"
 	},
 	{
 		title: "Estruturas Metálicas",
 		description: "Fabricação e montagem de mezaninos, coberturas e reforços estruturais.",
 		icon: Hammer,
-		image: "https://img.usecurling.com/p/600/400?q=welder%20steel%20ppe&color=black"
+		image: "https://img.usecurling.com/p/600/400?q=welder%20metal%20structure%20ppe"
 	}
 ];
 function Services() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/Services.tsx:50:5",
+		"data-uid": "src/components/sections/Services.tsx:49:5",
 		"data-prohibitions": "[editContent]",
-		id: "projetos",
+		id: "servicos",
 		className: "py-24 bg-gray-50",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/sections/Services.tsx:51:7",
+			"data-uid": "src/components/sections/Services.tsx:50:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 md:px-6",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Services.tsx:52:9",
+				"data-uid": "src/components/sections/Services.tsx:51:9",
 				"data-prohibitions": "[]",
 				className: "text-center max-w-3xl mx-auto mb-16",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-					"data-uid": "src/components/sections/Services.tsx:53:11",
+					"data-uid": "src/components/sections/Services.tsx:52:11",
 					"data-prohibitions": "[]",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-							"data-uid": "src/components/sections/Services.tsx:54:13",
+							"data-uid": "src/components/sections/Services.tsx:53:13",
 							"data-prohibitions": "[]",
 							className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
 							children: "Nossas Especialidades"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-							"data-uid": "src/components/sections/Services.tsx:57:13",
+							"data-uid": "src/components/sections/Services.tsx:56:13",
 							"data-prohibitions": "[]",
 							className: "text-3xl md:text-4xl font-extrabold text-brand-navy mb-4",
 							children: "Projetos e Serviços Especializados"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/sections/Services.tsx:60:13",
+							"data-uid": "src/components/sections/Services.tsx:59:13",
 							"data-prohibitions": "[]",
 							className: "text-gray-600 text-lg",
 							children: "Oferecemos soluções completas em engenharia, do projeto à entrega das chaves, com equipes multidisciplinares e gestão rigorosa."
@@ -33600,42 +33665,42 @@ function Services() {
 					]
 				})
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/Services.tsx:67:9",
+				"data-uid": "src/components/sections/Services.tsx:66:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid md:grid-cols-2 lg:grid-cols-3 gap-8",
 				children: services.map((service, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/components/sections/Services.tsx:69:13",
+					"data-uid": "src/components/sections/Services.tsx:68:13",
 					"data-prohibitions": "[editContent]",
 					delay: index * .1,
 					direction: "up",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/components/sections/Services.tsx:70:15",
+						"data-uid": "src/components/sections/Services.tsx:69:15",
 						"data-prohibitions": "[editContent]",
 						className: "overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 group h-full bg-white flex flex-col",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								"data-uid": "src/components/sections/Services.tsx:71:17",
+								"data-uid": "src/components/sections/Services.tsx:70:17",
 								"data-prohibitions": "[]",
 								className: "h-48 overflow-hidden relative",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/sections/Services.tsx:72:19",
+										"data-uid": "src/components/sections/Services.tsx:71:19",
 										"data-prohibitions": "[editContent]",
 										className: "absolute inset-0 bg-brand-navy/20 group-hover:bg-transparent transition-colors duration-500 z-10"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-										"data-uid": "src/components/sections/Services.tsx:73:19",
+										"data-uid": "src/components/sections/Services.tsx:72:19",
 										"data-prohibitions": "[editContent]",
 										src: service.image,
 										alt: service.title,
 										className: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										"data-uid": "src/components/sections/Services.tsx:78:19",
+										"data-uid": "src/components/sections/Services.tsx:77:19",
 										"data-prohibitions": "[]",
 										className: "absolute bottom-4 left-4 z-20 bg-white p-3 rounded-lg shadow-md group-hover:bg-brand-orange group-hover:text-white transition-colors duration-300",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(service.icon, {
-											"data-uid": "src/components/sections/Services.tsx:79:21",
+											"data-uid": "src/components/sections/Services.tsx:78:21",
 											"data-prohibitions": "[editContent]",
 											className: "h-6 w-6 text-brand-navy group-hover:text-white"
 										})
@@ -33643,22 +33708,22 @@ function Services() {
 								]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-								"data-uid": "src/components/sections/Services.tsx:82:17",
+								"data-uid": "src/components/sections/Services.tsx:81:17",
 								"data-prohibitions": "[editContent]",
 								className: "pt-6 pb-2",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
-									"data-uid": "src/components/sections/Services.tsx:83:19",
+									"data-uid": "src/components/sections/Services.tsx:82:19",
 									"data-prohibitions": "[editContent]",
 									className: "text-xl font-bold text-brand-navy group-hover:text-brand-light transition-colors",
 									children: service.title
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-								"data-uid": "src/components/sections/Services.tsx:87:17",
+								"data-uid": "src/components/sections/Services.tsx:86:17",
 								"data-prohibitions": "[editContent]",
 								className: "pb-6 flex-grow",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardDescription, {
-									"data-uid": "src/components/sections/Services.tsx:88:19",
+									"data-uid": "src/components/sections/Services.tsx:87:19",
 									"data-prohibitions": "[editContent]",
 									className: "text-gray-600 text-base",
 									children: service.description
@@ -33795,7 +33860,7 @@ function CompanyProfile() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 								"data-uid": "src/components/sections/CompanyProfile.tsx:21:15",
 								"data-prohibitions": "[editContent]",
-								src: "https://img.usecurling.com/p/800/600?q=construction%20engineers%20ppe&color=blue",
+								src: "https://img.usecurling.com/p/800/600?q=brazilian%20engineers%20ppe%20construction%20site",
 								alt: "Equipe JT Obras",
 								className: "relative z-10 rounded-2xl shadow-2xl border-4 border-white/10 w-full object-cover"
 							}),
@@ -34475,7 +34540,7 @@ function Contact() {
 															"data-uid": "src/components/sections/Contact.tsx:76:27",
 															"data-prohibitions": "[]",
 															className: "font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5",
-															children: "Joel Nascimento (Diretor)"
+															children: "Joel Nascimento (Projetos)"
 														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 															"data-uid": "src/components/sections/Contact.tsx:79:27",
 															"data-prohibitions": "[]",
@@ -34841,43 +34906,43 @@ var PORTFOLIO_ITEMS = [
 		id: 1,
 		title: "Manutenção Preventiva Industrial",
 		category: "Indústria",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=factory%20maintenance%20ppe%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=factory%20maintenance%20ppe%20after&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=factory%20maintenance%20machine",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20ppe%20factory%20inspection"
 	},
 	{
 		id: 2,
 		title: "Construção de Galpão Logístico",
 		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=construction%20site%20ppe%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=warehouse%20construction%20ppe&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20dirt%20land%20construction",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=warehouse%20construction%20workers%20ppe"
 	},
 	{
 		id: 3,
 		title: "Adequação Elétrica NR 10",
 		category: "Projetos Elétricos",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=electrical%20wires%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20ppe&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=old%20electrical%20panel",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20ppe%20panel%20wiring"
 	},
 	{
 		id: 4,
 		title: "Pintura e Reforma em Altura (NR 35)",
 		category: "Manutenção Predial",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=building%20facade%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20height%20ppe&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=worn%20building%20facade",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold%20ppe"
 	},
 	{
 		id: 5,
 		title: "Infraestrutura Hidráulica",
 		category: "Infraestrutura",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=pipes%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20ppe&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=broken%20pipes%20leaking",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20ppe%20fixing%20pipes"
 	},
 	{
 		id: 6,
 		title: "Reforma de Refeitório Corporativo",
 		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=cafeteria%20before&color=gray",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20ppe%20cafeteria&color=blue"
+		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20old%20room",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20ppe%20indoor"
 	}
 ];
 var Portfolio = () => {
@@ -34885,40 +34950,40 @@ var Portfolio = () => {
 		window.scrollTo(0, 0);
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Portfolio.tsx:61:5",
+		"data-uid": "src/pages/Portfolio.tsx:57:5",
 		"data-prohibitions": "[editContent]",
 		className: "bg-slate-50 min-h-screen pb-24",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-			"data-uid": "src/pages/Portfolio.tsx:63:7",
+			"data-uid": "src/pages/Portfolio.tsx:59:7",
 			"data-prohibitions": "[]",
 			className: "bg-primary text-white py-20 px-4",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Portfolio.tsx:64:9",
+				"data-uid": "src/pages/Portfolio.tsx:60:9",
 				"data-prohibitions": "[]",
 				className: "container mx-auto text-center",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-					"data-uid": "src/pages/Portfolio.tsx:65:11",
+					"data-uid": "src/pages/Portfolio.tsx:61:11",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						"data-uid": "src/pages/Portfolio.tsx:66:13",
+						"data-uid": "src/pages/Portfolio.tsx:62:13",
 						"data-prohibitions": "[]",
 						className: "font-poppins font-bold text-4xl md:text-5xl mb-4",
-						children: "Nossos Projetos"
+						children: "Exemplos de Obras"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						"data-uid": "src/pages/Portfolio.tsx:67:13",
+						"data-uid": "src/pages/Portfolio.tsx:63:13",
 						"data-prohibitions": "[]",
 						className: "text-xl text-primary-foreground/80 max-w-2xl mx-auto",
 						children: [
-							"Conheça alguns dos nossos projetos de alta complexidade executados com excelência.",
+							"Conheça alguns dos nossos projetos de alta complexidade executados com rigor técnico e segurança.",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-								"data-uid": "src/pages/Portfolio.tsx:69:15",
+								"data-uid": "src/pages/Portfolio.tsx:66:15",
 								"data-prohibitions": "[editContent]",
 								className: "hidden md:block"
 							}),
 							" Passe o mouse nas imagens para ver o",
 							" ",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-								"data-uid": "src/pages/Portfolio.tsx:70:15",
+								"data-uid": "src/pages/Portfolio.tsx:67:15",
 								"data-prohibitions": "[]",
 								className: "text-secondary",
 								children: "Antes e Depois"
@@ -34929,66 +34994,66 @@ var Portfolio = () => {
 				})
 			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-			"data-uid": "src/pages/Portfolio.tsx:77:7",
+			"data-uid": "src/pages/Portfolio.tsx:74:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 mt-16",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Portfolio.tsx:78:9",
+				"data-uid": "src/pages/Portfolio.tsx:75:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
 				children: PORTFOLIO_ITEMS.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/pages/Portfolio.tsx:80:13",
+					"data-uid": "src/pages/Portfolio.tsx:77:13",
 					"data-prohibitions": "[editContent]",
 					delay: index * 100,
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/Portfolio.tsx:81:15",
+						"data-uid": "src/pages/Portfolio.tsx:78:15",
 						"data-prohibitions": "[editContent]",
 						className: "overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group cursor-pointer h-full bg-white",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/pages/Portfolio.tsx:82:17",
+							"data-uid": "src/pages/Portfolio.tsx:79:17",
 							"data-prohibitions": "[editContent]",
 							className: "relative h-72 overflow-hidden",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/pages/Portfolio.tsx:84:19",
+									"data-uid": "src/pages/Portfolio.tsx:81:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageBefore,
 									alt: `${item.title} Antes`,
 									className: "absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-100 group-hover:opacity-0"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/pages/Portfolio.tsx:90:19",
+									"data-uid": "src/pages/Portfolio.tsx:87:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageAfter,
 									alt: `${item.title} Depois`,
 									className: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:97:19",
+									"data-uid": "src/pages/Portfolio.tsx:94:19",
 									"data-prohibitions": "[editContent]",
 									className: "absolute top-4 left-4 z-20",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:98:21",
+										"data-uid": "src/pages/Portfolio.tsx:95:21",
 										"data-prohibitions": "[editContent]",
 										className: "bg-white/90 backdrop-blur text-primary text-xs font-bold px-3 py-1 rounded shadow-sm",
 										children: item.category
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:104:19",
+									"data-uid": "src/pages/Portfolio.tsx:101:19",
 									"data-prohibitions": "[]",
 									className: "absolute top-4 right-4 z-20 flex gap-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:105:21",
+										"data-uid": "src/pages/Portfolio.tsx:102:21",
 										"data-prohibitions": "[]",
 										className: "bg-black/70 text-white text-xs px-2 py-1 rounded opacity-100 group-hover:opacity-0 transition-opacity flex items-center gap-1",
 										children: ["Antes ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeftRight, {
-											"data-uid": "src/pages/Portfolio.tsx:106:29",
+											"data-uid": "src/pages/Portfolio.tsx:103:29",
 											"data-prohibitions": "[editContent]",
 											size: 12
 										})]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:108:21",
+										"data-uid": "src/pages/Portfolio.tsx:105:21",
 										"data-prohibitions": "[]",
 										className: "bg-secondary/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity",
 										children: "Depois"
@@ -34996,11 +35061,11 @@ var Portfolio = () => {
 								})
 							]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/Portfolio.tsx:113:17",
+							"data-uid": "src/pages/Portfolio.tsx:110:17",
 							"data-prohibitions": "[editContent]",
 							className: "p-6",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/pages/Portfolio.tsx:114:19",
+								"data-uid": "src/pages/Portfolio.tsx:111:19",
 								"data-prohibitions": "[editContent]",
 								className: "font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors",
 								children: item.title
@@ -35170,4 +35235,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-Dl4GebXb.js.map
+//# sourceMappingURL=index-DBmFlxTN.js.map

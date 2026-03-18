@@ -2,8 +2,17 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, HardHat, ShieldCheck, Ruler } from 'lucide-react'
 import { FadeIn } from '@/components/animations/FadeIn'
 import { QuoteModal } from '@/components/sections/QuoteModal'
+import { Link } from 'react-router-dom'
 
 export function Hero() {
+  const handleScrollDown = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const element = document.getElementById('servicos')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <section
       id="inicio"
@@ -13,7 +22,7 @@ export function Hero() {
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-          backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20workers%20ppe&color=black')`,
+          backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site%20workers%20ppe')`,
         }}
       />
 
@@ -41,7 +50,7 @@ export function Hero() {
               <QuoteModal>
                 <Button
                   size="lg"
-                  className="bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8"
+                  className="bg-brand-orange hover:bg-[#cf6d18] text-white text-base h-14 px-8 w-full sm:w-auto"
                 >
                   Solicitar Orçamento <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -49,10 +58,10 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8"
+                className="text-white border-white/30 hover:bg-white/10 hover:text-white text-base h-14 px-8 w-full sm:w-auto"
                 asChild
               >
-                <a href="#projetos">Conheça Nossos Projetos</a>
+                <Link to="/portfolio">Conheça Nossos Projetos</Link>
               </Button>
             </div>
           </FadeIn>
@@ -84,8 +93,8 @@ export function Hero() {
               </div>
               <div className="rounded-2xl overflow-hidden h-48 border border-white/10 relative">
                 <img
-                  src="https://img.usecurling.com/p/400/400?q=engineer%20helmet%20ppe"
-                  alt="Projeto"
+                  src="https://img.usecurling.com/p/400/400?q=engineer%20helmet%20safety"
+                  alt="Projeto Seguro"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply"></div>
@@ -97,7 +106,11 @@ export function Hero() {
 
       {/* Scroll Down Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <a href="#projetos" className="text-white/50 hover:text-white transition-colors">
+        <a
+          href="#servicos"
+          onClick={handleScrollDown}
+          className="text-white/50 hover:text-white transition-colors"
+        >
           <div className="w-[30px] h-[50px] rounded-full border-2 border-current flex justify-center pt-2">
             <div className="w-1.5 h-3 bg-current rounded-full animate-scroll-down"></div>
           </div>

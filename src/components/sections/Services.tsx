@@ -8,46 +8,45 @@ const services = [
     description:
       'Construção e reforma de escritórios, galpões e lajes corporativas com foco em prazo e qualidade.',
     icon: Building2,
-    image:
-      'https://img.usecurling.com/p/600/400?q=construction%20worker%20helmet%20office&color=blue',
+    image: 'https://img.usecurling.com/p/600/400?q=office%20construction%20worker%20ppe',
   },
   {
     title: 'Manutenção Industrial',
     description:
       'Serviços preventivos e corretivos em plantas industriais, garantindo operação contínua.',
     icon: Wrench,
-    image: 'https://img.usecurling.com/p/600/400?q=industrial%20worker%20ppe&color=orange',
+    image: 'https://img.usecurling.com/p/600/400?q=industrial%20maintenance%20worker%20ppe',
   },
   {
     title: 'Instalações Elétricas',
     description: 'Projetos e execução de baixa e média tensão, painéis e adequação à NR 10.',
     icon: Zap,
-    image: 'https://img.usecurling.com/p/600/400?q=electrician%20ppe%20panel&color=black',
+    image: 'https://img.usecurling.com/p/600/400?q=electrician%20wiring%20ppe',
   },
   {
     title: 'Acabamentos Finos',
     description:
       'Revestimentos, pintura, gesso e marcenaria de alto padrão para ambientes exigentes.',
     icon: PaintRoller,
-    image: 'https://img.usecurling.com/p/600/400?q=painter%20construction%20ppe',
+    image: 'https://img.usecurling.com/p/600/400?q=painter%20wall%20ppe',
   },
   {
     title: 'Trabalho em Altura',
     description: 'Equipe especializada e certificada em NR 35 para fachadas e coberturas.',
     icon: ShieldAlert,
-    image: 'https://img.usecurling.com/p/600/400?q=construction%20worker%20height%20ppe&color=gray',
+    image: 'https://img.usecurling.com/p/600/400?q=worker%20harness%20scaffold%20ppe',
   },
   {
     title: 'Estruturas Metálicas',
     description: 'Fabricação e montagem de mezaninos, coberturas e reforços estruturais.',
     icon: Hammer,
-    image: 'https://img.usecurling.com/p/600/400?q=welder%20steel%20ppe&color=black',
+    image: 'https://img.usecurling.com/p/600/400?q=welder%20metal%20structure%20ppe',
   },
 ]
 
 export function Services() {
   return (
-    <section id="projetos" className="py-24 bg-gray-50">
+    <section id="servicos" className="py-24 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <FadeIn>

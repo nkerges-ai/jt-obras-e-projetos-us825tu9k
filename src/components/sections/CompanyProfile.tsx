@@ -19,7 +19,7 @@ export function CompanyProfile() {
             <div className="relative">
               <div className="absolute -inset-4 bg-brand-light/20 blur-2xl rounded-full z-0"></div>
               <img
-                src="https://img.usecurling.com/p/800/600?q=construction%20engineers%20ppe&color=blue"
+                src="https://img.usecurling.com/p/800/600?q=brazilian%20engineers%20ppe%20construction%20site"
                 alt="Equipe JT Obras"
                 className="relative z-10 rounded-2xl shadow-2xl border-4 border-white/10 w-full object-cover"
               />

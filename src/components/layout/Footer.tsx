@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook, MessageCircle } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import logo from '@/assets/logotipo-c129e.jpg'
 
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
@@ -18,6 +19,29 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/#')) {
+      e.preventDefault()
+      const targetId = href.replace('/#', '')
+      if (location.pathname !== '/') {
+        navigate('/')
+        setTimeout(() => {
+          const element = document.getElementById(targetId)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 100)
+      } else {
+        const element = document.getElementById(targetId)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+    }
+  }
 
   return (
     <footer className="bg-brand-navy text-white pt-16 pb-8">
@@ -67,37 +91,40 @@ export function Footer() {
             <h3 className="text-lg font-bold mb-4 text-brand-light">Links Rápidos</h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#inicio"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
+                <Link to="/" className="text-gray-300 hover:text-white transition-colors text-sm">
                   Início
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#projetos"
+                <Link
+                  to="/portfolio"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Nossos Projetos
-                </a>
+                  Exemplos de Obras
+                </Link>
               </li>
               <li>
                 <a
-                  href="#sobre"
+                  href="/#sobre"
+                  onClick={(e) => handleNavClick(e, '/#sobre')}
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Sobre Nós
                 </a>
               </li>
               <li>
-                <a href="#faq" className="text-gray-300 hover:text-white transition-colors text-sm">
+                <a
+                  href="/#faq"
+                  onClick={(e) => handleNavClick(e, '/#faq')}
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
                   Dúvidas (FAQ)
                 </a>
               </li>
               <li>
                 <a
-                  href="#contato"
+                  href="/#contato"
+                  onClick={(e) => handleNavClick(e, '/#contato')}
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Fale Conosco
@@ -143,7 +170,7 @@ export function Footer() {
                       size={14}
                       className="text-brand-light group-hover:text-brand-orange"
                     />
-                    <span>Joel Nascimento: (11) 94003-7545</span>
+                    <span>Joel Nascimento: +55 11 94003-7545</span>
                   </a>
                   <a
                     href="https://wa.me/5511947069293"
@@ -155,7 +182,7 @@ export function Footer() {
                       size={14}
                       className="text-brand-light group-hover:text-brand-orange"
                     />
-                    <span>Tatiana (Financeiro): (11) 94706-9293</span>
+                    <span>Tatiana (Financeiro): +55 11 94706-9293</span>
                   </a>
                 </div>
               </li>

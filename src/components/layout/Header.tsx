@@ -4,19 +4,22 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/logotipo-c129e.jpg'
 import { QuoteModal } from '@/components/sections/QuoteModal'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const navLinks = [
-  { name: 'Início', href: '#inicio' },
-  { name: 'Projetos', href: '#projetos' },
-  { name: 'Clientes', href: '#clientes' },
-  { name: 'Sobre', href: '#sobre' },
-  { name: 'FAQ', href: '#faq' },
-  { name: 'Contato', href: '#contato' },
+  { name: 'Início', href: '/' },
+  { name: 'Projetos', href: '/portfolio' },
+  { name: 'Clientes', href: '/#clientes' },
+  { name: 'Sobre', href: '/#sobre' },
+  { name: 'FAQ', href: '/#faq' },
+  { name: 'Contato', href: '/#contato' },
 ]
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +31,28 @@ export function Header() {
 
   const closeMenu = () => setIsMobileMenuOpen(false)
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/#')) {
+      e.preventDefault()
+      const targetId = href.replace('/#', '')
+      if (location.pathname !== '/') {
+        navigate('/')
+        setTimeout(() => {
+          const element = document.getElementById(targetId)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 100)
+      } else {
+        const element = document.getElementById(targetId)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }
+    }
+    closeMenu()
+  }
+
   return (
     <header
       className={cn(
@@ -37,9 +62,9 @@ export function Header() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo Placement (Header) */}
-        <a
-          href="#inicio"
-          className="flex items-center gap-3 flex-shrink-0 z-50"
+        <Link
+          to="/"
+          className="flex items-center gap-4 flex-shrink-0 z-50 lg:mr-16"
           onClick={closeMenu}
         >
           <img
@@ -47,24 +72,37 @@ export function Header() {
             alt="JT Obras e Manutenções"
             className="w-auto object-contain transition-all duration-300 h-12 md:h-16"
           />
-          <span className="font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block">
-            JT Obras e<br className="hidden lg:block" /> Manutenções
+          <span className="font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block uppercase tracking-wide">
+            JT OBRAS E<br className="hidden lg:block" /> MANUTENÇÕES
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
-            >
-              {link.name}
-            </a>
-          ))}
+        <nav className="hidden md:flex items-center gap-8 xl:gap-10 ml-auto">
+          {navLinks.map((link) => {
+            const isHash = link.href.startsWith('/#')
+            return isHash ? (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={link.name}
+                to={link.href}
+                onClick={closeMenu}
+                className="text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200"
+              >
+                {link.name}
+              </Link>
+            )
+          })}
           <QuoteModal>
-            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm">
+            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-2">
               Solicitar Orçamento
             </Button>
           </QuoteModal>
@@ -72,7 +110,7 @@ export function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden z-50 p-2 text-brand-navy focus:outline-none"
+          className="md:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -87,16 +125,28 @@ export function Header() {
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        {navLinks.map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            onClick={closeMenu}
-            className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
-          >
-            {link.name}
-          </a>
-        ))}
+        {navLinks.map((link) => {
+          const isHash = link.href.startsWith('/#')
+          return isHash ? (
+            <a
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
+            >
+              {link.name}
+            </a>
+          ) : (
+            <Link
+              key={link.name}
+              to={link.href}
+              onClick={closeMenu}
+              className="text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4"
+            >
+              {link.name}
+            </Link>
+          )
+        })}
         <QuoteModal>
           <Button
             className="bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg"

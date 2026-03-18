@@ -8,47 +8,43 @@ const PORTFOLIO_ITEMS = [
     id: 1,
     title: 'Manutenção Preventiva Industrial',
     category: 'Indústria',
-    imageBefore:
-      'https://img.usecurling.com/p/800/600?q=factory%20maintenance%20ppe%20before&color=gray',
-    imageAfter:
-      'https://img.usecurling.com/p/800/600?q=factory%20maintenance%20ppe%20after&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=factory%20maintenance%20machine',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=worker%20ppe%20factory%20inspection',
   },
   {
     id: 2,
     title: 'Construção de Galpão Logístico',
     category: 'Construção Civil',
-    imageBefore:
-      'https://img.usecurling.com/p/800/600?q=construction%20site%20ppe%20before&color=gray',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=warehouse%20construction%20ppe&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=empty%20dirt%20land%20construction',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=warehouse%20construction%20workers%20ppe',
   },
   {
     id: 3,
     title: 'Adequação Elétrica NR 10',
     category: 'Projetos Elétricos',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=electrical%20wires%20before&color=gray',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=electrician%20ppe&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=old%20electrical%20panel',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=electrician%20ppe%20panel%20wiring',
   },
   {
     id: 4,
     title: 'Pintura e Reforma em Altura (NR 35)',
     category: 'Manutenção Predial',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=building%20facade%20before&color=gray',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=worker%20height%20ppe&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=worn%20building%20facade',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold%20ppe',
   },
   {
     id: 5,
     title: 'Infraestrutura Hidráulica',
     category: 'Infraestrutura',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=pipes%20before&color=gray',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=plumber%20ppe&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=broken%20pipes%20leaking',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=plumber%20ppe%20fixing%20pipes',
   },
   {
     id: 6,
     title: 'Reforma de Refeitório Corporativo',
     category: 'Construção Civil',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=cafeteria%20before&color=gray',
-    imageAfter:
-      'https://img.usecurling.com/p/800/600?q=construction%20worker%20ppe%20cafeteria&color=blue',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=empty%20old%20room',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=construction%20worker%20ppe%20indoor',
   },
 ]
 
@@ -63,9 +59,10 @@ const Portfolio = () => {
       <section className="bg-primary text-white py-20 px-4">
         <div className="container mx-auto text-center">
           <FadeIn>
-            <h1 className="font-poppins font-bold text-4xl md:text-5xl mb-4">Nossos Projetos</h1>
+            <h1 className="font-poppins font-bold text-4xl md:text-5xl mb-4">Exemplos de Obras</h1>
             <p className="text-xl text-primary-foreground/80 max-w-2xl mx-auto">
-              Conheça alguns dos nossos projetos de alta complexidade executados com excelência.
+              Conheça alguns dos nossos projetos de alta complexidade executados com rigor técnico e
+              segurança.
               <br className="hidden md:block" /> Passe o mouse nas imagens para ver o{' '}
               <strong className="text-secondary">Antes e Depois</strong>.
             </p>

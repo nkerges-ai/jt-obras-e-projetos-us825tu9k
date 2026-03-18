@@ -1955,6 +1955,9 @@ video {
 .tracking-tight {
   letter-spacing: -0.025em;
 }
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
 .tracking-wider {
   letter-spacing: 0.05em;
 }
@@ -3191,6 +3194,10 @@ video {
     display: flex;
   }
 
+  .sm\:w-auto {
+    width: auto;
+  }
+
   .sm\:max-w-\[500px\] {
     max-width: 500px;
   }
@@ -3367,6 +3374,10 @@ video {
 }
 @media (min-width: 1024px) {
 
+  .lg\:mr-16 {
+    margin-right: 4rem;
+  }
+
   .lg\:block {
     display: block;
   }
@@ -3406,6 +3417,12 @@ video {
   .lg\:text-6xl {
     font-size: 3.75rem;
     line-height: 1;
+  }
+}
+@media (min-width: 1280px) {
+
+  .xl\:gap-10 {
+    gap: 2.5rem;
   }
 }
 .\[\&\:first-child\[data-selected\=true\]_button\]\:rounded-l-md:first-child[data-selected=true] button {

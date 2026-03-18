@@ -74,7 +74,7 @@ export function Contact() {
                         <MessageCircle className="h-5 w-5 text-brand-orange group-hover:text-brand-light transition-colors shrink-0" />
                         <div>
                           <span className="font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5">
-                            Joel Nascimento (Diretor)
+                            Joel Nascimento (Projetos)
                           </span>
                           <span>+55 11 94003-7545</span>
                         </div>
