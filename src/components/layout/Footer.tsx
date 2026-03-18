@@ -137,7 +137,7 @@ export function Footer() {
                 <Phone className="text-brand-orange shrink-0 mt-0.5" size={18} />
                 <div className="flex flex-col gap-2">
                   <a
-                    href="https://wa.me/5511940037575"
+                    href="https://wa.me/5511940037545"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
@@ -146,7 +146,7 @@ export function Footer() {
                       size={14}
                       className="text-brand-light group-hover:text-brand-orange"
                     />
-                    <span>Joel Nascimento: (11) 94003-7575</span>
+                    <span>Joel Nascimento: (11) 94003-7545</span>
                   </a>
                   <a
                     href="https://wa.me/5511947069293"
@@ -173,11 +173,11 @@ export function Footer() {
         {/* Bottom Bar with Logo and Legal Data */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4 flex-col md:flex-row text-center md:text-left">
-            <div className="bg-white p-2 rounded shadow-sm">
+            <div className="bg-white p-3 rounded shadow-sm">
               <img
                 src={logo}
                 alt="Logo JT Obras e manutenções ltda"
-                className="h-10 w-auto object-contain"
+                className="h-16 md:h-20 w-auto object-contain"
               />
             </div>
             <div>

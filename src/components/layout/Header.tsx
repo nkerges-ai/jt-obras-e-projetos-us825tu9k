@@ -35,13 +35,19 @@ export function Header() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo Placement (Header) */}
-        <a href="#inicio" className="flex items-center flex-shrink-0 z-50" onClick={closeMenu}>
+        <a
+          href="#inicio"
+          className="flex items-center gap-3 flex-shrink-0 z-50"
+          onClick={closeMenu}
+        >
           <img
             src={logo}
             alt="JT Obras e Manutenções"
-            className="w-auto object-contain transition-all duration-300"
-            style={{ maxHeight: '40px' }} // Ensures maximum height of 40px
+            className="w-auto object-contain transition-all duration-300 h-12 md:h-16"
           />
+          <span className="font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block">
+            JT Obras e<br className="hidden lg:block" /> Manutenções
+          </span>
         </a>
 
         {/* Desktop Navigation */}

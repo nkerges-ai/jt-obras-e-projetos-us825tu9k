@@ -8,39 +8,40 @@ const services = [
     description:
       'Construção e reforma de escritórios, galpões e lajes corporativas com foco em prazo e qualidade.',
     icon: Building2,
-    image: 'https://img.usecurling.com/p/600/400?q=office%20construction&color=blue',
+    image:
+      'https://img.usecurling.com/p/600/400?q=construction%20worker%20helmet%20office&color=blue',
   },
   {
     title: 'Manutenção Industrial',
     description:
       'Serviços preventivos e corretivos em plantas industriais, garantindo operação contínua.',
     icon: Wrench,
-    image: 'https://img.usecurling.com/p/600/400?q=industrial%20maintenance&color=orange',
+    image: 'https://img.usecurling.com/p/600/400?q=industrial%20worker%20ppe&color=orange',
   },
   {
     title: 'Instalações Elétricas',
     description: 'Projetos e execução de baixa e média tensão, painéis e adequação à NR 10.',
     icon: Zap,
-    image: 'https://img.usecurling.com/p/600/400?q=electrical%20panel&color=black',
+    image: 'https://img.usecurling.com/p/600/400?q=electrician%20ppe%20panel&color=black',
   },
   {
     title: 'Acabamentos Finos',
     description:
       'Revestimentos, pintura, gesso e marcenaria de alto padrão para ambientes exigentes.',
     icon: PaintRoller,
-    image: 'https://img.usecurling.com/p/600/400?q=interior%20finishes',
+    image: 'https://img.usecurling.com/p/600/400?q=painter%20construction%20ppe',
   },
   {
     title: 'Trabalho em Altura',
     description: 'Equipe especializada e certificada em NR 35 para fachadas e coberturas.',
     icon: ShieldAlert,
-    image: 'https://img.usecurling.com/p/600/400?q=scaffolding&color=gray',
+    image: 'https://img.usecurling.com/p/600/400?q=construction%20worker%20height%20ppe&color=gray',
   },
   {
     title: 'Estruturas Metálicas',
     description: 'Fabricação e montagem de mezaninos, coberturas e reforços estruturais.',
     icon: Hammer,
-    image: 'https://img.usecurling.com/p/600/400?q=steel%20structure&color=black',
+    image: 'https://img.usecurling.com/p/600/400?q=welder%20steel%20ppe&color=black',
   },
 ]
 

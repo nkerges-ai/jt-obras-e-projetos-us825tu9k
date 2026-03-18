@@ -28,7 +28,7 @@ export function Contact() {
                     <h4 className="font-semibold text-lg">Telefones / WhatsApp</h4>
                     <div className="mt-3 space-y-4">
                       <a
-                        href="https://wa.me/5511940037575"
+                        href="https://wa.me/5511940037545"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
@@ -38,7 +38,7 @@ export function Contact() {
                           <span className="font-medium text-white group-hover:text-brand-orange transition-colors block mb-0.5">
                             Joel Nascimento (Diretor)
                           </span>
-                          <span>+55 11 94003-7575</span>
+                          <span>+55 11 94003-7545</span>
                         </div>
                       </a>
                       <a
