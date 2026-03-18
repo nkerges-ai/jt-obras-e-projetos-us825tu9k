@@ -32814,7 +32814,7 @@ function Hero() {
 				"data-uid": "src/components/sections/Hero.tsx:22:7",
 				"data-prohibitions": "[editContent]",
 				className: "absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20",
-				style: { backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site%20workers%20ppe')` }
+				style: { backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=modern%20clean%20construction%20building')` }
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				"data-uid": "src/components/sections/Hero.tsx:29:7",
@@ -32990,7 +32990,7 @@ function Hero() {
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 									"data-uid": "src/components/sections/Hero.tsx:95:17",
 									"data-prohibitions": "[editContent]",
-									src: "https://img.usecurling.com/p/400/400?q=engineer%20helmet%20safety",
+									src: "https://img.usecurling.com/p/400/400?q=professional%20engineer%20blueprint",
 									alt: "Projeto Seguro",
 									className: "w-full h-full object-cover"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -35546,4 +35546,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-BQF_kVoG.js.map
+//# sourceMappingURL=index-DhnGDA1y.js.map

@@ -22,7 +22,7 @@ export function Hero() {
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
         style={{
-          backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=construction%20site%20workers%20ppe')`,
+          backgroundImage: `url('https://img.usecurling.com/p/1920/1080?q=modern%20clean%20construction%20building')`,
         }}
       />
 
@@ -93,7 +93,7 @@ export function Hero() {
               </div>
               <div className="rounded-2xl overflow-hidden h-48 border border-white/10 relative">
                 <img
-                  src="https://img.usecurling.com/p/400/400?q=engineer%20helmet%20safety"
+                  src="https://img.usecurling.com/p/400/400?q=professional%20engineer%20blueprint"
                   alt="Projeto Seguro"
                   className="w-full h-full object-cover"
                 />
