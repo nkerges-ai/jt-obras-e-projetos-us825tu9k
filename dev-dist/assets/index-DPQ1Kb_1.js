@@ -19098,6 +19098,13 @@ var Clock = createLucideIcon("clock", [["circle", {
 	d: "M12 6v6l4 2",
 	key: "mmk7yg"
 }]]);
+var Droplets = createLucideIcon("droplets", [["path", {
+	d: "M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z",
+	key: "1ptgy4"
+}], ["path", {
+	d: "M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97",
+	key: "1sl1rz"
+}]]);
 var Facebook = createLucideIcon("facebook", [["path", {
 	d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
 	key: "1jg4f8"
@@ -19158,6 +19165,20 @@ var Instagram = createLucideIcon("instagram", [
 		y1: "6.5",
 		y2: "6.5",
 		key: "r4j83e"
+	}]
+]);
+var Lightbulb = createLucideIcon("lightbulb", [
+	["path", {
+		d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
+		key: "1gvzjb"
+	}],
+	["path", {
+		d: "M9 18h6",
+		key: "x1upvd"
+	}],
+	["path", {
+		d: "M10 22h4",
+		key: "ceow96"
 	}]
 ]);
 var Linkedin = createLucideIcon("linkedin", [
@@ -19239,9 +19260,36 @@ var PaintRoller = createLucideIcon("paint-roller", [
 		key: "d6e7yl"
 	}]
 ]);
+var PenTool = createLucideIcon("pen-tool", [
+	["path", {
+		d: "M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z",
+		key: "nt11vn"
+	}],
+	["path", {
+		d: "m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18",
+		key: "15qc1e"
+	}],
+	["path", {
+		d: "m2.3 2.3 7.286 7.286",
+		key: "1wuzzi"
+	}],
+	["circle", {
+		cx: "11",
+		cy: "11",
+		r: "2",
+		key: "xmgehs"
+	}]
+]);
 var Phone = createLucideIcon("phone", [["path", {
 	d: "M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384",
 	key: "9njp5v"
+}]]);
+var Quote = createLucideIcon("quote", [["path", {
+	d: "M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z",
+	key: "rib7q0"
+}], ["path", {
+	d: "M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z",
+	key: "1ymkrd"
 }]]);
 var Ruler = createLucideIcon("ruler", [
 	["path", {
@@ -19285,6 +19333,10 @@ var ShieldCheck = createLucideIcon("shield-check", [["path", {
 }], ["path", {
 	d: "m9 12 2 2 4-4",
 	key: "dzmm74"
+}]]);
+var Star = createLucideIcon("star", [["path", {
+	d: "M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z",
+	key: "r04s7s"
 }]]);
 var Wrench = createLucideIcon("wrench", [["path", {
 	d: "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z",
@@ -32706,16 +32758,12 @@ var navLinks = [
 		href: "/portfolio"
 	},
 	{
-		name: "Clientes",
-		href: "/#clientes"
+		name: "Dicas",
+		href: "/#dicas"
 	},
 	{
-		name: "Sobre",
-		href: "/#sobre"
-	},
-	{
-		name: "FAQ",
-		href: "/#faq"
+		name: "Depoimentos",
+		href: "/#depoimentos"
 	},
 	{
 		name: "Contato",
@@ -32753,55 +32801,54 @@ function Header$1() {
 		closeMenu();
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		"data-uid": "src/components/layout/Header.tsx:57:5",
+		"data-uid": "src/components/layout/Header.tsx:56:5",
 		"data-prohibitions": "[editContent]",
 		className: cn$1("fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-white border-b", isScrolled ? "py-3 shadow-md border-transparent" : "py-5 border-gray-100"),
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Header.tsx:63:7",
+			"data-uid": "src/components/layout/Header.tsx:62:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 md:px-6 flex items-center justify-between",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
-					"data-uid": "src/components/layout/Header.tsx:65:9",
+					"data-uid": "src/components/layout/Header.tsx:64:9",
 					"data-prohibitions": "[]",
 					to: "/",
-					className: "flex items-center gap-4 flex-shrink-0 z-50 lg:mr-16",
+					className: "flex items-center gap-4 flex-shrink-0 z-50 lg:mr-auto",
 					onClick: closeMenu,
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						"data-uid": "src/components/layout/Header.tsx:70:11",
+						"data-uid": "src/components/layout/Header.tsx:69:11",
 						"data-prohibitions": "[editContent]",
 						src: logotipo_c129e_default,
 						alt: "JT Obras e Manutenções",
 						className: "w-auto object-contain transition-all duration-300 h-12 md:h-16"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/components/layout/Header.tsx:75:11",
+						"data-uid": "src/components/layout/Header.tsx:74:11",
 						"data-prohibitions": "[]",
-						className: "font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block uppercase tracking-wide",
+						className: "font-poppins font-extrabold text-brand-navy text-xl md:text-2xl leading-tight hidden xl:block uppercase tracking-wider",
 						children: [
 							"JT OBRAS E",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-								"data-uid": "src/components/layout/Header.tsx:76:23",
-								"data-prohibitions": "[editContent]",
-								className: "hidden lg:block"
+								"data-uid": "src/components/layout/Header.tsx:75:23",
+								"data-prohibitions": "[editContent]"
 							}),
 							" MANUTENÇÕES"
 						]
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-					"data-uid": "src/components/layout/Header.tsx:81:9",
+					"data-uid": "src/components/layout/Header.tsx:80:9",
 					"data-prohibitions": "[editContent]",
-					className: "hidden md:flex items-center gap-8 xl:gap-10 ml-auto",
+					className: "hidden lg:flex items-center gap-8 ml-auto",
 					children: [navLinks.map((link) => {
 						return link.href.startsWith("/#") ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							"data-uid": "src/components/layout/Header.tsx:85:15",
+							"data-uid": "src/components/layout/Header.tsx:84:15",
 							"data-prohibitions": "[editContent]",
 							href: link.href,
 							onClick: (e) => handleNavClick(e, link.href),
 							className: "text-sm font-semibold text-brand-navy hover:text-brand-light transition-colors duration-200",
 							children: link.name
 						}, link.name) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-							"data-uid": "src/components/layout/Header.tsx:94:15",
+							"data-uid": "src/components/layout/Header.tsx:93:15",
 							"data-prohibitions": "[editContent]",
 							to: link.href,
 							onClick: closeMenu,
@@ -32809,47 +32856,47 @@ function Header$1() {
 							children: link.name
 						}, link.name);
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
-						"data-uid": "src/components/layout/Header.tsx:104:11",
+						"data-uid": "src/components/layout/Header.tsx:103:11",
 						"data-prohibitions": "[]",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							"data-uid": "src/components/layout/Header.tsx:105:13",
+							"data-uid": "src/components/layout/Header.tsx:104:13",
 							"data-prohibitions": "[]",
-							className: "bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-2",
+							className: "bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-4",
 							children: "Solicitar Orçamento"
 						})
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					"data-uid": "src/components/layout/Header.tsx:112:9",
+					"data-uid": "src/components/layout/Header.tsx:111:9",
 					"data-prohibitions": "[editContent]",
-					className: "md:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto",
+					className: "lg:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto",
 					onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
 					"aria-label": "Toggle menu",
 					children: isMobileMenuOpen ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, {
-						"data-uid": "src/components/layout/Header.tsx:117:31",
+						"data-uid": "src/components/layout/Header.tsx:116:31",
 						"data-prohibitions": "[editContent]",
 						size: 24
 					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
-						"data-uid": "src/components/layout/Header.tsx:117:49",
+						"data-uid": "src/components/layout/Header.tsx:116:49",
 						"data-prohibitions": "[editContent]",
 						size: 24
 					})
 				})
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/layout/Header.tsx:122:7",
+			"data-uid": "src/components/layout/Header.tsx:121:7",
 			"data-prohibitions": "[editContent]",
-			className: cn$1("fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 md:hidden transition-transform duration-300 ease-in-out", isMobileMenuOpen ? "translate-x-0" : "translate-x-full"),
+			className: cn$1("fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 lg:hidden transition-transform duration-300 ease-in-out", isMobileMenuOpen ? "translate-x-0" : "translate-x-full"),
 			children: [navLinks.map((link) => {
 				return link.href.startsWith("/#") ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-					"data-uid": "src/components/layout/Header.tsx:131:13",
+					"data-uid": "src/components/layout/Header.tsx:130:13",
 					"data-prohibitions": "[editContent]",
 					href: link.href,
 					onClick: (e) => handleNavClick(e, link.href),
 					className: "text-lg font-semibold text-brand-navy hover:text-brand-light border-b border-gray-100 pb-4",
 					children: link.name
 				}, link.name) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-					"data-uid": "src/components/layout/Header.tsx:140:13",
+					"data-uid": "src/components/layout/Header.tsx:139:13",
 					"data-prohibitions": "[editContent]",
 					to: link.href,
 					onClick: closeMenu,
@@ -32857,10 +32904,10 @@ function Header$1() {
 					children: link.name
 				}, link.name);
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuoteModal, {
-				"data-uid": "src/components/layout/Header.tsx:150:9",
+				"data-uid": "src/components/layout/Header.tsx:149:9",
 				"data-prohibitions": "[]",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					"data-uid": "src/components/layout/Header.tsx:151:11",
+					"data-uid": "src/components/layout/Header.tsx:150:11",
 					"data-prohibitions": "[]",
 					className: "bg-brand-orange hover:bg-[#cf6d18] text-white mt-4 w-full h-12 text-lg",
 					onClick: closeMenu,
@@ -33037,10 +33084,10 @@ function Footer() {
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 										"data-uid": "src/components/layout/Footer.tsx:107:17",
 										"data-prohibitions": "[]",
-										href: "/#sobre",
-										onClick: (e) => handleNavClick(e, "/#sobre"),
+										href: "/#dicas",
+										onClick: (e) => handleNavClick(e, "/#dicas"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
-										children: "Sobre Nós"
+										children: "Dicas de Obras"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
@@ -33049,10 +33096,10 @@ function Footer() {
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 										"data-uid": "src/components/layout/Footer.tsx:116:17",
 										"data-prohibitions": "[]",
-										href: "/#faq",
-										onClick: (e) => handleNavClick(e, "/#faq"),
+										href: "/#depoimentos",
+										onClick: (e) => handleNavClick(e, "/#depoimentos"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
-										children: "Dúvidas (FAQ)"
+										children: "Depoimentos"
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
@@ -33061,10 +33108,10 @@ function Footer() {
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 										"data-uid": "src/components/layout/Footer.tsx:125:17",
 										"data-prohibitions": "[]",
-										href: "/#contato",
-										onClick: (e) => handleNavClick(e, "/#contato"),
+										href: "/#sobre",
+										onClick: (e) => handleNavClick(e, "/#sobre"),
 										className: "text-gray-300 hover:text-white transition-colors text-sm",
-										children: "Fale Conosco"
+										children: "Sobre Nós"
 									})
 								})
 							]
@@ -33942,6 +33989,259 @@ function CompanyProfile() {
 					]
 				})]
 			})
+		})
+	});
+}
+//#endregion
+//#region src/components/sections/Tips.tsx
+var tips = [
+	{
+		title: "Limpeza Regular de Calhas",
+		description: "A importância da limpeza regular de calhas para evitar infiltrações que podem comprometer a estrutura do seu imóvel e gerar altos custos de reparo.",
+		icon: Droplets
+	},
+	{
+		title: "Manutenção de Ar-Condicionado",
+		description: "Realize a manutenção preventiva de ar-condicionado periodicamente. Isso garante a qualidade do ar que você respira e aumenta a eficiência energética do aparelho.",
+		icon: Wrench
+	},
+	{
+		title: "Prevenção Elétrica (NR 10)",
+		description: "Evite curtos-circuitos fazendo a revisão do quadro de força a cada 5 anos. Instalações antigas podem não suportar os equipamentos modernos de alta potência.",
+		icon: Lightbulb
+	},
+	{
+		title: "Inspeção de Telhados",
+		description: "Após fortes tempestades, sempre verifique o estado das telhas. Uma pequena fresta pode causar danos severos ao forro e aos móveis ao longo do tempo.",
+		icon: PenTool
+	}
+];
+function Tips() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+		"data-uid": "src/components/sections/Tips.tsx:34:5",
+		"data-prohibitions": "[editContent]",
+		id: "dicas",
+		className: "py-24 bg-gray-50 border-t border-gray-100",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/sections/Tips.tsx:35:7",
+			"data-prohibitions": "[editContent]",
+			className: "container mx-auto px-4 md:px-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Tips.tsx:36:9",
+				"data-prohibitions": "[]",
+				className: "text-center max-w-3xl mx-auto mb-16",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+					"data-uid": "src/components/sections/Tips.tsx:37:11",
+					"data-prohibitions": "[]",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							"data-uid": "src/components/sections/Tips.tsx:38:13",
+							"data-prohibitions": "[]",
+							className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
+							children: "Dicas de Obras e Reparos"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/sections/Tips.tsx:41:13",
+							"data-prohibitions": "[]",
+							className: "text-3xl md:text-4xl font-extrabold text-brand-navy mb-4",
+							children: "Aprenda com Nossos Especialistas"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/sections/Tips.tsx:44:13",
+							"data-prohibitions": "[]",
+							className: "text-gray-600 text-lg",
+							children: "Confira curiosidades e dicas essenciais de manutenção preventiva para manter seu imóvel seguro e sempre valorizado."
+						})
+					]
+				})
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Tips.tsx:51:9",
+				"data-prohibitions": "[editContent]",
+				className: "grid md:grid-cols-2 lg:grid-cols-4 gap-8",
+				children: tips.map((tip, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
+					"data-uid": "src/components/sections/Tips.tsx:53:13",
+					"data-prohibitions": "[editContent]",
+					delay: index * .1,
+					direction: "up",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+						"data-uid": "src/components/sections/Tips.tsx:54:15",
+						"data-prohibitions": "[editContent]",
+						className: "h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white group",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardHeader, {
+							"data-uid": "src/components/sections/Tips.tsx:55:17",
+							"data-prohibitions": "[editContent]",
+							className: "pb-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								"data-uid": "src/components/sections/Tips.tsx:56:19",
+								"data-prohibitions": "[]",
+								className: "w-12 h-12 rounded-lg bg-brand-light/10 flex items-center justify-center mb-4 group-hover:bg-brand-orange transition-colors duration-300",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(tip.icon, {
+									"data-uid": "src/components/sections/Tips.tsx:57:21",
+									"data-prohibitions": "[editContent]",
+									className: "h-6 w-6 text-brand-light group-hover:text-white transition-colors duration-300"
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardTitle, {
+								"data-uid": "src/components/sections/Tips.tsx:59:19",
+								"data-prohibitions": "[editContent]",
+								className: "text-xl font-bold text-brand-navy",
+								children: tip.title
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
+							"data-uid": "src/components/sections/Tips.tsx:61:17",
+							"data-prohibitions": "[editContent]",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								"data-uid": "src/components/sections/Tips.tsx:62:19",
+								"data-prohibitions": "[editContent]",
+								className: "text-gray-600 leading-relaxed text-sm md:text-base",
+								children: tip.description
+							})
+						})]
+					})
+				}, index))
+			})]
+		})
+	});
+}
+//#endregion
+//#region src/components/sections/Testimonials.tsx
+var testimonials = [
+	{
+		name: "Carlos Almeida",
+		role: "Síndico Profissional",
+		content: "A equipe da JT Obras foi impecável na reforma da fachada do nosso condomínio. Cumpriram o prazo e todas as normas de segurança rigorosamente.",
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=1"
+	},
+	{
+		name: "Mariana Costa",
+		role: "Gerente Administrativa",
+		content: "Tínhamos um problema sério de infiltração. Eles realizaram a limpeza de calhas e o reparo do telhado com extrema eficiência e organização.",
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2"
+	},
+	{
+		name: "Roberto Silva",
+		role: "Diretor de Operações",
+		content: "Excelente serviço de adequação elétrica (NR 10). Profissionais altamente capacitados e transparentes em todas as etapas do projeto.",
+		avatar: "https://img.usecurling.com/ppl/thumbnail?gender=male&seed=3"
+	}
+];
+function Testimonials() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+		"data-uid": "src/components/sections/Testimonials.tsx:31:5",
+		"data-prohibitions": "[editContent]",
+		id: "depoimentos",
+		className: "py-24 bg-brand-navy text-white border-t border-brand-navy/90",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			"data-uid": "src/components/sections/Testimonials.tsx:35:7",
+			"data-prohibitions": "[editContent]",
+			className: "container mx-auto px-4 md:px-6",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Testimonials.tsx:36:9",
+				"data-prohibitions": "[]",
+				className: "text-center max-w-3xl mx-auto mb-16",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
+					"data-uid": "src/components/sections/Testimonials.tsx:37:11",
+					"data-prohibitions": "[]",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							"data-uid": "src/components/sections/Testimonials.tsx:38:13",
+							"data-prohibitions": "[]",
+							className: "text-brand-orange font-bold tracking-wider uppercase text-sm mb-2",
+							children: "O que nossos clientes dizem"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							"data-uid": "src/components/sections/Testimonials.tsx:41:13",
+							"data-prohibitions": "[]",
+							className: "text-3xl md:text-4xl font-extrabold text-white mb-4",
+							children: "Depoimentos"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							"data-uid": "src/components/sections/Testimonials.tsx:42:13",
+							"data-prohibitions": "[]",
+							className: "text-gray-300 text-lg",
+							children: "A satisfação dos nossos clientes é o maior reflexo da qualidade e do compromisso que entregamos em cada obra realizada."
+						})
+					]
+				})
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				"data-uid": "src/components/sections/Testimonials.tsx:49:9",
+				"data-prohibitions": "[editContent]",
+				className: "grid md:grid-cols-3 gap-8",
+				children: testimonials.map((testimonial, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
+					"data-uid": "src/components/sections/Testimonials.tsx:51:13",
+					"data-prohibitions": "[editContent]",
+					delay: index * .1,
+					direction: "up",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, {
+						"data-uid": "src/components/sections/Testimonials.tsx:52:15",
+						"data-prohibitions": "[editContent]",
+						className: "h-full border-0 bg-white/5 backdrop-blur-sm shadow-xl hover:bg-white/10 transition-all duration-300",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							"data-uid": "src/components/sections/Testimonials.tsx:53:17",
+							"data-prohibitions": "[editContent]",
+							className: "pt-8 relative",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Quote, {
+									"data-uid": "src/components/sections/Testimonials.tsx:54:19",
+									"data-prohibitions": "[editContent]",
+									className: "absolute top-6 right-6 h-10 w-10 text-brand-orange/20"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									"data-uid": "src/components/sections/Testimonials.tsx:55:19",
+									"data-prohibitions": "[editContent]",
+									className: "flex gap-1 mb-6 text-brand-orange",
+									children: [
+										1,
+										2,
+										3,
+										4,
+										5
+									].map((star) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Star, {
+										"data-uid": "src/components/sections/Testimonials.tsx:57:23",
+										"data-prohibitions": "[editContent]",
+										className: "h-4 w-4 fill-current"
+									}, star))
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+									"data-uid": "src/components/sections/Testimonials.tsx:60:19",
+									"data-prohibitions": "[editContent]",
+									className: "text-gray-300 mb-8 italic leading-relaxed text-sm md:text-base",
+									children: [
+										"\"",
+										testimonial.content,
+										"\""
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									"data-uid": "src/components/sections/Testimonials.tsx:63:19",
+									"data-prohibitions": "[editContent]",
+									className: "flex items-center gap-4",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+										"data-uid": "src/components/sections/Testimonials.tsx:64:21",
+										"data-prohibitions": "[editContent]",
+										src: testimonial.avatar,
+										alt: testimonial.name,
+										className: "w-12 h-12 rounded-full border-2 border-brand-light object-cover"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										"data-uid": "src/components/sections/Testimonials.tsx:69:21",
+										"data-prohibitions": "[editContent]",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+											"data-uid": "src/components/sections/Testimonials.tsx:70:23",
+											"data-prohibitions": "[editContent]",
+											className: "font-bold text-white text-sm md:text-base",
+											children: testimonial.name
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											"data-uid": "src/components/sections/Testimonials.tsx:73:23",
+											"data-prohibitions": "[editContent]",
+											className: "text-xs md:text-sm text-gray-400",
+											children: testimonial.role
+										})]
+									})]
+								})
+							]
+						})
+					})
+				}, index))
+			})]
 		})
 	});
 }
@@ -34853,47 +35153,55 @@ function Contact() {
 //#region src/pages/Index.tsx
 function Index() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Index.tsx:12:5",
+		"data-uid": "src/pages/Index.tsx:14:5",
 		"data-prohibitions": "[]",
 		className: "min-h-screen flex flex-col",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Header$1, {
-				"data-uid": "src/pages/Index.tsx:13:7",
+				"data-uid": "src/pages/Index.tsx:15:7",
 				"data-prohibitions": "[editContent]"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
-				"data-uid": "src/pages/Index.tsx:14:7",
+				"data-uid": "src/pages/Index.tsx:16:7",
 				"data-prohibitions": "[]",
 				className: "flex-1",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Hero, {
-						"data-uid": "src/pages/Index.tsx:15:9",
-						"data-prohibitions": "[editContent]"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Services, {
-						"data-uid": "src/pages/Index.tsx:16:9",
-						"data-prohibitions": "[editContent]"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clients, {
 						"data-uid": "src/pages/Index.tsx:17:9",
 						"data-prohibitions": "[editContent]"
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompanyProfile, {
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Services, {
 						"data-uid": "src/pages/Index.tsx:18:9",
 						"data-prohibitions": "[editContent]"
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FAQ, {
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clients, {
 						"data-uid": "src/pages/Index.tsx:19:9",
 						"data-prohibitions": "[editContent]"
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Contact, {
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tips, {
 						"data-uid": "src/pages/Index.tsx:20:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompanyProfile, {
+						"data-uid": "src/pages/Index.tsx:21:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Testimonials, {
+						"data-uid": "src/pages/Index.tsx:22:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FAQ, {
+						"data-uid": "src/pages/Index.tsx:23:9",
+						"data-prohibitions": "[editContent]"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Contact, {
+						"data-uid": "src/pages/Index.tsx:24:9",
 						"data-prohibitions": "[editContent]"
 					})
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Footer, {
-				"data-uid": "src/pages/Index.tsx:22:7",
+				"data-uid": "src/pages/Index.tsx:26:7",
 				"data-prohibitions": "[editContent]"
 			})
 		]
@@ -34904,45 +35212,51 @@ function Index() {
 var PORTFOLIO_ITEMS = [
 	{
 		id: 1,
-		title: "Manutenção Preventiva Industrial",
-		category: "Indústria",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=factory%20machinery%20old&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20helmet%20factory&dpr=2"
+		title: "Manutenção de Fachada e Pintura",
+		category: "Trabalho em Altura",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=scaffolding%20building%20workers&color=gray",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=painted%20building%20yellow%20scaffold",
+		description: "Trabalho em altura com andaimes para pintura de fachada predial (parede cinza e topo amarelo)."
 	},
 	{
 		id: 2,
-		title: "Construção de Galpão Logístico",
-		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20dirt%20site&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20helmet&dpr=2"
+		title: "Desobstrução e Limpeza de Calhas",
+		category: "Manutenção Preventiva",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=clogged%20gutter%20drain%20leaves%20boot",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=clean%20gutter%20water%20flowing",
+		description: "Manutenção e limpeza de calha entupida com folhas, prevenindo infiltrações."
 	},
 	{
 		id: 3,
-		title: "Adequação Elétrica NR 10",
-		category: "Projetos Elétricos",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=old%20electrical%20panel&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20helmet%20panel&dpr=2"
+		title: "Reparo de Telhado e Forro",
+		category: "Manutenção Predial",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=dark%20attic%20roof%20hole%20light",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=fixed%20attic%20roof%20no%20hole",
+		description: "Identificação e reparo de buraco no telhado com passagem de luz para o forro."
 	},
 	{
 		id: 4,
-		title: "Pintura e Reforma em Altura (NR 35)",
-		category: "Manutenção Predial",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=building%20old%20facade&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold&dpr=2"
+		title: "Construção de Galpão Logístico",
+		category: "Construção Civil",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20dirt%20site&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=construction%20worker%20helmet&dpr=2",
+		description: "Terraplanagem e construção completa de galpão para armazenagem."
 	},
 	{
 		id: 5,
-		title: "Infraestrutura Hidráulica",
-		category: "Infraestrutura",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=broken%20water%20pipes&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20helmet%20pipes&dpr=2"
+		title: "Adequação Elétrica NR 10",
+		category: "Projetos Elétricos",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=old%20electrical%20panel&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=electrician%20helmet%20panel&dpr=2",
+		description: "Atualização de quadros elétricos antigos para o padrão de segurança NR 10."
 	},
 	{
 		id: 6,
-		title: "Reforma de Refeitório Corporativo",
-		category: "Construção Civil",
-		imageBefore: "https://img.usecurling.com/p/800/600?q=empty%20old%20room&dpr=2",
-		imageAfter: "https://img.usecurling.com/p/800/600?q=builder%20helmet%20indoor&dpr=2"
+		title: "Infraestrutura Hidráulica",
+		category: "Infraestrutura",
+		imageBefore: "https://img.usecurling.com/p/800/600?q=broken%20water%20pipes&dpr=2",
+		imageAfter: "https://img.usecurling.com/p/800/600?q=plumber%20helmet%20pipes&dpr=2",
+		description: "Substituição de tubulações danificadas e modernização da rede hídrica."
 	}
 ];
 var Portfolio = () => {
@@ -34950,40 +35264,40 @@ var Portfolio = () => {
 		window.scrollTo(0, 0);
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Portfolio.tsx:57:5",
+		"data-uid": "src/pages/Portfolio.tsx:65:5",
 		"data-prohibitions": "[editContent]",
 		className: "bg-slate-50 min-h-screen pb-24",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-			"data-uid": "src/pages/Portfolio.tsx:59:7",
+			"data-uid": "src/pages/Portfolio.tsx:67:7",
 			"data-prohibitions": "[]",
 			className: "bg-primary text-white py-20 px-4",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Portfolio.tsx:60:9",
+				"data-uid": "src/pages/Portfolio.tsx:68:9",
 				"data-prohibitions": "[]",
 				className: "container mx-auto text-center",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FadeIn, {
-					"data-uid": "src/pages/Portfolio.tsx:61:11",
+					"data-uid": "src/pages/Portfolio.tsx:69:11",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						"data-uid": "src/pages/Portfolio.tsx:62:13",
+						"data-uid": "src/pages/Portfolio.tsx:70:13",
 						"data-prohibitions": "[]",
 						className: "font-poppins font-bold text-4xl md:text-5xl mb-4",
 						children: "Exemplos de Obras"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						"data-uid": "src/pages/Portfolio.tsx:63:13",
+						"data-uid": "src/pages/Portfolio.tsx:71:13",
 						"data-prohibitions": "[]",
 						className: "text-xl text-primary-foreground/80 max-w-2xl mx-auto",
 						children: [
 							"Conheça alguns dos nossos projetos de alta complexidade executados com rigor técnico e segurança.",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-								"data-uid": "src/pages/Portfolio.tsx:66:15",
+								"data-uid": "src/pages/Portfolio.tsx:74:15",
 								"data-prohibitions": "[editContent]",
 								className: "hidden md:block"
 							}),
 							" Passe o mouse nas imagens para ver o",
 							" ",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-								"data-uid": "src/pages/Portfolio.tsx:67:15",
+								"data-uid": "src/pages/Portfolio.tsx:75:15",
 								"data-prohibitions": "[]",
 								className: "text-secondary",
 								children: "Antes e Depois"
@@ -34994,28 +35308,28 @@ var Portfolio = () => {
 				})
 			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-			"data-uid": "src/pages/Portfolio.tsx:74:7",
+			"data-uid": "src/pages/Portfolio.tsx:82:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 mt-16",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/pages/Portfolio.tsx:75:9",
+				"data-uid": "src/pages/Portfolio.tsx:83:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
 				children: PORTFOLIO_ITEMS.map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FadeIn, {
-					"data-uid": "src/pages/Portfolio.tsx:77:13",
+					"data-uid": "src/pages/Portfolio.tsx:85:13",
 					"data-prohibitions": "[editContent]",
 					delay: index * 100,
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-						"data-uid": "src/pages/Portfolio.tsx:78:15",
+						"data-uid": "src/pages/Portfolio.tsx:86:15",
 						"data-prohibitions": "[editContent]",
-						className: "overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group cursor-pointer h-full bg-white",
+						className: "overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group cursor-pointer h-full bg-white flex flex-col",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/pages/Portfolio.tsx:79:17",
+							"data-uid": "src/pages/Portfolio.tsx:87:17",
 							"data-prohibitions": "[editContent]",
-							className: "relative h-72 overflow-hidden bg-slate-200",
+							className: "relative h-72 overflow-hidden bg-slate-200 shrink-0",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/pages/Portfolio.tsx:81:19",
+									"data-uid": "src/pages/Portfolio.tsx:89:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageBefore,
 									alt: `${item.title} Antes`,
@@ -35023,7 +35337,7 @@ var Portfolio = () => {
 									loading: "lazy"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-									"data-uid": "src/pages/Portfolio.tsx:88:19",
+									"data-uid": "src/pages/Portfolio.tsx:96:19",
 									"data-prohibitions": "[editContent]",
 									src: item.imageAfter,
 									alt: `${item.title} Depois`,
@@ -35031,47 +35345,52 @@ var Portfolio = () => {
 									loading: "lazy"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:96:19",
+									"data-uid": "src/pages/Portfolio.tsx:104:19",
 									"data-prohibitions": "[editContent]",
 									className: "absolute top-4 left-4 z-20",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:97:21",
+										"data-uid": "src/pages/Portfolio.tsx:105:21",
 										"data-prohibitions": "[editContent]",
 										className: "bg-white/90 backdrop-blur text-primary text-xs font-bold px-3 py-1 rounded shadow-sm",
 										children: item.category
 									})
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									"data-uid": "src/pages/Portfolio.tsx:103:19",
+									"data-uid": "src/pages/Portfolio.tsx:111:19",
 									"data-prohibitions": "[]",
 									className: "absolute top-4 right-4 z-20 flex gap-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:104:21",
+										"data-uid": "src/pages/Portfolio.tsx:112:21",
 										"data-prohibitions": "[]",
 										className: "bg-black/70 text-white text-xs px-2 py-1 rounded opacity-100 group-hover:opacity-0 transition-opacity flex items-center gap-1",
 										children: ["Antes ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeftRight, {
-											"data-uid": "src/pages/Portfolio.tsx:105:29",
+											"data-uid": "src/pages/Portfolio.tsx:113:29",
 											"data-prohibitions": "[editContent]",
 											size: 12
 										})]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										"data-uid": "src/pages/Portfolio.tsx:107:21",
+										"data-uid": "src/pages/Portfolio.tsx:115:21",
 										"data-prohibitions": "[]",
 										className: "bg-secondary/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity",
 										children: "Depois"
 									})]
 								})
 							]
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/pages/Portfolio.tsx:112:17",
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							"data-uid": "src/pages/Portfolio.tsx:120:17",
 							"data-prohibitions": "[editContent]",
-							className: "p-6",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/pages/Portfolio.tsx:113:19",
+							className: "p-6 flex flex-col flex-grow",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+								"data-uid": "src/pages/Portfolio.tsx:121:19",
 								"data-prohibitions": "[editContent]",
-								className: "font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors",
+								className: "font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors mb-2",
 								children: item.title
-							})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								"data-uid": "src/pages/Portfolio.tsx:124:19",
+								"data-prohibitions": "[editContent]",
+								className: "text-slate-600 text-sm leading-relaxed mt-auto",
+								children: item.description
+							})]
 						})]
 					})
 				}, item.id))
@@ -35127,7 +35446,7 @@ function WhatsAppFAB() {
 		href: "https://wa.me/5511940037545",
 		target: "_blank",
 		rel: "noopener noreferrer",
-		className: "fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:bg-[#20bd5a] transition-colors animate-pulse-soft hover:scale-110 duration-300",
+		className: "fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:bg-[#20bd5a] transition-all hover:-translate-y-1 hover:scale-105 duration-300 ring-4 ring-[#25D366]/20",
 		"aria-label": "Contact via WhatsApp",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
 			"data-uid": "src/components/layout/WhatsAppFAB.tsx:12:7",
@@ -35237,4 +35556,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-RsQrSKzY.js.map
+//# sourceMappingURL=index-DPQ1Kb_1.js.map

@@ -4,6 +4,8 @@ import { Hero } from '@/components/sections/Hero'
 import { Services } from '@/components/sections/Services'
 import { Clients } from '@/components/sections/Clients'
 import { CompanyProfile } from '@/components/sections/CompanyProfile'
+import { Tips } from '@/components/sections/Tips'
+import { Testimonials } from '@/components/sections/Testimonials'
 import { FAQ } from '@/components/sections/FAQ'
 import { Contact } from '@/components/sections/Contact'
 
@@ -15,7 +17,9 @@ export default function Index() {
         <Hero />
         <Services />
         <Clients />
+        <Tips />
         <CompanyProfile />
+        <Testimonials />
         <FAQ />
         <Contact />
       </main>

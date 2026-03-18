@@ -9,9 +9,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 const navLinks = [
   { name: 'Início', href: '/' },
   { name: 'Projetos', href: '/portfolio' },
-  { name: 'Clientes', href: '/#clientes' },
-  { name: 'Sobre', href: '/#sobre' },
-  { name: 'FAQ', href: '/#faq' },
+  { name: 'Dicas', href: '/#dicas' },
+  { name: 'Depoimentos', href: '/#depoimentos' },
   { name: 'Contato', href: '/#contato' },
 ]
 
@@ -64,7 +63,7 @@ export function Header() {
         {/* Logo Placement (Header) */}
         <Link
           to="/"
-          className="flex items-center gap-4 flex-shrink-0 z-50 lg:mr-16"
+          className="flex items-center gap-4 flex-shrink-0 z-50 lg:mr-auto"
           onClick={closeMenu}
         >
           <img
@@ -72,13 +71,13 @@ export function Header() {
             alt="JT Obras e Manutenções"
             className="w-auto object-contain transition-all duration-300 h-12 md:h-16"
           />
-          <span className="font-poppins font-bold text-brand-navy text-lg md:text-xl leading-tight hidden sm:block uppercase tracking-wide">
-            JT OBRAS E<br className="hidden lg:block" /> MANUTENÇÕES
+          <span className="font-poppins font-extrabold text-brand-navy text-xl md:text-2xl leading-tight hidden xl:block uppercase tracking-wider">
+            JT OBRAS E<br /> MANUTENÇÕES
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 xl:gap-10 ml-auto">
+        <nav className="hidden lg:flex items-center gap-8 ml-auto">
           {navLinks.map((link) => {
             const isHash = link.href.startsWith('/#')
             return isHash ? (
@@ -102,7 +101,7 @@ export function Header() {
             )
           })}
           <QuoteModal>
-            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-2">
+            <Button className="bg-brand-orange hover:bg-[#cf6d18] text-white transition-colors shadow-sm ml-4">
               Solicitar Orçamento
             </Button>
           </QuoteModal>
@@ -110,7 +109,7 @@ export function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto"
+          className="lg:hidden z-50 p-2 text-brand-navy focus:outline-none ml-auto"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -121,7 +120,7 @@ export function Header() {
       {/* Mobile Navigation */}
       <div
         className={cn(
-          'fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 md:hidden transition-transform duration-300 ease-in-out',
+          'fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 gap-6 lg:hidden transition-transform duration-300 ease-in-out',
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >

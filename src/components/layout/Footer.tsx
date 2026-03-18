@@ -105,29 +105,29 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href="/#dicas"
+                  onClick={(e) => handleNavClick(e, '/#dicas')}
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  Dicas de Obras
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#depoimentos"
+                  onClick={(e) => handleNavClick(e, '/#depoimentos')}
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  Depoimentos
+                </a>
+              </li>
+              <li>
+                <a
                   href="/#sobre"
                   onClick={(e) => handleNavClick(e, '/#sobre')}
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
                   Sobre Nós
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/#faq"
-                  onClick={(e) => handleNavClick(e, '/#faq')}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Dúvidas (FAQ)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/#contato"
-                  onClick={(e) => handleNavClick(e, '/#contato')}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Fale Conosco
                 </a>
               </li>
             </ul>

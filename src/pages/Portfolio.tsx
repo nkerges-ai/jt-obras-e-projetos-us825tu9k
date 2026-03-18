@@ -6,45 +6,53 @@ import { ArrowLeftRight } from 'lucide-react'
 const PORTFOLIO_ITEMS = [
   {
     id: 1,
-    title: 'Manutenção Preventiva Industrial',
-    category: 'Indústria',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=factory%20machinery%20old&dpr=2',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=worker%20helmet%20factory&dpr=2',
+    title: 'Manutenção de Fachada e Pintura',
+    category: 'Trabalho em Altura',
+    imageBefore:
+      'https://img.usecurling.com/p/800/600?q=scaffolding%20building%20workers&color=gray',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=painted%20building%20yellow%20scaffold',
+    description:
+      'Trabalho em altura com andaimes para pintura de fachada predial (parede cinza e topo amarelo).',
   },
   {
     id: 2,
+    title: 'Desobstrução e Limpeza de Calhas',
+    category: 'Manutenção Preventiva',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=clogged%20gutter%20drain%20leaves%20boot',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=clean%20gutter%20water%20flowing',
+    description: 'Manutenção e limpeza de calha entupida com folhas, prevenindo infiltrações.',
+  },
+  {
+    id: 3,
+    title: 'Reparo de Telhado e Forro',
+    category: 'Manutenção Predial',
+    imageBefore: 'https://img.usecurling.com/p/800/600?q=dark%20attic%20roof%20hole%20light',
+    imageAfter: 'https://img.usecurling.com/p/800/600?q=fixed%20attic%20roof%20no%20hole',
+    description: 'Identificação e reparo de buraco no telhado com passagem de luz para o forro.',
+  },
+  {
+    id: 4,
     title: 'Construção de Galpão Logístico',
     category: 'Construção Civil',
     imageBefore: 'https://img.usecurling.com/p/800/600?q=empty%20dirt%20site&dpr=2',
     imageAfter: 'https://img.usecurling.com/p/800/600?q=construction%20worker%20helmet&dpr=2',
+    description: 'Terraplanagem e construção completa de galpão para armazenagem.',
   },
   {
-    id: 3,
+    id: 5,
     title: 'Adequação Elétrica NR 10',
     category: 'Projetos Elétricos',
     imageBefore: 'https://img.usecurling.com/p/800/600?q=old%20electrical%20panel&dpr=2',
     imageAfter: 'https://img.usecurling.com/p/800/600?q=electrician%20helmet%20panel&dpr=2',
+    description: 'Atualização de quadros elétricos antigos para o padrão de segurança NR 10.',
   },
   {
-    id: 4,
-    title: 'Pintura e Reforma em Altura (NR 35)',
-    category: 'Manutenção Predial',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=building%20old%20facade&dpr=2',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=worker%20harness%20scaffold&dpr=2',
-  },
-  {
-    id: 5,
+    id: 6,
     title: 'Infraestrutura Hidráulica',
     category: 'Infraestrutura',
     imageBefore: 'https://img.usecurling.com/p/800/600?q=broken%20water%20pipes&dpr=2',
     imageAfter: 'https://img.usecurling.com/p/800/600?q=plumber%20helmet%20pipes&dpr=2',
-  },
-  {
-    id: 6,
-    title: 'Reforma de Refeitório Corporativo',
-    category: 'Construção Civil',
-    imageBefore: 'https://img.usecurling.com/p/800/600?q=empty%20old%20room&dpr=2',
-    imageAfter: 'https://img.usecurling.com/p/800/600?q=builder%20helmet%20indoor&dpr=2',
+    description: 'Substituição de tubulações danificadas e modernização da rede hídrica.',
   },
 ]
 
@@ -75,8 +83,8 @@ const Portfolio = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {PORTFOLIO_ITEMS.map((item, index) => (
             <FadeIn key={item.id} delay={index * 100}>
-              <Card className="overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group cursor-pointer h-full bg-white">
-                <div className="relative h-72 overflow-hidden bg-slate-200">
+              <Card className="overflow-hidden border-none shadow-soft hover:shadow-hover transition-all duration-300 group cursor-pointer h-full bg-white flex flex-col">
+                <div className="relative h-72 overflow-hidden bg-slate-200 shrink-0">
                   {/* Before Image */}
                   <img
                     src={item.imageBefore}
@@ -109,10 +117,13 @@ const Portfolio = () => {
                     </span>
                   </div>
                 </div>
-                <CardContent className="p-6">
-                  <h3 className="font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors">
+                <CardContent className="p-6 flex flex-col flex-grow">
+                  <h3 className="font-poppins font-bold text-xl text-slate-800 group-hover:text-primary transition-colors mb-2">
                     {item.title}
                   </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed mt-auto">
+                    {item.description}
+                  </p>
                 </CardContent>
               </Card>
             </FadeIn>
