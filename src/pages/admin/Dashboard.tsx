@@ -11,6 +11,8 @@ import { TemplatesTab } from './components/TemplatesTab'
 import { LogsTab } from './components/LogsTab'
 import { AgendaTab } from './components/AgendaTab'
 import { TicketsTab } from './components/TicketsTab'
+import { InventoryTab } from './components/InventoryTab'
+import { InvoicesTab } from './components/InvoicesTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
@@ -80,7 +82,7 @@ export default function AdminDashboard() {
             Portal Administrativo
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Gestão integrada de obras, custos e agenda.
+            Gestão integrada de obras, custos, estoque e agenda.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -126,6 +128,18 @@ export default function AdminDashboard() {
             Projetos e Custos
           </TabsTrigger>
           <TabsTrigger
+            value="estoque"
+            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Estoque
+          </TabsTrigger>
+          <TabsTrigger
+            value="nfs"
+            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Notas Fiscais
+          </TabsTrigger>
+          <TabsTrigger
             value="chamados"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
@@ -149,16 +163,16 @@ export default function AdminDashboard() {
           >
             Gerar Modelos
           </TabsTrigger>
-          <TabsTrigger
-            value="logs"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Notificações
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="projetos">
           <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="estoque">
+          <InventoryTab key={`inv-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="nfs">
+          <InvoicesTab key={`nf-${syncKey}`} />
         </TabsContent>
         <TabsContent value="chamados">
           <TicketsTab key={`tck-${syncKey}`} />
@@ -171,9 +185,6 @@ export default function AdminDashboard() {
         </TabsContent>
         <TabsContent value="modelos">
           <TemplatesTab />
-        </TabsContent>
-        <TabsContent value="logs">
-          <LogsTab key={`log-${syncKey}`} />
         </TabsContent>
       </Tabs>
     </div>

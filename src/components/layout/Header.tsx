@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, HardHat, Lock } from 'lucide-react'
+import { Menu, X, HardHat, Lock, UserCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -42,6 +42,13 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          <Link
+            to="/cliente/login"
+            title="Portal do Cliente"
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <UserCircle className="h-5 w-5" />
+          </Link>
           <Link
             to="/admin"
             title="Área Administrativa"
@@ -105,6 +112,16 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/cliente/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                'text-2xl font-bold flex items-center gap-3',
+                location.pathname.startsWith('/cliente') ? 'text-primary' : 'text-foreground',
+              )}
+            >
+              <UserCircle className="h-6 w-6" /> Portal do Cliente
+            </Link>
             <Link
               to="/admin"
               onClick={() => setMobileMenuOpen(false)}

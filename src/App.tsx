@@ -11,6 +11,8 @@ import AdminDashboard from './pages/admin/Dashboard'
 import TemplateEditor from './pages/admin/TemplateEditor'
 import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
+import ClientLogin from './pages/client/Login'
+import ClientDashboard from './pages/client/Dashboard'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
+          <Route path="/cliente/login" element={<ClientLogin />} />
+          <Route path="/cliente/dashboard" element={<ClientDashboard />} />
         </Route>
         {/* Route without global layout for public gallery and printing views */}
         <Route path="/projeto/:id/galeria" element={<PublicGallery />} />

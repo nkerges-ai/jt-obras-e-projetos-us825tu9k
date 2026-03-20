@@ -13,6 +13,7 @@ import {
 import { DollarSign, Plus, TrendingUp, AlertCircle, FileText } from 'lucide-react'
 import { Project, Expense } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
+import { Badge } from '@/components/ui/badge'
 
 interface ProjectCostsTabProps {
   project: Project
@@ -30,6 +31,24 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
   )
   const profit = project.budget - totalExpenses
   const margin = project.budget > 0 ? ((profit / project.budget) * 100).toFixed(1) : 0
+
+  const categories = [
+    'Mão de Obra',
+    'Matéria Prima',
+    'Locação de Equipamentos',
+    'Administrativo',
+    'Outros',
+  ]
+  const categorizedCosts = useMemo(() => {
+    return categories
+      .map((cat) => ({
+        name: cat,
+        total: project.expenses
+          .filter((e) => (e.category || 'Outros') === cat)
+          .reduce((acc, curr) => acc + curr.cost, 0),
+      }))
+      .filter((c) => c.total > 0)
+  }, [project.expenses])
 
   const handleUpdateBudget = () => {
     const budgetNum = parseFloat(newBudget)
@@ -49,6 +68,7 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
       description: expenseForm.description,
       cost: costNum,
       date: new Date().toISOString(),
+      category: 'Outros',
     }
 
     onUpdate({ ...project, expenses: [...project.expenses, newExpense] })
@@ -93,6 +113,24 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
         </div>
       </div>
 
+      {categorizedCosts.length > 0 && (
+        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+          <div className="p-4 border-b bg-secondary/30">
+            <h4 className="font-bold flex items-center gap-2 text-sm text-brand-navy">
+              Resumo Contábil por Categoria
+            </h4>
+          </div>
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {categorizedCosts.map((cat) => (
+              <div key={cat.name} className="flex flex-col">
+                <span className="text-xs text-muted-foreground">{cat.name}</span>
+                <span className="font-semibold text-red-700">{formatCurrency(cat.total)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white border rounded-xl overflow-hidden">
         <div className="p-4 border-b bg-secondary/30 flex justify-between items-center flex-wrap gap-2">
           <h4 className="font-bold flex items-center gap-2">
@@ -111,14 +149,15 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Data</TableHead>
-              <TableHead>Descrição do Custo</TableHead>
+              <TableHead>Descrição / NF</TableHead>
+              <TableHead>Categoria</TableHead>
               <TableHead className="text-right">Valor</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {project.expenses.length === 0 && (
               <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
                   Nenhum custo registrado.
                 </TableCell>
               </TableRow>
@@ -128,7 +167,17 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
                 <TableCell className="text-sm text-muted-foreground">
                   {new Date(exp.date).toLocaleDateString('pt-BR')}
                 </TableCell>
-                <TableCell className="font-medium">{exp.description}</TableCell>
+                <TableCell className="font-medium">
+                  {exp.description}
+                  {exp.isInvoice && (
+                    <Badge variant="outline" className="ml-2 font-mono text-[10px]">
+                      NF {exp.invoiceNumber}
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {exp.category || 'Outros'}
+                </TableCell>
                 <TableCell className="text-right font-medium text-red-600">
                   -{formatCurrency(exp.cost)}
                 </TableCell>
@@ -143,9 +192,9 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
         className="grid grid-cols-1 sm:grid-cols-[1fr_150px_100px] gap-4 items-end bg-secondary/20 p-4 rounded-xl border border-dashed"
       >
         <div className="space-y-2">
-          <Label>Descrição do Material / Serviço</Label>
+          <Label>Despesa Simples (Sem NF)</Label>
           <Input
-            placeholder="Ex: Cimento e Areia"
+            placeholder="Ex: Cimento e Areia extra"
             value={expenseForm.description}
             onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
             required

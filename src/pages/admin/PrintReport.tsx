@@ -13,10 +13,6 @@ export default function PrintReport() {
     const projects = getProjects()
     const found = projects.find((p) => p.id === id)
     if (found) setProject(found)
-
-    // Optional: auto trigger print
-    // const timer = setTimeout(() => window.print(), 500)
-    // return () => clearTimeout(timer)
   }, [id])
 
   const formatCurrency = (val: number) =>
@@ -25,6 +21,25 @@ export default function PrintReport() {
   const totalExpenses = useMemo(() => {
     if (!project) return 0
     return project.expenses.reduce((acc, curr) => acc + curr.cost, 0)
+  }, [project])
+
+  const categorizedCosts = useMemo(() => {
+    if (!project) return []
+    const categories = [
+      'Mão de Obra',
+      'Matéria Prima',
+      'Locação de Equipamentos',
+      'Administrativo',
+      'Outros',
+    ]
+    return categories
+      .map((cat) => ({
+        name: cat,
+        total: project.expenses
+          .filter((e) => (e.category || 'Outros') === cat)
+          .reduce((acc, curr) => acc + curr.cost, 0),
+      }))
+      .filter((c) => c.total > 0)
   }, [project])
 
   if (!project) {
@@ -119,8 +134,29 @@ export default function PrintReport() {
                   </div>
                 </div>
 
+                {categorizedCosts.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="font-bold text-lg border-b pb-2 mb-4 text-brand-navy">
+                      Resumo Contábil por Categoria
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {categorizedCosts.map((cat) => (
+                        <div
+                          key={cat.name}
+                          className="flex justify-between border-b border-gray-200 pb-1"
+                        >
+                          <span className="text-gray-600">{cat.name}</span>
+                          <span className="font-semibold text-brand-navy">
+                            {formatCurrency(cat.total)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <h3 className="font-bold text-lg border-b pb-2 mb-4 text-brand-navy">
-                  Detalhamento de Despesas
+                  Detalhamento de Despesas e Notas Fiscais
                 </h3>
                 {project.expenses.length === 0 ? (
                   <p className="text-center text-gray-500 py-4 border rounded bg-gray-50">
@@ -130,23 +166,34 @@ export default function PrintReport() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-gray-100 border-y border-gray-300">
-                        <th className="py-3 px-4 font-semibold text-gray-600">Data</th>
-                        <th className="py-3 px-4 font-semibold text-gray-600">
-                          Descrição do Serviço / Material
+                        <th className="py-2 px-3 font-semibold text-gray-600 text-xs">Data</th>
+                        <th className="py-2 px-3 font-semibold text-gray-600 text-xs">
+                          Descrição / Fornecedor
                         </th>
-                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">
-                          Valor Registrado
+                        <th className="py-2 px-3 font-semibold text-gray-600 text-xs">Categoria</th>
+                        <th className="py-2 px-3 font-semibold text-gray-600 text-xs text-right">
+                          Valor
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {project.expenses.map((exp, idx) => (
                         <tr key={exp.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="py-3 px-4 border-b text-gray-500">
+                          <td className="py-2 px-3 border-b text-gray-500 text-xs">
                             {new Date(exp.date).toLocaleDateString('pt-BR')}
                           </td>
-                          <td className="py-3 px-4 border-b font-medium">{exp.description}</td>
-                          <td className="py-3 px-4 border-b text-right text-red-600 font-medium">
+                          <td className="py-2 px-3 border-b font-medium text-xs">
+                            {exp.description}
+                            {exp.isInvoice && (
+                              <span className="block text-[10px] text-gray-500 mt-0.5">
+                                NF: {exp.invoiceNumber}
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2 px-3 border-b text-gray-500 text-xs">
+                            {exp.category || 'Outros'}
+                          </td>
+                          <td className="py-2 px-3 border-b text-right text-red-600 font-medium text-sm">
                             {formatCurrency(exp.cost)}
                           </td>
                         </tr>
