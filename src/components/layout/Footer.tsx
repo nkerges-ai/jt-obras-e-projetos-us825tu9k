@@ -44,7 +44,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-brand-navy text-white pt-16 pb-8">
+    <footer className="bg-brand-navy text-white pt-16 pb-8 print:hidden">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
@@ -113,13 +113,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="/#depoimentos"
-                  onClick={(e) => handleNavClick(e, '/#depoimentos')}
+                <Link
+                  to="/admin"
                   className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Depoimentos
-                </a>
+                  Área Administrativa
+                </Link>
               </li>
               <li>
                 <a

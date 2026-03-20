@@ -6,6 +6,9 @@ import Index from './pages/Index'
 import Portfolio from './pages/Portfolio'
 import NotFound from './pages/NotFound'
 import { Layout } from './components/Layout'
+import AdminLogin from './pages/admin/Login'
+import AdminDashboard from './pages/admin/Dashboard'
+import TemplateEditor from './pages/admin/TemplateEditor'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
@@ -16,6 +19,9 @@ const App = () => (
         <Route element={<Layout />}>
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/template/:type" element={<TemplateEditor />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, HardHat } from 'lucide-react'
+import { Menu, X, HardHat, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -14,7 +14,7 @@ export function Header() {
   const location = useLocation()
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
       <div className="container mx-auto px-6 py-5 md:px-12 md:py-7 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-4 group">
           <div className="bg-primary p-3 rounded-xl group-hover:bg-primary/90 transition-colors shadow-sm">
@@ -42,6 +42,13 @@ export function Header() {
               {item.name}
             </Link>
           ))}
+          <Link
+            to="/admin"
+            title="Área Administrativa"
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Lock className="h-5 w-5" />
+          </Link>
           <Button size="lg" className="font-bold rounded-full px-8 shadow-md">
             Solicitar Orçamento
           </Button>
@@ -98,6 +105,16 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                'text-2xl font-bold flex items-center gap-3',
+                location.pathname.startsWith('/admin') ? 'text-primary' : 'text-foreground',
+              )}
+            >
+              <Lock className="h-6 w-6" /> Área Administrativa
+            </Link>
             <Button size="lg" className="w-full mt-8 font-bold rounded-full py-6 text-lg">
               Solicitar Orçamento
             </Button>

@@ -12,7 +12,9 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
-      <WhatsAppFAB />
+      <div className="print:hidden">
+        <WhatsAppFAB />
+      </div>
       <Toaster />
     </div>
   )
