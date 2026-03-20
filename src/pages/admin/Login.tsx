@@ -18,7 +18,7 @@ export default function AdminLogin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === 'admin123') {
+    if (password === 'JOELTATIANA') {
       sessionStorage.setItem('admin_auth', 'true')
       navigate('/admin')
     } else {
@@ -57,11 +57,6 @@ export default function AdminLogin() {
                   <ShieldAlert className="h-4 w-4" />
                   <span>Senha incorreta. Tente novamente.</span>
                 </div>
-              )}
-              {!error && (
-                <p className="text-xs text-center text-muted-foreground mt-2">
-                  Dica: a senha é <code className="font-mono">admin123</code>
-                </p>
               )}
             </div>
             <Button type="submit" className="w-full h-14 text-lg font-bold">
