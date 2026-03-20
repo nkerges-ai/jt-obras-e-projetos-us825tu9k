@@ -10,6 +10,7 @@ import { DocumentsTab } from './components/DocumentsTab'
 import { TemplatesTab } from './components/TemplatesTab'
 import { LogsTab } from './components/LogsTab'
 import { AgendaTab } from './components/AgendaTab'
+import { TicketsTab } from './components/TicketsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
@@ -125,6 +126,12 @@ export default function AdminDashboard() {
             Projetos e Custos
           </TabsTrigger>
           <TabsTrigger
+            value="chamados"
+            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Chamados
+          </TabsTrigger>
+          <TabsTrigger
             value="agenda"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
@@ -152,6 +159,9 @@ export default function AdminDashboard() {
 
         <TabsContent value="projetos">
           <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="chamados">
+          <TicketsTab key={`tck-${syncKey}`} />
         </TabsContent>
         <TabsContent value="agenda">
           <AgendaTab key={`ag-${syncKey}`} />

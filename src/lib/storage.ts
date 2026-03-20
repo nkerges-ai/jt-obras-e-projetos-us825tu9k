@@ -42,6 +42,18 @@ export interface NotificationLog {
   status: 'Enviado' | 'Falha'
 }
 
+export type TicketStatus = 'Aberto' | 'Em andamento' | 'Resolvido'
+
+export interface Ticket {
+  id: string
+  clientName: string
+  projectId: string
+  description: string
+  dateOpened: string
+  status: TicketStatus
+  internalNotes: string
+}
+
 export const getProjects = (): Project[] => {
   const data = localStorage.getItem('jt_projects')
   if (data) return JSON.parse(data)
@@ -123,4 +135,24 @@ export const addLog = (log: Omit<NotificationLog, 'id' | 'date'>) => {
     date: new Date().toISOString(),
   }
   localStorage.setItem('jt_logs', JSON.stringify([newLog, ...logs]))
+}
+
+export const getTickets = (): Ticket[] => {
+  const data = localStorage.getItem('jt_tickets')
+  if (data) return JSON.parse(data)
+  return [
+    {
+      id: 't1',
+      clientName: 'Condomínio Azul',
+      projectId: '1',
+      description: 'Verificação de infiltração próxima à janela do 3º andar após chuva forte.',
+      dateOpened: new Date().toISOString(),
+      status: 'Aberto',
+      internalNotes: 'Agendar visita com a equipe de impermeabilização.',
+    },
+  ]
+}
+
+export const saveTickets = (tickets: Ticket[]) => {
+  localStorage.setItem('jt_tickets', JSON.stringify(tickets))
 }

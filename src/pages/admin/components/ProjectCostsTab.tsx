@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DollarSign, Plus, TrendingUp, AlertCircle } from 'lucide-react'
+import { DollarSign, Plus, TrendingUp, AlertCircle, FileText } from 'lucide-react'
 import { Project, Expense } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
 
@@ -94,10 +94,18 @@ export function ProjectCostsTab({ project, onUpdate }: ProjectCostsTabProps) {
       </div>
 
       <div className="bg-white border rounded-xl overflow-hidden">
-        <div className="p-4 border-b bg-secondary/30 flex justify-between items-center">
+        <div className="p-4 border-b bg-secondary/30 flex justify-between items-center flex-wrap gap-2">
           <h4 className="font-bold flex items-center gap-2">
             <DollarSign className="h-4 w-4 text-primary" /> Relatório de Materiais e Insumos
           </h4>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-2 bg-white"
+            onClick={() => window.open(`/admin/print/custos/${project.id}`, '_blank')}
+          >
+            <FileText className="h-4 w-4" /> Exportar PDF
+          </Button>
         </div>
         <Table>
           <TableHeader>

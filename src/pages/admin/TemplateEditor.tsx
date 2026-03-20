@@ -36,6 +36,7 @@ export default function TemplateEditor() {
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
+  const [signatureDate, setSignatureDate] = useState<string | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
@@ -138,6 +139,7 @@ export default function TemplateEditor() {
   const saveSignature = () => {
     if (!canvasRef.current) return
     setSignatureData(canvasRef.current.toDataURL('image/png'))
+    setSignatureDate(new Date().toLocaleString('pt-BR'))
     setIsSigned(true)
     setIsSignDialogOpen(false)
 
@@ -444,9 +446,12 @@ export default function TemplateEditor() {
                           <p className="font-bold text-sm">CONTRATANTE</p>
                           <p className="text-xs">{data.clientName || 'Assinatura do Cliente'}</p>
                           {isSigned && (
-                            <p className="text-[10px] text-green-600 mt-1 flex items-center gap-1">
-                              <CheckCircle className="h-3 w-3" /> Assinado Digitalmente
-                            </p>
+                            <div className="mt-1 flex flex-col items-center">
+                              <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold">
+                                <CheckCircle className="h-3 w-3" /> Assinado Digitalmente
+                              </p>
+                              <p className="text-[9px] text-gray-500 mt-0.5">{signatureDate}</p>
+                            </div>
                           )}
                         </div>
                         <div className="w-full sm:w-1/2 px-4 flex flex-col items-center">
@@ -524,9 +529,12 @@ export default function TemplateEditor() {
                         <p className="font-bold text-sm">Joel Nascimento de Paula</p>
                         <p className="text-xs">Diretor Técnico - JT Obras e Manutenções LTDA</p>
                         {isSigned && (
-                          <p className="text-[10px] text-green-600 mt-1 flex items-center justify-center gap-1">
-                            <CheckCircle className="h-3 w-3" /> Assinado Digitalmente
-                          </p>
+                          <div className="mt-1 flex flex-col items-center">
+                            <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold">
+                              <CheckCircle className="h-3 w-3" /> Assinado Digitalmente
+                            </p>
+                            <p className="text-[9px] text-gray-500 mt-0.5">{signatureDate}</p>
+                          </div>
                         )}
                       </div>
                     </div>

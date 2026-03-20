@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Project, Photo, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
-import { ImagePlus, Share2, Eye, Copy } from 'lucide-react'
+import { ImagePlus, Share2, Eye, Copy, FileText } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -96,6 +96,18 @@ export function ProjectGalleryTab({ project, onUpdate }: ProjectGalleryTabProps)
 
   return (
     <div className="space-y-6 pt-4">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-lg font-bold">Gerenciador Visual</h3>
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-2"
+          onClick={() => window.open(`/admin/print/resumo/${project.id}`, '_blank')}
+        >
+          <FileText className="h-4 w-4" /> Exportar Resumo (PDF)
+        </Button>
+      </div>
+
       <Alert className="bg-primary/5 border-primary/20">
         <Share2 className="h-4 w-4 text-primary" />
         <AlertDescription className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">

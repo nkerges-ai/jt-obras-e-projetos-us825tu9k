@@ -9,6 +9,7 @@ import { Layout } from './components/Layout'
 import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import TemplateEditor from './pages/admin/TemplateEditor'
+import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
 
 const App = () => (
@@ -24,8 +25,9 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
         </Route>
-        {/* Route without global layout for public gallery client view */}
+        {/* Route without global layout for public gallery and printing views */}
         <Route path="/projeto/:id/galeria" element={<PublicGallery />} />
+        <Route path="/admin/print/:type/:id" element={<PrintReport />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>
