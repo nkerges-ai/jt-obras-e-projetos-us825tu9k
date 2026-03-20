@@ -1,11 +1,36 @@
 export type ProjectStatus = 'Em andamento' | 'Concluído' | 'Em orçamento'
 
+export interface Expense {
+  id: string
+  description: string
+  cost: number
+  date: string
+}
+
+export interface Photo {
+  id: string
+  url: string
+  type: 'Antes' | 'Depois'
+  date: string
+}
+
 export interface Project {
   id: string
   name: string
   client: string
   startDate: string
   status: ProjectStatus
+  budget: number
+  expenses: Expense[]
+  photos: Photo[]
+}
+
+export interface CalendarEvent {
+  id: string
+  title: string
+  type: 'Visita Técnica' | 'Entrega'
+  projectId: string
+  date: string
 }
 
 export interface NotificationLog {
@@ -27,6 +52,18 @@ export const getProjects = (): Project[] => {
       client: 'Condomínio Azul',
       startDate: '2023-09-10',
       status: 'Em andamento',
+      budget: 50000,
+      expenses: [
+        { id: 'e1', description: 'Tintas e Impermeabilizantes', cost: 12000, date: '2023-09-15' },
+      ],
+      photos: [
+        {
+          id: 'p1',
+          url: 'https://img.usecurling.com/p/600/400?q=old%20building%20facade',
+          type: 'Antes',
+          date: '2023-09-10',
+        },
+      ],
     },
     {
       id: '2',
@@ -34,19 +71,33 @@ export const getProjects = (): Project[] => {
       client: 'Escola Esperança',
       startDate: '2023-10-05',
       status: 'Concluído',
-    },
-    {
-      id: '3',
-      name: 'Pintura Interna Escritórios',
-      client: 'Tech Solutions LTDA',
-      startDate: '2023-11-20',
-      status: 'Em orçamento',
+      budget: 5000,
+      expenses: [],
+      photos: [],
     },
   ]
 }
 
 export const saveProjects = (projects: Project[]) => {
   localStorage.setItem('jt_projects', JSON.stringify(projects))
+}
+
+export const getEvents = (): CalendarEvent[] => {
+  const data = localStorage.getItem('jt_events')
+  if (data) return JSON.parse(data)
+  return [
+    {
+      id: '1',
+      title: 'Vistoria Inicial',
+      type: 'Visita Técnica',
+      projectId: '1',
+      date: new Date().toISOString(),
+    },
+  ]
+}
+
+export const saveEvents = (events: CalendarEvent[]) => {
+  localStorage.setItem('jt_events', JSON.stringify(events))
 }
 
 export const getLogs = (): NotificationLog[] => {
@@ -58,7 +109,7 @@ export const getLogs = (): NotificationLog[] => {
       date: new Date().toISOString(),
       type: 'Sistema',
       recipient: 'Admin',
-      message: 'Sistema de notificações automático iniciado.',
+      message: 'Sistema automático iniciado.',
       status: 'Enviado',
     },
   ]

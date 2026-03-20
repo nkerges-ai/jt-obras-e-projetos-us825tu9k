@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { LogOut, Cloud, RefreshCw, Smartphone } from 'lucide-react'
+import { LogOut, Cloud, RefreshCw, Smartphone, Info } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { ProjectsTab } from './components/ProjectsTab'
 import { DocumentsTab } from './components/DocumentsTab'
 import { TemplatesTab } from './components/TemplatesTab'
 import { LogsTab } from './components/LogsTab'
+import { AgendaTab } from './components/AgendaTab'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -42,7 +44,7 @@ export default function AdminDashboard() {
       setIsSyncing(false)
       toast({
         title: 'Sincronização concluída',
-        description: 'Os dados do dashboard foram atualizados com sucesso.',
+        description: 'Os dados foram atualizados com sucesso.',
       })
     }, 1000)
   }
@@ -55,20 +57,29 @@ export default function AdminDashboard() {
     } else {
       toast({
         title: 'Instalação indisponível',
-        description: 'O app já está instalado ou seu navegador não suporta esta ação nativamente.',
+        description: 'O app já está instalado ou não suportado.',
       })
     }
   }
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-7xl">
+      <Alert className="mb-8 bg-blue-50 text-blue-900 border-blue-200">
+        <Info className="h-4 w-4 text-blue-600" />
+        <AlertTitle>Ambiente de Desenvolvimento (Skip)</AlertTitle>
+        <AlertDescription>
+          Para que as últimas alterações de código fiquem disponíveis permanentemente online,
+          lembre-se de clicar no botão <strong>"Publish"</strong> na interface da Skip.
+        </AlertDescription>
+      </Alert>
+
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-brand-navy">
             Portal Administrativo
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Gestão centralizada de obras, documentos e notificações automáticas.
+            Gestão integrada de obras, custos e agenda.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -111,30 +122,39 @@ export default function AdminDashboard() {
             value="projetos"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Obras e Projetos
+            Projetos e Custos
+          </TabsTrigger>
+          <TabsTrigger
+            value="agenda"
+            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Agenda Técnica
           </TabsTrigger>
           <TabsTrigger
             value="documentos"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Meus Arquivos
+            Repositório
           </TabsTrigger>
           <TabsTrigger
             value="modelos"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Gerar Documentos
+            Gerar Modelos
           </TabsTrigger>
           <TabsTrigger
             value="logs"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Notificações Automáticas
+            Notificações
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="projetos">
           <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="agenda">
+          <AgendaTab key={`ag-${syncKey}`} />
         </TabsContent>
         <TabsContent value="documentos">
           <DocumentsTab key={`doc-${syncKey}`} />
