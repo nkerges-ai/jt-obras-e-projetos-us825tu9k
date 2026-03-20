@@ -1,0 +1,75 @@
+export type ProjectStatus = 'Em andamento' | 'Concluído' | 'Em orçamento'
+
+export interface Project {
+  id: string
+  name: string
+  client: string
+  startDate: string
+  status: ProjectStatus
+}
+
+export interface NotificationLog {
+  id: string
+  date: string
+  type: 'WhatsApp' | 'Email' | 'Sistema'
+  recipient: string
+  message: string
+  status: 'Enviado' | 'Falha'
+}
+
+export const getProjects = (): Project[] => {
+  const data = localStorage.getItem('jt_projects')
+  if (data) return JSON.parse(data)
+  return [
+    {
+      id: '1',
+      name: 'Reforma Fachada Edifício Azul',
+      client: 'Condomínio Azul',
+      startDate: '2023-09-10',
+      status: 'Em andamento',
+    },
+    {
+      id: '2',
+      name: 'Manutenção Preventiva Ar Condicionado',
+      client: 'Escola Esperança',
+      startDate: '2023-10-05',
+      status: 'Concluído',
+    },
+    {
+      id: '3',
+      name: 'Pintura Interna Escritórios',
+      client: 'Tech Solutions LTDA',
+      startDate: '2023-11-20',
+      status: 'Em orçamento',
+    },
+  ]
+}
+
+export const saveProjects = (projects: Project[]) => {
+  localStorage.setItem('jt_projects', JSON.stringify(projects))
+}
+
+export const getLogs = (): NotificationLog[] => {
+  const data = localStorage.getItem('jt_logs')
+  if (data) return JSON.parse(data)
+  return [
+    {
+      id: '1',
+      date: new Date().toISOString(),
+      type: 'Sistema',
+      recipient: 'Admin',
+      message: 'Sistema de notificações automático iniciado.',
+      status: 'Enviado',
+    },
+  ]
+}
+
+export const addLog = (log: Omit<NotificationLog, 'id' | 'date'>) => {
+  const logs = getLogs()
+  const newLog: NotificationLog = {
+    ...log,
+    id: Date.now().toString(),
+    date: new Date().toISOString(),
+  }
+  localStorage.setItem('jt_logs', JSON.stringify([newLog, ...logs]))
+}

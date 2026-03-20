@@ -1,0 +1,21 @@
+{
+  "name": "JT Obras e Manutenções",
+  "short_name": "JT Obras",
+  "description": "Dashboard de Projetos, Obras e Notificações Automatizadas",
+  "start_url": "/admin",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "https://img.usecurling.com/i?q=building&color=orange&shape=fill",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://img.usecurling.com/i?q=building&color=orange&shape=fill",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

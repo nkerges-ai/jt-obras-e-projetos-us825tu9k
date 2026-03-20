@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
+import { addLog } from '@/lib/storage'
 
 export default function TemplateEditor() {
   const { type } = useParams<{ type: string }>()
@@ -32,11 +33,9 @@ export default function TemplateEditor() {
 
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
   const [emailData, setEmailData] = useState({ to: '', subject: '' })
-
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
-
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
@@ -53,8 +52,7 @@ export default function TemplateEditor() {
 
   useEffect(() => {
     if (isSignDialogOpen && canvasRef.current) {
-      const canvas = canvasRef.current
-      const ctx = canvas.getContext('2d')
+      const ctx = canvasRef.current.getContext('2d')
       if (ctx) {
         ctx.lineWidth = 2
         ctx.lineCap = 'round'
@@ -73,41 +71,47 @@ export default function TemplateEditor() {
 
   const handleWhatsApp = () => {
     const text = encodeURIComponent(
-      `Olá! Segue o link para o ${title} referente aos serviços da JT Obras e Manutenções: [LINK DO DOCUMENTO]`,
+      `Olá! Segue o link para o ${title} referente aos serviços da JT Obras e Manutenções.`,
     )
+    addLog({
+      type: 'WhatsApp',
+      recipient: data.clientName || 'Cliente',
+      message: `Link do ${title} gerado e disparado via WhatsApp.`,
+      status: 'Enviado',
+    })
     window.open(`https://wa.me/?text=${text}`, '_blank')
+    toast({
+      title: 'Notificação WhatsApp',
+      description: 'Registro de envio automático criado com sucesso.',
+    })
   }
 
   const handleSendEmail = (e: React.FormEvent) => {
     e.preventDefault()
+    addLog({
+      type: 'Email',
+      recipient: emailData.to,
+      message: `Documento ${title} enviado por e-mail (Assunto: ${emailData.subject}).`,
+      status: 'Enviado',
+    })
     toast({
       title: 'E-mail enviado com sucesso!',
-      description: `O documento foi enviado para ${emailData.to}.`,
+      description: `O documento foi enviado e a notificação automatizada foi registrada.`,
     })
     setIsEmailDialogOpen(false)
     setEmailData({ to: '', subject: '' })
   }
 
-  const getCoordinates = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>,
-  ) => {
+  const getCoordinates = (e: any) => {
     const canvas = canvasRef.current
     if (!canvas) return { x: 0, y: 0 }
     const rect = canvas.getBoundingClientRect()
-    let clientX, clientY
-    if ('touches' in e) {
-      clientX = e.touches[0].clientX
-      clientY = e.touches[0].clientY
-    } else {
-      clientX = e.nativeEvent.clientX
-      clientY = e.nativeEvent.clientY
-    }
+    const clientX = e.touches ? e.touches[0].clientX : e.nativeEvent.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.nativeEvent.clientY
     return { x: clientX - rect.left, y: clientY - rect.top }
   }
 
-  const startDrawing = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>,
-  ) => {
+  const startDrawing = (e: any) => {
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
     const { x, y } = getCoordinates(e)
@@ -116,7 +120,7 @@ export default function TemplateEditor() {
     setIsDrawing(true)
   }
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const draw = (e: any) => {
     if (!isDrawing) return
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
@@ -126,30 +130,29 @@ export default function TemplateEditor() {
   }
 
   const stopDrawing = () => setIsDrawing(false)
-
-  const clearSignature = () => {
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d')
-    if (!canvas || !ctx) return
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-  }
+  const clearSignature = () =>
+    canvasRef.current
+      ?.getContext('2d')
+      ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
 
   const saveSignature = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    setSignatureData(canvas.toDataURL('image/png'))
+    if (!canvasRef.current) return
+    setSignatureData(canvasRef.current.toDataURL('image/png'))
     setIsSigned(true)
     setIsSignDialogOpen(false)
+
+    addLog({
+      type: 'Sistema',
+      recipient: data.clientName || 'Cliente',
+      message: `Assinatura digital concluída para ${title}. Notificação de confirmação enviada automaticamente.`,
+      status: 'Enviado',
+    })
+
     toast({
       title: 'Documento Assinado',
-      description: 'A assinatura digital foi aplicada e o documento foi bloqueado para edições.',
+      description:
+        'A assinatura digital foi aplicada. Cliente notificado com sucesso da conclusão.',
     })
-    setTimeout(() => {
-      toast({
-        title: 'Backup concluído',
-        description: 'A versão final assinada foi salva na nuvem.',
-      })
-    }, 1500)
   }
 
   return (
@@ -171,7 +174,6 @@ export default function TemplateEditor() {
               <MessageCircle className="h-4 w-4 text-green-600" />{' '}
               <span className="hidden sm:inline">WhatsApp</span>
             </Button>
-
             <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
@@ -180,7 +182,7 @@ export default function TemplateEditor() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Enviar Documento por E-mail</DialogTitle>
+                  <DialogTitle>Enviar Notificação por E-mail</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSendEmail} className="space-y-4 pt-4">
                   <div className="space-y-2">
@@ -210,11 +212,9 @@ export default function TemplateEditor() {
                 </form>
               </DialogContent>
             </Dialog>
-
             <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
               <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir</span>
             </Button>
-
             {!isSigned ? (
               <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
                 <DialogTrigger asChild>
@@ -229,7 +229,8 @@ export default function TemplateEditor() {
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <p className="text-sm text-muted-foreground">
-                      Desenhe sua assinatura no quadro abaixo para validar o documento.
+                      Desenhe sua assinatura no quadro abaixo para validar o documento e notificar o
+                      cliente automaticamente.
                     </p>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
                       <canvas
@@ -274,7 +275,6 @@ export default function TemplateEditor() {
           </div>
         </div>
       </div>
-
       <div className="container mx-auto px-4 mt-8 print:p-0 print:m-0 print:w-full print:max-w-none">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
@@ -349,7 +349,6 @@ export default function TemplateEditor() {
               </div>
             </div>
           </div>
-
           <div className="flex-1 flex justify-center print:block print:w-full">
             <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] relative print:shadow-none print:m-0 print:p-0">
               <div className="p-[20mm] pb-0">
@@ -365,7 +364,6 @@ export default function TemplateEditor() {
                   </div>
                 </header>
               </div>
-
               <main className="px-[20mm] pb-[30mm] text-gray-800 text-[15px] leading-relaxed text-justify space-y-6">
                 <h2 className="text-center font-bold text-xl md:text-2xl uppercase mb-10 tracking-widest text-brand-navy">
                   {title}
@@ -387,7 +385,6 @@ export default function TemplateEditor() {
                       Contrato de Prestação de Serviços, que se regerá pelas cláusulas seguintes e
                       pelas condições descritas.
                     </p>
-
                     <div className="space-y-4 pt-4">
                       <p>
                         <strong className="text-brand-navy">Cláusula 1ª - Do Objeto</strong>
@@ -399,7 +396,6 @@ export default function TemplateEditor() {
                         </span>
                         , a serem realizados no endereço da CONTRATANTE.
                       </p>
-
                       <p>
                         <strong className="text-brand-navy">
                           Cláusula 2ª - Do Valor e Forma de Pagamento
@@ -410,7 +406,6 @@ export default function TemplateEditor() {
                         R$ {data.value || '[VALOR]'}, com as condições de pagamento previamente
                         acordadas entre as partes.
                       </p>
-
                       <p>
                         <strong className="text-brand-navy">Cláusula 3ª - Do Prazo</strong>
                       </p>
@@ -420,7 +415,6 @@ export default function TemplateEditor() {
                         atrasos não imputáveis à CONTRATADA.
                       </p>
                     </div>
-
                     <div className="mt-16 text-center space-y-16">
                       <p>
                         São Paulo,{' '}
@@ -476,7 +470,6 @@ export default function TemplateEditor() {
                       <span className="font-medium">{data.address || '[ENDEREÇO DO PROJETO]'}</span>
                       .
                     </p>
-
                     <div className="space-y-4 pt-4">
                       <p>
                         <strong className="text-brand-navy">1. Escopo dos Serviços</strong>
@@ -484,7 +477,6 @@ export default function TemplateEditor() {
                       <div className="pl-4 whitespace-pre-wrap">
                         {data.description || '[DESCRIÇÃO DETALHADA DOS SERVIÇOS]'}
                       </div>
-
                       <p>
                         <strong className="text-brand-navy">2. Investimento</strong>
                       </p>
@@ -492,7 +484,6 @@ export default function TemplateEditor() {
                         O valor total para a realização dos serviços descritos acima é de:{' '}
                         <strong>R$ {data.value || '[VALOR]'}</strong>.
                       </p>
-
                       <p>
                         <strong className="text-brand-navy">3. Validade e Prazos</strong>
                       </p>
@@ -504,7 +495,6 @@ export default function TemplateEditor() {
                         </li>
                       </ul>
                     </div>
-
                     <div className="mt-16 space-y-16">
                       <p>Colocamo-nos à inteira disposição para quaisquer esclarecimentos.</p>
                       <p>
@@ -543,7 +533,6 @@ export default function TemplateEditor() {
                   </>
                 )}
               </main>
-
               <footer className="absolute bottom-[10mm] left-[20mm] right-[20mm] border-t border-brand-orange/30 pt-4 text-center text-xs text-brand-navy">
                 <p className="font-semibold">
                   jt.obrasemanutencao@gmail.com | (11) 94003-7545 | (11) 94706-9293
