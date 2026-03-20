@@ -26,7 +26,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getTickets, saveTickets, Ticket, TicketStatus, getProjects, Project } from '@/lib/storage'
+import {
+  getTickets,
+  saveTickets,
+  Ticket,
+  TicketStatus,
+  getProjects,
+  Project,
+  addLog,
+} from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 
@@ -49,11 +57,25 @@ export function TicketsTab() {
   }, [])
 
   const handleUpdateTicket = (updated: Ticket) => {
+    const oldTicket = tickets.find((t) => t.id === updated.id)
     const newList = tickets.map((t) => (t.id === updated.id ? updated : t))
     setTickets(newList)
     saveTickets(newList)
     setSelectedTicket(updated)
-    toast({ title: 'Chamado Atualizado', description: 'As alterações foram salvas.' })
+
+    if (oldTicket && oldTicket.status !== updated.status) {
+      addLog({
+        type: 'WhatsApp',
+        recipient: updated.clientName,
+        message: `Aviso Automático: O status do seu chamado #${updated.id} mudou para: ${updated.status}.`,
+        status: 'Enviado',
+      })
+    }
+
+    toast({
+      title: 'Chamado Atualizado',
+      description: 'As alterações foram salvas e notificadas.',
+    })
   }
 
   const handleCreateTicket = (e: React.FormEvent) => {

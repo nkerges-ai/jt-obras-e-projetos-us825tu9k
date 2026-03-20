@@ -9,6 +9,7 @@ import { Layout } from './components/Layout'
 import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import TemplateEditor from './pages/admin/TemplateEditor'
+import OSNREditor from './pages/admin/OSNREditor'
 import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
 import ClientLogin from './pages/client/Login'
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/template/os-nr01" element={<OSNREditor />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
           <Route path="/cliente/login" element={<ClientLogin />} />
           <Route path="/cliente/dashboard" element={<ClientDashboard />} />

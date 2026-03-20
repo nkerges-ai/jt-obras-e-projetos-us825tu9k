@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Plus, Briefcase, ExternalLink } from 'lucide-react'
-import { getProjects, saveProjects, Project, ProjectStatus } from '@/lib/storage'
+import { getProjects, saveProjects, Project, ProjectStatus, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
 import { ProjectDetailsDialog } from './ProjectDetailsDialog'
 
@@ -30,10 +30,24 @@ export function ProjectsTab() {
   }, [])
 
   const handleStatusChange = (projectId: string, newStatus: ProjectStatus) => {
+    const project = projects.find((p) => p.id === projectId)
     const updated = projects.map((p) => (p.id === projectId ? { ...p, status: newStatus } : p))
     setProjects(updated)
     saveProjects(updated)
-    toast({ title: 'Status atualizado', description: 'O andamento da obra foi modificado.' })
+
+    if (project && project.status !== newStatus) {
+      addLog({
+        type: 'WhatsApp',
+        recipient: project.client,
+        message: `Aviso Automático: O status da obra "${project.name}" foi atualizado para: ${newStatus}.`,
+        status: 'Enviado',
+      })
+    }
+
+    toast({
+      title: 'Status atualizado',
+      description: 'O andamento da obra foi modificado e o cliente notificado.',
+    })
   }
 
   const handleUpdateProject = (updatedProject: Project) => {

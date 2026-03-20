@@ -67,6 +67,26 @@ export interface Material {
   unit: string
 }
 
+export interface ServiceOrder {
+  id: string
+  osNumber: string
+  revision: string
+  projectId: string
+  date: string
+  prestadora: {
+    nome: string
+    cnpj: string
+    endereco: string
+    responsavel: string
+    telefone: string
+  }
+  execucao: { local: string; dataInicio: string; dataFim: string }
+  atividade: { descricao: string; setor: string }
+  epis: string[]
+  epcs: string[]
+  status: 'Rascunho' | 'Finalizado'
+}
+
 export const getProjects = (): Project[] => {
   const data = localStorage.getItem('jt_projects')
   if (data) return JSON.parse(data)
@@ -86,25 +106,8 @@ export const getProjects = (): Project[] => {
           date: '2023-09-15',
           category: 'Matéria Prima',
         },
-        {
-          id: 'e2',
-          description: 'Serviço Pintura',
-          cost: 8000,
-          date: '2023-09-20',
-          isInvoice: true,
-          invoiceNumber: '00123',
-          supplier: 'Empreiteira ABC',
-          category: 'Mão de Obra',
-        },
       ],
-      photos: [
-        {
-          id: 'p1',
-          url: 'https://img.usecurling.com/p/600/400?q=old%20building%20facade',
-          type: 'Antes',
-          date: '2023-09-10',
-        },
-      ],
+      photos: [],
     },
     {
       id: '2',
@@ -174,10 +177,10 @@ export const getTickets = (): Ticket[] => {
       id: 't1',
       clientName: 'Condomínio Azul',
       projectId: '1',
-      description: 'Verificação de infiltração próxima à janela do 3º andar após chuva forte.',
+      description: 'Verificação de infiltração próxima à janela do 3º andar.',
       dateOpened: new Date().toISOString(),
       status: 'Aberto',
-      internalNotes: 'Agendar visita com a equipe de impermeabilização.',
+      internalNotes: 'Agendar visita com a equipe.',
     },
   ]
 }
@@ -198,25 +201,19 @@ export const getInventory = (): Material[] => {
       minQuantity: 20,
       unit: 'sc',
     },
-    {
-      id: 'm2',
-      name: 'Tinta Acrílica Branca 18L',
-      category: 'Acabamento',
-      quantity: 25,
-      minQuantity: 10,
-      unit: 'lt',
-    },
-    {
-      id: 'm3',
-      name: 'Argamassa AC-III 20kg',
-      category: 'Básico',
-      quantity: 5,
-      minQuantity: 15,
-      unit: 'sc',
-    },
   ]
 }
 
 export const saveInventory = (inventory: Material[]) => {
   localStorage.setItem('jt_inventory', JSON.stringify(inventory))
+}
+
+export const getServiceOrders = (): ServiceOrder[] => {
+  const data = localStorage.getItem('jt_os')
+  if (data) return JSON.parse(data)
+  return []
+}
+
+export const saveServiceOrders = (orders: ServiceOrder[]) => {
+  localStorage.setItem('jt_os', JSON.stringify(orders))
 }
