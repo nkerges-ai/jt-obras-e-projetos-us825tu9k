@@ -103,18 +103,10 @@ export function OSPreview({ data }: { data: Partial<ServiceOrder> }) {
             </div>
           </Section>
 
-          <Section title="4. ORIENTAÇÕES DE SEGURANÇA E SAÚDE NO TRABALHO">
-            <ul className="list-disc pl-4">
-              {OS_TEXTS.orientacoes.map((i, k) => (
-                <li key={k}>{i}</li>
-              ))}
-            </ul>
-          </Section>
-
-          <Section title="5. EQUIPAMENTOS DE PROTEÇÃO (EPIs e EPCs)">
+          <Section title="4. EQUIPAMENTOS DE PROTEÇÃO (EPIs e EPCs)">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <strong className="block border-b mb-1">5.1 EPIs OBRIGATÓRIOS</strong>
+                <strong className="block border-b mb-1">4.1 EPIs OBRIGATÓRIOS</strong>
                 <div className="grid grid-cols-1 gap-0.5 mt-1">
                   {data.epis?.map((e) => (
                     <div key={e}>[ X ] {e}</div>
@@ -123,7 +115,7 @@ export function OSPreview({ data }: { data: Partial<ServiceOrder> }) {
                 </div>
               </div>
               <div>
-                <strong className="block border-b mb-1">5.2 EPCs OBRIGATÓRIOS</strong>
+                <strong className="block border-b mb-1">4.2 EPCs OBRIGATÓRIOS</strong>
                 <div className="grid grid-cols-1 gap-0.5 mt-1">
                   {data.epcs?.map((e) => (
                     <div key={e}>[ X ] {e}</div>
@@ -134,50 +126,89 @@ export function OSPreview({ data }: { data: Partial<ServiceOrder> }) {
             </div>
           </Section>
 
-          <Section title="6. REGRAS DE CONDUTA E DISCIPLINA">
-            <ul className="list-disc pl-4">
-              {OS_TEXTS.regras.map((i, k) => (
-                <li key={k}>{i}</li>
-              ))}
-            </ul>
-          </Section>
+          {data.compliance && (data.compliance.esocial || data.compliance.receita) && (
+            <Section title="5. DADOS DE CONFORMIDADE REGULATÓRIA">
+              <div className="grid grid-cols-2 gap-4">
+                {data.compliance.esocial && (
+                  <div>
+                    <strong className="block mb-0.5 text-[10px]">REGISTRO ESOCIAL:</strong>
+                    {data.compliance.esocial}
+                  </div>
+                )}
+                {data.compliance.receita && (
+                  <div>
+                    <strong className="block mb-0.5 text-[10px]">RECEITA FEDERAL:</strong>
+                    {data.compliance.receita}
+                  </div>
+                )}
+              </div>
+            </Section>
+          )}
 
-          <Section title="7. DISPOSIÇÕES FINAIS">
+          <Section title="6. DISPOSIÇÕES FINAIS">
             <p className="text-justify">{OS_TEXTS.disposicoes}</p>
           </Section>
 
           <div className="border border-gray-300 rounded-sm p-3 mt-4 bg-gray-50/50">
             <h2 className="font-bold text-[11px] uppercase mb-2 text-center underline">
-              8. CONTROLE DE CIÊNCIA E TREINAMENTO
+              7. CONTROLE DE CIÊNCIA E TREINAMENTO
             </h2>
             <p className="italic text-justify px-2 mb-6">"{OS_TEXTS.controle}"</p>
             <div className="flex justify-between text-center pt-8 px-6">
-              <div className="w-1/2 border-t border-black pt-1 mx-4">
+              <div className="w-1/2 mx-4 flex flex-col items-center">
+                {data.adminSignature?.type === 'govbr' ? (
+                  <div className="flex flex-col items-center justify-center h-10 mb-1 text-center">
+                    <span className="text-[8px] font-bold text-blue-800 border border-blue-800 px-1.5 py-0.5 rounded bg-blue-50">
+                      ASSINADO GOV.BR
+                    </span>
+                  </div>
+                ) : data.adminSignature?.data ? (
+                  <div className="h-10 flex items-center justify-center mb-1">
+                    <img
+                      src={data.adminSignature.data}
+                      className="max-h-full mix-blend-multiply"
+                      alt="Assinatura Admin"
+                    />
+                  </div>
+                ) : (
+                  <div className="border-t border-black w-full mb-1 mt-6"></div>
+                )}
+                {data.adminSignature && data.adminSignature.type !== 'govbr' && (
+                  <div className="border-t border-black w-full mb-1"></div>
+                )}
+
                 <p className="font-bold">JT OBRAS E MANUTENÇÕES</p>
                 <p>Joel Nascimento de Paula</p>
+
+                {data.adminSignature?.biometric && (
+                  <p className="text-[8px] text-green-600 flex items-center gap-1 font-bold mt-1">
+                    <CheckCircle className="h-2 w-2" /> Validação Emissora
+                  </p>
+                )}
               </div>
+
               <div className="w-1/2 mx-4 flex flex-col items-center">
                 {!data.biometricValidation && (
-                  <div className="border-t border-black pt-1 w-full">
+                  <div className="border-t border-black pt-1 w-full mt-6">
                     <p className="font-bold">PRESTADORA / COLABORADOR</p>
                     <p>{data.prestadora?.responsavel || 'Assinatura'}</p>
                   </div>
                 )}
                 {data.biometricValidation && (
                   <div className="flex flex-col items-center w-full">
-                    <div className="border-t border-black w-full mb-1"></div>
+                    <div className="border-t border-black w-full mb-1 mt-6"></div>
                     <p className="font-bold">PRESTADORA / COLABORADOR</p>
                     <p>{data.prestadora?.responsavel}</p>
-                    <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold mt-1">
-                      <CheckCircle className="h-3 w-3" /> Assinatura Biométrica Registrada
+                    <p className="text-[9px] text-green-600 flex items-center gap-1 font-bold mt-1">
+                      <CheckCircle className="h-2 w-2" /> Assinatura Biométrica
                     </p>
-                    <div className="flex items-center gap-2 mt-1 border border-gray-300 rounded p-1 bg-white">
+                    <div className="flex items-center gap-1.5 mt-1 border border-gray-300 rounded p-1 bg-white">
                       <img
                         src={data.biometricValidation.imageUrl}
-                        className="w-6 h-6 rounded-full object-cover"
+                        className="w-5 h-5 rounded-full object-cover"
                         alt="Biometria"
                       />
-                      <div className="text-[8px] text-left leading-tight">
+                      <div className="text-[7px] text-left leading-tight">
                         <p className="font-bold text-gray-700">Validação Facial Confirmada</p>
                         <p className="text-gray-500">
                           {new Date(data.biometricValidation.timestamp).toLocaleString('pt-BR')}

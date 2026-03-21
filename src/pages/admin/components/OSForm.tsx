@@ -28,6 +28,8 @@ export function OSForm({ data, setData }: OSFormProps) {
     setData({ ...data, execucao: { ...data.execucao!, [f]: v } })
   const updateA = (f: string, v: string) =>
     setData({ ...data, atividade: { ...data.atividade!, [f]: v } })
+  const updateC = (f: string, v: string) =>
+    setData({ ...data, compliance: { ...(data.compliance || {}), [f]: v } })
 
   const toggleArr = (key: 'epis' | 'epcs', item: string) => {
     const arr = data[key] || []
@@ -135,6 +137,28 @@ export function OSForm({ data, setData }: OSFormProps) {
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}
           />
+        </div>
+
+        <div className="space-y-3 bg-gray-50 p-3 rounded border">
+          <Label className="font-bold text-primary">Conformidade e Tributos (Opcional)</Label>
+          <div className="space-y-2">
+            <Label className="text-xs">Registro eSocial</Label>
+            <Input
+              disabled={isFinalizado}
+              placeholder="Ex: Matrícula eSocial / S-2240"
+              value={data.compliance?.esocial || ''}
+              onChange={(e) => updateC('esocial', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs">Receita Federal (CNO / CNPJ)</Label>
+            <Input
+              disabled={isFinalizado}
+              placeholder="Ex: CNO Ativo, Regular"
+              value={data.compliance?.receita || ''}
+              onChange={(e) => updateC('receita', e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="space-y-3 bg-gray-50 p-3 rounded border">

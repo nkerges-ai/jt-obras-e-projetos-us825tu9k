@@ -104,6 +104,17 @@ export interface ServiceOrder {
   epcs: string[]
   status: 'Rascunho' | 'Finalizado'
   biometricValidation?: BiometricValidation
+  compliance?: {
+    esocial?: string
+    receita?: string
+  }
+  adminSignature?: {
+    type: 'draw' | 'upload' | 'govbr'
+    data?: string
+    link?: string
+    date: string
+    biometric?: BiometricValidation
+  }
 }
 
 export interface TechnicalDocument {
@@ -114,6 +125,17 @@ export interface TechnicalDocument {
   projectId: string
   isRestricted: boolean
   url: string
+  compliance?: {
+    esocial?: string
+    receita?: string
+  }
+  adminSignature?: {
+    type: 'draw' | 'upload' | 'govbr'
+    data?: string
+    link?: string
+    date: string
+    biometric?: BiometricValidation
+  }
 }
 
 export interface DocumentAccessRequest {
@@ -174,7 +196,6 @@ export interface RentalRequest {
   requestDate: string
 }
 
-// Data keys updated to _v4 to ensure clean integration of new properties
 export const getProjects = (): Project[] => {
   const data = localStorage.getItem('jt_projects_v4')
   return data ? JSON.parse(data) : []

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -20,7 +21,20 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { ArrowLeft, Printer, Save, Info, ShieldCheck, Send } from 'lucide-react'
+import {
+  ArrowLeft,
+  Printer,
+  Save,
+  Info,
+  ShieldCheck,
+  Send,
+  MessageCircle,
+  PenTool,
+  CheckCircle,
+  Upload,
+  Fingerprint,
+  Trash2,
+} from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
 import {
@@ -32,7 +46,10 @@ import {
   DocumentSignature,
   saveSignatures,
   getSignatures,
+  BiometricValidation,
+  addLog,
 } from '@/lib/storage'
+import { BiometricCapture } from '@/components/BiometricCapture'
 
 const COMPANY = {
   name: 'JT OBRAS E MANUTENÇÕES LTDA',
@@ -243,10 +260,41 @@ export default function EngineeringTemplateEditor() {
     role: '',
   })
 
-  const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
+  const [compliance, setCompliance] = useState({
+    esocial: '',
+    receita: '',
+  })
+
+  // External Signature State
+  const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
   const [signPhone, setSignPhone] = useState('')
 
+  // Internal/Admin Signature State
+  const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
+  const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
+  const [uploadedSign, setUploadedSign] = useState<string | null>(null)
+  const [govbrLink, setGovbrLink] = useState('')
+  const [tempSignature, setTempSignature] = useState<string | null>(null)
+
+  const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+  const [isSigned, setIsSigned] = useState(false)
+  const [adminSignature, setAdminSignature] = useState<TechnicalDocument['adminSignature']>()
+
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+
   useEffect(() => setProjects(getProjects()), [])
+
+  useEffect(() => {
+    if (isAdminSignOpen && canvasRef.current && signType === 'draw') {
+      const ctx = canvasRef.current.getContext('2d')
+      if (ctx) {
+        ctx.lineWidth = 2
+        ctx.lineCap = 'round'
+        ctx.strokeStyle = '#000000'
+      }
+    }
+  }, [isAdminSignOpen, signType])
 
   if (!type || !TEMPLATES[type]) return <div className="p-8">Modelo não encontrado.</div>
 
@@ -266,6 +314,8 @@ export default function EngineeringTemplateEditor() {
       projectId: selectedProject.id,
       isRestricted: isRestricted,
       url: '#',
+      compliance,
+      adminSignature: isSigned ? adminSignature : undefined,
     }
     saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
     toast({
@@ -273,6 +323,20 @@ export default function EngineeringTemplateEditor() {
       description: 'O modelo foi gerado e salvo no Acervo Técnico.',
     })
     navigate('/admin')
+  }
+
+  const handleWhatsApp = () => {
+    const text = encodeURIComponent(
+      `Olá! Segue o link para o documento: ${config.title} referente à obra ${selectedProject?.name || ''}.`,
+    )
+    addLog({
+      type: 'WhatsApp',
+      recipient: profData.name || 'Participante',
+      message: `Link do documento ${config.title} enviado via WhatsApp.`,
+      status: 'Enviado',
+    })
+    window.open(`https://wa.me/5511940037545?text=${text}`, '_blank')
+    toast({ title: 'Notificação', description: 'Registro de envio automático criado com sucesso.' })
   }
 
   const handleFieldChange = (key: string, val: string) => {
@@ -311,12 +375,96 @@ export default function EngineeringTemplateEditor() {
       title: 'Assinatura Solicitada',
       description: 'Link gerado e WhatsApp aberto para envio.',
     })
-    setIsSignDialogOpen(false)
+    setIsReqSignDialogOpen(false)
     setSignPhone('')
+  }
+
+  // Signature Canvas Logic
+  const getCoordinates = (e: any) => {
+    const canvas = canvasRef.current
+    if (!canvas) return { x: 0, y: 0 }
+    const rect = canvas.getBoundingClientRect()
+    const clientX = e.touches ? e.touches[0].clientX : e.nativeEvent.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.nativeEvent.clientY
+    return { x: clientX - rect.left, y: clientY - rect.top }
+  }
+
+  const startDrawing = (e: any) => {
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const { x, y } = getCoordinates(e)
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    setIsDrawing(true)
+  }
+
+  const draw = (e: any) => {
+    if (!isDrawing) return
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const { x, y } = getCoordinates(e)
+    ctx.lineTo(x, y)
+    ctx.stroke()
+  }
+
+  const stopDrawing = () => setIsDrawing(false)
+
+  const clearSignature = () =>
+    canvasRef.current
+      ?.getContext('2d')
+      ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+
+  const handleSaveAdminSignature = () => {
+    if (signType === 'draw') {
+      if (!canvasRef.current) return
+      setTempSignature(canvasRef.current.toDataURL('image/png'))
+    } else if (signType === 'upload') {
+      if (!uploadedSign) {
+        toast({ title: 'Atenção', description: 'Faça upload da imagem.', variant: 'destructive' })
+        return
+      }
+      setTempSignature(uploadedSign)
+    } else if (signType === 'govbr') {
+      if (!govbrLink) {
+        toast({
+          title: 'Atenção',
+          description: 'Insira o link de validação.',
+          variant: 'destructive',
+        })
+        return
+      }
+      setTempSignature('govbr')
+    }
+
+    setIsAdminSignOpen(false)
+    setTimeout(() => setIsBiometricOpen(true), 300)
+  }
+
+  const finalizeAdminSignature = (bioData: BiometricValidation) => {
+    setAdminSignature({
+      type: signType,
+      data: signType !== 'govbr' ? tempSignature! : undefined,
+      link: signType === 'govbr' ? govbrLink : undefined,
+      date: new Date().toLocaleString('pt-BR'),
+      biometric: bioData,
+    })
+    setIsSigned(true)
+    setIsBiometricOpen(false)
+
+    toast({
+      title: 'Documento Assinado',
+      description: 'A assinatura e validação foram aplicadas com sucesso.',
+    })
   }
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+      <BiometricCapture
+        open={isBiometricOpen}
+        onCapture={finalizeAdminSignature}
+        onCancel={() => setIsBiometricOpen(false)}
+      />
+
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -330,12 +478,21 @@ export default function EngineeringTemplateEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleWhatsApp}
+              className="gap-2 hidden md:flex"
+            >
+              <MessageCircle className="h-4 w-4 text-green-600" /> WhatsApp
+            </Button>
+
+            <Dialog open={isReqSignDialogOpen} onOpenChange={setIsReqSignDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
+                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
                 >
                   <ShieldCheck className="h-4 w-4" />{' '}
                   <span className="hidden sm:inline">Coletar Assinatura</span>
@@ -376,16 +533,121 @@ export default function EngineeringTemplateEditor() {
               </DialogContent>
             </Dialog>
 
+            {!isSigned ? (
+              <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+                    <PenTool className="h-4 w-4" />{' '}
+                    <span className="hidden sm:inline">Assinar (JT Obras)</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Assinatura Digital - Emissora</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <Tabs
+                      value={signType}
+                      onValueChange={(v) => setSignType(v as any)}
+                      className="w-full"
+                    >
+                      <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="draw" className="gap-1 text-xs">
+                          <PenTool className="h-3 w-3" /> Desenhar
+                        </TabsTrigger>
+                        <TabsTrigger value="upload" className="gap-1 text-xs">
+                          <Upload className="h-3 w-3" /> Imagem
+                        </TabsTrigger>
+                        <TabsTrigger value="govbr" className="gap-1 text-xs">
+                          <Fingerprint className="h-3 w-3" /> Gov.br
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="draw" className="space-y-4 mt-4">
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
+                          <canvas
+                            ref={canvasRef}
+                            width={400}
+                            height={200}
+                            className="w-full h-[200px] cursor-crosshair"
+                            onMouseDown={startDrawing}
+                            onMouseMove={draw}
+                            onMouseUp={stopDrawing}
+                            onMouseLeave={stopDrawing}
+                            onTouchStart={startDrawing}
+                            onTouchMove={draw}
+                            onTouchEnd={stopDrawing}
+                          />
+                        </div>
+                        <div className="flex justify-between">
+                          <Button
+                            variant="ghost"
+                            onClick={clearSignature}
+                            className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" /> Limpar
+                          </Button>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="upload" className="space-y-4 mt-4">
+                        <Input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              const reader = new FileReader()
+                              reader.onload = (ev) => setUploadedSign(ev.target?.result as string)
+                              reader.readAsDataURL(file)
+                            }
+                          }}
+                        />
+                        {uploadedSign && (
+                          <img
+                            src={uploadedSign}
+                            className="h-24 object-contain border p-2 rounded bg-white mx-auto mix-blend-multiply"
+                            alt="Preview"
+                          />
+                        )}
+                      </TabsContent>
+                      <TabsContent value="govbr" className="space-y-4 mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          Insira o link de validação da assinatura gerada no Portal Gov.br.
+                        </p>
+                        <Input
+                          placeholder="https://validar.iti.gov.br/..."
+                          value={govbrLink}
+                          onChange={(e) => setGovbrLink(e.target.value)}
+                        />
+                      </TabsContent>
+                    </Tabs>
+                    <div className="pt-4 border-t flex justify-end">
+                      <Button onClick={handleSaveAdminSignature} className="gap-2 w-full sm:w-auto">
+                        <Save className="h-4 w-4" /> Avançar para Validação
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-2 bg-green-100 text-green-700 pointer-events-none"
+              >
+                <CheckCircle className="h-4 w-4" />{' '}
+                <span className="hidden sm:inline">Assinado</span>
+              </Button>
+            )}
+
             <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" />{' '}
-              <span className="hidden sm:inline">Salvar no Acervo</span>
+              <Save className="h-4 w-4" /> <span className="hidden sm:inline">Salvar</span>
             </Button>
             <Button
               onClick={() => window.print()}
               size="sm"
               className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir PDF</span>
+              <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir</span>
             </Button>
           </div>
         </div>
@@ -482,6 +744,26 @@ export default function EngineeringTemplateEditor() {
                   <p className="text-[10px] text-muted-foreground">{field.example}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="space-y-4 pt-4 border-t mt-4">
+              <h3 className="font-bold text-brand-navy">Dados de Conformidade Regulatória</h3>
+              <div className="space-y-2">
+                <Label>Dados eSocial (Opcional)</Label>
+                <Input
+                  placeholder="Ex: S-2240, Matrícula 987"
+                  value={compliance.esocial}
+                  onChange={(e) => setCompliance({ ...compliance, esocial: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Receita Federal do Brasil (Opcional)</Label>
+                <Input
+                  placeholder="Ex: CNO 123.456, Status Regular"
+                  value={compliance.receita}
+                  onChange={(e) => setCompliance({ ...compliance, receita: e.target.value })}
+                />
+              </div>
             </div>
 
             <div className="flex items-center space-x-3 pt-4 border-t mt-6">
@@ -593,16 +875,71 @@ export default function EngineeringTemplateEditor() {
                 </div>
               </div>
 
+              {(compliance.esocial || compliance.receita) && (
+                <div className="border border-gray-400 rounded p-4 mb-6">
+                  <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
+                    5. DADOS DE CONFORMIDADE REGULATÓRIA
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 text-[13px]">
+                    {compliance.esocial && (
+                      <div>
+                        <strong className="text-gray-600 block mb-1">Registro eSocial:</strong>
+                        <span className="font-medium">{compliance.esocial}</span>
+                      </div>
+                    )}
+                    {compliance.receita && (
+                      <div>
+                        <strong className="text-gray-600 block mb-1">
+                          Receita Federal do Brasil:
+                        </strong>
+                        <span className="font-medium">{compliance.receita}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-20 flex justify-between gap-8 text-center px-4">
-                <div className="w-1/2">
-                  <div className="border-t border-black w-full mx-auto mb-2"></div>
+                <div className="w-1/2 flex flex-col items-center">
+                  {isSigned && adminSignature?.type === 'govbr' ? (
+                    <div className="flex flex-col items-center justify-center h-12 mb-2 text-center">
+                      <span className="text-[10px] font-bold text-blue-800 border border-blue-800 px-2 py-1 rounded bg-blue-50">
+                        ASSINADO GOV.BR
+                      </span>
+                      <a
+                        href={adminSignature.link}
+                        className="text-[8px] text-blue-600 mt-1 underline break-all max-w-[150px]"
+                      >
+                        Verificar Validade
+                      </a>
+                    </div>
+                  ) : isSigned && adminSignature?.data ? (
+                    <div className="h-12 flex items-center justify-center mb-2">
+                      <img
+                        src={adminSignature.data}
+                        alt="Assinatura"
+                        className="max-h-full mix-blend-multiply"
+                      />
+                    </div>
+                  ) : (
+                    <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
+                  )}
+                  {isSigned && <div className="border-t border-black w-full mx-auto mb-2"></div>}
                   <p className="font-bold text-xs">{COMPANY.responsible}</p>
                   <p className="text-[10px] text-gray-500 uppercase">
                     Responsável - {COMPANY.name}
                   </p>
+                  {isSigned && adminSignature?.biometric && (
+                    <div className="mt-2 flex flex-col items-center">
+                      <p className="text-[8px] text-green-600 font-bold flex items-center gap-1">
+                        <CheckCircle className="w-2 h-2" /> Biometria OK
+                      </p>
+                      <p className="text-[7px] text-gray-400">{adminSignature.date}</p>
+                    </div>
+                  )}
                 </div>
-                <div className="w-1/2">
-                  <div className="border-t border-black w-full mx-auto mb-2"></div>
+                <div className="w-1/2 flex flex-col items-center">
+                  <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
                   <p className="font-bold text-xs">
                     {profData.name || 'Assinatura do Participante'}
                   </p>
