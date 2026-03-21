@@ -10,6 +10,7 @@ import { Project } from '@/lib/storage'
 import { ProjectCostsTab } from './ProjectCostsTab'
 import { ProjectGalleryTab } from './ProjectGalleryTab'
 import { ProjectGanttTab } from './ProjectGanttTab'
+import { ProjectInfoTab } from './ProjectInfoTab'
 
 interface ProjectDetailsDialogProps {
   project: Project | null
@@ -37,12 +38,17 @@ export function ProjectDetailsDialog({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto pr-2 mt-4">
-          <Tabs defaultValue="custos" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 mb-4">
+          <Tabs defaultValue="detalhes" className="w-full">
+            <TabsList className="w-full grid grid-cols-4 mb-4">
+              <TabsTrigger value="detalhes">Detalhes</TabsTrigger>
               <TabsTrigger value="custos">Financeiro</TabsTrigger>
               <TabsTrigger value="cronograma">Cronograma</TabsTrigger>
               <TabsTrigger value="galeria">Galeria</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="detalhes" className="m-0">
+              <ProjectInfoTab project={project} onUpdate={onUpdateProject} />
+            </TabsContent>
 
             <TabsContent value="custos" className="m-0">
               <ProjectCostsTab project={project} onUpdate={onUpdateProject} />

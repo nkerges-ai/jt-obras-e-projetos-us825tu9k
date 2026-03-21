@@ -15,6 +15,7 @@ import { InventoryTab } from './components/InventoryTab'
 import { InvoicesTab } from './components/InvoicesTab'
 import { LibraryTab } from './components/LibraryTab'
 import { ValidityAlertsTab } from './components/ValidityAlertsTab'
+import { B2BTab } from './components/B2BTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
@@ -136,6 +137,12 @@ export default function AdminDashboard() {
             Estoque
           </TabsTrigger>
           <TabsTrigger
+            value="b2b"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            B2B - EPIs e Locação
+          </TabsTrigger>
+          <TabsTrigger
             value="nfs"
             className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
@@ -178,6 +185,9 @@ export default function AdminDashboard() {
         </TabsContent>
         <TabsContent value="estoque">
           <InventoryTab key={`inv-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="b2b">
+          <B2BTab key={`b2b-${syncKey}`} />
         </TabsContent>
         <TabsContent value="nfs">
           <InvoicesTab key={`nf-${syncKey}`} />

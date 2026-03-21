@@ -20,26 +20,19 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 
+type DocFile = {
+  id: number
+  name: string
+  type: string
+  date: string
+  status: string
+}
+
 export function DocumentsTab() {
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [files, setFiles] = useState([
-    {
-      id: 1,
-      name: 'Alvara_Prefeitura.pdf',
-      type: 'application/pdf',
-      date: '2023-10-15',
-      status: 'Assinado',
-    },
-    {
-      id: 2,
-      name: 'Modelo_Contrato_Base.docx',
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      date: '2023-11-01',
-      status: 'Rascunho',
-    },
-  ])
+  const [files, setFiles] = useState<DocFile[]>([])
 
   const handleUploadClick = () => fileInputRef.current?.click()
 
@@ -113,6 +106,13 @@ export function DocumentsTab() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {files.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  Nenhum arquivo adicionado.
+                </TableCell>
+              </TableRow>
+            )}
             {files.map((file) => (
               <TableRow key={file.id}>
                 <TableCell className="font-medium flex items-center gap-3">

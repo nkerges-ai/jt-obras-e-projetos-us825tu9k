@@ -19,11 +19,22 @@ import { Plus, Briefcase, ExternalLink } from 'lucide-react'
 import { getProjects, saveProjects, Project, ProjectStatus, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
 import { ProjectDetailsDialog } from './ProjectDetailsDialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export function ProjectsTab() {
   const [projects, setProjects] = useState<Project[]>([])
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false)
   const { toast } = useToast()
+
+  const [newProject, setNewProject] = useState({
+    name: '',
+    client: '',
+    startDate: new Date().toISOString().split('T')[0],
+    status: 'Em orçamento' as ProjectStatus,
+  })
 
   useEffect(() => {
     setProjects(getProjects())
@@ -57,6 +68,35 @@ export function ProjectsTab() {
     setSelectedProject(updatedProject)
   }
 
+  const handleCreateProject = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newProject.name || !newProject.client || !newProject.startDate) return
+
+    const proj: Project = {
+      id: Date.now().toString(),
+      name: newProject.name,
+      client: newProject.client,
+      startDate: newProject.startDate,
+      status: newProject.status,
+      budget: 0,
+      expenses: [],
+      photos: [],
+      phases: [],
+    }
+
+    const updated = [proj, ...projects]
+    setProjects(updated)
+    saveProjects(updated)
+    setIsNewProjectOpen(false)
+    setNewProject({
+      name: '',
+      client: '',
+      startDate: new Date().toISOString().split('T')[0],
+      status: 'Em orçamento',
+    })
+    toast({ title: 'Projeto Adicionado', description: 'Novo projeto incluído no painel.' })
+  }
+
   const getStatusColor = (status: ProjectStatus) => {
     switch (status) {
       case 'Concluído':
@@ -70,23 +110,6 @@ export function ProjectsTab() {
     }
   }
 
-  const addMockProject = () => {
-    const newProject: Project = {
-      id: Date.now().toString(),
-      name: 'Nova Obra Residencial',
-      client: 'Novo Cliente',
-      startDate: new Date().toISOString().split('T')[0],
-      status: 'Em orçamento',
-      budget: 0,
-      expenses: [],
-      photos: [],
-    }
-    const updated = [newProject, ...projects]
-    setProjects(updated)
-    saveProjects(updated)
-    toast({ title: 'Projeto Adicionado', description: 'Novo projeto incluído no painel.' })
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
@@ -98,7 +121,10 @@ export function ProjectsTab() {
             Acompanhe custos, evolução e status dos projetos.
           </p>
         </div>
-        <Button onClick={addMockProject} className="gap-2 font-bold w-full sm:w-auto">
+        <Button
+          onClick={() => setIsNewProjectOpen(true)}
+          className="gap-2 font-bold w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4" /> Novo Projeto
         </Button>
       </div>
@@ -117,7 +143,7 @@ export function ProjectsTab() {
             {projects.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  Nenhuma obra cadastrada.
+                  Nenhum projeto encontrado.
                 </TableCell>
               </TableRow>
             )}
@@ -164,6 +190,66 @@ export function ProjectsTab() {
         onOpenChange={(open) => !open && setSelectedProject(null)}
         onUpdateProject={handleUpdateProject}
       />
+
+      <Dialog open={isNewProjectOpen} onOpenChange={setIsNewProjectOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Criar Novo Projeto</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateProject} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label>Nome do Projeto / Obra</Label>
+              <Input
+                required
+                value={newProject.name}
+                onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                placeholder="Ex: Reforma Predial Bloco A"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Nome do Cliente</Label>
+              <Input
+                required
+                value={newProject.client}
+                onChange={(e) => setNewProject({ ...newProject, client: e.target.value })}
+                placeholder="Ex: Condomínio Residencial"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Data de Início</Label>
+                <Input
+                  type="date"
+                  required
+                  value={newProject.startDate}
+                  onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Status Inicial</Label>
+                <Select
+                  required
+                  value={newProject.status}
+                  onValueChange={(v) =>
+                    setNewProject({ ...newProject, status: v as ProjectStatus })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Em orçamento">Em orçamento</SelectItem>
+                    <SelectItem value="Em andamento">Em andamento</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button type="submit" className="w-full">
+              Criar Projeto
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

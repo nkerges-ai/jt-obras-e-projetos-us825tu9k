@@ -31,6 +31,9 @@ export interface Project {
   name: string
   client: string
   startDate: string
+  endDate?: string
+  description?: string
+  technicalResponsible?: string
   status: ProjectStatus
   budget: number
   expenses: Expense[]
@@ -143,26 +146,42 @@ export interface ValidityDocument {
   warningDays: number
 }
 
+export interface Ppe {
+  id: string
+  name: string
+  category: string
+  description: string
+  availability: number
+}
+
+export interface Equipment {
+  id: string
+  type: string
+  specs: string
+  rentalStatus: 'Disponível' | 'Locado' | 'Em Manutenção'
+}
+
+// Data keys updated to _v3 to ensure complete data sanitization and empty states
 export const getProjects = (): Project[] => {
-  const data = localStorage.getItem('jt_projects')
+  const data = localStorage.getItem('jt_projects_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveProjects = (projects: Project[]) => {
-  localStorage.setItem('jt_projects', JSON.stringify(projects))
+  localStorage.setItem('jt_projects_v3', JSON.stringify(projects))
 }
 
 export const getEvents = (): CalendarEvent[] => {
-  const data = localStorage.getItem('jt_events')
+  const data = localStorage.getItem('jt_events_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveEvents = (events: CalendarEvent[]) => {
-  localStorage.setItem('jt_events', JSON.stringify(events))
+  localStorage.setItem('jt_events_v3', JSON.stringify(events))
 }
 
 export const getLogs = (): NotificationLog[] => {
-  const data = localStorage.getItem('jt_logs')
+  const data = localStorage.getItem('jt_logs_v3')
   return data ? JSON.parse(data) : []
 }
 
@@ -173,68 +192,86 @@ export const addLog = (log: Omit<NotificationLog, 'id' | 'date'>) => {
     id: Date.now().toString(),
     date: new Date().toISOString(),
   }
-  localStorage.setItem('jt_logs', JSON.stringify([newLog, ...logs]))
+  localStorage.setItem('jt_logs_v3', JSON.stringify([newLog, ...logs]))
 }
 
 export const getTickets = (): Ticket[] => {
-  const data = localStorage.getItem('jt_tickets')
+  const data = localStorage.getItem('jt_tickets_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveTickets = (tickets: Ticket[]) => {
-  localStorage.setItem('jt_tickets', JSON.stringify(tickets))
+  localStorage.setItem('jt_tickets_v3', JSON.stringify(tickets))
 }
 
 export const getInventory = (): Material[] => {
-  const data = localStorage.getItem('jt_inventory')
+  const data = localStorage.getItem('jt_inventory_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveInventory = (inventory: Material[]) => {
-  localStorage.setItem('jt_inventory', JSON.stringify(inventory))
+  localStorage.setItem('jt_inventory_v3', JSON.stringify(inventory))
 }
 
 export const getServiceOrders = (): ServiceOrder[] => {
-  const data = localStorage.getItem('jt_os')
+  const data = localStorage.getItem('jt_os_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveServiceOrders = (orders: ServiceOrder[]) => {
-  localStorage.setItem('jt_os', JSON.stringify(orders))
+  localStorage.setItem('jt_os_v3', JSON.stringify(orders))
 }
 
 export const getTechnicalDocuments = (): TechnicalDocument[] => {
-  const data = localStorage.getItem('jt_tech_docs')
+  const data = localStorage.getItem('jt_tech_docs_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveTechnicalDocuments = (docs: TechnicalDocument[]) => {
-  localStorage.setItem('jt_tech_docs', JSON.stringify(docs))
+  localStorage.setItem('jt_tech_docs_v3', JSON.stringify(docs))
 }
 
 export const getAccessRequests = (): DocumentAccessRequest[] => {
-  const data = localStorage.getItem('jt_access_requests')
+  const data = localStorage.getItem('jt_access_requests_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveAccessRequests = (reqs: DocumentAccessRequest[]) => {
-  localStorage.setItem('jt_access_requests', JSON.stringify(reqs))
+  localStorage.setItem('jt_access_requests_v3', JSON.stringify(reqs))
 }
 
 export const getSignatures = (): DocumentSignature[] => {
-  const data = localStorage.getItem('jt_signatures')
+  const data = localStorage.getItem('jt_signatures_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveSignatures = (sigs: DocumentSignature[]) => {
-  localStorage.setItem('jt_signatures', JSON.stringify(sigs))
+  localStorage.setItem('jt_signatures_v3', JSON.stringify(sigs))
 }
 
 export const getValidityDocs = (): ValidityDocument[] => {
-  const data = localStorage.getItem('jt_validities')
+  const data = localStorage.getItem('jt_validities_v3')
   return data ? JSON.parse(data) : []
 }
 
 export const saveValidityDocs = (docs: ValidityDocument[]) => {
-  localStorage.setItem('jt_validities', JSON.stringify(docs))
+  localStorage.setItem('jt_validities_v3', JSON.stringify(docs))
+}
+
+export const getPpe = (): Ppe[] => {
+  const data = localStorage.getItem('jt_ppe_v3')
+  return data ? JSON.parse(data) : []
+}
+
+export const savePpe = (ppes: Ppe[]) => {
+  localStorage.setItem('jt_ppe_v3', JSON.stringify(ppes))
+}
+
+export const getEquipment = (): Equipment[] => {
+  const data = localStorage.getItem('jt_equipment_v3')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveEquipment = (equipments: Equipment[]) => {
+  localStorage.setItem('jt_equipment_v3', JSON.stringify(equipments))
 }
