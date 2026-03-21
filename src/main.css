@@ -14,7 +14,7 @@
     --popover-foreground: 222.2 84% 4.9%;
 
     /* Brand Colors - JT Obras (Navy and Orange) */
-    --primary: 211 43% 21%; /* Updated primary to navy to fit new standard */
+    --primary: 211 43% 21%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -137,17 +137,18 @@
   }
 }
 
-/* Print Specific Rules for Perfect A4 formatting with full-bleed letterhead */
+/* Print Specific Rules for Perfect A4 formatting */
 @media print {
   @page {
     size: A4;
-    margin: 0 !important; /* Zero margin to allow background graphics to touch edges */
+    margin: 15mm !important; /* Perfect 15mm margins on all sides for safe printing */
   }
 
   body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    background: white;
+    background: white !important;
+    color: black !important;
     font-size: 11pt;
     margin: 0 !important;
     padding: 0 !important;
@@ -164,15 +165,16 @@
   }
 
   .print-page-container {
-    width: 210mm !important;
-    min-height: 297mm !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
     page-break-after: always;
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
   }
 
   /* Table and Layout Protections */
@@ -185,7 +187,8 @@
     display: table-header-group;
   }
 
-  .print-row-avoid-break {
+  .print-row-avoid-break,
+  tr {
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -195,42 +198,32 @@
     break-inside: avoid;
   }
 
-  /* Force headers to print at top of specific blocks */
   .print-header-group {
     page-break-before: auto;
+    page-break-inside: avoid;
   }
 
-  /* Footer locking */
   .print-footer {
     display: flex !important;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     width: 100%;
+    page-break-inside: avoid;
+    margin-top: 2rem;
   }
 
-  /* Overrides for background colors that might be lost */
+  /* Overrides to ensure brand colors persist */
   .bg-brand-navy {
     background-color: #0a2240 !important;
     color: white !important;
+  }
+  .text-brand-navy {
+    color: #0a2240 !important;
   }
   .bg-brand-orange {
     background-color: #f97316 !important;
     color: white !important;
   }
-  .bg-brand-navy-dark {
-    background-color: #0a2240 !important;
-    color: white !important;
-  }
-  .bg-brand-cyan {
-    background-color: #009fe3 !important;
-  }
-  .bg-gray-200 {
-    background-color: #e5e7eb !important;
-  }
-  .bg-gray-100 {
-    background-color: #f3f4f6 !important;
+  .bg-blue-50 {
+    background-color: #eff6ff !important;
   }
   .bg-gray-50 {
     background-color: #f9fafb !important;

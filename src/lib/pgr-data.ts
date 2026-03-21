@@ -122,4 +122,28 @@ export const STANDARD_ACTIVITIES = [
       },
     ],
   },
+  {
+    id: 'psi',
+    name: 'Fatores Psicossociais e Ergonomia (NR-01)',
+    risks: [
+      {
+        perigo: 'Pressão por tempo / Ritmo intenso de trabalho',
+        dano: 'Estresse ocupacional, ansiedade, fadiga mental',
+        probabilidade: '3',
+        severidade: '3',
+        nivelRisco: 'Moderado',
+        medidas:
+          'Planejamento adequado das demandas, pausas programadas, ambiente colaborativo e apoio à saúde mental.',
+      },
+      {
+        perigo: 'Trabalho isolado ou turnos extenuantes',
+        dano: 'Síndrome de Burnout, distúrbios do sono, depressão',
+        probabilidade: '2',
+        severidade: '4',
+        nivelRisco: 'Moderado',
+        medidas:
+          'Rodízio de turnos, monitoramento contínuo de bem-estar, feedbacks construtivos, treinamento de liderança.',
+      },
+    ],
+  },
 ]

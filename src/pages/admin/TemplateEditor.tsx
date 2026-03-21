@@ -516,7 +516,7 @@ export default function TemplateEditor() {
               </Button>
               <Button
                 onClick={() => setStep(step + 1)}
-                className="gap-2 bg-brand-light hover:bg-brand-light/90"
+                className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
               >
                 Avançar <ChevronRight className="w-4 h-4" />
               </Button>
@@ -530,8 +530,12 @@ export default function TemplateEditor() {
           <DocumentLetterhead title={!isTimbrado ? title : undefined}>
             <div className="text-[14px] leading-relaxed text-justify space-y-6">
               {isTimbrado ? (
-                <div className="whitespace-pre-wrap font-medium">
-                  {data.clientName && <p className="mb-8 font-bold">À {data.clientName}</p>}
+                <div className="whitespace-pre-wrap font-medium text-gray-800 text-[14px]">
+                  {data.clientName && (
+                    <p className="mb-6 font-bold text-brand-navy text-[15px]">
+                      À {data.clientName},
+                    </p>
+                  )}
                   {data.freeContent || '...'}
                 </div>
               ) : isContrato ? (
