@@ -166,6 +166,15 @@ export function PGRForm({ data, setData, projects, currentStep = 1 }: PGRFormPro
               />
             </div>
             <div className="space-y-2">
+              <Label>Endereço Completo</Label>
+              <Input
+                value={data.endereco || ''}
+                onChange={(e) => setData({ ...data, endereco: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label>Data de Emissão Base</Label>
               <Input
                 type="date"
@@ -173,13 +182,14 @@ export function PGRForm({ data, setData, projects, currentStep = 1 }: PGRFormPro
                 onChange={(e) => setData({ ...data, date: e.target.value })}
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Endereço Completo</Label>
-            <Input
-              value={data.endereco || ''}
-              onChange={(e) => setData({ ...data, endereco: e.target.value })}
-            />
+            <div className="space-y-2">
+              <Label className="text-brand-orange font-bold">Validade do PGR (Vencimento)</Label>
+              <Input
+                type="date"
+                value={data.validade ? new Date(data.validade).toISOString().split('T')[0] : ''}
+                onChange={(e) => setData({ ...data, validade: e.target.value })}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

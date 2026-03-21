@@ -15,6 +15,7 @@ import {
   Stamp,
   ChevronRight,
   ChevronLeft,
+  Mail,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -25,12 +26,16 @@ import {
   Project,
   BiometricValidation,
   getCompanyAssets,
+  CompanyAsset,
   DEFAULT_PGR_TEMPLATE,
+  saveValidityDocs,
+  getValidityDocs,
 } from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 import { PGRForm } from './components/PGRForm'
 import { PGRPreview } from './components/PGRPreview'
 import { WizardStepper } from '@/components/WizardStepper'
+import { EmailSenderDialog } from '@/components/EmailSenderDialog'
 
 export default function PGREditor() {
   const { toast } = useToast()
@@ -52,8 +57,10 @@ export default function PGREditor() {
   })
 
   const [projects, setProjects] = useState<Project[]>([])
+  const [assets, setAssets] = useState<CompanyAsset[]>([])
 
   const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
   const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
   const [uploadedSign, setUploadedSign] = useState<string | null>(null)
   const [govbrLink, setGovbrLink] = useState('')
@@ -62,13 +69,31 @@ export default function PGREditor() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
-  useEffect(() => setProjects(getProjects()), [])
+  useEffect(() => {
+    setProjects(getProjects())
+    setAssets(getCompanyAssets())
+  }, [])
 
   const handleSave = () => {
     const pgrs = getPGRs()
     const doc: PGRDocument = { ...(data as PGRDocument), id: data.id || `pgr_${Date.now()}` }
     const filtered = pgrs.filter((p) => p.id !== doc.id)
     savePGRs([doc, ...filtered])
+
+    if (data.validade) {
+      const valDocs = getValidityDocs()
+      saveValidityDocs([
+        {
+          id: `val_${Date.now()}`,
+          name: `PGR - ${data.empresa}`,
+          category: 'PGR',
+          expirationDate: data.validade,
+          warningDays: 30,
+        },
+        ...valDocs,
+      ])
+    }
+
     toast({
       title: 'PGR Salvo',
       description: 'O Programa de Gerenciamento de Riscos foi salvo com sucesso.',
@@ -77,7 +102,6 @@ export default function PGREditor() {
   }
 
   const applyCompanyAsset = () => {
-    const assets = getCompanyAssets()
     const asset =
       assets.find((a) => a.type === 'signature') || assets.find((a) => a.type === 'stamp')
     if (asset) {
@@ -158,6 +182,11 @@ export default function PGREditor() {
         onCapture={finalizeAdminSignature}
         onCancel={() => setIsBiometricOpen(false)}
       />
+      <EmailSenderDialog
+        open={isEmailOpen}
+        onOpenChange={setIsEmailOpen}
+        documentName={`PGR NR-01 - ${data.empresa || 'Empresa'}`}
+      />
 
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -199,6 +228,14 @@ export default function PGREditor() {
                     <CheckCircle className="h-4 w-4" /> Assinado
                   </Button>
                 )}
+                <Button
+                  onClick={() => setIsEmailOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 hidden sm:flex"
+                >
+                  <Mail className="h-4 w-4" /> Enviar por E-mail
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -262,7 +299,7 @@ export default function PGREditor() {
             onValueChange={(v) => setSignType(v as any)}
             className="w-full pt-4"
           >
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="draw" className="gap-1 text-xs">
                 <PenTool className="h-3 w-3" /> Desenhar
               </TabsTrigger>
@@ -271,6 +308,9 @@ export default function PGREditor() {
               </TabsTrigger>
               <TabsTrigger value="govbr" className="gap-1 text-xs">
                 <Fingerprint className="h-3 w-3" /> Gov.br
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="gap-1 text-xs">
+                <Stamp className="h-3 w-3" /> Galeria
               </TabsTrigger>
             </TabsList>
             <TabsContent value="draw" className="space-y-4 mt-4">
@@ -310,6 +350,40 @@ export default function PGREditor() {
                 value={govbrLink}
                 onChange={(e) => setGovbrLink(e.target.value)}
               />
+            </TabsContent>
+            <TabsContent value="gallery" className="space-y-4 mt-4">
+              {assets.filter((a) => a.type === 'signature').length === 0 ? (
+                <div className="text-center text-sm text-gray-500 py-4 border rounded bg-gray-50">
+                  Nenhuma assinatura na galeria.
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 max-h-[200px] overflow-y-auto p-1">
+                  {assets
+                    .filter((a) => a.type === 'signature')
+                    .map((a) => (
+                      <div
+                        key={a.id}
+                        className="border-2 rounded-lg p-2 cursor-pointer hover:border-brand-light hover:bg-blue-50 flex flex-col items-center justify-center h-24"
+                        onClick={() => {
+                          setUploadedSign(a.dataUrl)
+                          setSignType('upload')
+                          toast({
+                            title: 'Assinatura Selecionada',
+                            description: 'Clique em Avançar para concluir.',
+                          })
+                        }}
+                      >
+                        <img
+                          src={a.dataUrl}
+                          className="max-h-12 object-contain mix-blend-multiply"
+                        />
+                        <span className="text-[10px] mt-2 font-bold truncate w-full text-center text-brand-navy">
+                          {a.name}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              )}
             </TabsContent>
             <Button
               onClick={handleSaveAdminSignature}

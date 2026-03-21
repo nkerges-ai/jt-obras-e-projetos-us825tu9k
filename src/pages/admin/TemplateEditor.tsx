@@ -24,9 +24,21 @@ import {
   Trash2,
   ChevronRight,
   ChevronLeft,
+  Mail,
+  Save,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { BiometricValidation, getCompanyAssets, getContractors, Contractor } from '@/lib/storage'
+import {
+  BiometricValidation,
+  getCompanyAssets,
+  getContractors,
+  Contractor,
+  CompanyAsset,
+  saveTechnicalDocuments,
+  getTechnicalDocuments,
+  TechnicalDocument,
+  addLog,
+} from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 import {
   Select,
@@ -37,6 +49,7 @@ import {
 } from '@/components/ui/select'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
 import { WizardStepper } from '@/components/WizardStepper'
+import { EmailSenderDialog } from '@/components/EmailSenderDialog'
 
 const COMPANY_NAME = 'JT OBRAS E MANUTENÇÕES LTDA'
 
@@ -46,6 +59,7 @@ export default function TemplateEditor() {
   const navigate = useNavigate()
 
   const [contractors, setContractors] = useState<Contractor[]>([])
+  const [assets, setAssets] = useState<CompanyAsset[]>([])
   const [step, setStep] = useState(1)
 
   const [isSigned, setIsSigned] = useState(false)
@@ -55,6 +69,8 @@ export default function TemplateEditor() {
 
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
   const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
+
   const [biometricData, setBiometricData] = useState<BiometricValidation | null>(null)
   const [tempSignature, setTempSignature] = useState<string | null>(null)
 
@@ -81,6 +97,7 @@ export default function TemplateEditor() {
 
   useEffect(() => {
     setContractors(getContractors())
+    setAssets(getCompanyAssets())
   }, [])
 
   useEffect(() => {
@@ -114,7 +131,6 @@ export default function TemplateEditor() {
   const handlePrint = () => window.print()
 
   const applyCompanyAsset = () => {
-    const assets = getCompanyAssets()
     const asset =
       assets.find((a) => a.type === 'signature') || assets.find((a) => a.type === 'stamp')
     if (asset) {
@@ -192,6 +208,43 @@ export default function TemplateEditor() {
       })
       toast({ title: 'Fotos Anexadas' })
     }
+  }
+
+  const handleSaveToAcervo = () => {
+    const doc: TechnicalDocument = {
+      id: `doc_${Date.now()}`,
+      name: `${title} - ${data.clientName || 'Geral'}`,
+      category: isContrato ? 'Contratos' : isTimbrado ? 'Outros' : 'Propostas',
+      uploadDate: new Date().toISOString(),
+      projectId: 'global',
+      isRestricted: false,
+      url: '#',
+      adminSignature: isSigned
+        ? {
+            type: finalSignatureType,
+            data: signatureData || undefined,
+            date: signatureDate || new Date().toLocaleString('pt-BR'),
+            biometric: biometricData || undefined,
+          }
+        : undefined,
+    }
+    saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
+
+    if (!isContrato && !isTimbrado) {
+      addLog({
+        type: 'Email',
+        recipient: data.clientName || 'Cliente',
+        message: `Notificação Automática: Um novo orçamento/proposta foi gerado e está disponível no acervo.`,
+        status: 'Enviado',
+      })
+      toast({
+        title: 'Orçamento Salvo e Notificado',
+        description: 'Proposta salva no Acervo e notificação registrada.',
+      })
+    } else {
+      toast({ title: 'Documento Salvo', description: 'Salvo com sucesso no Acervo Técnico.' })
+    }
+    navigate('/admin')
   }
 
   const renderWizardContent = () => {
@@ -385,6 +438,11 @@ export default function TemplateEditor() {
         onCapture={finalizeSignature}
         onCancel={() => setIsBiometricOpen(false)}
       />
+      <EmailSenderDialog
+        open={isEmailOpen}
+        onOpenChange={setIsEmailOpen}
+        documentName={`${title} - ${data.clientName || 'Cliente'}`}
+      />
 
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -405,7 +463,7 @@ export default function TemplateEditor() {
                       size="sm"
                       onClick={applyCompanyAsset}
                       variant="outline"
-                      className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
+                      className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
                     >
                       <Stamp className="h-4 w-4" /> Validar Oficial
                     </Button>
@@ -428,15 +486,18 @@ export default function TemplateEditor() {
                           onValueChange={(v) => setSignType(v as any)}
                           className="w-full pt-4"
                         >
-                          <TabsList className="grid w-full grid-cols-3">
+                          <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="draw" className="gap-1 text-xs">
-                              <PenTool className="h-3 w-3" /> Desenhar
+                              <PenTool className="h-3 w-3" /> Desenho
                             </TabsTrigger>
                             <TabsTrigger value="upload" className="gap-1 text-xs">
                               <Upload className="h-3 w-3" /> Imagem
                             </TabsTrigger>
                             <TabsTrigger value="govbr" className="gap-1 text-xs">
                               <Fingerprint className="h-3 w-3" /> Gov.br
+                            </TabsTrigger>
+                            <TabsTrigger value="gallery" className="gap-1 text-xs">
+                              <Stamp className="h-3 w-3" /> Galeria
                             </TabsTrigger>
                           </TabsList>
                           <TabsContent value="draw" className="space-y-4 mt-4">
@@ -470,6 +531,43 @@ export default function TemplateEditor() {
                               }}
                             />
                           </TabsContent>
+                          <TabsContent value="govbr" className="space-y-4 mt-4">
+                            <Input placeholder="Código de Validação Gov.br" />
+                          </TabsContent>
+                          <TabsContent value="gallery" className="space-y-4 mt-4">
+                            {assets.filter((a) => a.type === 'signature').length === 0 ? (
+                              <div className="text-center text-sm text-gray-500 py-4 border rounded bg-gray-50">
+                                Nenhuma assinatura na galeria.
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-2 gap-3 max-h-[200px] overflow-y-auto p-1">
+                                {assets
+                                  .filter((a) => a.type === 'signature')
+                                  .map((a) => (
+                                    <div
+                                      key={a.id}
+                                      className="border-2 rounded-lg p-2 cursor-pointer hover:border-brand-light hover:bg-blue-50 flex flex-col items-center justify-center h-24"
+                                      onClick={() => {
+                                        setUploadedSign(a.dataUrl)
+                                        setSignType('upload')
+                                        toast({
+                                          title: 'Assinatura Selecionada',
+                                          description: 'Clique em Avançar para concluir.',
+                                        })
+                                      }}
+                                    >
+                                      <img
+                                        src={a.dataUrl}
+                                        className="max-h-12 object-contain mix-blend-multiply"
+                                      />
+                                      <span className="text-[10px] mt-2 font-bold truncate w-full text-center text-brand-navy">
+                                        {a.name}
+                                      </span>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </TabsContent>
                           <Button onClick={handleSaveDrawing} className="w-full mt-4">
                             Avançar
                           </Button>
@@ -481,15 +579,33 @@ export default function TemplateEditor() {
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="gap-2 bg-green-100 text-green-700 pointer-events-none"
+                    className="gap-2 bg-green-100 text-green-700 pointer-events-none hidden sm:flex"
                   >
                     <CheckCircle className="h-4 w-4" /> Assinado
                   </Button>
                 )}
                 <Button
+                  onClick={handleSaveToAcervo}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
+                >
+                  <Save className="h-4 w-4" />{' '}
+                  <span className="hidden xl:inline">Salvar no Acervo</span>
+                </Button>
+                <Button
+                  onClick={() => setIsEmailOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 hidden md:flex"
+                >
+                  <Mail className="h-4 w-4" />{' '}
+                  <span className="hidden lg:inline">Enviar por E-mail</span>
+                </Button>
+                <Button
                   onClick={handlePrint}
                   size="sm"
-                  className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
                 >
                   <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir</span>
                 </Button>
@@ -568,19 +684,23 @@ export default function TemplateEditor() {
                 </>
               ) : (
                 <>
-                  <p className="mb-6 font-bold">
+                  <p className="mb-6 font-bold text-brand-navy text-[15px]">
                     À {data.clientName || '___________________________'}
                   </p>
                   <div className="space-y-4 pt-2">
                     <p>
-                      <strong>1. Escopo da Proposta Comercial:</strong>
+                      <strong className="text-brand-navy">1. Escopo da Proposta Comercial:</strong>
                     </p>
-                    <div className="pl-4 whitespace-pre-wrap">{data.description || '...'}</div>
+                    <div className="pl-4 whitespace-pre-wrap text-gray-700">
+                      {data.description || '...'}
+                    </div>
                     <p>
-                      <strong>2. Investimento Necessário:</strong> R$ {data.value || '___________'}.
+                      <strong className="text-brand-navy">2. Investimento Necessário:</strong> R${' '}
+                      {data.value || '___________'}.
                     </p>
                     <p>
-                      <strong>3. Validade desta Proposta:</strong> {data.date || '___________'}.
+                      <strong className="text-brand-navy">3. Validade desta Proposta:</strong>{' '}
+                      {data.date || '___________'}.
                     </p>
                   </div>
                 </>
@@ -609,23 +729,23 @@ export default function TemplateEditor() {
                         <img src={signatureData} className="max-h-full mix-blend-multiply" />
                       </div>
                     ) : (
-                      <div className="border-t border-black mb-2 mt-16 w-full"></div>
+                      <div className="border-t border-brand-navy mb-2 mt-16 w-full"></div>
                     )}
                     {isSigned && finalSignatureType !== 'govbr' && (
-                      <div className="border-t border-black w-full mb-2"></div>
+                      <div className="border-t border-brand-navy w-full mb-2"></div>
                     )}
-                    <p className="font-bold text-sm">EMISSOR</p>
+                    <p className="font-bold text-sm text-brand-navy">EMISSOR</p>
                     <p className="text-xs">{COMPANY_NAME}</p>
                     {isSigned && biometricData && (
                       <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold mt-1">
-                        <CheckCircle className="h-3 w-3" /> Assinado
+                        <CheckCircle className="h-3 w-3" /> Assinado Eletronicamente
                       </p>
                     )}
                   </div>
                   {!isTimbrado && (
                     <div className="w-full sm:w-1/2 px-4 flex flex-col items-center">
-                      <div className="border-t border-black mb-2 mt-16 w-full"></div>
-                      <p className="font-bold text-sm">CLIENTE / CONTRATANTE</p>
+                      <div className="border-t border-brand-navy mb-2 mt-16 w-full"></div>
+                      <p className="font-bold text-sm text-brand-navy">CLIENTE / CONTRATANTE</p>
                       <p className="text-xs">{data.clientName || 'Assinatura'}</p>
                     </div>
                   )}
@@ -641,7 +761,7 @@ export default function TemplateEditor() {
                     {siteImages.map((img, i) => (
                       <div
                         key={i}
-                        className="border-2 border-gray-200 p-2 h-64 flex items-center justify-center bg-gray-50 rounded shadow-sm break-inside-avoid"
+                        className="border-2 border-brand-light/20 p-2 h-64 flex items-center justify-center bg-gray-50 rounded shadow-sm break-inside-avoid"
                       >
                         <img
                           src={img}

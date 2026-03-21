@@ -122,6 +122,7 @@ export interface PGRDocument {
   gestaoTerceiros?: string
   monitoramento?: string
   encerramento?: string
+  validade?: string
   riscos: PGRRisk[]
   planoAcao?: PGRActionPlan[]
   adminSignature?: {
@@ -173,6 +174,7 @@ export interface TechnicalDocument {
   projectId: string
   isRestricted: boolean
   url: string
+  validade?: string
   attendanceList?: { id: string; name: string; cpf: string; signature?: string }[]
   evidencePhotos?: string[]
   compliance?: {
@@ -268,6 +270,7 @@ export interface CompanyAsset {
   id: string
   type: 'signature' | 'stamp'
   name: string
+  role?: string
   dataUrl: string
 }
 
@@ -599,9 +602,9 @@ export const saveEmployees = (items: Employee[]) => {
 }
 
 export const getCompanyAssets = (): CompanyAsset[] => {
-  const data = localStorage.getItem('jt_assets_v1')
+  const data = localStorage.getItem('jt_assets_v2')
   return data ? JSON.parse(data) : []
 }
 export const saveCompanyAssets = (items: CompanyAsset[]) => {
-  localStorage.setItem('jt_assets_v1', JSON.stringify(items))
+  localStorage.setItem('jt_assets_v2', JSON.stringify(items))
 }

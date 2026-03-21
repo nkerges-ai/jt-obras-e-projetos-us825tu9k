@@ -8,13 +8,9 @@ import { cn } from '@/lib/utils'
 import { useNetwork } from '@/hooks/use-network'
 
 import { ProjectsTab } from './components/ProjectsTab'
-import { DocumentsTab } from './components/DocumentsTab'
 import { TemplatesTab } from './components/TemplatesTab'
-import { LogsTab } from './components/LogsTab'
-import { AgendaTab } from './components/AgendaTab'
 import { TicketsTab } from './components/TicketsTab'
 import { InventoryTab } from './components/InventoryTab'
-import { InvoicesTab } from './components/InvoicesTab'
 import { LibraryTab } from './components/LibraryTab'
 import { ValidityAlertsTab } from './components/ValidityAlertsTab'
 import { B2BTab } from './components/B2BTab'
@@ -147,31 +143,49 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="projetos" className="w-full">
+      <Tabs defaultValue="cadastros" className="w-full">
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
-          <TabsTrigger
-            value="projetos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Projetos e Custos
-          </TabsTrigger>
           <TabsTrigger
             value="cadastros"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Cadastros
+            1. Cadastro de Clientes
+          </TabsTrigger>
+          <TabsTrigger
+            value="modelos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            2. Gerar Documentações
+          </TabsTrigger>
+          <TabsTrigger
+            value="acervo"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            3. Acervo Técnico
+          </TabsTrigger>
+          <TabsTrigger
+            value="ativos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            4. Galeria de Assinaturas
+          </TabsTrigger>
+          <TabsTrigger
+            value="projetos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Obras e Custos
+          </TabsTrigger>
+          <TabsTrigger
+            value="validade"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Alertas de Validade
           </TabsTrigger>
           <TabsTrigger
             value="vencimentos"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Vencimentos NRs
-          </TabsTrigger>
-          <TabsTrigger
-            value="ativos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Assinaturas Oficiais
           </TabsTrigger>
           <TabsTrigger
             value="estoque"
@@ -183,51 +197,42 @@ export default function AdminDashboard() {
             value="b2b"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            B2B - EPIs
-          </TabsTrigger>
-          <TabsTrigger
-            value="acervo"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Acervo Técnico
-          </TabsTrigger>
-          <TabsTrigger
-            value="modelos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Matrizes de Documentos
+            Locação (B2B)
           </TabsTrigger>
           <TabsTrigger
             value="chamados"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Chamados
+            Suporte
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="projetos">
-          <ProjectsTab key={`proj-${syncKey}`} />
-        </TabsContent>
         <TabsContent value="cadastros">
           <RegistrationsTab key={`cad-${syncKey}`} />
         </TabsContent>
-        <TabsContent value="vencimentos">
-          <TrainingExpirationsTab key={`ven-${syncKey}`} />
+        <TabsContent value="modelos">
+          <TemplatesTab />
+        </TabsContent>
+        <TabsContent value="acervo">
+          <LibraryTab key={`lib-${syncKey}`} />
         </TabsContent>
         <TabsContent value="ativos">
           <CompanyAssetsTab key={`ast-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="projetos">
+          <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="validade">
+          <ValidityAlertsTab key={`val-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="vencimentos">
+          <TrainingExpirationsTab key={`ven-${syncKey}`} />
         </TabsContent>
         <TabsContent value="estoque">
           <InventoryTab key={`inv-${syncKey}`} />
         </TabsContent>
         <TabsContent value="b2b">
           <B2BTab key={`b2b-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="acervo">
-          <LibraryTab key={`lib-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="modelos">
-          <TemplatesTab />
         </TabsContent>
         <TabsContent value="chamados">
           <TicketsTab key={`tck-${syncKey}`} />

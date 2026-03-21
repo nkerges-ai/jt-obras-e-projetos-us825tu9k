@@ -35,6 +35,8 @@ import {
   PenTool,
   MessageCircle,
   Copy,
+  Mail,
+  Search,
 } from 'lucide-react'
 import {
   getTechnicalDocuments,
@@ -59,6 +61,7 @@ import {
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
+import { EmailSenderDialog } from '@/components/EmailSenderDialog'
 
 export function LibraryTab() {
   const { toast } = useToast()
@@ -66,6 +69,8 @@ export function LibraryTab() {
   const [requests, setRequests] = useState<DocumentAccessRequest[]>([])
   const [projects, setProjects] = useState<Project[]>([])
   const [signatures, setSignatures] = useState<DocumentSignature[]>([])
+
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [newDoc, setNewDoc] = useState<Partial<TechnicalDocument>>({
@@ -78,6 +83,9 @@ export function LibraryTab() {
   const [isSignatureOpen, setIsSignatureOpen] = useState(false)
   const [sigTarget, setSigTarget] = useState<TechnicalDocument | null>(null)
   const [sigForm, setSigForm] = useState({ clientName: '', clientPhone: '' })
+
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
+  const [emailTarget, setEmailTarget] = useState<TechnicalDocument | null>(null)
 
   useEffect(() => {
     setDocs(getTechnicalDocuments())
@@ -155,6 +163,14 @@ export function LibraryTab() {
     return projects.find((p) => p.id === id)?.name || 'Desconhecido'
   }
 
+  const filteredDocs = docs.filter((doc) => {
+    const search = searchTerm.toLowerCase()
+    return (
+      doc.name.toLowerCase().includes(search) ||
+      getProjectName(doc.projectId).toLowerCase().includes(search)
+    )
+  })
+
   const smartTemplates = [
     {
       id: 'art',
@@ -184,18 +200,44 @@ export function LibraryTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {emailTarget && (
+        <EmailSenderDialog
+          open={isEmailOpen}
+          onOpenChange={(v) => {
+            setIsEmailOpen(v)
+            if (!v) setEmailTarget(null)
+          }}
+          documentName={emailTarget.name}
+        />
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
             <FolderOpen className="h-5 w-5 text-primary" /> Acervo Técnico Centralizado
           </h3>
           <p className="text-muted-foreground text-sm">
-            Gerencie documentos, modelos inteligentes e colete assinaturas.
+            Gerencie documentos, pesquise o histórico de clientes e colete assinaturas.
           </p>
         </div>
-        <Button onClick={() => setIsUploadOpen(true)} className="gap-2 font-bold">
-          <Upload className="h-4 w-4" /> Novo Arquivo
-        </Button>
+        <div className="flex w-full sm:w-auto items-center gap-2">
+          <Button
+            onClick={() => setIsUploadOpen(true)}
+            className="gap-2 font-bold w-full sm:w-auto"
+          >
+            <Upload className="h-4 w-4" /> Novo Arquivo
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-2">
+        <Search className="w-5 h-5 text-muted-foreground ml-2" />
+        <Input
+          placeholder="Pesquisar por nome do documento ou cliente/projeto..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border-none shadow-none focus-visible:ring-0 text-base"
+        />
       </div>
 
       <Tabs defaultValue="repository" className="w-full">
@@ -223,8 +265,9 @@ export function LibraryTab() {
         <TabsContent value="repository" className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Card className="shadow-sm border-none bg-white">
-              <CardHeader className="border-b pb-4">
+              <CardHeader className="border-b pb-4 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Documentos e Plantas</CardTitle>
+                {searchTerm && <Badge variant="secondary">{filteredDocs.length} resultados</Badge>}
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
@@ -237,14 +280,14 @@ export function LibraryTab() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {docs.length === 0 && (
+                    {filteredDocs.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                          Nenhum documento no acervo.
+                          Nenhum documento encontrado.
                         </TableCell>
                       </TableRow>
                     )}
-                    {docs.map((doc) => {
+                    {filteredDocs.map((doc) => {
                       const hasSig = signatures.find((s) => s.documentId === doc.id)
                       return (
                         <TableRow key={doc.id}>
@@ -266,30 +309,43 @@ export function LibraryTab() {
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
-                            {hasSig ? (
-                              <Badge
-                                variant="outline"
-                                className={
-                                  hasSig.status === 'Assinado'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }
-                              >
-                                {hasSig.status}
-                              </Badge>
-                            ) : (
+                            <div className="flex items-center justify-end gap-2">
                               <Button
                                 variant="ghost"
-                                size="sm"
-                                className="text-primary gap-1"
+                                size="icon"
                                 onClick={() => {
-                                  setSigTarget(doc)
-                                  setIsSignatureOpen(true)
+                                  setEmailTarget(doc)
+                                  setIsEmailOpen(true)
                                 }}
+                                title="Enviar por E-mail"
                               >
-                                Coletar Assinatura <PenTool className="h-3 w-3" />
+                                <Mail className="h-4 w-4 text-blue-600" />
                               </Button>
-                            )}
+                              {hasSig ? (
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    hasSig.status === 'Assinado'
+                                      ? 'bg-green-100 text-green-800'
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }
+                                >
+                                  {hasSig.status}
+                                </Badge>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-primary gap-1"
+                                  onClick={() => {
+                                    setSigTarget(doc)
+                                    setIsSignatureOpen(true)
+                                  }}
+                                >
+                                  Coletar Assinatura <PenTool className="h-3 w-3" />
+                                </Button>
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       )

@@ -83,6 +83,18 @@
   .bg-brand-navy {
     background-color: #0a2240;
   }
+  .border-brand-navy {
+    border-color: #0a2240;
+  }
+  .text-brand-light {
+    color: #3498db;
+  }
+  .bg-brand-light {
+    background-color: #3498db;
+  }
+  .border-brand-light {
+    border-color: #3498db;
+  }
   .text-brand-orange {
     color: #f97316;
   }
@@ -154,6 +166,22 @@
     padding: 0 !important;
   }
 
+  /* CRITICAL: KILL SKIP WATERMARKS AND BADGES FROM PRINT */
+  #skip-badge,
+  .skip-badge,
+  .skip-badge-container,
+  [id^='skip-'],
+  [class*='goskip'],
+  iframe[src*='goskip'] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    z-index: -9999 !important;
+  }
+
   .print\:hidden {
     display: none !important;
   }
@@ -198,6 +226,11 @@
     break-inside: avoid;
   }
 
+  .print-force-break-if-needed {
+    page-break-before: auto;
+    break-inside: avoid;
+  }
+
   .print-header-group {
     page-break-before: auto;
     page-break-inside: avoid;
@@ -217,6 +250,19 @@
   }
   .text-brand-navy {
     color: #0a2240 !important;
+  }
+  .border-brand-navy {
+    border-color: #0a2240 !important;
+  }
+  .bg-brand-light {
+    background-color: #3498db !important;
+    color: white !important;
+  }
+  .text-brand-light {
+    color: #3498db !important;
+  }
+  .border-brand-light {
+    border-color: #3498db !important;
   }
   .bg-brand-orange {
     background-color: #f97316 !important;

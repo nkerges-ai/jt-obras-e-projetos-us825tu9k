@@ -105,9 +105,12 @@ export function ValidityAlertsTab() {
     const exp = new Date(doc.expirationDate)
     const diff = Math.ceil((exp.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 
-    if (diff < 0) return { label: 'Vencido', color: 'bg-red-100 text-red-800 border-red-200' }
+    if (diff < 0) return { label: 'Expirado', color: 'bg-red-100 text-red-800 border-red-200' }
     if (diff <= doc.warningDays)
-      return { label: 'Atenção', color: 'bg-orange-100 text-orange-800 border-orange-200' }
+      return {
+        label: 'Vencendo em breve',
+        color: 'bg-orange-100 text-orange-800 border-orange-200',
+      }
     return { label: 'Válido', color: 'bg-green-100 text-green-800 border-green-200' }
   }
 

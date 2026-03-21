@@ -29,6 +29,7 @@ import {
   Building2,
   ChevronRight,
   ChevronLeft,
+  Mail,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -47,6 +48,7 @@ import {
 import { BiometricCapture } from '@/components/BiometricCapture'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
 import { WizardStepper } from '@/components/WizardStepper'
+import { EmailSenderDialog } from '@/components/EmailSenderDialog'
 
 const COMPANY = {
   name: 'JT OBRAS E MANUTENÇÕES LTDA',
@@ -189,6 +191,7 @@ export default function EngineeringTemplateEditor() {
   const [govbrLink, setGovbrLink] = useState('')
   const [tempSignature, setTempSignature] = useState<string | null>(null)
   const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
   const [adminSignature, setAdminSignature] = useState<TechnicalDocument['adminSignature']>()
 
@@ -603,6 +606,11 @@ export default function EngineeringTemplateEditor() {
         onCapture={finalizeAdminSignature}
         onCancel={() => setIsBiometricOpen(false)}
       />
+      <EmailSenderDialog
+        open={isEmailOpen}
+        onOpenChange={setIsEmailOpen}
+        documentName={`${config.title} - ${selectedProject?.name || 'Geral'}`}
+      />
 
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -647,10 +655,18 @@ export default function EngineeringTemplateEditor() {
                   </Button>
                 )}
                 <Button
+                  onClick={() => setIsEmailOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 hidden md:flex"
+                >
+                  <Mail className="h-4 w-4" /> Enviar por E-mail
+                </Button>
+                <Button
                   variant="outline"
                   size="sm"
                   onClick={handleSave}
-                  className="gap-2 hidden md:flex"
+                  className="gap-2 hidden md:flex border-brand-navy text-brand-navy hover:bg-brand-navy/5"
                 >
                   <Save className="h-4 w-4" /> Salvar Acervo
                 </Button>
