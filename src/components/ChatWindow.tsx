@@ -9,7 +9,7 @@ import {
 } from '@/lib/storage'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Send, Paperclip, X } from 'lucide-react'
+import { Send, Paperclip, X, Link2, File as FileIcon, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
@@ -19,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
 
 interface ChatWindowProps {
   projectId: string
@@ -32,6 +31,7 @@ export function ChatWindow({ projectId, currentUserType, projectName }: ChatWind
   const [newMessage, setNewMessage] = useState('')
   const [selectedContext, setSelectedContext] = useState<string>('')
   const scrollRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const project = getProjects().find((p) => p.id === projectId)
   const docs = getTechnicalDocuments().filter(
@@ -68,6 +68,30 @@ export function ChatWindow({ projectId, currentUserType, projectName }: ChatWind
       context: selectedContext || undefined,
     })
     setNewMessage('')
+    setSelectedContext('')
+  }
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string
+      addChatMessage({
+        projectId,
+        sender: currentUserType,
+        text: file.type.startsWith('image/') ? 'Imagem anexada' : 'Documento anexado',
+        context: selectedContext || undefined,
+        attachment: {
+          name: file.name,
+          type: file.type.startsWith('image/') ? 'image' : 'document',
+          dataUrl,
+        },
+      })
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
     setSelectedContext('')
   }
 
@@ -112,6 +136,43 @@ export function ChatWindow({ projectId, currentUserType, projectName }: ChatWind
                   )}
                 >
                   {msg.text}
+
+                  {msg.attachment && (
+                    <div className="mt-2 mb-1">
+                      {msg.attachment.type === 'image' ? (
+                        <a
+                          href={msg.attachment.dataUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block max-w-[200px] overflow-hidden rounded-lg border shadow-sm mt-1 hover:opacity-90 transition-opacity"
+                        >
+                          <img
+                            src={msg.attachment.dataUrl}
+                            alt={msg.attachment.name}
+                            className="w-full object-cover"
+                          />
+                        </a>
+                      ) : (
+                        <a
+                          href={msg.attachment.dataUrl}
+                          download={msg.attachment.name}
+                          className={cn(
+                            'flex items-center gap-2 p-2 rounded-lg transition-colors border',
+                            isMe
+                              ? 'bg-white/10 hover:bg-white/20 border-white/20 text-white'
+                              : 'bg-gray-50 hover:bg-gray-100 border-gray-200 text-brand-navy',
+                          )}
+                        >
+                          <FileIcon className="h-6 w-6 shrink-0" />
+                          <span className="text-xs font-medium truncate max-w-[150px]">
+                            {msg.attachment.name}
+                          </span>
+                          <Download className="h-4 w-4 ml-1 opacity-70 shrink-0" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+
                   <span
                     className={cn(
                       'block text-[10px] mt-1 opacity-70',
@@ -157,7 +218,7 @@ export function ChatWindow({ projectId, currentUserType, projectName }: ChatWind
                 className="rounded-full shrink-0 text-muted-foreground hover:text-brand-navy"
                 title="Vincular a uma fase ou documento"
               >
-                <Paperclip className="h-5 w-5" />
+                <Link2 className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
@@ -196,6 +257,24 @@ export function ChatWindow({ projectId, currentUserType, projectName }: ChatWind
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full shrink-0 text-muted-foreground hover:text-brand-navy"
+            title="Anexar arquivo (PDF, Imagens)"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Paperclip className="h-5 w-5" />
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*,.pdf,.doc,.docx"
+            onChange={handleFileUpload}
+          />
 
           <Input
             value={newMessage}

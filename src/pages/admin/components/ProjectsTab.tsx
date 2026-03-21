@@ -95,6 +95,30 @@ export function ProjectsTab() {
       status: 'Em orçamento',
     })
     toast({ title: 'Projeto Adicionado', description: 'Novo projeto incluído no painel.' })
+
+    // Simulate Push Notification
+    if ('Notification' in window) {
+      const showNotification = () => {
+        const notification = new Notification('Nova Obra Atribuída', {
+          body: `Equipe designada para a obra: ${proj.name}. Toque para abrir os detalhes.`,
+          icon: 'https://img.usecurling.com/i?q=building&color=orange&shape=fill',
+        })
+        notification.onclick = () => {
+          window.focus()
+          setSelectedProject(proj)
+        }
+      }
+
+      if (Notification.permission === 'granted') {
+        showNotification()
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            showNotification()
+          }
+        })
+      }
+    }
   }
 
   const getStatusColor = (status: ProjectStatus) => {

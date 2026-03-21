@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNetwork } from '@/hooks/use-network'
 import { getProjects } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
-import { Wifi, WifiOff, RefreshCw, CheckCircle2 } from 'lucide-react'
+import { WifiOff, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function SyncIndicator({ className }: { className?: string }) {
@@ -63,7 +63,7 @@ export function SyncIndicator({ className }: { className?: string }) {
   }
   return (
     <Badge className={cn('bg-emerald-500 hover:bg-emerald-600 gap-1 shadow-sm h-7', className)}>
-      <CheckCircle2 className="w-3 h-3" /> Sincronizado
+      <CheckCircle2 className="w-3 h-3" /> Dados Sincronizados
     </Badge>
   )
 }

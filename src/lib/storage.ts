@@ -289,6 +289,12 @@ export interface CompanyAsset {
   dataUrl: string
 }
 
+export interface ChatAttachment {
+  name: string
+  type: string
+  dataUrl: string
+}
+
 export interface ChatMessage {
   id: string
   projectId: string
@@ -297,6 +303,7 @@ export interface ChatMessage {
   timestamp: string
   read: boolean
   context?: string
+  attachment?: ChatAttachment
 }
 
 // Pre-filled Examples
