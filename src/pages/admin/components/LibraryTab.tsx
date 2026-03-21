@@ -32,6 +32,9 @@ import {
   FileSignature,
   AlertTriangle,
   Activity,
+  PenTool,
+  MessageCircle,
+  Copy,
 } from 'lucide-react'
 import {
   getTechnicalDocuments,
@@ -42,9 +45,18 @@ import {
   TechnicalDocument,
   DocumentAccessRequest,
   Project,
+  DocumentSignature,
+  getSignatures,
+  saveSignatures,
 } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
@@ -53,6 +65,8 @@ export function LibraryTab() {
   const [docs, setDocs] = useState<TechnicalDocument[]>([])
   const [requests, setRequests] = useState<DocumentAccessRequest[]>([])
   const [projects, setProjects] = useState<Project[]>([])
+  const [signatures, setSignatures] = useState<DocumentSignature[]>([])
+
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [newDoc, setNewDoc] = useState<Partial<TechnicalDocument>>({
     name: '',
@@ -61,10 +75,15 @@ export function LibraryTab() {
     isRestricted: false,
   })
 
+  const [isSignatureOpen, setIsSignatureOpen] = useState(false)
+  const [sigTarget, setSigTarget] = useState<TechnicalDocument | null>(null)
+  const [sigForm, setSigForm] = useState({ clientName: '', clientPhone: '' })
+
   useEffect(() => {
     setDocs(getTechnicalDocuments())
     setRequests(getAccessRequests())
     setProjects(getProjects())
+    setSignatures(getSignatures())
   }, [])
 
   const handleUpload = (e: React.FormEvent) => {
@@ -84,6 +103,29 @@ export function LibraryTab() {
     setIsUploadOpen(false)
     setNewDoc({ name: '', category: 'Plantas', projectId: 'global', isRestricted: false })
     toast({ title: 'Documento Adicionado', description: 'Acervo técnico atualizado.' })
+  }
+
+  const handleRequestSignature = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!sigTarget) return
+    const newSig: DocumentSignature = {
+      id: `sig_${Date.now()}`,
+      documentId: sigTarget.id,
+      documentName: sigTarget.name,
+      clientName: sigForm.clientName,
+      clientPhone: sigForm.clientPhone,
+      status: 'Pendente',
+      sentDate: new Date().toISOString(),
+    }
+    const updatedSigs = [newSig, ...signatures]
+    setSignatures(updatedSigs)
+    saveSignatures(updatedSigs)
+    setIsSignatureOpen(false)
+    setSigForm({ clientName: '', clientPhone: '' })
+    toast({
+      title: 'Solicitação Criada',
+      description: 'O link de assinatura está disponível no painel.',
+    })
   }
 
   const handleRequest = (reqId: string, status: 'Aprovado' | 'Negado') => {
@@ -128,42 +170,15 @@ export function LibraryTab() {
     },
     {
       id: 'pt',
-      title: 'PT',
-      desc: 'Permissão de Trabalho. Liberação para atividades específicas.',
+      title: 'PT (Permissão Trabalho)',
+      desc: 'Liberação para atividades específicas conforme NRs.',
       icon: Activity,
     },
     {
       id: 'arpt',
-      title: 'ARPT',
-      desc: 'Análise de Risco e PT. Avaliação detalhada antes da execução.',
+      title: 'ARPT (Análise Risco)',
+      desc: 'Análise detalhada de riscos antes da execução.',
       icon: AlertTriangle,
-    },
-  ]
-
-  const engModels = [
-    {
-      id: 1,
-      title: 'Planta Elétrica Padrão',
-      category: 'Elétrica',
-      img: 'https://img.usecurling.com/p/400/300?q=blueprint&color=blue',
-    },
-    {
-      id: 2,
-      title: 'Esquema Hidráulico Base',
-      category: 'Hidráulica',
-      img: 'https://img.usecurling.com/p/400/300?q=pipes&color=blue',
-    },
-    {
-      id: 3,
-      title: 'Layout de Canteiro',
-      category: 'Civil',
-      img: 'https://img.usecurling.com/p/400/300?q=construction%20plan&color=gray',
-    },
-    {
-      id: 4,
-      title: 'Reforço Estrutural Viga',
-      category: 'Estrutural',
-      img: 'https://img.usecurling.com/p/400/300?q=steel%20beams&color=gray',
     },
   ]
 
@@ -175,10 +190,10 @@ export function LibraryTab() {
             <FolderOpen className="h-5 w-5 text-primary" /> Acervo Técnico Centralizado
           </h3>
           <p className="text-muted-foreground text-sm">
-            Gerencie documentos, modelos inteligentes e desenhos técnicos.
+            Gerencie documentos, modelos inteligentes e colete assinaturas.
           </p>
         </div>
-        <Button onClick={() => setIsUploadOpen(true)} className="gap-2">
+        <Button onClick={() => setIsUploadOpen(true)} className="gap-2 font-bold">
           <Upload className="h-4 w-4" /> Novo Arquivo
         </Button>
       </div>
@@ -192,16 +207,16 @@ export function LibraryTab() {
             Repositório Principal
           </TabsTrigger>
           <TabsTrigger
+            value="signatures"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Assinaturas Digitais
+          </TabsTrigger>
+          <TabsTrigger
             value="smart-templates"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Modelos de Preenchimento Inteligente
-          </TabsTrigger>
-          <TabsTrigger
-            value="engineering-models"
-            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Modelos de Projetos
+            Gerar Documentos (NRs)
           </TabsTrigger>
         </TabsList>
 
@@ -217,8 +232,8 @@ export function LibraryTab() {
                     <TableRow>
                       <TableHead>Documento</TableHead>
                       <TableHead>Categoria</TableHead>
-                      <TableHead>Vinculação</TableHead>
                       <TableHead className="text-center">Liberar p/ Cliente</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -229,33 +244,56 @@ export function LibraryTab() {
                         </TableCell>
                       </TableRow>
                     )}
-                    {docs.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell className="font-medium flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-blue-500" /> {doc.name}
-                        </TableCell>
-                        <TableCell className="text-sm">{doc.category}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {getProjectName(doc.projectId)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <Switch
-                              checked={!doc.isRestricted}
-                              onCheckedChange={() => toggleRestriction(doc)}
-                            />
-                            <span
-                              className={cn(
-                                'text-xs font-medium w-[60px]',
-                                !doc.isRestricted ? 'text-green-600' : 'text-orange-600',
-                              )}
-                            >
-                              {!doc.isRestricted ? 'Liberado' : 'Restrito'}
-                            </span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {docs.map((doc) => {
+                      const hasSig = signatures.find((s) => s.documentId === doc.id)
+                      return (
+                        <TableRow key={doc.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-blue-500" /> {doc.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1 ml-6 font-normal">
+                              Ref: {getProjectName(doc.projectId)}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm">{doc.category}</TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <Switch
+                                checked={!doc.isRestricted}
+                                onCheckedChange={() => toggleRestriction(doc)}
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {hasSig ? (
+                              <Badge
+                                variant="outline"
+                                className={
+                                  hasSig.status === 'Assinado'
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }
+                              >
+                                {hasSig.status}
+                              </Badge>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-primary gap-1"
+                                onClick={() => {
+                                  setSigTarget(doc)
+                                  setIsSignatureOpen(true)
+                                }}
+                              >
+                                Coletar Assinatura <PenTool className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -320,6 +358,103 @@ export function LibraryTab() {
           </div>
         </TabsContent>
 
+        <TabsContent value="signatures">
+          <Card className="border-none shadow-sm bg-white">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg">Gestão de Assinaturas Digitais</CardTitle>
+              <CardDescription>
+                Acompanhe os documentos enviados para os clientes aprovarem e assinarem.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Documento</TableHead>
+                    <TableHead>Destinatário</TableHead>
+                    <TableHead>Data Envio</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {signatures.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                        Nenhuma assinatura solicitada ainda.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {signatures.map((sig) => {
+                    const link = `${window.location.origin}/assinatura/${sig.id}`
+                    return (
+                      <TableRow key={sig.id}>
+                        <TableCell className="font-medium">{sig.documentName}</TableCell>
+                        <TableCell>
+                          <div>{sig.clientName}</div>
+                          <div className="text-xs text-muted-foreground">{sig.clientPhone}</div>
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {new Date(sig.sentDate).toLocaleDateString('pt-BR')}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={
+                              sig.status === 'Assinado'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }
+                          >
+                            {sig.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {sig.status === 'Pendente' ? (
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                title="Copiar Link"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(link)
+                                  toast({ title: 'Link Copiado' })
+                                }}
+                              >
+                                <Copy className="h-4 w-4 text-gray-600" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                title="Enviar WhatsApp"
+                                onClick={() => {
+                                  const text = encodeURIComponent(
+                                    `Olá ${sig.clientName}, segue o link para assinatura do documento ${sig.documentName}: ${link}`,
+                                  )
+                                  window.open(
+                                    `https://wa.me/${sig.clientPhone.replace(/\D/g, '')}?text=${text}`,
+                                    '_blank',
+                                  )
+                                }}
+                              >
+                                <MessageCircle className="h-4 w-4 text-green-600" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-green-600 font-bold flex items-center justify-end gap-1">
+                              <CheckCircle className="h-3 w-3" /> Concluído
+                            </span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="smart-templates">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {smartTemplates.map((t) => {
@@ -347,46 +482,6 @@ export function LibraryTab() {
               )
             })}
           </div>
-        </TabsContent>
-
-        <TabsContent value="engineering-models">
-          <Card className="border-none shadow-sm bg-white">
-            <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg">Biblioteca de Modelos de Projetos</CardTitle>
-              <CardDescription>
-                Acesse desenhos técnicos, esquemas e layouts estruturais padronizados.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {engModels.map((model) => (
-                  <Card
-                    key={model.id}
-                    className="overflow-hidden border shadow-sm bg-white hover:shadow-md transition-shadow"
-                  >
-                    <div className="h-32 bg-secondary/50 overflow-hidden relative group">
-                      <img
-                        src={model.img}
-                        alt={model.title}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                      />
-                      <div className="absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded text-[10px] font-bold shadow-sm">
-                        {model.category}
-                      </div>
-                    </div>
-                    <CardContent className="p-4">
-                      <h4 className="font-bold text-sm text-brand-navy mb-1 line-clamp-1">
-                        {model.title}
-                      </h4>
-                      <Button variant="outline" size="sm" className="w-full text-xs h-8 mt-2">
-                        Visualizar Padrão
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
 
@@ -419,7 +514,7 @@ export function LibraryTab() {
                     <SelectItem value="Plantas">Plantas e Desenhos</SelectItem>
                     <SelectItem value="Manuais">Manuais Técnicos</SelectItem>
                     <SelectItem value="Laudos Técnicos">Laudos Técnicos</SelectItem>
-                    <SelectItem value="Modelos de Projeto">Modelos de Projeto</SelectItem>
+                    <SelectItem value="AVCB">AVCB / Bombeiros</SelectItem>
                     <SelectItem value="Outros">Outros</SelectItem>
                   </SelectContent>
                 </Select>
@@ -456,6 +551,41 @@ export function LibraryTab() {
             </div>
             <Button type="submit" className="w-full mt-4">
               Salvar no Acervo
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSignatureOpen} onOpenChange={setIsSignatureOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Solicitar Assinatura Digital</DialogTitle>
+            <DialogDescription>
+              Enviaremos um link seguro para o cliente assinar o documento{' '}
+              <strong>{sigTarget?.name}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label>Nome do Cliente / Responsável</Label>
+              <Input
+                required
+                value={sigForm.clientName}
+                onChange={(e) => setSigForm({ ...sigForm, clientName: e.target.value })}
+                placeholder="Ex: Carlos Silva"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Telefone (WhatsApp)</Label>
+              <Input
+                required
+                value={sigForm.clientPhone}
+                onChange={(e) => setSigForm({ ...sigForm, clientPhone: e.target.value })}
+                placeholder="Ex: 11 99999-9999"
+              />
+            </div>
+            <Button type="submit" className="w-full mt-2">
+              Gerar Link de Assinatura
             </Button>
           </form>
         </DialogContent>

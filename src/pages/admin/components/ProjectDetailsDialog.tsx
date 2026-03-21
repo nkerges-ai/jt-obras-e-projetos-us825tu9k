@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Project } from '@/lib/storage'
 import { ProjectCostsTab } from './ProjectCostsTab'
 import { ProjectGalleryTab } from './ProjectGalleryTab'
+import { ProjectGanttTab } from './ProjectGanttTab'
 
 interface ProjectDetailsDialogProps {
   project: Project | null
@@ -27,7 +28,7 @@ export function ProjectDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl h-[85vh] flex flex-col">
+      <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl text-brand-navy">{project.name}</DialogTitle>
           <DialogDescription>
@@ -37,13 +38,18 @@ export function ProjectDetailsDialog({
 
         <div className="flex-1 overflow-y-auto pr-2 mt-4">
           <Tabs defaultValue="custos" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 mb-4">
-              <TabsTrigger value="custos">Financeiro e Custos</TabsTrigger>
-              <TabsTrigger value="galeria">Galeria da Obra</TabsTrigger>
+            <TabsList className="w-full grid grid-cols-3 mb-4">
+              <TabsTrigger value="custos">Financeiro</TabsTrigger>
+              <TabsTrigger value="cronograma">Cronograma</TabsTrigger>
+              <TabsTrigger value="galeria">Galeria</TabsTrigger>
             </TabsList>
 
             <TabsContent value="custos" className="m-0">
               <ProjectCostsTab project={project} onUpdate={onUpdateProject} />
+            </TabsContent>
+
+            <TabsContent value="cronograma" className="m-0">
+              <ProjectGanttTab project={project} onUpdate={onUpdateProject} />
             </TabsContent>
 
             <TabsContent value="galeria" className="m-0">

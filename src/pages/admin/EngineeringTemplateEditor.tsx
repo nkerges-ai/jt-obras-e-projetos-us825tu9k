@@ -30,11 +30,98 @@ const COMPANY = {
   responsible: 'Joel Nascimento de Paula',
 }
 
-const TITLES: Record<string, string> = {
-  art: 'Anotação de Responsabilidade Técnica (ART)',
-  avcb: 'Auto de Vistoria do Corpo de Bombeiros (AVCB)',
-  pt: 'Permissão de Trabalho (PT)',
-  arpt: 'Análise de Risco e Permissão de Trabalho (ARPT)',
+interface TemplateField {
+  key: string
+  label: string
+  example: string
+  type?: 'textarea' | 'input'
+}
+
+const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
+  art: {
+    title: 'Anotação de Responsabilidade Técnica (ART)',
+    fields: [
+      {
+        key: 'funcao',
+        label: 'Atividade Técnica / Função',
+        example: 'Ex: Execução de Obra, Laudo Técnico Estrutural',
+      },
+      {
+        key: 'descricao',
+        label: 'Descrição Resumida do Serviço',
+        example: 'Ex: Reforma estrutural com reforço em sapatas...',
+        type: 'textarea',
+      },
+      { key: 'valor', label: 'Valor Declarado do Contrato (R$)', example: 'Ex: 45.000,00' },
+    ],
+  },
+  avcb: {
+    title: 'Auto de Vistoria do Corpo de Bombeiros (AVCB)',
+    fields: [
+      { key: 'processo', label: 'Número do Processo', example: 'Ex: 2024/98765-43' },
+      { key: 'area', label: 'Área Construída (m²)', example: 'Ex: 2.500' },
+      {
+        key: 'caracteristicas',
+        label: 'Características da Edificação',
+        example: 'Ex: Galpão logístico J-2, risco médio, hidrantes...',
+        type: 'textarea',
+      },
+    ],
+  },
+  pt: {
+    title: 'Permissão de Trabalho (PT - NR-01)',
+    fields: [
+      {
+        key: 'local',
+        label: 'Local Exato da Atividade',
+        example: 'Ex: Fachada Leste (Altura 15m)',
+      },
+      {
+        key: 'descricao',
+        label: 'Descrição da Atividade Específica',
+        example: 'Ex: Manutenção na fachada com uso de balancim...',
+        type: 'textarea',
+      },
+      {
+        key: 'riscos',
+        label: 'Riscos Potenciais Identificados',
+        example: 'Ex: Queda de nível, choque elétrico, queda de material',
+      },
+      {
+        key: 'epis',
+        label: 'EPIs / EPCs Obrigatórios',
+        example: 'Ex: Cinto paraquedista, talabarte Y, capacete, linha de vida',
+      },
+    ],
+  },
+  arpt: {
+    title: 'Análise de Risco e Permissão de Trabalho (ARPT)',
+    fields: [
+      {
+        key: 'tarefa',
+        label: 'Descrição da Tarefa Crítica',
+        example: 'Ex: Solda em tubulação de gás no subsolo',
+      },
+      {
+        key: 'passos',
+        label: 'Passos da Tarefa',
+        example: 'Ex: 1. Inspeção / 2. Isolamento / 3. Soldagem',
+        type: 'textarea',
+      },
+      {
+        key: 'riscos',
+        label: 'Riscos Potenciais',
+        example: 'Ex: Explosão, Intoxicação por gás, Incêndio',
+        type: 'textarea',
+      },
+      {
+        key: 'medidas',
+        label: 'Medidas de Controle Aplicadas',
+        example: 'Ex: Exaustor mecânico, medidor de gases, extintor CO2',
+        type: 'textarea',
+      },
+    ],
+  },
 }
 
 export default function EngineeringTemplateEditor() {
@@ -43,19 +130,16 @@ export default function EngineeringTemplateEditor() {
   const { toast } = useToast()
 
   const [projects, setProjects] = useState<Project[]>([])
-  const [data, setData] = useState({
-    projectId: '',
-    description: '',
-    field1: '',
-    field2: '',
-    isRestricted: true,
-  })
+  const [projectId, setProjectId] = useState('')
+  const [isRestricted, setIsRestricted] = useState(true)
+  const [formData, setFormData] = useState<Record<string, string>>({})
 
   useEffect(() => setProjects(getProjects()), [])
 
-  if (!type || !TITLES[type]) return <div className="p-8">Modelo não encontrado.</div>
+  if (!type || !TEMPLATES[type]) return <div className="p-8">Modelo não encontrado.</div>
 
-  const selectedProject = projects.find((p) => p.id === data.projectId)
+  const config = TEMPLATES[type]
+  const selectedProject = projects.find((p) => p.id === projectId)
 
   const handleSave = () => {
     if (!selectedProject) {
@@ -64,11 +148,11 @@ export default function EngineeringTemplateEditor() {
     }
     const doc: TechnicalDocument = {
       id: `doc_${Date.now()}`,
-      name: `${type.toUpperCase()} - ${selectedProject.name}`,
-      category: type.toUpperCase(),
+      name: `${config.title.split(' ')[0]} - ${selectedProject.name}`,
+      category: config.title.split(' ')[0],
       uploadDate: new Date().toISOString(),
       projectId: selectedProject.id,
-      isRestricted: data.isRestricted,
+      isRestricted: isRestricted,
       url: '#',
     }
     saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
@@ -79,50 +163,9 @@ export default function EngineeringTemplateEditor() {
     navigate('/admin')
   }
 
-  const getFields = () => {
-    switch (type) {
-      case 'art':
-        return {
-          descLabel: 'Descrição Resumida do Serviço',
-          descEx: 'Exemplo: Reforma estrutural com reforço em sapatas e impermeabilização...',
-          f1Label: 'Atividade Técnica / Função',
-          f1Ex: 'Exemplo: Execução de Obra, Laudo Técnico Estrutural',
-          f2Label: 'Valor Declarado do Contrato (R$)',
-          f2Ex: 'Exemplo: 45.000,00',
-        }
-      case 'avcb':
-        return {
-          descLabel: 'Características da Edificação',
-          descEx: 'Exemplo: Galpão logístico de classe J-2, risco médio, com hidrantes...',
-          f1Label: 'Número do Processo (Bombeiros)',
-          f1Ex: 'Exemplo: 2024/98765-43',
-          f2Label: 'Área Construída (m²)',
-          f2Ex: 'Exemplo: 2.500',
-        }
-      case 'pt':
-        return {
-          descLabel: 'Descrição da Atividade Específica',
-          descEx: 'Exemplo: Manutenção na fachada leste com uso de balancim elétrico...',
-          f1Label: 'Riscos Potenciais Identificados',
-          f1Ex: 'Exemplo: Queda de nível, choque elétrico, queda de materiais',
-          f2Label: 'EPIs e EPCs Obrigatórios',
-          f2Ex: 'Exemplo: Cinto tipo paraquedista, talabarte Y, capacete com jugular',
-        }
-      case 'arpt':
-        return {
-          descLabel: 'Descrição da Tarefa Crítica',
-          descEx: 'Exemplo: Solda em tubulação de gás no subsolo do edifício...',
-          f1Label: 'Passos da Tarefa e Análise de Risco',
-          f1Ex: 'Exemplo: 1. Inspeção (gases) / 2. Isolamento / 3. Soldagem / 4. Resfriamento',
-          f2Label: 'Medidas de Controle Aplicadas',
-          f2Ex: 'Exemplo: Medidor de gases contínuo, exaustor mecânico, extintor CO2',
-        }
-      default:
-        return null
-    }
+  const handleFieldChange = (key: string, val: string) => {
+    setFormData((prev) => ({ ...prev, [key]: val }))
   }
-
-  const fields = getFields()
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
@@ -135,7 +178,7 @@ export default function EngineeringTemplateEditor() {
               </Link>
             </Button>
             <h1 className="font-bold text-lg text-brand-navy hidden sm:block">
-              Preenchimento: {TITLES[type]}
+              Preenchimento: {config.title}
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -163,20 +206,17 @@ export default function EngineeringTemplateEditor() {
 
             <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-sm mb-4">
               <div className="flex items-center gap-2 text-blue-800 font-bold mb-2">
-                <Info className="h-4 w-4" /> Preenchimento Inteligente
+                <Info className="h-4 w-4" /> Preenchimento Inteligente (NRs)
               </div>
               <p className="text-blue-700/80 leading-relaxed">
-                Os dados da JT OBRAS E MANUTENÇÕES (Sede, CNPJ e Resp. Técnico) serão injetados
-                automaticamente no documento final.
+                Os dados da JT OBRAS E MANUTENÇÕES serão injetados automaticamente no documento.
+                Siga os exemplos para conformidade com normas regulamentadoras.
               </p>
             </div>
 
             <div className="space-y-2">
               <Label>Obra / Cliente Vinculado</Label>
-              <Select
-                value={data.projectId}
-                onValueChange={(v) => setData({ ...data, projectId: v })}
-              >
+              <Select value={projectId} onValueChange={setProjectId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione a obra..." />
                 </SelectTrigger>
@@ -190,41 +230,29 @@ export default function EngineeringTemplateEditor() {
               </Select>
             </div>
 
-            {fields && (
-              <>
-                <div className="space-y-2">
-                  <Label>{fields.f1Label}</Label>
-                  <Input
-                    value={data.field1}
-                    onChange={(e) => setData({ ...data, field1: e.target.value })}
-                  />
-                  <p className="text-[10px] text-muted-foreground">{fields.f1Ex}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>{fields.descLabel}</Label>
+            {config.fields.map((field) => (
+              <div key={field.key} className="space-y-2">
+                <Label>{field.label}</Label>
+                {field.type === 'textarea' ? (
                   <Textarea
                     className="min-h-[80px]"
-                    value={data.description}
-                    onChange={(e) => setData({ ...data, description: e.target.value })}
+                    value={formData[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    placeholder={field.example}
                   />
-                  <p className="text-[10px] text-muted-foreground">{fields.descEx}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>{fields.f2Label}</Label>
+                ) : (
                   <Input
-                    value={data.field2}
-                    onChange={(e) => setData({ ...data, field2: e.target.value })}
+                    value={formData[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    placeholder={field.example}
                   />
-                  <p className="text-[10px] text-muted-foreground">{fields.f2Ex}</p>
-                </div>
-              </>
-            )}
+                )}
+                <p className="text-[10px] text-muted-foreground">{field.example}</p>
+              </div>
+            ))}
 
             <div className="flex items-center space-x-3 pt-4 border-t mt-6">
-              <Switch
-                checked={!data.isRestricted}
-                onCheckedChange={(c) => setData({ ...data, isRestricted: !c })}
-              />
+              <Switch checked={!isRestricted} onCheckedChange={(c) => setIsRestricted(!c)} />
               <Label className="cursor-pointer text-sm font-semibold text-brand-navy">
                 Liberar para o Cliente <br />
                 <span className="text-xs text-muted-foreground font-normal">
@@ -249,7 +277,7 @@ export default function EngineeringTemplateEditor() {
             </div>
             <main className="px-[20mm] pb-[30mm] text-gray-800 text-[14px] leading-relaxed">
               <h2 className="text-center font-bold text-xl uppercase mb-8 tracking-widest text-brand-navy">
-                {TITLES[type]}
+                {config.title}
               </h2>
 
               <div className="border border-gray-400 rounded p-4 mb-6">
@@ -296,26 +324,15 @@ export default function EngineeringTemplateEditor() {
                   3. DETALHES TÉCNICOS E ESPECIFICAÇÕES
                 </h3>
                 <div className="space-y-4 text-[13px]">
-                  <p>
-                    <strong className="block mb-1">{fields?.f1Label}:</strong>
-                    <span className="whitespace-pre-wrap">
-                      {data.field1 || '____________________________________________________'}
-                    </span>
-                  </p>
-                  <p>
-                    <strong className="block mb-1">{fields?.descLabel}:</strong>
-                    <span className="whitespace-pre-wrap">
-                      {data.description || '____________________________________________________'}
-                    </span>
-                  </p>
-                  <p>
-                    <strong className="block mb-1">{fields?.f2Label}:</strong>
-                    <span className="whitespace-pre-wrap">
-                      {type === 'art' && data.field2
-                        ? `R$ ${data.field2}`
-                        : data.field2 || '____________________________________________________'}
-                    </span>
-                  </p>
+                  {config.fields.map((field) => (
+                    <p key={field.key}>
+                      <strong className="block mb-1">{field.label}:</strong>
+                      <span className="whitespace-pre-wrap block bg-gray-50/50 p-2 rounded border border-transparent">
+                        {formData[field.key] ||
+                          '____________________________________________________'}
+                      </span>
+                    </p>
+                  ))}
                 </div>
               </div>
 

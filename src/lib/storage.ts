@@ -18,6 +18,14 @@ export interface Photo {
   date: string
 }
 
+export interface ProjectPhase {
+  id: string
+  name: string
+  startDate: string
+  endDate: string
+  progress: number
+}
+
 export interface Project {
   id: string
   name: string
@@ -27,6 +35,7 @@ export interface Project {
   budget: number
   expenses: Expense[]
   photos: Photo[]
+  phases?: ProjectPhase[]
 }
 
 export interface CalendarEvent {
@@ -113,6 +122,26 @@ export interface DocumentAccessRequest {
   requestDate: string
 }
 
+export interface DocumentSignature {
+  id: string
+  documentId: string
+  documentName: string
+  clientName: string
+  clientPhone: string
+  status: 'Pendente' | 'Assinado' | 'Cancelado'
+  sentDate: string
+  signedDate?: string
+  signatureData?: string
+}
+
+export interface ValidityDocument {
+  id: string
+  name: string
+  category: string
+  expirationDate: string
+  warningDays: number
+}
+
 export const getProjects = (): Project[] => {
   const data = localStorage.getItem('jt_projects')
   return data ? JSON.parse(data) : []
@@ -189,4 +218,22 @@ export const getAccessRequests = (): DocumentAccessRequest[] => {
 
 export const saveAccessRequests = (reqs: DocumentAccessRequest[]) => {
   localStorage.setItem('jt_access_requests', JSON.stringify(reqs))
+}
+
+export const getSignatures = (): DocumentSignature[] => {
+  const data = localStorage.getItem('jt_signatures')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveSignatures = (sigs: DocumentSignature[]) => {
+  localStorage.setItem('jt_signatures', JSON.stringify(sigs))
+}
+
+export const getValidityDocs = (): ValidityDocument[] => {
+  const data = localStorage.getItem('jt_validities')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveValidityDocs = (docs: ValidityDocument[]) => {
+  localStorage.setItem('jt_validities', JSON.stringify(docs))
 }

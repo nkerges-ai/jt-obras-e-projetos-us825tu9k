@@ -14,6 +14,7 @@ import { TicketsTab } from './components/TicketsTab'
 import { InventoryTab } from './components/InventoryTab'
 import { InvoicesTab } from './components/InvoicesTab'
 import { LibraryTab } from './components/LibraryTab'
+import { ValidityAlertsTab } from './components/ValidityAlertsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
@@ -124,43 +125,49 @@ export default function AdminDashboard() {
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
           <TabsTrigger
             value="projetos"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Projetos e Custos
           </TabsTrigger>
           <TabsTrigger
             value="estoque"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Estoque
           </TabsTrigger>
           <TabsTrigger
             value="nfs"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Notas Fiscais
           </TabsTrigger>
           <TabsTrigger
             value="chamados"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Chamados
           </TabsTrigger>
           <TabsTrigger
             value="agenda"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Agenda Técnica
           </TabsTrigger>
           <TabsTrigger
             value="acervo"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Acervo Técnico
           </TabsTrigger>
           <TabsTrigger
+            value="alertas"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Validades e Alertas
+          </TabsTrigger>
+          <TabsTrigger
             value="modelos"
-            className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Gerar Modelos
           </TabsTrigger>
@@ -183,6 +190,9 @@ export default function AdminDashboard() {
         </TabsContent>
         <TabsContent value="acervo">
           <LibraryTab key={`lib-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="alertas">
+          <ValidityAlertsTab key={`val-${syncKey}`} />
         </TabsContent>
         <TabsContent value="modelos">
           <TemplatesTab />

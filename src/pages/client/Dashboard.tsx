@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   FolderOpen,
   Lock,
+  CalendarDays,
 } from 'lucide-react'
 import {
   getProjects,
@@ -31,6 +32,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
+import { GanttChart } from '@/components/GanttChart'
 
 export default function ClientDashboard() {
   const navigate = useNavigate()
@@ -113,7 +115,7 @@ export default function ClientDashboard() {
   const depois = project.photos.filter((p) => p.type === 'Depois')
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-5xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-6xl">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-brand-navy">
@@ -135,6 +137,12 @@ export default function ClientDashboard() {
             <ImageIcon className="h-4 w-4 mr-2" /> Resumo e Fotos
           </TabsTrigger>
           <TabsTrigger
+            value="cronograma"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <CalendarDays className="h-4 w-4 mr-2" /> Cronograma
+          </TabsTrigger>
+          <TabsTrigger
             value="acervo"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
@@ -144,7 +152,7 @@ export default function ClientDashboard() {
             value="chamados"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            <Headset className="h-4 w-4 mr-2" /> Chamados e Suporte
+            <Headset className="h-4 w-4 mr-2" /> Suporte
           </TabsTrigger>
         </TabsList>
 
@@ -215,6 +223,17 @@ export default function ClientDashboard() {
                   )}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cronograma">
+          <Card className="bg-white border-none shadow-sm">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg">Cronograma de Fases (Gantt)</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <GanttChart phases={project.phases || []} />
             </CardContent>
           </Card>
         </TabsContent>

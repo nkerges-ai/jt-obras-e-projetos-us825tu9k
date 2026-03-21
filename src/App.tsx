@@ -12,6 +12,7 @@ import TemplateEditor from './pages/admin/TemplateEditor'
 import OSNREditor from './pages/admin/OSNREditor'
 import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
+import PublicSignature from './pages/PublicSignature'
 import ClientLogin from './pages/client/Login'
 import ClientDashboard from './pages/client/Dashboard'
 import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
@@ -36,6 +37,7 @@ const App = () => (
         {/* Route without global layout for public gallery and printing views */}
         <Route path="/projeto/:id/galeria" element={<PublicGallery />} />
         <Route path="/admin/print/:type/:id" element={<PrintReport />} />
+        <Route path="/assinatura/:id" element={<PublicSignature />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>
