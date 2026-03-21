@@ -227,6 +227,13 @@ export default function PGREditor() {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+      <style>{`
+        @media print {
+          body { counter-reset: page-counter; }
+          .print-page-container { counter-increment: page-counter; }
+          .page-number::after { content: "Página " counter(page-counter); }
+        }
+      `}</style>
       <BiometricCapture
         open={isBiometricOpen}
         onCapture={finalizeAdminSignature}
@@ -330,10 +337,20 @@ export default function PGREditor() {
           {attachments.map((att, i) => (
             <div
               key={i}
-              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8"
+              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8 print:break-before-page print-page-container flex flex-col"
             >
               <h3 className="text-lg font-bold mb-4">Anexo de Evidência {i + 1}</h3>
-              <img src={att} className="max-w-full" alt="Anexo PGR" />
+              <div className="flex-1 flex items-center justify-center">
+                <img
+                  src={att}
+                  className="max-w-full max-h-[250mm] object-contain"
+                  alt="Anexo PGR"
+                />
+              </div>
+              <footer className="mt-auto pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
+                <span>JT OBRAS E MANUTENÇÕES LTDA</span>
+                <span className="print:block hidden page-number"></span>
+              </footer>
             </div>
           ))}
         </div>

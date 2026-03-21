@@ -80,15 +80,15 @@ export function TemplatesTab() {
               <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 text-primary">
                 <ClipboardCheck className="h-7 w-7" />
               </div>
-              <CardTitle className="text-xl lg:text-2xl">OS NR-01 (Simples)</CardTitle>
+              <CardTitle className="text-xl lg:text-2xl">OS NR-01 (Avançada)</CardTitle>
               <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
-                Documento rápido de Ordem de Serviço com declarações legais, campos para riscos e
-                medidas de controle em conformidade com as NRs.
+                Formulário completo de Ordem de Serviço com checklist de EPIs e EPCs, sincronizado
+                com o PGR.
               </CardDescription>
             </CardHeader>
             <CardContent className="mt-auto">
               <Button asChild className="w-full h-12 text-base font-bold">
-                <Link to="/admin/acervo/template/osnr01">Gerar OS Simples</Link>
+                <Link to="/admin/template/os-nr01">Acessar OS Avançada</Link>
               </Button>
             </CardContent>
           </Card>
@@ -98,33 +98,24 @@ export function TemplatesTab() {
               <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 text-primary">
                 <GraduationCap className="h-7 w-7" />
               </div>
-              <CardTitle className="text-xl lg:text-2xl">Certificado de Treinamento</CardTitle>
+              <CardTitle className="text-xl lg:text-2xl">Certificados (NRs)</CardTitle>
               <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
-                Gere certificados de integração com lista de presença, fotos de evidência e
-                validação de engajamento.
+                Gere certificados para treinamentos de normas regulamentadoras com lista de presença
+                e fotos.
               </CardDescription>
             </CardHeader>
-            <CardContent className="mt-auto">
-              <Button asChild className="w-full h-12 text-base font-bold">
-                <Link to="/admin/acervo/template/treinamento">Gerar Certificado</Link>
+            <CardContent className="mt-auto grid grid-cols-2 gap-2">
+              <Button asChild variant="outline" className="w-full text-xs font-bold h-10">
+                <Link to="/admin/acervo/template/nr35">NR-35 (Altura)</Link>
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-all border-primary/20 bg-white flex flex-col">
-            <CardHeader>
-              <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 text-primary">
-                <ClipboardCheck className="h-7 w-7" />
-              </div>
-              <CardTitle className="text-xl lg:text-2xl">OS NR-01 (Avançada)</CardTitle>
-              <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
-                Formulário completo de Ordem de Serviço com checklist de dezenas de EPIs e EPCs,
-                sincronizado com o PGR.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="mt-auto">
-              <Button asChild variant="secondary" className="w-full h-12 text-base font-bold">
-                <Link to="/admin/template/os-nr01">Acessar OS Avançada</Link>
+              <Button asChild variant="outline" className="w-full text-xs font-bold h-10">
+                <Link to="/admin/acervo/template/nr10">NR-10 (Elétrica)</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full text-xs font-bold h-10">
+                <Link to="/admin/acervo/template/nr06">NR-06 (EPI)</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full text-xs font-bold h-10">
+                <Link to="/admin/acervo/template/nr18">NR-18 (Civil)</Link>
               </Button>
             </CardContent>
           </Card>

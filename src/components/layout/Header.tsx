@@ -68,36 +68,46 @@ export function Header() {
           </button>
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="flex items-center gap-2 lg:gap-3">
+          {/* Acesso Administrativo - Always visible */}
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="text-brand-navy hover:text-brand-orange hover:bg-orange-50"
+            className="text-brand-navy hover:text-brand-orange hover:bg-orange-50 px-2 lg:px-3"
           >
-            <Link to="/admin/login">
-              <Lock className="h-4 w-4 mr-2" /> Acesso Administrativo
+            <Link to="/admin/login" title="Acesso Administrativo">
+              <Lock className="h-4 w-4 lg:mr-2" />
+              <span className="hidden lg:inline">Acesso Administrativo</span>
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild className="border-brand-navy text-brand-navy">
-            <Link to="/cliente/login">
-              <UserCircle className="h-4 w-4 mr-2" /> Área do Cliente
-            </Link>
-          </Button>
-          <Button size="sm" asChild className="bg-brand-orange hover:bg-brand-orange/90 gap-2">
-            <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
-              <Phone className="h-4 w-4" /> Solicitar Orçamento
-            </a>
-          </Button>
-        </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="lg:hidden p-2 text-brand-navy"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+          <div className="hidden lg:flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="border-brand-navy text-brand-navy"
+            >
+              <Link to="/cliente/login">
+                <UserCircle className="h-4 w-4 mr-2" /> Área do Cliente
+              </Link>
+            </Button>
+            <Button size="sm" asChild className="bg-brand-orange hover:bg-brand-orange/90 gap-2">
+              <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+                <Phone className="h-4 w-4" /> Solicitar Orçamento
+              </a>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="lg:hidden p-2 text-brand-navy ml-1"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -122,12 +132,6 @@ export function Header() {
             >
               Clientes
             </button>
-            <Link
-              to="/admin/login"
-              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"
-            >
-              <Lock className="h-4 w-4" /> Acesso Administrativo
-            </Link>
             <Link
               to="/cliente/login"
               className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"

@@ -6,8 +6,8 @@ import { CheckCircle } from 'lucide-react'
 export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
   return (
     <div className="flex-1 flex justify-center print:block print:w-full">
-      <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0">
-        <div className="p-[15mm] border border-gray-400 min-h-[297mm] flex flex-col print:border-gray-800 m-[5mm] print:m-0">
+      <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0 print-page-container flex flex-col">
+        <div className="p-[15mm] border border-gray-400 min-h-[297mm] flex flex-col flex-1 print:border-gray-800 m-[5mm] print:m-0">
           <header className="flex justify-between items-center border-b-2 border-brand-navy pb-4 mb-6">
             <img src={logo} className="h-12 object-contain" alt="JT Obras Logo" />
             <div className="text-right">
@@ -154,7 +154,7 @@ export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
           <footer className="mt-auto pt-3 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
             <span>JT OBRAS E MANUTENÇÕES LTDA - CNPJ: 63.243.791/0001-09</span>
             <span>Rua Tommaso Giordani, 371 vila Guacuri – SP</span>
-            <span className="print:block hidden">Página 1</span>
+            <span className="print:block hidden page-number"></span>
           </footer>
         </div>
       </div>

@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -18,16 +17,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   ArrowLeft,
   Printer,
   Save,
-  Info,
-  ShieldCheck,
-  Send,
   MessageCircle,
   PenTool,
   CheckCircle,
@@ -67,6 +63,27 @@ interface TemplateField {
   example: string
   type?: 'textarea' | 'input'
 }
+
+const TREINAMENTO_FIELDS: TemplateField[] = [
+  {
+    key: 'courseTitle',
+    label: 'Título do Treinamento',
+    example: 'Ex: NR-35 - Trabalho em Altura',
+  },
+  { key: 'date', label: 'Data de Realização', example: 'Ex: 15/10/2023' },
+  { key: 'duration', label: 'Carga Horária (Duração)', example: 'Ex: 8 horas' },
+  {
+    key: 'content',
+    label: 'Conteúdo Programático',
+    type: 'textarea',
+    example: 'Ex: Normas, uso de EPIs, procedimentos de resgate.',
+  },
+  {
+    key: 'instructor',
+    label: 'Identificação do Instrutor (Nome e CREA/MTE)',
+    example: 'Ex: João Silva - Téc. Segurança MTE 12345',
+  },
+]
 
 const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
   art: {
@@ -216,29 +233,21 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
       },
     ],
   },
-  treinamento: {
-    title: 'Certificado de Treinamento e Integração',
-    fields: [
-      {
-        key: 'courseTitle',
-        label: 'Título do Treinamento',
-        example: 'Ex: Integração de Segurança e Saúde no Trabalho',
-      },
-      { key: 'date', label: 'Data de Realização', example: 'Ex: 15/10/2023' },
-      { key: 'duration', label: 'Carga Horária (Duração)', example: 'Ex: 4 horas' },
-      {
-        key: 'content',
-        label: 'Conteúdo Programático',
-        type: 'textarea',
-        example:
-          'Ex: Normas Regulamentadoras, uso correto de EPIs, procedimentos em caso de emergência.',
-      },
-      {
-        key: 'instructor',
-        label: 'Identificação do Instrutor (CREA/MTE)',
-        example: 'Ex: João Silva - Téc. Segurança MTE 12345',
-      },
-    ],
+  nr35: {
+    title: 'Certificado de Treinamento NR-35 (Trabalho em Altura)',
+    fields: TREINAMENTO_FIELDS,
+  },
+  nr10: {
+    title: 'Certificado de Treinamento NR-10 (Segurança em Instalações Elétricas)',
+    fields: TREINAMENTO_FIELDS,
+  },
+  nr06: {
+    title: 'Certificado de Treinamento NR-06 (Equipamentos de Proteção Individual)',
+    fields: TREINAMENTO_FIELDS,
+  },
+  nr18: {
+    title: 'Certificado de Treinamento NR-18 (Segurança na Indústria da Construção)',
+    fields: TREINAMENTO_FIELDS,
   },
 }
 
@@ -248,32 +257,27 @@ export default function EngineeringTemplateEditor() {
   const { toast } = useToast()
 
   const [projects, setProjects] = useState<Project[]>([])
-  const [projectId, setProjectId] = useState('')
+  const [projectId, setProjectId] = useState('global')
   const [isRestricted, setIsRestricted] = useState(true)
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [profData, setProfData] = useState({ name: '', registry: '', document: '', role: '' })
   const [compliance, setCompliance] = useState({ esocial: '', receita: '' })
 
-  // Treinamento Evidence & Attendance
   const [attendanceList, setAttendanceList] = useState<{ id: string; name: string; cpf: string }[]>(
     [],
   )
   const [evidencePhotos, setEvidencePhotos] = useState<string[]>([])
   const photoRef = useRef<HTMLInputElement>(null)
 
-  // Attachments (Generic)
   const [attachments, setAttachments] = useState<string[]>([])
   const attachRef = useRef<HTMLInputElement>(null)
 
-  // Email
   const [isEmailOpen, setIsEmailOpen] = useState(false)
   const [emailTo, setEmailTo] = useState('')
 
-  // External Signature State
   const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
   const [signPhone, setSignPhone] = useState('')
 
-  // Internal/Admin Signature State
   const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
   const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
   const [uploadedSign, setUploadedSign] = useState<string | null>(null)
@@ -301,7 +305,7 @@ export default function EngineeringTemplateEditor() {
 
   if (!type || !TEMPLATES[type]) return <div className="p-8">Modelo não encontrado.</div>
   const config = TEMPLATES[type]
-  const isTraining = type === 'treinamento'
+  const isTraining = type.startsWith('nr') || type === 'treinamento'
   const selectedProject = projects.find((p) => p.id === projectId)
 
   const handleSave = () => {
@@ -394,7 +398,6 @@ export default function EngineeringTemplateEditor() {
     setIsReqSignDialogOpen(false)
   }
 
-  // Signature Canvas Logic
   const startDrawing = (e: any) => {
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
@@ -441,6 +444,13 @@ export default function EngineeringTemplateEditor() {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+      <style>{`
+        @media print {
+          body { counter-reset: page-counter; }
+          .print-page-container { counter-increment: page-counter; }
+          .page-number::after { content: "Página " counter(page-counter); }
+        }
+      `}</style>
       <BiometricCapture
         open={isBiometricOpen}
         onCapture={finalizeAdminSignature}
@@ -691,8 +701,8 @@ export default function EngineeringTemplateEditor() {
         </div>
 
         <div className="flex-1 flex flex-col justify-start print:block print:w-full">
-          <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0">
-            <div className="p-[15mm] border border-gray-400 min-h-[297mm] flex flex-col print:border-gray-800 m-[5mm] print:m-0">
+          <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0 print-page-container flex flex-col">
+            <div className="p-[15mm] border border-gray-400 min-h-[297mm] flex flex-col flex-1 print:border-gray-800 m-[5mm] print:m-0">
               <header className="border-b-2 border-brand-orange pb-6 mb-10 flex justify-between items-end">
                 <img src={logo} alt="JT Obras" className="h-16 md:h-20 object-contain" />
                 <div className="text-right text-[11px] text-gray-600 space-y-0.5">
@@ -704,7 +714,7 @@ export default function EngineeringTemplateEditor() {
 
               <main className="flex-1 text-[13px] leading-relaxed text-gray-800">
                 <h2 className="text-center font-bold text-xl uppercase mb-8 tracking-widest text-brand-navy">
-                  {config.title}
+                  {isTraining ? 'Ata de Treinamento e Integração' : config.title}
                 </h2>
                 <div className="border border-gray-400 rounded p-3 mb-4 bg-gray-50/50">
                   <p>
@@ -724,7 +734,7 @@ export default function EngineeringTemplateEditor() {
                     {config.fields.map((field) => (
                       <p key={field.key}>
                         <strong className="block mb-1">{field.label}:</strong>{' '}
-                        <span className="whitespace-pre-wrap block bg-white p-2 border border-gray-200 rounded">
+                        <span className="whitespace-pre-wrap block bg-white p-2 border border-gray-200 rounded min-h-[24px]">
                           {formData[field.key] || '---'}
                         </span>
                       </p>
@@ -774,62 +784,143 @@ export default function EngineeringTemplateEditor() {
                   {COMPANY.name} - CNPJ: {COMPANY.cnpj}
                 </span>
                 <span>{COMPANY.address}</span>
-                <span className="print:block hidden">Página 1</span>
+                <span className="print:block hidden page-number"></span>
               </footer>
             </div>
           </div>
 
           {/* Append Training Attendance List if applicable */}
           {isTraining && attendanceList.length > 0 && (
-            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8">
-              <h2 className="text-lg font-bold mb-4 text-center uppercase">Lista de Presença</h2>
-              <table className="w-full border-collapse border border-black text-[12px] text-center">
-                <thead>
-                  <tr className="bg-gray-200">
-                    <th className="border border-black p-2">Nº</th>
-                    <th className="border border-black p-2">Nome Completo</th>
-                    <th className="border border-black p-2">CPF</th>
-                    <th className="border border-black p-2">Assinatura</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendanceList.map((att, i) => (
-                    <tr key={att.id}>
-                      <td className="border border-black p-2">{i + 1}</td>
-                      <td className="border border-black p-2">{att.name}</td>
-                      <td className="border border-black p-2">{att.cpf}</td>
-                      <td className="border border-black p-2"></td>
+            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8 print:break-before-page print-page-container flex flex-col">
+              <header className="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
+                <img src={logo} className="h-10 object-contain" alt="JT Obras Logo" />
+                <h2 className="text-sm font-bold text-center uppercase text-brand-navy">
+                  Lista de Presença - {formData.courseTitle || config.title}
+                </h2>
+              </header>
+              <div className="flex-1">
+                <table className="w-full border-collapse border border-black text-[12px] text-center">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="border border-black p-2 w-10">Nº</th>
+                      <th className="border border-black p-2">Nome Completo</th>
+                      <th className="border border-black p-2 w-32">CPF</th>
+                      <th className="border border-black p-2 w-48">Assinatura</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {attendanceList.map((att, i) => (
+                      <tr key={att.id} className="h-12">
+                        <td className="border border-black p-2">{i + 1}</td>
+                        <td className="border border-black p-2 text-left pl-2">{att.name}</td>
+                        <td className="border border-black p-2">{att.cpf}</td>
+                        <td className="border border-black p-2"></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <footer className="mt-auto pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
+                <span>JT OBRAS E MANUTENÇÕES LTDA</span>
+                <span className="print:block hidden page-number"></span>
+              </footer>
             </div>
           )}
 
           {/* Append Evidence Photos */}
           {isTraining && evidencePhotos.length > 0 && (
-            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8">
-              <h2 className="text-lg font-bold mb-6 text-center uppercase">
-                Relatório Fotográfico (Evidências)
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8 print:break-before-page print-page-container flex flex-col">
+              <header className="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
+                <img src={logo} className="h-10 object-contain" alt="JT Obras Logo" />
+                <h2 className="text-sm font-bold text-center uppercase text-brand-navy">
+                  Relatório Fotográfico - Evidências
+                </h2>
+              </header>
+              <div className="flex-1 grid grid-cols-2 gap-4 content-start">
                 {evidencePhotos.map((photo, i) => (
-                  <div key={i} className="border border-gray-300 p-2">
-                    <img src={photo} alt="Evidência" className="w-full object-cover" />
+                  <div
+                    key={i}
+                    className="border border-gray-300 p-2 h-48 flex items-center justify-center bg-gray-50"
+                  >
+                    <img
+                      src={photo}
+                      alt="Evidência"
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                 ))}
               </div>
+              <footer className="mt-auto pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
+                <span>JT OBRAS E MANUTENÇÕES LTDA</span>
+                <span className="print:block hidden page-number"></span>
+              </footer>
             </div>
           )}
+
+          {/* Individual Certificates (Portrait A4) */}
+          {isTraining &&
+            attendanceList.length > 0 &&
+            attendanceList.map((att) => (
+              <div
+                key={`cert_${att.id}`}
+                className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto p-[15mm] border border-gray-400 mt-8 print:break-before-page print-page-container flex flex-col"
+              >
+                <div className="border-[8px] border-double border-brand-navy p-8 h-full flex-1 flex flex-col items-center justify-center text-center relative bg-slate-50/50">
+                  <div className="absolute top-8 text-center w-full">
+                    <img src={logo} className="h-16 object-contain mx-auto" alt="JT Obras Logo" />
+                  </div>
+                  <h1 className="text-3xl font-extrabold text-brand-navy mb-6 uppercase tracking-widest mt-24">
+                    Certificado
+                  </h1>
+                  <p className="text-base mb-6 text-gray-700">Certificamos que</p>
+                  <h2 className="text-2xl font-bold border-b-2 border-brand-orange pb-2 mb-6 w-full max-w-sm text-gray-900 mx-auto">
+                    {att.name || '___________________________'}
+                  </h2>
+                  <p className="text-sm mb-8 text-gray-600">
+                    Portador(a) do CPF <strong>{att.cpf || '___.___.___-__'}</strong>
+                  </p>
+                  <p className="text-base mb-12 leading-relaxed max-w-md text-gray-800 mx-auto">
+                    Concluiu com êxito o treinamento de <br />
+                    <strong className="text-lg text-brand-navy block mt-2">
+                      {formData.courseTitle || config.title}
+                    </strong>
+                    <br /> realizado em <strong>{formData.date || '__/__/____'}</strong>, com carga
+                    horária de <strong>{formData.duration || '___ horas'}</strong>, ministrado por{' '}
+                    <strong>{formData.instructor || '___________________'}</strong>.
+                  </p>
+
+                  <div className="w-full flex flex-col items-center gap-12 mt-auto pb-8">
+                    <div className="w-56 text-center">
+                      <div className="border-t border-black w-full mb-2"></div>
+                      <p className="font-bold text-sm">
+                        {formData.instructor || 'Instrutor Técnico'}
+                      </p>
+                      <p className="text-xs text-gray-500">Responsável pelo Treinamento</p>
+                    </div>
+                    <div className="w-56 text-center">
+                      <div className="border-t border-black w-full mb-2"></div>
+                      <p className="font-bold text-sm">{att.name}</p>
+                      <p className="text-xs text-gray-500">Participante</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
 
           {/* Append Generic Attachments */}
           {attachments.map((att, i) => (
             <div
               key={i}
-              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8"
+              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8 print:break-before-page print-page-container flex flex-col"
             >
               <h3 className="text-lg font-bold mb-4">Anexo {i + 1}</h3>
-              <img src={att} className="max-w-full" alt="Anexo" />
+              <div className="flex-1 flex items-center justify-center">
+                <img src={att} className="max-w-full max-h-[250mm] object-contain" alt="Anexo" />
+              </div>
+              <footer className="mt-auto pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
+                <span>JT OBRAS E MANUTENÇÕES LTDA</span>
+                <span className="print:block hidden page-number"></span>
+              </footer>
             </div>
           ))}
         </div>
@@ -854,6 +945,72 @@ export default function EngineeringTemplateEditor() {
               Enviar E-mail
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Assinatura do Documento</DialogTitle>
+          </DialogHeader>
+          <Tabs
+            value={signType}
+            onValueChange={(v) => setSignType(v as any)}
+            className="w-full pt-4"
+          >
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="draw" className="gap-1 text-xs">
+                <PenTool className="h-3 w-3" /> Desenhar
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="gap-1 text-xs">
+                <Upload className="h-3 w-3" /> Imagem
+              </TabsTrigger>
+              <TabsTrigger value="govbr" className="gap-1 text-xs">
+                <Fingerprint className="h-3 w-3" /> Gov.br
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="draw" className="space-y-4 mt-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
+                <canvas
+                  ref={canvasRef}
+                  width={400}
+                  height={200}
+                  className="w-full h-[200px] cursor-crosshair"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                />
+              </div>
+            </TabsContent>
+            <TabsContent value="upload" className="space-y-4 mt-4">
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (f) {
+                    const r = new FileReader()
+                    r.onload = (ev) => setUploadedSign(ev.target?.result as string)
+                    r.readAsDataURL(f)
+                  }
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="govbr" className="space-y-4 mt-4">
+              <Input
+                placeholder="Link de validação"
+                value={govbrLink}
+                onChange={(e) => setGovbrLink(e.target.value)}
+              />
+            </TabsContent>
+            <Button onClick={handleSaveAdminSignature} className="w-full mt-4">
+              Avançar para Validação
+            </Button>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
