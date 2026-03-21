@@ -90,9 +90,9 @@ export interface PGRRisk {
   atividade: string
   perigo: string
   dano: string
-  probabilidade?: 'Baixa' | 'Média' | 'Alta' | string
-  severidade?: 'Baixa' | 'Média' | 'Alta' | string
-  nivelRisco?: 'Baixo' | 'Médio' | 'Alto' | 'Crítico' | string
+  probabilidade?: string
+  severidade?: string
+  nivelRisco?: string
   medidas: string
 }
 
@@ -104,6 +104,7 @@ export interface PGRActionPlan {
   endDate?: string
   when?: string // Deprecated, kept for backward compatibility
   status: 'Pendente' | 'Em Andamento' | 'Concluído'
+  priority?: string
 }
 
 export interface PGRDocument {
@@ -112,7 +113,15 @@ export interface PGRDocument {
   date: string
   empresa: string
   cnpj: string
+  endereco?: string
+  diretorAdmin?: string
+  responsavelTecnico?: string
   elaborador: string
+  introducao?: string
+  escopo?: string
+  gestaoTerceiros?: string
+  monitoramento?: string
+  encerramento?: string
   riscos: PGRRisk[]
   planoAcao?: PGRActionPlan[]
   adminSignature?: {
@@ -292,74 +301,158 @@ const DEFAULT_EMPLOYEE: Employee = {
   ],
 }
 
-const EXAMPLE_PGR: PGRDocument = {
-  id: 'example_pgr_1',
+export const DEFAULT_PGR_TEMPLATE: Omit<PGRDocument, 'id'> = {
   projectId: 'global',
   date: new Date().toISOString(),
   empresa: 'JT Obras e Manutenções LTDA',
   cnpj: '63.243.791/0001-09',
-  elaborador: 'Engenharia de Segurança do Trabalho',
+  endereco: 'Rua Tommaso Giordani, 371',
+  diretorAdmin: 'Joel Nascimento de Paula',
+  responsavelTecnico: 'Eder Silva',
+  elaborador: 'Eder Silva (Técnico em Segurança do Trabalho - Reg. MTE 0116887/SP)',
+  introducao:
+    'Este Programa de Gerenciamento de Riscos (PGR) foi elaborado em conformidade com as diretrizes da Norma Regulamentadora nº 01 (NR-01) do Ministério do Trabalho e Previdência. Seu objetivo principal é estabelecer as medidas de prevenção necessárias para garantir a integridade física e a saúde dos trabalhadores envolvidos nas atividades executadas pela JT Obras e Manutenções Ltda.',
+  escopo:
+    'Este PGR aplica-se a todas as frentes de trabalho sob responsabilidade da JT Obras e Manutenções Ltda, englobando as atividades operacionais, de manutenção e serviços em geral realizados em instalações de clientes, bem como em suas próprias dependências.',
+  gestaoTerceiros:
+    'A JT Obras exige que todas as empresas contratadas e subcontratadas atuem em estrita conformidade com este PGR. Todos os terceiros devem apresentar seus respectivos PGRs e PCMSOs antes do início de qualquer atividade.',
+  monitoramento:
+    'Este PGR deve ser revisado anualmente, ou sempre que houver mudanças significativas no processo de trabalho, novos riscos identificados, acidentes ou doenças ocupacionais registradas, de forma a garantir a melhoria contínua da gestão de SST.',
+  encerramento:
+    'A liderança da JT Obras e Manutenções Ltda reafirma seu compromisso com a segurança e a saúde no trabalho, fornecendo os recursos necessários para a implementação das medidas descritas neste programa. Todos os colaboradores são orientados a seguir rigorosamente as regras estabelecidas.',
   riscos: [
     {
       id: 'r_1',
-      atividade: 'Trabalho em Altura (Fachada/Telhado)',
-      perigo: 'Queda de trabalhador com diferença de nível',
-      dano: 'Lesões graves, fraturas, óbito',
-      probabilidade: 'Média',
-      severidade: 'Alta',
-      nivelRisco: 'Alto',
+      atividade: 'Trabalho em Altura',
+      perigo: 'Queda de pessoas com diferença de nível',
+      dano: 'Fraturas, lesões múltiplas, óbito',
+      probabilidade: '2',
+      severidade: '5',
+      nivelRisco: 'Moderado', // Updated by logic later but prefilled
       medidas:
-        'Uso de Cinto tipo paraquedista com duplo talabarte ancorado em linha de vida independente. Treinamento NR-35. Emissão de PT.',
+        'Uso de cinto de segurança tipo paraquedista com duplo talabarte; Instalação e uso de linha de vida; Treinamento NR-35; Emissão de PT; Isolamento e sinalização da área.',
     },
     {
       id: 'r_2',
-      atividade: 'Manutenção em Painéis Elétricos',
-      perigo: 'Choque elétrico por contato direto/indireto',
+      atividade: 'Trabalho com Eletricidade',
+      perigo: 'Choque elétrico, arco elétrico',
       dano: 'Queimaduras, fibrilação ventricular, óbito',
-      probabilidade: 'Baixa',
-      severidade: 'Alta',
-      nivelRisco: 'Médio',
+      probabilidade: '2',
+      severidade: '5',
+      nivelRisco: 'Moderado',
       medidas:
-        'Desenergização e bloqueio (LOTO); Uso de EPI dielétrico adequado à classe de tensão; Autorização formal (NR-10).',
+        'Desenergização e bloqueio (LOTO); Uso de ferramentas isoladas e EPIs dielétricos (luvas, botinas); Treinamento NR-10; Emissão de PT.',
     },
     {
       id: 'r_3',
-      atividade: 'Obras Civis (Demolição/Alvenaria)',
-      perigo: 'Inalação de poeira mineral (Sílica) e Ruído',
-      dano: 'Doenças respiratórias e perda auditiva (PAIR)',
-      probabilidade: 'Alta',
-      severidade: 'Média',
-      nivelRisco: 'Alto',
+      atividade: 'Uso de Ferramentas Manuais/Rotativas',
+      perigo: 'Corte, perfuração, projeção de partículas',
+      dano: 'Lacerações, amputações, lesões oculares',
+      probabilidade: '3',
+      severidade: '3',
+      nivelRisco: 'Tolerável',
       medidas:
-        'Umidificação constante do local; Uso obrigatório de máscara PFF2/N95 e protetor auditivo tipo concha/plug; Revezamento.',
+        'Uso de luvas de proteção (raspa/vaqueta) e óculos de segurança; Inspeção prévia das ferramentas; Protetores em partes móveis.',
+    },
+    {
+      id: 'r_4',
+      atividade: 'Exposição a Ruído',
+      perigo: 'Ruído excessivo contínuo ou intermitente',
+      dano: 'Perda Auditiva Induzida por Ruído (PAIR)',
+      probabilidade: '4',
+      severidade: '2',
+      nivelRisco: 'Tolerável',
+      medidas: 'Uso obrigatório de protetor auditivo (concha ou plug); Revezamento de tarefas.',
+    },
+    {
+      id: 'r_5',
+      atividade: 'Geração de Poeira (Construção Civil)',
+      perigo: 'Inalação de poeira mineral (sílica)',
+      dano: 'Doenças respiratórias (silicose)',
+      probabilidade: '4',
+      severidade: '3',
+      nivelRisco: 'Moderado',
+      medidas:
+        'Umidificação do ambiente; Uso de respiradores PFF2; Ventilação natural ou exaustão mecânica.',
+    },
+    {
+      id: 'r_6',
+      atividade: 'Movimentação Manual de Cargas',
+      perigo: 'Esforço físico excessivo, postura inadequada',
+      dano: 'Dores musculares, lesões na coluna (Lombalgia)',
+      probabilidade: '4',
+      severidade: '2',
+      nivelRisco: 'Tolerável',
+      medidas:
+        'Treinamento de ergonomia; Uso de equipamentos de auxílio à carga (carrinhos); Divisão de peso em equipe.',
+    },
+    {
+      id: 'r_7',
+      atividade: 'Exposição Solar',
+      perigo: 'Radiação não ionizante (UV)',
+      dano: 'Queimaduras na pele, insolação, câncer de pele',
+      probabilidade: '5',
+      severidade: '2',
+      nivelRisco: 'Moderado',
+      medidas:
+        'Fornecimento de protetor solar; Roupas de manga longa e capacete com aba; Pausas em locais sombreados; Hidratação constante.',
     },
   ],
   planoAcao: [
     {
       id: 'pa_1',
-      what: 'Instalação de Linha de Vida Fixa (Mitigação Estrutural)',
-      who: 'Engenharia Estrutural',
-      startDate: new Date().toISOString(),
+      what: 'Treinamento NR-35 e NR-10 para novos colaboradores',
+      priority: 'Alta',
+      who: 'Eder Silva (TST)',
       endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
-      status: 'Em Andamento',
-    },
-    {
-      id: 'pa_2',
-      what: 'Treinamento e Reciclagem NR-10, NR-18 e NR-35',
-      who: 'Téc. de Segurança (SESMT)',
-      startDate: new Date().toISOString(),
-      endDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
       status: 'Pendente',
     },
     {
+      id: 'pa_2',
+      what: 'Inspeção e substituição de EPIs desgastados',
+      priority: 'Média',
+      who: 'Joel Nascimento (Admin)',
+      endDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+      status: 'Em Andamento',
+    },
+    {
       id: 'pa_3',
-      what: 'Fornecimento de novos EPIs específicos (Dielétricos e Altura)',
-      who: 'Departamento de Compras',
-      startDate: new Date().toISOString(),
+      what: 'Implementação de Permissão de Trabalho (PT) diária',
+      priority: 'Alta',
+      who: 'Encarregado da Obra',
       endDate: new Date().toISOString(),
       status: 'Concluído',
     },
+    {
+      id: 'pa_4',
+      what: 'Elaboração de OS Específicas',
+      priority: 'Média',
+      who: 'Eder Silva (TST)',
+      endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(),
+      status: 'Pendente',
+    },
+    {
+      id: 'pa_5',
+      what: 'Inspeções de segurança semanais nas frentes de obra',
+      priority: 'Alta',
+      who: 'Eder Silva (TST)',
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 12)).toISOString(),
+      status: 'Em Andamento',
+    },
+    {
+      id: 'pa_6',
+      what: 'Fornecimento contínuo de água potável e protetor solar',
+      priority: 'Alta',
+      who: 'Joel Nascimento (Admin)',
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 12)).toISOString(),
+      status: 'Concluído',
+    },
   ],
+}
+
+const EXAMPLE_PGR: PGRDocument = {
+  id: 'example_pgr_1',
+  ...DEFAULT_PGR_TEMPLATE,
 }
 
 const EXAMPLE_OS: ServiceOrder = {
@@ -451,10 +544,9 @@ export const saveInventory = (inventory: Material[]) => {
 }
 
 export const getPGRs = (): PGRDocument[] => {
-  const data = localStorage.getItem('jt_pgr_v5')
+  const data = localStorage.getItem('jt_pgr_v6')
   if (!data) {
-    // Migration logic or initial seeding
-    const oldData = localStorage.getItem('jt_pgr_v4')
+    const oldData = localStorage.getItem('jt_pgr_v5')
     if (oldData) {
       const parsed = JSON.parse(oldData)
       savePGRs(parsed)
@@ -466,7 +558,7 @@ export const getPGRs = (): PGRDocument[] => {
   return JSON.parse(data)
 }
 export const savePGRs = (pgrs: PGRDocument[]) => {
-  localStorage.setItem('jt_pgr_v5', JSON.stringify(pgrs))
+  localStorage.setItem('jt_pgr_v6', JSON.stringify(pgrs))
 }
 
 export const getServiceOrders = (): ServiceOrder[] => {

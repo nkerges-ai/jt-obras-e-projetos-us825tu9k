@@ -29,6 +29,7 @@ import {
   Project,
   BiometricValidation,
   getCompanyAssets,
+  DEFAULT_PGR_TEMPLATE,
 } from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 import { PGRForm } from './components/PGRForm'
@@ -38,17 +39,13 @@ export default function PGREditor() {
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  const [data, setData] = useState<Partial<PGRDocument>>({
-    projectId: '',
-    date: new Date().toISOString(),
-    empresa: '',
-    cnpj: '',
-    elaborador: 'JT Obras (Téc. Segurança)',
-    riscos: [],
+  const [data, setData] = useState<Partial<PGRDocument>>(() => {
+    const existing = getPGRs()
+    if (existing.length > 0) return existing[0]
+    return { ...DEFAULT_PGR_TEMPLATE, id: `pgr_${Date.now()}` }
   })
+
   const [projects, setProjects] = useState<Project[]>([])
-  const [attachments, setAttachments] = useState<string[]>([])
-  const attachRef = useRef<HTMLInputElement>(null)
 
   const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
   const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
@@ -164,7 +161,7 @@ export default function PGREditor() {
               </Link>
             </Button>
             <h1 className="font-bold text-lg text-brand-navy truncate hidden md:block">
-              Gestão de PGR (NR-01)
+              Editor de PGR (NR-01)
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
@@ -208,7 +205,7 @@ export default function PGREditor() {
               size="sm"
               className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
             >
-              <Printer className="h-4 w-4" /> Imprimir
+              <Printer className="h-4 w-4" /> Imprimir Documento
             </Button>
           </div>
         </div>
