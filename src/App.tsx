@@ -14,6 +14,7 @@ import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
 import ClientLogin from './pages/client/Login'
 import ClientDashboard from './pages/client/Dashboard'
+import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/template/os-nr01" element={<OSNREditor />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
+          <Route path="/admin/acervo/template/:type" element={<EngineeringTemplateEditor />} />
           <Route path="/cliente/login" element={<ClientLogin />} />
           <Route path="/cliente/dashboard" element={<ClientDashboard />} />
         </Route>
