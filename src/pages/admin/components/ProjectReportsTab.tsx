@@ -5,7 +5,16 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Project, ConstructionReport, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
-import { MessageCircle, Upload, Plus, Trash2, Calendar, CheckCircle2 } from 'lucide-react'
+import {
+  MessageCircle,
+  Upload,
+  Plus,
+  Trash2,
+  Calendar,
+  CheckCircle2,
+  RefreshCw,
+} from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 interface ProjectReportsTabProps {
   project: Project
@@ -61,9 +70,12 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
       progress: Number(newReport.progress) || 0,
       summary: newReport.summary,
       photos: newReport.photos || [],
+      syncStatus: navigator.onLine ? 'synced' : 'pending',
     }
 
     onUpdate({ ...project, reports: [report, ...(project.reports || [])] })
+    window.dispatchEvent(new Event('jt_reports_updated'))
+
     setNewReport({
       date: new Date().toISOString().split('T')[0],
       progress: report.progress,
@@ -78,6 +90,7 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
 
   const handleDeleteReport = (id: string) => {
     onUpdate({ ...project, reports: (project.reports || []).filter((r) => r.id !== id) })
+    window.dispatchEvent(new Event('jt_reports_updated'))
     toast({ title: 'Relatório Removido', description: 'O relatório foi apagado do histórico.' })
   }
 
@@ -200,10 +213,15 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
-                        <h5 className="font-bold text-base text-brand-navy">
+                        <h5 className="font-bold text-base text-brand-navy flex items-center gap-2">
                           Relatório de {new Date(report.date).toLocaleDateString('pt-BR')}
+                          {report.syncStatus === 'pending' && (
+                            <Badge className="bg-amber-500 hover:bg-amber-600 text-black text-[9px] h-5 px-1.5 shadow-none gap-1">
+                              <RefreshCw className="h-2.5 w-2.5" /> Pendente
+                            </Badge>
+                          )}
                         </h5>
-                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 mt-1 inline-block">
                           Progresso: {report.progress}%
                         </span>
                       </div>

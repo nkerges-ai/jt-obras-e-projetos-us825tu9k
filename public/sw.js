@@ -1,6 +1,6 @@
 // Service Worker Minimal Setup for PWA and Offline Cache
-const CACHE_NAME = 'jt-obras-cache-v1'
-const urlsToCache = ['/', '/admin', '/index.html']
+const CACHE_NAME = 'jt-obras-cache-v2'
+const urlsToCache = ['/', '/admin', '/campo', '/cliente/login', '/cliente/dashboard', '/index.html']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

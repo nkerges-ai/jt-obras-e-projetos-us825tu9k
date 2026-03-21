@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LogOut, Cloud, RefreshCw, Smartphone, Info, Wifi, WifiOff } from 'lucide-react'
@@ -17,7 +17,10 @@ import { B2BTab } from './components/B2BTab'
 import { RegistrationsTab } from './components/RegistrationsTab'
 import { TrainingExpirationsTab } from './components/TrainingExpirationsTab'
 import { CompanyAssetsTab } from './components/CompanyAssetsTab'
+import { AdminChatTab } from './components/AdminChatTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { getChatMessages } from '@/lib/storage'
+import { Badge } from '@/components/ui/badge'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -26,6 +29,7 @@ export default function AdminDashboard() {
   const [isSyncing, setIsSyncing] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [syncKey, setSyncKey] = useState(0)
+  const [unreadAdmin, setUnreadAdmin] = useState(0)
 
   const isAuth = sessionStorage.getItem('admin_auth') === 'true'
 
@@ -35,7 +39,18 @@ export default function AdminDashboard() {
       setDeferredPrompt(e)
     }
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    const updateAdminUnread = () => {
+      const msgs = getChatMessages()
+      setUnreadAdmin(msgs.filter((m) => m.sender === 'client' && !m.read).length)
+    }
+    updateAdminUnread()
+    window.addEventListener('jt_chats_updated', updateAdminUnread)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('jt_chats_updated', updateAdminUnread)
+    }
   }, [])
 
   if (!isAuth) return <Navigate to="/admin/login" />
@@ -99,6 +114,9 @@ export default function AdminDashboard() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <Button asChild variant="outline" className="gap-2 border-brand-navy text-brand-navy">
+            <Link to="/campo">App de Campo (Mobile)</Link>
+          </Button>
           <div
             className={cn(
               'flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border shadow-sm',
@@ -143,37 +161,48 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="cadastros" className="w-full">
+      <Tabs defaultValue="projetos" className="w-full">
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
-          <TabsTrigger
-            value="cadastros"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            1. Cadastro de Clientes
-          </TabsTrigger>
-          <TabsTrigger
-            value="modelos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            2. Gerar Documentações
-          </TabsTrigger>
-          <TabsTrigger
-            value="acervo"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            3. Acervo Técnico
-          </TabsTrigger>
-          <TabsTrigger
-            value="ativos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            4. Galeria de Assinaturas
-          </TabsTrigger>
           <TabsTrigger
             value="projetos"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Obras e Custos
+          </TabsTrigger>
+          <TabsTrigger
+            value="mensagens"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Atendimento (Chat)
+            {unreadAdmin > 0 && (
+              <Badge className="ml-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] px-1.5 py-0 border-none shadow-none">
+                {unreadAdmin}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger
+            value="cadastros"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Cadastros
+          </TabsTrigger>
+          <TabsTrigger
+            value="modelos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Gerar Documentações
+          </TabsTrigger>
+          <TabsTrigger
+            value="acervo"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Acervo Técnico
+          </TabsTrigger>
+          <TabsTrigger
+            value="ativos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Galeria de Assinaturas
           </TabsTrigger>
           <TabsTrigger
             value="validade"
@@ -207,6 +236,12 @@ export default function AdminDashboard() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="projetos">
+          <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="mensagens">
+          <AdminChatTab />
+        </TabsContent>
         <TabsContent value="cadastros">
           <RegistrationsTab key={`cad-${syncKey}`} />
         </TabsContent>
@@ -218,9 +253,6 @@ export default function AdminDashboard() {
         </TabsContent>
         <TabsContent value="ativos">
           <CompanyAssetsTab key={`ast-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="projetos">
-          <ProjectsTab key={`proj-${syncKey}`} />
         </TabsContent>
         <TabsContent value="validade">
           <ValidityAlertsTab key={`val-${syncKey}`} />

@@ -32,6 +32,7 @@ export interface ConstructionReport {
   progress: number
   summary: string
   photos: string[]
+  syncStatus?: 'pending' | 'synced'
 }
 
 export interface Project {
@@ -111,7 +112,7 @@ export interface PGRActionPlan {
   who: string
   startDate?: string
   endDate?: string
-  when?: string // Deprecated, kept for backward compatibility
+  when?: string // Deprecated
   status: 'Pendente' | 'Em Andamento' | 'Concluído'
   priority?: string
 }
@@ -283,6 +284,16 @@ export interface CompanyAsset {
   name: string
   role?: string
   dataUrl: string
+}
+
+export interface ChatMessage {
+  id: string
+  projectId: string
+  sender: 'admin' | 'client'
+  text: string
+  timestamp: string
+  read: boolean
+  context?: string
 }
 
 // Pre-filled Examples
@@ -619,4 +630,41 @@ export const getCompanyAssets = (): CompanyAsset[] => {
 }
 export const saveCompanyAssets = (items: CompanyAsset[]) => {
   localStorage.setItem('jt_assets_v2', JSON.stringify(items))
+}
+
+export const getChatMessages = (): ChatMessage[] => {
+  const data = localStorage.getItem('jt_chats_v1')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveChatMessages = (messages: ChatMessage[]) => {
+  localStorage.setItem('jt_chats_v1', JSON.stringify(messages))
+  window.dispatchEvent(new Event('jt_chats_updated'))
+}
+
+export const addChatMessage = (msg: Omit<ChatMessage, 'id' | 'timestamp' | 'read'>) => {
+  const messages = getChatMessages()
+  const newMsg: ChatMessage = {
+    ...msg,
+    id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    timestamp: new Date().toISOString(),
+    read: false,
+  }
+  saveChatMessages([...messages, newMsg])
+  return newMsg
+}
+
+export const markMessagesAsRead = (projectId: string, reader: 'admin' | 'client') => {
+  const messages = getChatMessages()
+  let changed = false
+  const updated = messages.map((m) => {
+    if (m.projectId === projectId && m.sender !== reader && !m.read) {
+      changed = true
+      return { ...m, read: true }
+    }
+    return m
+  })
+  if (changed) {
+    saveChatMessages(updated)
+  }
 }

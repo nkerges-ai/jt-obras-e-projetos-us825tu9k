@@ -16,6 +16,7 @@ import {
   CalendarDays,
   BriefcaseBusiness,
   ClipboardList,
+  MessageSquare,
 } from 'lucide-react'
 import {
   getProjects,
@@ -29,6 +30,7 @@ import {
   getRentalRequests,
   saveRentalRequests,
   getSignatures,
+  getChatMessages,
   Project,
   Ticket,
   TechnicalDocument,
@@ -44,6 +46,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { GanttChart } from '@/components/GanttChart'
+import { ChatWindow } from '@/components/ChatWindow'
 
 export default function ClientDashboard() {
   const navigate = useNavigate()
@@ -62,6 +65,8 @@ export default function ClientDashboard() {
 
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
   const [newTicketDesc, setNewTicketDesc] = useState('')
+
+  const [unreadClient, setUnreadClient] = useState(0)
 
   useEffect(() => {
     if (projectId) {
@@ -82,6 +87,16 @@ export default function ClientDashboard() {
       setPpes(getPpe())
       setEquipments(getEquipment())
       setClientRentals(getRentalRequests().filter((r) => r.projectId === projectId))
+
+      const updateUnread = () => {
+        const msgs = getChatMessages()
+        setUnreadClient(
+          msgs.filter((m) => m.projectId === projectId && m.sender === 'admin' && !m.read).length,
+        )
+      }
+      updateUnread()
+      window.addEventListener('jt_chats_updated', updateUnread)
+      return () => window.removeEventListener('jt_chats_updated', updateUnread)
     }
   }, [projectId])
 
@@ -202,6 +217,17 @@ export default function ClientDashboard() {
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             <BriefcaseBusiness className="h-4 w-4 mr-2" /> Locação / EPIs
+          </TabsTrigger>
+          <TabsTrigger
+            value="mensagens"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <MessageSquare className="h-4 w-4 mr-2" /> Mensagens
+            {unreadClient > 0 && (
+              <Badge className="ml-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] px-1.5 py-0 border-none shadow-none">
+                {unreadClient}
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger
             value="chamados"
@@ -553,6 +579,16 @@ export default function ClientDashboard() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="mensagens">
+          <div className="max-w-3xl mx-auto">
+            <ChatWindow
+              projectId={project.id}
+              currentUserType="client"
+              projectName={project.name}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="chamados">

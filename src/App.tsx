@@ -17,9 +17,12 @@ import PublicSignature from './pages/PublicSignature'
 import ClientLogin from './pages/client/Login'
 import ClientDashboard from './pages/client/Dashboard'
 import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
+import FieldApp from './pages/FieldApp'
+import { SyncManager } from './components/SyncManager'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
+    <SyncManager />
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -36,7 +39,8 @@ const App = () => (
           <Route path="/cliente/login" element={<ClientLogin />} />
           <Route path="/cliente/dashboard" element={<ClientDashboard />} />
         </Route>
-        {/* Route without global layout for public gallery and printing views */}
+        {/* Route without global layout for public gallery, field app and printing views */}
+        <Route path="/campo" element={<FieldApp />} />
         <Route path="/projeto/:id/galeria" element={<PublicGallery />} />
         <Route path="/admin/print/:type/:id" element={<PrintReport />} />
         <Route path="/assinatura/:id" element={<PublicSignature />} />
