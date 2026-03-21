@@ -15,28 +15,17 @@ import {
 import {
   ArrowLeft,
   Printer,
-  Mail,
-  MessageCircle,
   PenTool,
   CheckCircle,
   Upload,
   Fingerprint,
-  Link2,
   Stamp,
   Building2,
+  Trash2,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
-import {
-  addLog,
-  BiometricValidation,
-  saveSignatures,
-  getSignatures,
-  DocumentSignature,
-  getCompanyAssets,
-  getContractors,
-  Contractor,
-} from '@/lib/storage'
+import { BiometricValidation, getCompanyAssets, getContractors, Contractor } from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 import {
   Select,
@@ -52,12 +41,6 @@ export default function TemplateEditor() {
 
   const [contractors, setContractors] = useState<Contractor[]>([])
 
-  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
-  const [emailData, setEmailData] = useState({ to: '', subject: '' })
-
-  const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
-  const [reqSignPhone, setReqSignPhone] = useState('')
-
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
   const [signatureDate, setSignatureDate] = useState<string | null>(null)
@@ -70,13 +53,12 @@ export default function TemplateEditor() {
 
   const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
   const [uploadedSign, setUploadedSign] = useState<string | null>(null)
-  const [govbrLink, setGovbrLink] = useState('')
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
-  const [attachments, setAttachments] = useState<string[]>([])
-  const attachRef = useRef<HTMLInputElement>(null)
+  const [siteImages, setSiteImages] = useState<string[]>([])
+  const siteImagesRef = useRef<HTMLInputElement>(null)
 
   const isAuth = sessionStorage.getItem('admin_auth') === 'true'
 
@@ -178,6 +160,20 @@ export default function TemplateEditor() {
     setIsSigned(true)
     setIsBiometricOpen(false)
     toast({ title: 'Documento Assinado' })
+  }
+
+  const handleSiteImagesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = (ev) => {
+          setSiteImages((prev) => [...prev, ev.target?.result as string])
+        }
+        reader.readAsDataURL(file)
+      })
+      toast({ title: 'Fotos Anexadas', description: 'Imagens do local prontas para o documento.' })
+    }
   }
 
   return (
@@ -356,7 +352,7 @@ export default function TemplateEditor() {
                 onChange={(e) => setData({ ...data, description: e.target.value })}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 border-b border-gray-100 pb-4">
               <div className="space-y-2">
                 <Label>Valor Total (R$)</Label>
                 <Input
@@ -373,6 +369,50 @@ export default function TemplateEditor() {
                   onChange={(e) => setData({ ...data, date: e.target.value })}
                 />
               </div>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <Label className="font-bold text-brand-navy flex items-center gap-2">
+                Imagens de Referência
+              </Label>
+              <input
+                type="file"
+                ref={siteImagesRef}
+                className="hidden"
+                accept="image/png, image/jpeg, image/jpg"
+                multiple
+                onChange={handleSiteImagesUpload}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-dashed"
+                onClick={() => siteImagesRef.current?.click()}
+                disabled={isSigned}
+              >
+                <Upload className="h-4 w-4 mr-2" /> Anexar Imagens Fotográficas
+              </Button>
+              {siteImages.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto py-2">
+                  {siteImages.map((img, i) => (
+                    <div key={i} className="relative w-16 h-16 shrink-0 group">
+                      <img
+                        src={img}
+                        alt="Anexo"
+                        className="w-full h-full object-cover rounded border"
+                      />
+                      {!isSigned && (
+                        <button
+                          onClick={() => setSiteImages(siteImages.filter((_, idx) => idx !== i))}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -482,11 +522,33 @@ export default function TemplateEditor() {
                     </div>
                   </div>
                 </div>
+
+                {siteImages.length > 0 && (
+                  <div className="mt-16 print:break-before-page pt-8 border-t-2 border-gray-200">
+                    <h3 className="font-bold text-lg mb-6 text-brand-navy uppercase text-center tracking-widest">
+                      Imagens de Referência
+                    </h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      {siteImages.map((img, i) => (
+                        <div
+                          key={i}
+                          className="border border-gray-300 p-2 h-64 flex items-center justify-center bg-gray-50 rounded break-inside-avoid"
+                        >
+                          <img
+                            src={img}
+                            className="max-w-full max-h-full object-contain"
+                            alt={`Anexo ${i + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </main>
               <footer className="mt-8 pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
                 <span>JT OBRAS E MANUTENÇÕES LTDA - CNPJ: 63.243.791/0001-09</span>
                 <span>(11) 94003-7545</span>
-                <span className="print:block hidden">Página 1</span>
+                <span className="print:block hidden">Impresso via Sistema</span>
               </footer>
             </div>
           </div>

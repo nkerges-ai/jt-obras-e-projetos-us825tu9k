@@ -24,14 +24,11 @@ import {
   ArrowLeft,
   Printer,
   Save,
-  MessageCircle,
   PenTool,
   CheckCircle,
   Upload,
   Fingerprint,
   Trash2,
-  Mail,
-  Link2,
   Plus,
   Stamp,
   Users,
@@ -45,11 +42,7 @@ import {
   saveTechnicalDocuments,
   getTechnicalDocuments,
   TechnicalDocument,
-  DocumentSignature,
-  saveSignatures,
-  getSignatures,
   BiometricValidation,
-  addLog,
   getEmployees,
   Employee,
   getCompanyAssets,
@@ -179,9 +172,11 @@ export default function EngineeringTemplateEditor() {
   const [contractors, setContractors] = useState<Contractor[]>([])
 
   const [projectId, setProjectId] = useState('global')
+  const [contractorId, setContractorId] = useState<string>('none')
+  const [employeeId, setEmployeeId] = useState<string>('none')
+
   const [isRestricted, setIsRestricted] = useState(true)
   const [formData, setFormData] = useState<Record<string, string>>({})
-  const [profData, setProfData] = useState({ name: '', document: '', role: '' })
 
   const [attendanceList, setAttendanceList] = useState<
     { id: string; name: string; cpf: string; signature?: string }[]
@@ -238,6 +233,8 @@ export default function EngineeringTemplateEditor() {
   const config = TEMPLATES[type]
   const isTraining = type.startsWith('nr') || type === 'treinamento'
   const selectedProject = projects.find((p) => p.id === projectId)
+  const selectedContractor = contractors.find((c) => c.id === contractorId)
+  const selectedEmployee = employees.find((e) => e.id === employeeId)
 
   const handleSave = () => {
     const doc: TechnicalDocument = {
@@ -311,11 +308,6 @@ export default function EngineeringTemplateEditor() {
     setAttendanceList(attendanceList.map((a) => (a.id === id ? { ...a, [field]: val } : a)))
   const removeAttendee = (id: string) =>
     setAttendanceList(attendanceList.filter((a) => a.id !== id))
-
-  const handlePreFillProf = (id: string) => {
-    const emp = employees.find((e) => e.id === id)
-    if (emp) setProfData({ name: emp.name, document: emp.cpf, role: emp.role })
-  }
 
   // Draw Admin
   const startDrawing = (e: any) => {
@@ -496,51 +488,44 @@ export default function EngineeringTemplateEditor() {
               </Select>
             </div>
 
-            {!isTraining && (
-              <div className="space-y-4 pt-4 border-t mt-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-brand-navy">Dados do Signatário</h3>
-                </div>
-                <div className="space-y-2 pb-2 border-b border-gray-100">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" /> Autopreencher com Colaborador
-                  </Label>
-                  <Select onValueChange={handlePreFillProf}>
-                    <SelectTrigger className="h-8 text-xs bg-white">
-                      <SelectValue placeholder="Selecionar Colaborador..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {employees.map((e) => (
-                        <SelectItem key={e.id} value={e.id}>
-                          {e.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Nome Completo</Label>
-                  <Input
-                    value={profData.name}
-                    onChange={(e) => setProfData({ ...profData, name: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Registro / CPF</Label>
-                  <Input
-                    value={profData.document}
-                    onChange={(e) => setProfData({ ...profData, document: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Cargo / Função</Label>
-                  <Input
-                    value={profData.role}
-                    onChange={(e) => setProfData({ ...profData, role: e.target.value })}
-                  />
-                </div>
-              </div>
-            )}
+            <div className="space-y-2 pt-2">
+              <Label className="flex items-center gap-1">
+                <Building2 className="h-3 w-3 text-muted-foreground" /> Contratante (Base de Dados)
+              </Label>
+              <Select value={contractorId} onValueChange={setContractorId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o contratante..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Não especificado</SelectItem>
+                  {contractors.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <Label className="flex items-center gap-1">
+                <Users className="h-3 w-3 text-muted-foreground" /> Parceiro / Contratada (Base de
+                Dados)
+              </Label>
+              <Select value={employeeId} onValueChange={setEmployeeId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o parceiro..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Não especificado</SelectItem>
+                  {employees.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="space-y-4 pt-4 border-t mt-4">
               <h3 className="font-bold text-brand-navy">Detalhes da Execução</h3>
@@ -689,10 +674,20 @@ export default function EngineeringTemplateEditor() {
                 <h2 className="text-center font-bold text-xl uppercase mb-8 tracking-widest text-brand-navy">
                   {isTraining ? 'Ata de Treinamento e Integração' : config.title}
                 </h2>
-                <div className="border border-gray-400 rounded p-3 mb-4 bg-gray-50/50">
+                <div className="border border-gray-400 rounded p-3 mb-4 bg-gray-50/50 space-y-1">
                   <p>
                     <strong>Obra / Projeto:</strong>{' '}
                     {selectedProject?.name || '___________________________'}
+                  </p>
+                  <p>
+                    <strong>Contratante:</strong>{' '}
+                    {selectedContractor?.name || '___________________________'}
+                    {selectedContractor?.cnpj ? ` - CNPJ/CPF: ${selectedContractor.cnpj}` : ''}
+                  </p>
+                  <p>
+                    <strong>Contratada / Parceiro Técnico:</strong>{' '}
+                    {selectedEmployee?.name || '___________________________'}
+                    {selectedEmployee?.cpf ? ` - Registro: ${selectedEmployee.cpf}` : ''}
                   </p>
                   <p>
                     <strong>Data de Emissão:</strong> {new Date().toLocaleDateString('pt-BR')}
@@ -745,7 +740,9 @@ export default function EngineeringTemplateEditor() {
                     </div>
                     <div className="w-1/2 flex flex-col items-center">
                       <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
-                      <p className="font-bold text-xs">{profData.name || 'Assinatura'}</p>
+                      <p className="font-bold text-xs">
+                        {selectedContractor?.name || 'Assinatura'}
+                      </p>
                       <p className="text-[10px] text-gray-500 uppercase">Recebedor / Cliente</p>
                     </div>
                   </div>

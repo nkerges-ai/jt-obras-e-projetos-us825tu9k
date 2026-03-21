@@ -195,7 +195,7 @@ export default function AdminDashboard() {
             value="modelos"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Gerar Modelos
+            Matrizes de Documentos
           </TabsTrigger>
           <TabsTrigger
             value="chamados"

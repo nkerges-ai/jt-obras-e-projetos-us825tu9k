@@ -27,6 +27,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Plus, Trash2, Building2, Users } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -40,6 +50,11 @@ export function RegistrationsTab() {
 
   const [newContractor, setNewContractor] = useState<Partial<Contractor>>({})
   const [newEmployee, setNewEmployee] = useState<Partial<Employee>>({ nrs: [] })
+
+  const [deleteItem, setDeleteItem] = useState<{
+    id: string
+    type: 'contractor' | 'employee'
+  } | null>(null)
 
   useEffect(() => {
     setContractors(getContractors())
@@ -67,7 +82,23 @@ export function RegistrationsTab() {
     saveEmployees(updated)
     setIsEmployeeOpen(false)
     setNewEmployee({ nrs: [] })
-    toast({ title: 'Colaborador Salvo', description: 'Cadastro e treinamentos atualizados.' })
+    toast({ title: 'Parceiro Salvo', description: 'Cadastro e treinamentos atualizados.' })
+  }
+
+  const handleConfirmDelete = () => {
+    if (!deleteItem) return
+    if (deleteItem.type === 'contractor') {
+      const updated = contractors.filter((c) => c.id !== deleteItem.id)
+      setContractors(updated)
+      saveContractors(updated)
+      toast({ title: 'Empresa Excluída', description: 'O cadastro foi removido com sucesso.' })
+    } else {
+      const updated = employees.filter((e) => e.id !== deleteItem.id)
+      setEmployees(updated)
+      saveEmployees(updated)
+      toast({ title: 'Parceiro Excluído', description: 'O cadastro foi removido com sucesso.' })
+    }
+    setDeleteItem(null)
   }
 
   return (
@@ -77,8 +108,7 @@ export function RegistrationsTab() {
           <Building2 className="h-5 w-5 text-primary" /> Base de Cadastros Centralizada
         </h3>
         <p className="text-muted-foreground text-sm">
-          Gerencie informações de clientes e colaboradores para preenchimento automático de OS e
-          NRs.
+          Gerencie informações de clientes e parceiros para preenchimento automático de OS e NRs.
         </p>
       </div>
 
@@ -88,7 +118,7 @@ export function RegistrationsTab() {
             <Building2 className="h-4 w-4" /> Contratantes
           </TabsTrigger>
           <TabsTrigger value="employees" className="gap-2">
-            <Users className="h-4 w-4" /> Colaboradores
+            <Users className="h-4 w-4" /> Parceiros / Colaboradores
           </TabsTrigger>
         </TabsList>
 
@@ -106,12 +136,13 @@ export function RegistrationsTab() {
                   <TableHead>CNPJ / CPF</TableHead>
                   <TableHead>Endereço</TableHead>
                   <TableHead>Responsável</TableHead>
+                  <TableHead className="text-right w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {contractors.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
                       Nenhum contratante cadastrado.
                     </TableCell>
                   </TableRow>
@@ -122,6 +153,17 @@ export function RegistrationsTab() {
                     <TableCell>{c.cnpj}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{c.address}</TableCell>
                     <TableCell>{c.contact}</TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8"
+                        onClick={() => setDeleteItem({ id: c.id, type: 'contractor' })}
+                        title="Excluir cadastro"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -132,7 +174,7 @@ export function RegistrationsTab() {
         <TabsContent value="employees">
           <div className="flex justify-end mb-4">
             <Button onClick={() => setIsEmployeeOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" /> Novo Colaborador
+              <Plus className="h-4 w-4" /> Novo Parceiro / Colaborador
             </Button>
           </div>
           <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
@@ -144,13 +186,14 @@ export function RegistrationsTab() {
                   <TableHead>Função</TableHead>
                   <TableHead>Data de Admissão</TableHead>
                   <TableHead>Treinamentos (NRs)</TableHead>
+                  <TableHead className="text-right w-[100px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {employees.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                      Nenhum colaborador cadastrado.
+                    <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                      Nenhum parceiro ou colaborador cadastrado.
                     </TableCell>
                   </TableRow>
                 )}
@@ -162,6 +205,17 @@ export function RegistrationsTab() {
                     <TableCell>{new Date(e.hireDate).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {e.nrs.length > 0 ? e.nrs.map((n) => n.nr).join(', ') : 'Nenhum'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8"
+                        onClick={() => setDeleteItem({ id: e.id, type: 'employee' })}
+                        title="Excluir parceiro"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -221,7 +275,7 @@ export function RegistrationsTab() {
       <Dialog open={isEmployeeOpen} onOpenChange={setIsEmployeeOpen}>
         <DialogContent className="max-w-md max-h-screen overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Novo Colaborador</DialogTitle>
+            <DialogTitle>Novo Parceiro / Colaborador</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSaveEmployee} className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -242,7 +296,7 @@ export function RegistrationsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Data de Admissão</Label>
+                <Label>Data de Admissão / Início</Label>
                 <Input
                   type="date"
                   required
@@ -336,6 +390,27 @@ export function RegistrationsTab() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja excluir este cadastro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O registro será permanentemente removido da base de
+              dados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
