@@ -128,8 +128,18 @@
 
 @media print {
   @page {
-    margin: 0;
+    margin: 15mm;
     size: A4;
+    @bottom-right {
+      content: 'Página ' counter(page) ' de ' counter(pages);
+      font-size: 9pt;
+      color: #666;
+    }
+    @bottom-left {
+      content: 'JT OBRAS E MANUTENÇÕES LTDA';
+      font-size: 9pt;
+      color: #666;
+    }
   }
   body {
     -webkit-print-color-adjust: exact !important;
@@ -156,5 +166,8 @@
   }
   .print\:bg-white {
     background-color: white !important;
+  }
+  .print\:border-gray-800 {
+    border-color: #1f2937 !important;
   }
 }

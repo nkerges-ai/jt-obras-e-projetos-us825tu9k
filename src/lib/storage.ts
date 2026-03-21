@@ -93,6 +93,14 @@ export interface PGRRisk {
   medidas: string
 }
 
+export interface PGRActionPlan {
+  id: string
+  what: string
+  who: string
+  when: string
+  status: 'Pendente' | 'Em Andamento' | 'Concluído'
+}
+
 export interface PGRDocument {
   id: string
   projectId: string
@@ -101,6 +109,7 @@ export interface PGRDocument {
   cnpj: string
   elaborador: string
   riscos: PGRRisk[]
+  planoAcao?: PGRActionPlan[]
   adminSignature?: {
     type: 'draw' | 'upload' | 'govbr'
     data?: string

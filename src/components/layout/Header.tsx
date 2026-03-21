@@ -76,7 +76,7 @@ export function Header() {
             className="text-brand-navy hover:text-brand-orange hover:bg-orange-50"
           >
             <Link to="/admin/login">
-              <Lock className="h-4 w-4 mr-2" /> Administrativo
+              <Lock className="h-4 w-4 mr-2" /> Acesso Administrativo
             </Link>
           </Button>
           <Button variant="outline" size="sm" asChild className="border-brand-navy text-brand-navy">

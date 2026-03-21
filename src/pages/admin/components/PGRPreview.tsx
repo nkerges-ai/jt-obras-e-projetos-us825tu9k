@@ -15,7 +15,7 @@ export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
                 PROGRAMA DE GERENCIAMENTO DE RISCOS
               </h1>
               <p className="font-semibold text-sm mt-1 text-gray-600">
-                Norma Regulamentadora 01 (NR-01)
+                Gestão de Segurança Interna - JT Obras (Contratada)
               </p>
             </div>
           </header>
@@ -79,16 +79,48 @@ export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
               )}
             </div>
 
+            {data.planoAcao && data.planoAcao.length > 0 && (
+              <div className="mb-6">
+                <h2 className="font-bold text-[13px] uppercase bg-brand-navy text-white px-2 py-1 mb-3">
+                  3. Plano de Ação (Gestão de Riscos)
+                </h2>
+                <table className="w-full border-collapse border border-gray-400 text-left text-[11px]">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="border border-gray-400 p-1.5 w-2/5">Ação a ser executada</th>
+                      <th className="border border-gray-400 p-1.5 w-1/5">Responsável</th>
+                      <th className="border border-gray-400 p-1.5 w-1/5">Prazo</th>
+                      <th className="border border-gray-400 p-1.5 w-1/5">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.planoAcao.map((p) => (
+                      <tr key={p.id}>
+                        <td className="border border-gray-400 p-1.5 align-top">{p.what}</td>
+                        <td className="border border-gray-400 p-1.5 align-top">{p.who}</td>
+                        <td className="border border-gray-400 p-1.5 align-top">
+                          {p.when ? new Date(p.when).toLocaleDateString('pt-BR') : '--'}
+                        </td>
+                        <td className="border border-gray-400 p-1.5 align-top font-semibold">
+                          {p.status}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             <div className="mt-8 border border-gray-300 rounded p-3 text-justify text-[11px]">
               <p>
                 As informações contidas neste Programa de Gerenciamento de Riscos (PGR) foram
-                elaboradas com base nas condições observadas e informadas para a presente obra. O
-                cumprimento das medidas preventivas descritas na matriz de riscos é obrigatório para
-                a liberação de Ordens de Serviço (OS) e emissão de Permissões de Trabalho.
+                elaboradas para a gestão interna da JT Obras e Manutenções LTDA. O cumprimento das
+                medidas descritas na matriz e no plano de ação é obrigatório para a liberação de
+                Ordens de Serviço (OS) e emissão de Permissões de Trabalho nas frentes de serviço.
               </p>
             </div>
 
-            <div className="mt-16 text-center w-64 mx-auto flex flex-col items-center">
+            <div className="mt-16 text-center w-64 mx-auto flex flex-col items-center break-inside-avoid">
               {data.adminSignature?.type === 'govbr' ? (
                 <div className="flex flex-col items-center justify-center h-12 mb-2 text-center">
                   <span className="text-[10px] font-bold text-blue-800 border border-blue-800 px-2 py-1 rounded bg-blue-50">
@@ -110,7 +142,7 @@ export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
                 <div className="border-t border-black w-full mx-auto mb-2"></div>
               )}
               <p className="font-bold text-xs">{data.elaborador || 'Responsável Técnico'}</p>
-              <p className="text-[10px] text-gray-500 uppercase">Elaborador do PGR</p>
+              <p className="text-[10px] text-gray-500 uppercase">Elaborador do PGR / Emissor</p>
               {data.adminSignature?.biometric && (
                 <p className="text-[9px] text-green-600 flex items-center gap-1 font-bold mt-1">
                   <CheckCircle className="h-3 w-3" /> Validação Emissora Confirmada
@@ -121,7 +153,7 @@ export function PGRPreview({ data }: { data: Partial<PGRDocument> }) {
 
           <footer className="mt-auto pt-3 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
             <span>JT OBRAS E MANUTENÇÕES LTDA - CNPJ: 63.243.791/0001-09</span>
-            <span>Rua Tommaso Giordani, 371 vila Guacuri – SP Cep- 04.475-210</span>
+            <span>Rua Tommaso Giordani, 371 vila Guacuri – SP</span>
             <span className="print:block hidden">Página 1</span>
           </footer>
         </div>
