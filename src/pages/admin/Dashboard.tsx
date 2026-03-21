@@ -13,6 +13,7 @@ import { AgendaTab } from './components/AgendaTab'
 import { TicketsTab } from './components/TicketsTab'
 import { InventoryTab } from './components/InventoryTab'
 import { InvoicesTab } from './components/InvoicesTab'
+import { LibraryTab } from './components/LibraryTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
@@ -152,10 +153,10 @@ export default function AdminDashboard() {
             Agenda Técnica
           </TabsTrigger>
           <TabsTrigger
-            value="documentos"
+            value="acervo"
             className="text-sm md:text-base h-12 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            Repositório
+            Acervo Técnico
           </TabsTrigger>
           <TabsTrigger
             value="modelos"
@@ -180,8 +181,8 @@ export default function AdminDashboard() {
         <TabsContent value="agenda">
           <AgendaTab key={`ag-${syncKey}`} />
         </TabsContent>
-        <TabsContent value="documentos">
-          <DocumentsTab key={`doc-${syncKey}`} />
+        <TabsContent value="acervo">
+          <LibraryTab key={`lib-${syncKey}`} />
         </TabsContent>
         <TabsContent value="modelos">
           <TemplatesTab />

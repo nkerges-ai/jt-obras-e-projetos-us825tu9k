@@ -2,6 +2,7 @@ import React from 'react'
 import logo from '@/assets/logotipo-c129e.jpg'
 import { OS_TEXTS } from '@/lib/os-text'
 import { ServiceOrder } from '@/lib/storage'
+import { CheckCircle } from 'lucide-react'
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-3 border border-gray-300 rounded-sm">
@@ -67,7 +68,10 @@ export function OSPreview({ data }: { data: Partial<ServiceOrder> }) {
               </div>
             </div>
             <div className="border p-1.5 rounded-sm">
-              <strong>1.4. ATIVIDADE A SER EXECUTADA (SETOR: {data.atividade?.setor}):</strong>
+              <strong>
+                1.4. ATIVIDADE A SER EXECUTADA (SETOR: {data.atividade?.setor || '_______________'}
+                ):
+              </strong>
               <div className="mt-1 whitespace-pre-wrap">
                 {data.atividade?.descricao || 'Nenhuma descrição fornecida.'}
               </div>
@@ -146,15 +150,42 @@ export function OSPreview({ data }: { data: Partial<ServiceOrder> }) {
             <h2 className="font-bold text-[11px] uppercase mb-2 text-center underline">
               8. CONTROLE DE CIÊNCIA E TREINAMENTO
             </h2>
-            <p className="italic text-justify px-2 mb-8">"{OS_TEXTS.controle}"</p>
+            <p className="italic text-justify px-2 mb-6">"{OS_TEXTS.controle}"</p>
             <div className="flex justify-between text-center pt-8 px-6">
               <div className="w-1/2 border-t border-black pt-1 mx-4">
                 <p className="font-bold">JT OBRAS E MANUTENÇÕES</p>
                 <p>Joel Nascimento de Paula</p>
               </div>
-              <div className="w-1/2 border-t border-black pt-1 mx-4">
-                <p className="font-bold">PRESTADORA / COLABORADOR</p>
-                <p>{data.prestadora?.responsavel || 'Assinatura'}</p>
+              <div className="w-1/2 mx-4 flex flex-col items-center">
+                {!data.biometricValidation && (
+                  <div className="border-t border-black pt-1 w-full">
+                    <p className="font-bold">PRESTADORA / COLABORADOR</p>
+                    <p>{data.prestadora?.responsavel || 'Assinatura'}</p>
+                  </div>
+                )}
+                {data.biometricValidation && (
+                  <div className="flex flex-col items-center w-full">
+                    <div className="border-t border-black w-full mb-1"></div>
+                    <p className="font-bold">PRESTADORA / COLABORADOR</p>
+                    <p>{data.prestadora?.responsavel}</p>
+                    <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold mt-1">
+                      <CheckCircle className="h-3 w-3" /> Assinatura Biométrica Registrada
+                    </p>
+                    <div className="flex items-center gap-2 mt-1 border border-gray-300 rounded p-1 bg-white">
+                      <img
+                        src={data.biometricValidation.imageUrl}
+                        className="w-6 h-6 rounded-full object-cover"
+                        alt="Biometria"
+                      />
+                      <div className="text-[8px] text-left leading-tight">
+                        <p className="font-bold text-gray-700">Validação Facial Confirmada</p>
+                        <p className="text-gray-500">
+                          {new Date(data.biometricValidation.timestamp).toLocaleString('pt-BR')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

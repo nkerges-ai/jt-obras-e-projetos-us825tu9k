@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Printer, Save, MessageCircle } from 'lucide-react'
+import { ArrowLeft, Printer, Save, MessageCircle, ScanFace, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { ServiceOrder, getServiceOrders, saveServiceOrders, addLog } from '@/lib/storage'
+import {
+  ServiceOrder,
+  getServiceOrders,
+  saveServiceOrders,
+  addLog,
+  BiometricValidation,
+} from '@/lib/storage'
 import { OSForm } from './components/OSForm'
 import { OSPreview } from './components/OSPreview'
+import { BiometricCapture } from '@/components/BiometricCapture'
 
 export default function OSNREditor() {
   const { toast } = useToast()
@@ -20,6 +27,8 @@ export default function OSNREditor() {
     epcs: [],
   })
 
+  const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+
   useEffect(() => {
     const orders = getServiceOrders()
     const nextId = String(orders.length + 1).padStart(4, '0')
@@ -28,8 +37,14 @@ export default function OSNREditor() {
 
   const handleSave = () => {
     const orders = getServiceOrders()
-    const newOrder = { ...data, id: `os_${Date.now()}` } as ServiceOrder
-    saveServiceOrders([newOrder, ...orders])
+    const newOrder = { ...data, id: data.id || `os_${Date.now()}` } as ServiceOrder
+    setData(newOrder)
+
+    if (data.id) {
+      saveServiceOrders(orders.map((o) => (o.id === data.id ? newOrder : o)))
+    } else {
+      saveServiceOrders([newOrder, ...orders])
+    }
     toast({ title: 'Rascunho Salvo', description: 'Ordem de Serviço salva com sucesso.' })
   }
 
@@ -49,8 +64,34 @@ export default function OSNREditor() {
     toast({ title: 'Notificação', description: 'Mensagem de WhatsApp disparada com sucesso.' })
   }
 
+  const onBiometricCapture = (bioData: BiometricValidation) => {
+    const orders = getServiceOrders()
+    const updated = {
+      ...data,
+      id: data.id || `os_${Date.now()}`,
+      status: 'Finalizado',
+      biometricValidation: bioData,
+    } as ServiceOrder
+
+    setData(updated)
+    if (data.id) {
+      saveServiceOrders(orders.map((o) => (o.id === updated.id ? updated : o)))
+    } else {
+      saveServiceOrders([updated, ...orders])
+    }
+
+    setIsBiometricOpen(false)
+    toast({ title: 'OS Assinada', description: 'Validação biométrica registrada com sucesso.' })
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+      <BiometricCapture
+        open={isBiometricOpen}
+        onCapture={onBiometricCapture}
+        onCancel={() => setIsBiometricOpen(false)}
+      />
+
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -68,11 +109,37 @@ export default function OSNREditor() {
               <MessageCircle className="h-4 w-4 text-green-600" />{' '}
               <span className="hidden sm:inline">WhatsApp</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> <span className="hidden sm:inline">Salvar</span>
-            </Button>
-            <Button onClick={handlePrint} size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700">
-              <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir PDF</span>
+
+            {data.status !== 'Finalizado' ? (
+              <>
+                <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
+                  <Save className="h-4 w-4" /> <span className="hidden sm:inline">Salvar</span>
+                </Button>
+                <Button
+                  onClick={() => setIsBiometricOpen(true)}
+                  size="sm"
+                  className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <ScanFace className="h-4 w-4" /> <span className="hidden sm:inline">Assinar</span>
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-2 bg-green-100 text-green-700 pointer-events-none"
+              >
+                <CheckCircle className="h-4 w-4" />{' '}
+                <span className="hidden sm:inline">Finalizada</span>
+              </Button>
+            )}
+
+            <Button
+              onClick={handlePrint}
+              size="sm"
+              className="gap-2 border-brand-navy text-brand-navy"
+            >
+              <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir</span>
             </Button>
           </div>
         </div>

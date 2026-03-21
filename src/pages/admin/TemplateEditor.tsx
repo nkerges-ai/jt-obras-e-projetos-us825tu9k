@@ -25,7 +25,8 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
-import { addLog } from '@/lib/storage'
+import { addLog, BiometricValidation } from '@/lib/storage'
+import { BiometricCapture } from '@/components/BiometricCapture'
 
 export default function TemplateEditor() {
   const { type } = useParams<{ type: string }>()
@@ -33,10 +34,16 @@ export default function TemplateEditor() {
 
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
   const [emailData, setEmailData] = useState({ to: '', subject: '' })
+
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
   const [signatureDate, setSignatureDate] = useState<string | null>(null)
+
+  const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+  const [biometricData, setBiometricData] = useState<BiometricValidation | null>(null)
+  const [tempSignature, setTempSignature] = useState<string | null>(null)
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
@@ -131,34 +138,47 @@ export default function TemplateEditor() {
   }
 
   const stopDrawing = () => setIsDrawing(false)
+
   const clearSignature = () =>
     canvasRef.current
       ?.getContext('2d')
       ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
 
-  const saveSignature = () => {
+  const handleSaveDrawing = () => {
     if (!canvasRef.current) return
-    setSignatureData(canvasRef.current.toDataURL('image/png'))
-    setSignatureDate(new Date().toLocaleString('pt-BR'))
-    setIsSigned(true)
+    setTempSignature(canvasRef.current.toDataURL('image/png'))
     setIsSignDialogOpen(false)
+    setTimeout(() => setIsBiometricOpen(true), 300)
+  }
+
+  const finalizeSignature = (bioData: BiometricValidation) => {
+    setSignatureData(tempSignature)
+    setSignatureDate(new Date().toLocaleString('pt-BR'))
+    setBiometricData(bioData)
+    setIsSigned(true)
+    setIsBiometricOpen(false)
 
     addLog({
       type: 'Sistema',
       recipient: data.clientName || 'Cliente',
-      message: `Assinatura digital concluída para ${title}. Notificação de confirmação enviada automaticamente.`,
+      message: `Assinatura digital e validação biométrica concluídas para ${title}.`,
       status: 'Enviado',
     })
 
     toast({
       title: 'Documento Assinado',
-      description:
-        'A assinatura digital foi aplicada. Cliente notificado com sucesso da conclusão.',
+      description: 'A assinatura e validação facial foram aplicadas com sucesso.',
     })
   }
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+      <BiometricCapture
+        open={isBiometricOpen}
+        onCapture={finalizeSignature}
+        onCancel={() => setIsBiometricOpen(false)}
+      />
+
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -231,8 +251,8 @@ export default function TemplateEditor() {
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <p className="text-sm text-muted-foreground">
-                      Desenhe sua assinatura no quadro abaixo para validar o documento e notificar o
-                      cliente automaticamente.
+                      Desenhe sua assinatura no quadro abaixo. Em seguida, será solicitada validação
+                      facial.
                     </p>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
                       <canvas
@@ -257,8 +277,8 @@ export default function TemplateEditor() {
                       >
                         <Trash2 className="h-4 w-4" /> Limpar
                       </Button>
-                      <Button onClick={saveSignature} className="gap-2">
-                        <Save className="h-4 w-4" /> Salvar Assinatura
+                      <Button onClick={handleSaveDrawing} className="gap-2">
+                        <Save className="h-4 w-4" /> Avançar
                       </Button>
                     </div>
                   </div>
@@ -277,6 +297,7 @@ export default function TemplateEditor() {
           </div>
         </div>
       </div>
+
       <div className="container mx-auto px-4 mt-8 print:p-0 print:m-0 print:w-full print:max-w-none">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
@@ -451,6 +472,21 @@ export default function TemplateEditor() {
                                 <CheckCircle className="h-3 w-3" /> Assinado Digitalmente
                               </p>
                               <p className="text-[9px] text-gray-500 mt-0.5">{signatureDate}</p>
+                              {biometricData && (
+                                <div className="flex items-center gap-2 mt-2 border border-gray-200 rounded px-2 py-1 bg-gray-50/50">
+                                  <img
+                                    src={biometricData.imageUrl}
+                                    alt="Validação"
+                                    className="w-6 h-6 rounded-full object-cover"
+                                  />
+                                  <div className="text-[8px] text-left leading-tight">
+                                    <p className="font-bold text-gray-700">Validação Facial</p>
+                                    <p className="text-gray-500">
+                                      {new Date(biometricData.timestamp).toLocaleString('pt-BR')}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>

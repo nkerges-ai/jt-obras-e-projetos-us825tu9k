@@ -37,6 +37,8 @@ export function OSForm({ data, setData }: OSFormProps) {
     })
   }
 
+  const isFinalizado = data.status === 'Finalizado'
+
   return (
     <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
       <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[80vh] lg:overflow-y-auto">
@@ -44,7 +46,11 @@ export function OSForm({ data, setData }: OSFormProps) {
 
         <div className="space-y-2">
           <Label>Obra / Projeto Vinculado</Label>
-          <Select value={data.projectId} onValueChange={(v) => setData({ ...data, projectId: v })}>
+          <Select
+            disabled={isFinalizado}
+            value={data.projectId}
+            onValueChange={(v) => setData({ ...data, projectId: v })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Selecione um contrato..." />
             </SelectTrigger>
@@ -61,29 +67,34 @@ export function OSForm({ data, setData }: OSFormProps) {
         <div className="space-y-3 bg-gray-50 p-3 rounded border">
           <Label className="font-bold text-primary">Dados da Prestadora</Label>
           <Input
-            placeholder="Razão Social"
+            disabled={isFinalizado}
+            placeholder="[Nome do cliente/ estabelecimento]"
             value={data.prestadora?.nome}
             onChange={(e) => updateP('nome', e.target.value)}
           />
           <div className="grid grid-cols-2 gap-2">
             <Input
-              placeholder="CNPJ"
+              disabled={isFinalizado}
+              placeholder="[00.000.000/0000-00]"
               value={data.prestadora?.cnpj}
               onChange={(e) => updateP('cnpj', e.target.value)}
             />
             <Input
-              placeholder="Telefone"
+              disabled={isFinalizado}
+              placeholder="(11) 90000-0000"
               value={data.prestadora?.telefone}
               onChange={(e) => updateP('telefone', e.target.value)}
             />
           </div>
           <Input
+            disabled={isFinalizado}
             placeholder="Endereço Completo"
             value={data.prestadora?.endereco}
             onChange={(e) => updateP('endereco', e.target.value)}
           />
           <Input
-            placeholder="Nome do Responsável"
+            disabled={isFinalizado}
+            placeholder="[Nome do Responsável]"
             value={data.prestadora?.responsavel}
             onChange={(e) => updateP('responsavel', e.target.value)}
           />
@@ -92,29 +103,34 @@ export function OSForm({ data, setData }: OSFormProps) {
         <div className="space-y-3 bg-gray-50 p-3 rounded border">
           <Label className="font-bold text-primary">Execução e Atividade</Label>
           <Input
-            placeholder="Local / Unidade"
+            disabled={isFinalizado}
+            placeholder="[Nome do cliente/ estabelecimento]"
             value={data.execucao?.local}
             onChange={(e) => updateE('local', e.target.value)}
           />
           <div className="grid grid-cols-2 gap-2">
             <Input
+              disabled={isFinalizado}
               type="date"
               value={data.execucao?.dataInicio}
               onChange={(e) => updateE('dataInicio', e.target.value)}
             />
             <Input
+              disabled={isFinalizado}
               type="date"
               value={data.execucao?.dataFim}
               onChange={(e) => updateE('dataFim', e.target.value)}
             />
           </div>
           <Input
-            placeholder="Setor da Atividade"
+            disabled={isFinalizado}
+            placeholder="Laboratório de Meio Ambiente"
             value={data.atividade?.setor}
             onChange={(e) => updateA('setor', e.target.value)}
           />
           <Textarea
-            placeholder="Descrição da Atividade"
+            disabled={isFinalizado}
+            placeholder="Descrição detalhada da atividade a ser executada..."
             className="h-20"
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}
@@ -126,6 +142,7 @@ export function OSForm({ data, setData }: OSFormProps) {
           {EPI_LIST.map((epi) => (
             <div key={epi} className="flex items-center space-x-2">
               <Checkbox
+                disabled={isFinalizado}
                 id={epi}
                 checked={data.epis?.includes(epi)}
                 onCheckedChange={() => toggleArr('epis', epi)}
@@ -142,6 +159,7 @@ export function OSForm({ data, setData }: OSFormProps) {
           {EPC_LIST.map((epc) => (
             <div key={epc} className="flex items-center space-x-2">
               <Checkbox
+                disabled={isFinalizado}
                 id={epc}
                 checked={data.epcs?.includes(epc)}
                 onCheckedChange={() => toggleArr('epcs', epc)}

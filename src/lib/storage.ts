@@ -67,6 +67,12 @@ export interface Material {
   unit: string
 }
 
+export interface BiometricValidation {
+  imageUrl: string
+  timestamp: string
+  userAgent: string
+}
+
 export interface ServiceOrder {
   id: string
   osNumber: string
@@ -85,41 +91,31 @@ export interface ServiceOrder {
   epis: string[]
   epcs: string[]
   status: 'Rascunho' | 'Finalizado'
+  biometricValidation?: BiometricValidation
+}
+
+export interface TechnicalDocument {
+  id: string
+  name: string
+  category: string
+  uploadDate: string
+  projectId: string
+  isRestricted: boolean
+  url: string
+}
+
+export interface DocumentAccessRequest {
+  id: string
+  documentId: string
+  projectId: string
+  clientName: string
+  status: 'Pendente' | 'Aprovado' | 'Negado'
+  requestDate: string
 }
 
 export const getProjects = (): Project[] => {
   const data = localStorage.getItem('jt_projects')
-  if (data) return JSON.parse(data)
-  return [
-    {
-      id: '1',
-      name: 'Reforma Fachada Edifício Azul',
-      client: 'Condomínio Azul',
-      startDate: '2023-09-10',
-      status: 'Em andamento',
-      budget: 50000,
-      expenses: [
-        {
-          id: 'e1',
-          description: 'Tintas e Impermeabilizantes',
-          cost: 12000,
-          date: '2023-09-15',
-          category: 'Matéria Prima',
-        },
-      ],
-      photos: [],
-    },
-    {
-      id: '2',
-      name: 'Manutenção Preventiva Ar Condicionado',
-      client: 'Escola Esperança',
-      startDate: '2023-10-05',
-      status: 'Concluído',
-      budget: 5000,
-      expenses: [],
-      photos: [],
-    },
-  ]
+  return data ? JSON.parse(data) : []
 }
 
 export const saveProjects = (projects: Project[]) => {
@@ -128,16 +124,7 @@ export const saveProjects = (projects: Project[]) => {
 
 export const getEvents = (): CalendarEvent[] => {
   const data = localStorage.getItem('jt_events')
-  if (data) return JSON.parse(data)
-  return [
-    {
-      id: '1',
-      title: 'Vistoria Inicial',
-      type: 'Visita Técnica',
-      projectId: '1',
-      date: new Date().toISOString(),
-    },
-  ]
+  return data ? JSON.parse(data) : []
 }
 
 export const saveEvents = (events: CalendarEvent[]) => {
@@ -146,17 +133,7 @@ export const saveEvents = (events: CalendarEvent[]) => {
 
 export const getLogs = (): NotificationLog[] => {
   const data = localStorage.getItem('jt_logs')
-  if (data) return JSON.parse(data)
-  return [
-    {
-      id: '1',
-      date: new Date().toISOString(),
-      type: 'Sistema',
-      recipient: 'Admin',
-      message: 'Sistema automático iniciado.',
-      status: 'Enviado',
-    },
-  ]
+  return data ? JSON.parse(data) : []
 }
 
 export const addLog = (log: Omit<NotificationLog, 'id' | 'date'>) => {
@@ -171,18 +148,7 @@ export const addLog = (log: Omit<NotificationLog, 'id' | 'date'>) => {
 
 export const getTickets = (): Ticket[] => {
   const data = localStorage.getItem('jt_tickets')
-  if (data) return JSON.parse(data)
-  return [
-    {
-      id: 't1',
-      clientName: 'Condomínio Azul',
-      projectId: '1',
-      description: 'Verificação de infiltração próxima à janela do 3º andar.',
-      dateOpened: new Date().toISOString(),
-      status: 'Aberto',
-      internalNotes: 'Agendar visita com a equipe.',
-    },
-  ]
+  return data ? JSON.parse(data) : []
 }
 
 export const saveTickets = (tickets: Ticket[]) => {
@@ -191,17 +157,7 @@ export const saveTickets = (tickets: Ticket[]) => {
 
 export const getInventory = (): Material[] => {
   const data = localStorage.getItem('jt_inventory')
-  if (data) return JSON.parse(data)
-  return [
-    {
-      id: 'm1',
-      name: 'Cimento CP II 50kg',
-      category: 'Básico',
-      quantity: 10,
-      minQuantity: 20,
-      unit: 'sc',
-    },
-  ]
+  return data ? JSON.parse(data) : []
 }
 
 export const saveInventory = (inventory: Material[]) => {
@@ -210,10 +166,27 @@ export const saveInventory = (inventory: Material[]) => {
 
 export const getServiceOrders = (): ServiceOrder[] => {
   const data = localStorage.getItem('jt_os')
-  if (data) return JSON.parse(data)
-  return []
+  return data ? JSON.parse(data) : []
 }
 
 export const saveServiceOrders = (orders: ServiceOrder[]) => {
   localStorage.setItem('jt_os', JSON.stringify(orders))
+}
+
+export const getTechnicalDocuments = (): TechnicalDocument[] => {
+  const data = localStorage.getItem('jt_tech_docs')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveTechnicalDocuments = (docs: TechnicalDocument[]) => {
+  localStorage.setItem('jt_tech_docs', JSON.stringify(docs))
+}
+
+export const getAccessRequests = (): DocumentAccessRequest[] => {
+  const data = localStorage.getItem('jt_access_requests')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveAccessRequests = (reqs: DocumentAccessRequest[]) => {
+  localStorage.setItem('jt_access_requests', JSON.stringify(reqs))
 }

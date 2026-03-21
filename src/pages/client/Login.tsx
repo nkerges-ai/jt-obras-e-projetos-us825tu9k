@@ -20,7 +20,6 @@ export default function ClientLogin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     const projects = getProjects()
-    // For demo purposes, we accept the Project ID as the access code
     const project = projects.find((p) => p.id === accessCode)
     if (project) {
       sessionStorage.setItem('client_project_id', project.id)
@@ -67,7 +66,7 @@ export default function ClientLogin() {
               Acessar Painel
             </Button>
             <p className="text-xs text-center text-muted-foreground mt-4">
-              Dica: Use "1" ou "2" para testar com os projetos de exemplo.
+              Dica: Solicite ao administrador o ID da sua obra para acessar o portal.
             </p>
           </form>
         </CardContent>

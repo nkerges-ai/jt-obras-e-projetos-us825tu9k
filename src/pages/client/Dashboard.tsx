@@ -11,8 +11,21 @@ import {
   Download,
   Plus,
   CheckCircle2,
+  FolderOpen,
+  Lock,
 } from 'lucide-react'
-import { getProjects, getTickets, saveTickets, Project, Ticket } from '@/lib/storage'
+import {
+  getProjects,
+  getTickets,
+  saveTickets,
+  getTechnicalDocuments,
+  getAccessRequests,
+  saveAccessRequests,
+  Project,
+  Ticket,
+  TechnicalDocument,
+  DocumentAccessRequest,
+} from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -26,6 +39,9 @@ export default function ClientDashboard() {
 
   const [project, setProject] = useState<Project | null>(null)
   const [tickets, setTickets] = useState<Ticket[]>([])
+  const [techDocs, setTechDocs] = useState<TechnicalDocument[]>([])
+  const [requests, setRequests] = useState<DocumentAccessRequest[]>([])
+
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
   const [newTicketDesc, setNewTicketDesc] = useState('')
 
@@ -33,8 +49,15 @@ export default function ClientDashboard() {
     if (projectId) {
       const p = getProjects().find((p) => p.id === projectId)
       if (p) setProject(p)
+
       const allTickets = getTickets()
       setTickets(allTickets.filter((t) => t.projectId === projectId))
+
+      const allDocs = getTechnicalDocuments()
+      setTechDocs(allDocs.filter((d) => d.projectId === 'global' || d.projectId === projectId))
+
+      const allReqs = getAccessRequests()
+      setRequests(allReqs.filter((r) => r.projectId === projectId))
     }
   }, [projectId])
 
@@ -68,18 +91,26 @@ export default function ClientDashboard() {
     toast({ title: 'Chamado Aberto', description: 'Nossa equipe entrará em contato em breve.' })
   }
 
+  const handleRequestAccess = (docId: string) => {
+    const newReq: DocumentAccessRequest = {
+      id: `req_${Date.now()}`,
+      documentId: docId,
+      projectId: project.id,
+      clientName: project.client,
+      status: 'Pendente',
+      requestDate: new Date().toISOString(),
+    }
+    const allReqs = getAccessRequests()
+    saveAccessRequests([newReq, ...allReqs])
+    setRequests([newReq, ...requests])
+    toast({
+      title: 'Acesso Solicitado',
+      description: 'Sua solicitação foi enviada ao administrador.',
+    })
+  }
+
   const antes = project.photos.filter((p) => p.type === 'Antes')
   const depois = project.photos.filter((p) => p.type === 'Depois')
-
-  const mockDocs = [
-    {
-      id: 1,
-      name: 'Contrato_Prestacao_Servicos_Assinado.pdf',
-      date: project.startDate,
-      size: '2.4 MB',
-    },
-    { id: 2, name: 'ART_Projeto_Estrutural.pdf', date: project.startDate, size: '1.1 MB' },
-  ]
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-5xl">
@@ -104,10 +135,10 @@ export default function ClientDashboard() {
             <ImageIcon className="h-4 w-4 mr-2" /> Resumo e Fotos
           </TabsTrigger>
           <TabsTrigger
-            value="documentos"
+            value="acervo"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            <FileText className="h-4 w-4 mr-2" /> Meus Documentos
+            <FolderOpen className="h-4 w-4 mr-2" /> Acervo Técnico
           </TabsTrigger>
           <TabsTrigger
             value="chamados"
@@ -188,42 +219,73 @@ export default function ClientDashboard() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="documentos">
+        <TabsContent value="acervo">
           <Card className="bg-white border-none shadow-sm">
             <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg">Documentos Associados</CardTitle>
+              <CardTitle className="text-lg">Acervo Técnico e Documentos</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
-                {mockDocs.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-gray-50 transition-colors gap-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-8 w-8 text-blue-500" />
-                      <div>
-                        <p className="font-medium text-brand-navy">{doc.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Enviado em {new Date(doc.date).toLocaleDateString('pt-BR')} • {doc.size}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                      onClick={() =>
-                        toast({
-                          title: 'Download Iniciado',
-                          description: 'O documento está sendo baixado.',
-                        })
-                      }
+                {techDocs.length === 0 && (
+                  <p className="p-8 text-center text-muted-foreground">
+                    Nenhum documento técnico disponível no momento.
+                  </p>
+                )}
+                {techDocs.map((doc) => {
+                  const req = requests.find((r) => r.documentId === doc.id)
+                  const canDownload = !doc.isRestricted || req?.status === 'Aprovado'
+
+                  return (
+                    <div
+                      key={doc.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-gray-50 transition-colors gap-4"
                     >
-                      <Download className="h-4 w-4" /> Baixar
-                    </Button>
-                  </div>
-                ))}
+                      <div className="flex items-center gap-3">
+                        {doc.isRestricted && !canDownload ? (
+                          <Lock className="h-8 w-8 text-orange-500" />
+                        ) : (
+                          <FileText className="h-8 w-8 text-blue-500" />
+                        )}
+                        <div>
+                          <p className="font-medium text-brand-navy">{doc.name}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {doc.category} • {new Date(doc.uploadDate).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                      </div>
+
+                      {canDownload ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          onClick={() =>
+                            toast({
+                              title: 'Download Iniciado',
+                              description: 'O documento está sendo baixado.',
+                            })
+                          }
+                        >
+                          <Download className="h-4 w-4" /> Baixar
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={req ? 'secondary' : 'default'}
+                          size="sm"
+                          className="gap-2"
+                          disabled={!!req}
+                          onClick={() => handleRequestAccess(doc.id)}
+                        >
+                          {req?.status === 'Pendente'
+                            ? 'Aprovação Pendente'
+                            : req?.status === 'Negado'
+                              ? 'Acesso Negado'
+                              : 'Solicitar Acesso'}
+                        </Button>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
