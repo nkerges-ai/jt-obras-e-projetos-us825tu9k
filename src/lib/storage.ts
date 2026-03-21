@@ -174,6 +174,7 @@ export interface TechnicalDocument {
   projectId: string
   isRestricted: boolean
   url: string
+  docNumber?: string
   validade?: string
   attendanceList?: { id: string; name: string; cpf: string; signature?: string }[]
   evidencePhotos?: string[]
@@ -434,6 +435,7 @@ const EXAMPLE_DOC_NR35: TechnicalDocument = {
   projectId: 'global',
   isRestricted: false,
   url: '#',
+  docNumber: 'DOC-2026-001',
   attendanceList: [
     { id: 'att_1', name: 'João Silva', cpf: '123.456.789-00' },
     { id: 'att_2', name: 'Maria Souza', cpf: '555.666.777-88' },

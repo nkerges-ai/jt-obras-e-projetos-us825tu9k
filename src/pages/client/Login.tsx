@@ -47,7 +47,7 @@ export default function ClientLogin() {
             <div className="space-y-2">
               <Input
                 type="text"
-                placeholder="Código de Acesso da Obra (ID)"
+                placeholder="Número do Contrato / ID da Obra"
                 value={accessCode}
                 onChange={(e) => {
                   setAccessCode(e.target.value)
@@ -66,7 +66,7 @@ export default function ClientLogin() {
               Acessar Painel
             </Button>
             <p className="text-xs text-center text-muted-foreground mt-4">
-              Dica: Solicite ao administrador o ID da sua obra para acessar o portal.
+              Dica: Acesse usando o número do seu contrato ou ID fornecido pela JT Obras.
             </p>
           </form>
         </CardContent>

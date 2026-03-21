@@ -26,6 +26,7 @@ import {
   ChevronLeft,
   Mail,
   Save,
+  FolderOpen,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -38,6 +39,9 @@ import {
   getTechnicalDocuments,
   TechnicalDocument,
   addLog,
+  getProjects,
+  Project,
+  saveProjects,
 } from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 import {
@@ -59,8 +63,11 @@ export default function TemplateEditor() {
   const navigate = useNavigate()
 
   const [contractors, setContractors] = useState<Contractor[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [assets, setAssets] = useState<CompanyAsset[]>([])
   const [step, setStep] = useState(1)
+  const [projectId, setProjectId] = useState('global')
+  const [docNumber, setDocNumber] = useState('')
 
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
@@ -98,7 +105,16 @@ export default function TemplateEditor() {
   useEffect(() => {
     setContractors(getContractors())
     setAssets(getCompanyAssets())
-  }, [])
+    setProjects(getProjects())
+
+    const docs = getTechnicalDocuments()
+    const category =
+      type === 'contrato' ? 'Contratos' : type === 'timbrado' ? 'Outros' : 'Propostas'
+    const count = docs.filter((d) => d.category === category).length + 1
+    const prefix = type === 'contrato' ? 'CTR' : type === 'timbrado' ? 'DOC' : 'ORC'
+    const year = new Date().getFullYear()
+    setDocNumber(`${prefix}-${year}-${String(count).padStart(3, '0')}`)
+  }, [type])
 
   useEffect(() => {
     if (isSignDialogOpen && canvasRef.current && signType === 'draw') {
@@ -125,8 +141,8 @@ export default function TemplateEditor() {
       : 'Proposta Comercial'
 
   const wizardSteps = isTimbrado
-    ? ['Dados Iniciais', 'Conteúdo Livre', 'Revisão e Geração']
-    : ['Seleção do Cliente', 'Dados Específicos', 'Imagens/Anexos', 'Revisão e Geração']
+    ? ['Vínculos e Cliente', 'Conteúdo Livre', 'Revisão e Geração']
+    : ['Vínculos e Cliente', 'Dados Específicos', 'Imagens/Anexos', 'Revisão e Geração']
 
   const handlePrint = () => window.print()
 
@@ -153,6 +169,14 @@ export default function TemplateEditor() {
     if (c) {
       setData({ ...data, clientName: c.name, document: c.cnpj, address: c.address })
       toast({ title: 'Autopreenchimento', description: 'Dados do contratante inseridos.' })
+    }
+  }
+
+  const handleSelectProject = (id: string) => {
+    setProjectId(id)
+    const p = projects.find((proj) => proj.id === id)
+    if (p && !data.clientName) {
+      setData({ ...data, clientName: p.client })
     }
   }
 
@@ -216,9 +240,10 @@ export default function TemplateEditor() {
       name: `${title} - ${data.clientName || 'Geral'}`,
       category: isContrato ? 'Contratos' : isTimbrado ? 'Outros' : 'Propostas',
       uploadDate: new Date().toISOString(),
-      projectId: 'global',
+      projectId: projectId,
       isRestricted: false,
       url: '#',
+      docNumber: docNumber,
       adminSignature: isSigned
         ? {
             type: finalSignatureType,
@@ -230,11 +255,27 @@ export default function TemplateEditor() {
     }
     saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
 
+    // If photos are attached and a project is selected, link them to the client's project gallery
+    if (projectId !== 'global' && siteImages.length > 0) {
+      const allProjects = getProjects()
+      const pIndex = allProjects.findIndex((p) => p.id === projectId)
+      if (pIndex > -1) {
+        const newPhotos = siteImages.map((img, i) => ({
+          id: `photo_${Date.now()}_${i}`,
+          url: img,
+          type: 'Antes' as const,
+          date: new Date().toISOString(),
+        }))
+        allProjects[pIndex].photos.push(...newPhotos)
+        saveProjects(allProjects)
+      }
+    }
+
     if (!isContrato && !isTimbrado) {
       addLog({
         type: 'Email',
         recipient: data.clientName || 'Cliente',
-        message: `Notificação Automática: Um novo orçamento/proposta foi gerado e está disponível no acervo.`,
+        message: `Notificação Automática: Um novo orçamento (${docNumber}) foi gerado e está disponível no acervo.`,
         status: 'Enviado',
       })
       toast({
@@ -248,20 +289,41 @@ export default function TemplateEditor() {
   }
 
   const renderWizardContent = () => {
-    if (isTimbrado) {
-      if (step === 1) {
-        return (
-          <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-            <h3 className="font-bold text-lg text-brand-navy border-b pb-2">
-              Destinatário (Opcional)
-            </h3>
+    if (step === 1) {
+      return (
+        <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+          <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Vínculos e Cliente</h3>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1">
+              <FolderOpen className="h-4 w-4 text-brand-light" /> Obra / Projeto Vinculado
+            </Label>
+            <Select value={projectId} onValueChange={handleSelectProject}>
+              <SelectTrigger className="h-10 bg-white">
+                <SelectValue placeholder="Selecione a obra (opcional)..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="global">Geral / Sem vínculo específico</SelectItem>
+                {projects.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Vincular a um projeto garante que o documento aparecerá no Portal do Cliente.
+            </p>
+          </div>
+
+          <div className="pt-4 space-y-4">
             <div className="space-y-2 pb-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
+              <Label className="text-xs text-brand-navy flex items-center gap-1 font-bold">
+                <Building2 className="h-4 w-4" /> Autopreencher com Cadastro
               </Label>
               <Select onValueChange={handleSelectContractor}>
                 <SelectTrigger className="h-10 bg-white">
-                  <SelectValue placeholder="Selecionar Contratante..." />
+                  <SelectValue placeholder="Selecionar Cliente / Contratante..." />
                 </SelectTrigger>
                 <SelectContent>
                   {contractors.map((c) => (
@@ -273,16 +335,38 @@ export default function TemplateEditor() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>A/C (Aos Cuidados de)</Label>
+              <Label>
+                {isTimbrado ? 'A/C (Aos Cuidados de) / Empresa' : 'Nome do Cliente / Empresa'}
+              </Label>
               <Input
                 value={data.clientName}
                 onChange={(e) => setData({ ...data, clientName: e.target.value })}
-                placeholder="Nome ou Empresa"
               />
             </div>
+            {!isTimbrado && (
+              <>
+                <div className="space-y-2">
+                  <Label>CPF / CNPJ</Label>
+                  <Input
+                    value={data.document}
+                    onChange={(e) => setData({ ...data, document: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Endereço Completo</Label>
+                  <Input
+                    value={data.address}
+                    onChange={(e) => setData({ ...data, address: e.target.value })}
+                  />
+                </div>
+              </>
+            )}
           </div>
-        )
-      }
+        </div>
+      )
+    }
+
+    if (isTimbrado) {
       if (step === 2) {
         return (
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -302,51 +386,6 @@ export default function TemplateEditor() {
         )
       }
     } else {
-      if (step === 1) {
-        return (
-          <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-            <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Seleção do Cliente</h3>
-            <div className="space-y-2 pb-2">
-              <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
-              </Label>
-              <Select onValueChange={handleSelectContractor}>
-                <SelectTrigger className="h-10 bg-white">
-                  <SelectValue placeholder="Selecionar Contratante..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {contractors.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Nome do Cliente / Empresa</Label>
-              <Input
-                value={data.clientName}
-                onChange={(e) => setData({ ...data, clientName: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>CPF / CNPJ</Label>
-              <Input
-                value={data.document}
-                onChange={(e) => setData({ ...data, document: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Endereço Completo</Label>
-              <Input
-                value={data.address}
-                onChange={(e) => setData({ ...data, address: e.target.value })}
-              />
-            </div>
-          </div>
-        )
-      }
       if (step === 2) {
         return (
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -424,6 +463,10 @@ export default function TemplateEditor() {
                 ))}
               </div>
             )}
+            <p className="text-xs text-muted-foreground mt-2">
+              Dica: Fotos anexadas aqui serão salvas automaticamente na Galeria do Cliente (se
+              houver projeto vinculado).
+            </p>
           </div>
         )
       }
@@ -441,7 +484,7 @@ export default function TemplateEditor() {
       <EmailSenderDialog
         open={isEmailOpen}
         onOpenChange={setIsEmailOpen}
-        documentName={`${title} - ${data.clientName || 'Cliente'}`}
+        documentName={`${title} ${docNumber} - ${data.clientName || 'Cliente'}`}
       />
 
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
@@ -451,7 +494,8 @@ export default function TemplateEditor() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="font-bold text-lg text-brand-navy hidden sm:block truncate">
-              Editor: {title}
+              Editor: {title}{' '}
+              <span className="text-muted-foreground font-normal text-sm ml-2">({docNumber})</span>
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -643,7 +687,7 @@ export default function TemplateEditor() {
         <div
           className={`w-full flex justify-center ${step < wizardSteps.length ? 'hidden print:flex' : 'flex'}`}
         >
-          <DocumentLetterhead title={!isTimbrado ? title : undefined}>
+          <DocumentLetterhead title={!isTimbrado ? title : undefined} docNumber={docNumber}>
             <div className="text-[14px] leading-relaxed text-justify space-y-6">
               {isTimbrado ? (
                 <div className="whitespace-pre-wrap font-medium text-gray-800 text-[14px]">

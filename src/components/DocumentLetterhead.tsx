@@ -6,6 +6,7 @@ interface DocumentLetterheadProps {
   children: React.ReactNode
   title?: string
   subtitle?: string
+  docNumber?: string
   className?: string
 }
 
@@ -13,6 +14,7 @@ export function DocumentLetterhead({
   children,
   title,
   subtitle,
+  docNumber,
   className,
 }: DocumentLetterheadProps) {
   return (
@@ -23,17 +25,22 @@ export function DocumentLetterhead({
       )}
     >
       {/* Visual Header Identity - Restored to Previous Version with Blue Tones */}
-      <div className="border-b-[6px] border-brand-navy shrink-0 print-header-group flex flex-row items-center justify-between px-8 py-6 bg-white">
+      <div className="border-b-[6px] border-[#005A9C] shrink-0 print-header-group flex flex-row items-center justify-between px-8 py-6 bg-white">
         <div className="flex items-center gap-4">
           <img src={logo} alt="JT Obras" className="h-16 object-contain" />
         </div>
-        <div className="text-[10px] text-right text-brand-navy space-y-0.5 font-medium border-l-2 border-brand-light pl-4">
+        <div className="text-[10px] text-right text-brand-navy space-y-0.5 font-medium border-l-2 border-[#009FE3] pl-4">
           <p className="font-bold text-[11px] uppercase tracking-wider">
             JT OBRAS E MANUTENÇÕES LTDA
           </p>
           <p>CNPJ 63.243.791/0001-09</p>
           <p>(11) 94003-7545</p>
           <p>São Paulo - SP</p>
+          {docNumber && (
+            <p className="pt-1 mt-1 font-bold text-[#005A9C] border-t border-gray-200">
+              Nº: {docNumber}
+            </p>
+          )}
         </div>
       </div>
 
@@ -47,7 +54,7 @@ export function DocumentLetterhead({
               </h2>
             )}
             {subtitle && (
-              <h3 className="text-sm font-semibold text-brand-light mt-1.5 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-[#009FE3] mt-1.5 uppercase tracking-wider">
                 {subtitle}
               </h3>
             )}

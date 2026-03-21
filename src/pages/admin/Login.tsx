@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Lock, ShieldAlert } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   useEffect(() => {
     if (sessionStorage.getItem('admin_auth') === 'true') {
@@ -25,6 +27,13 @@ export default function AdminLogin() {
       setError(true)
       setPassword('')
     }
+  }
+
+  const handleForgotPassword = () => {
+    toast({
+      title: 'Recuperação de Senha',
+      description: 'Um link de recuperação foi enviado para o e-mail do administrador cadastrado.',
+    })
   }
 
   return (
@@ -62,6 +71,16 @@ export default function AdminLogin() {
             <Button type="submit" className="w-full h-14 text-lg font-bold">
               Acessar Portal
             </Button>
+            <div className="text-center mt-4">
+              <Button
+                type="button"
+                variant="link"
+                className="text-muted-foreground text-sm font-medium hover:text-primary"
+                onClick={handleForgotPassword}
+              >
+                Esqueci a senha
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

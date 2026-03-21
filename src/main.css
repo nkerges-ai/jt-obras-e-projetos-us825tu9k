@@ -172,7 +172,9 @@
   .skip-badge-container,
   [id^='skip-'],
   [class*='goskip'],
-  iframe[src*='goskip'] {
+  iframe[src*='goskip'],
+  div[style*='z-index: 99999'],
+  a[href*='goskip'] {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
@@ -273,5 +275,18 @@
   }
   .bg-gray-50 {
     background-color: #f9fafb !important;
+  }
+  /* Specifc blues */
+  .border-\[\#005A9C\] {
+    border-color: #005a9c !important;
+  }
+  .border-\[\#009FE3\] {
+    border-color: #009fe3 !important;
+  }
+  .text-\[\#009FE3\] {
+    color: #009fe3 !important;
+  }
+  .text-\[\#005A9C\] {
+    color: #005a9c !important;
   }
 }

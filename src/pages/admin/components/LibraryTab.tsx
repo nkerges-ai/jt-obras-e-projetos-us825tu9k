@@ -37,6 +37,7 @@ import {
   Copy,
   Mail,
   Search,
+  CheckCircle,
 } from 'lucide-react'
 import {
   getTechnicalDocuments,
@@ -62,6 +63,12 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import { EmailSenderDialog } from '@/components/EmailSenderDialog'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
 
 export function LibraryTab() {
   const { toast } = useToast()
@@ -159,7 +166,7 @@ export function LibraryTab() {
   }
 
   const getProjectName = (id: string) => {
-    if (id === 'global') return 'Acervo Global'
+    if (id === 'global') return 'Acervo Global e Administrativo'
     return projects.find((p) => p.id === id)?.name || 'Desconhecido'
   }
 
@@ -167,8 +174,27 @@ export function LibraryTab() {
     const search = searchTerm.toLowerCase()
     return (
       doc.name.toLowerCase().includes(search) ||
-      getProjectName(doc.projectId).toLowerCase().includes(search)
+      getProjectName(doc.projectId).toLowerCase().includes(search) ||
+      (doc.docNumber && doc.docNumber.toLowerCase().includes(search))
     )
+  })
+
+  // Group by project
+  const groupedDocs = filteredDocs.reduce(
+    (acc, doc) => {
+      const pid = doc.projectId || 'global'
+      if (!acc[pid]) acc[pid] = []
+      acc[pid].push(doc)
+      return acc
+    },
+    {} as Record<string, TechnicalDocument[]>,
+  )
+
+  // Sort groups: "global" first, then alphabetically
+  const sortedPids = Object.keys(groupedDocs).sort((a, b) => {
+    if (a === 'global') return -1
+    if (b === 'global') return 1
+    return getProjectName(a).localeCompare(getProjectName(b))
   })
 
   const smartTemplates = [
@@ -233,7 +259,7 @@ export function LibraryTab() {
       <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-2">
         <Search className="w-5 h-5 text-muted-foreground ml-2" />
         <Input
-          placeholder="Pesquisar por nome do documento ou cliente/projeto..."
+          placeholder="Pesquisar por nome, número do documento ou cliente/projeto..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border-none shadow-none focus-visible:ring-0 text-base"
@@ -264,96 +290,125 @@ export function LibraryTab() {
 
         <TabsContent value="repository" className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <Card className="shadow-sm border-none bg-white">
-              <CardHeader className="border-b pb-4 flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Documentos e Plantas</CardTitle>
-                {searchTerm && <Badge variant="secondary">{filteredDocs.length} resultados</Badge>}
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader className="bg-secondary/30">
-                    <TableRow>
-                      <TableHead>Documento</TableHead>
-                      <TableHead>Categoria</TableHead>
-                      <TableHead className="text-center">Liberar p/ Cliente</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredDocs.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                          Nenhum documento encontrado.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                    {filteredDocs.map((doc) => {
-                      const hasSig = signatures.find((s) => s.documentId === doc.id)
-                      return (
-                        <TableRow key={doc.id}>
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-blue-500" /> {doc.name}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1 ml-6 font-normal">
-                              Ref: {getProjectName(doc.projectId)}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-sm">{doc.category}</TableCell>
-                          <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-2">
-                              <Switch
-                                checked={!doc.isRestricted}
-                                onCheckedChange={() => toggleRestriction(doc)}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  setEmailTarget(doc)
-                                  setIsEmailOpen(true)
-                                }}
-                                title="Enviar por E-mail"
-                              >
-                                <Mail className="h-4 w-4 text-blue-600" />
-                              </Button>
-                              {hasSig ? (
-                                <Badge
-                                  variant="outline"
-                                  className={
-                                    hasSig.status === 'Assinado'
-                                      ? 'bg-green-100 text-green-800'
-                                      : 'bg-yellow-100 text-yellow-800'
-                                  }
-                                >
-                                  {hasSig.status}
-                                </Badge>
-                              ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-primary gap-1"
-                                  onClick={() => {
-                                    setSigTarget(doc)
-                                    setIsSignatureOpen(true)
-                                  }}
-                                >
-                                  Coletar Assinatura <PenTool className="h-3 w-3" />
-                                </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            {sortedPids.length === 0 ? (
+              <Card className="shadow-sm border-none bg-white">
+                <CardContent className="text-center py-8 text-muted-foreground">
+                  Nenhum documento encontrado.
+                </CardContent>
+              </Card>
+            ) : (
+              <Accordion type="multiple" defaultValue={['global']} className="w-full space-y-4">
+                {sortedPids.map((pid) => {
+                  // Sort documents inside folder by newest first
+                  const projectDocs = groupedDocs[pid].sort(
+                    (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
+                  )
+
+                  return (
+                    <AccordionItem
+                      key={pid}
+                      value={pid}
+                      className="bg-white border rounded-xl shadow-sm px-2 sm:px-4 overflow-hidden"
+                    >
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3 font-bold text-brand-navy">
+                          <FolderOpen className="h-5 w-5 text-brand-light shrink-0" />
+                          <span className="truncate text-left">{getProjectName(pid)}</span>
+                          <Badge variant="secondary" className="ml-2 font-medium shrink-0">
+                            {projectDocs.length} doc{projectDocs.length !== 1 && 's'}
+                          </Badge>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <Table>
+                          <TableHeader className="bg-secondary/30">
+                            <TableRow>
+                              <TableHead>Documento</TableHead>
+                              <TableHead className="text-center">Liberar p/ Cliente</TableHead>
+                              <TableHead className="text-right">Ações</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {projectDocs.map((doc) => {
+                              const hasSig = signatures.find((s) => s.documentId === doc.id)
+                              return (
+                                <TableRow key={doc.id}>
+                                  <TableCell className="font-medium">
+                                    <div className="flex items-center gap-2">
+                                      <FileText className="h-4 w-4 text-blue-500 shrink-0" />
+                                      <span className="truncate max-w-[200px]">{doc.name}</span>
+                                      {doc.docNumber && (
+                                        <Badge
+                                          variant="outline"
+                                          className="text-[9px] h-5 px-1.5 shrink-0 bg-brand-light/5 text-brand-light border-brand-light/20"
+                                        >
+                                          {doc.docNumber}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground mt-1 ml-6 font-normal">
+                                      {doc.category} •{' '}
+                                      {new Date(doc.uploadDate).toLocaleDateString('pt-BR')}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <div className="flex items-center justify-center gap-2">
+                                      <Switch
+                                        checked={!doc.isRestricted}
+                                        onCheckedChange={() => toggleRestriction(doc)}
+                                      />
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <div className="flex items-center justify-end gap-1">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => {
+                                          setEmailTarget(doc)
+                                          setIsEmailOpen(true)
+                                        }}
+                                        title="Enviar por E-mail"
+                                      >
+                                        <Mail className="h-4 w-4 text-blue-600" />
+                                      </Button>
+                                      {hasSig ? (
+                                        <Badge
+                                          variant="outline"
+                                          className={
+                                            hasSig.status === 'Assinado'
+                                              ? 'bg-green-100 text-green-800 border-green-200 text-[10px]'
+                                              : 'bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px]'
+                                          }
+                                        >
+                                          {hasSig.status}
+                                        </Badge>
+                                      ) : (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="text-primary gap-1 px-2"
+                                          onClick={() => {
+                                            setSigTarget(doc)
+                                            setIsSignatureOpen(true)
+                                          }}
+                                        >
+                                          Assinatura <PenTool className="h-3 w-3" />
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            })}
+                          </TableBody>
+                        </Table>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )
+                })}
+              </Accordion>
+            )}
           </div>
 
           <div>

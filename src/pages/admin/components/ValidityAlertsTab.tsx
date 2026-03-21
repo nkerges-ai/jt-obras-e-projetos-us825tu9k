@@ -30,7 +30,7 @@ export function ValidityAlertsTab() {
 
   const [newDoc, setNewDoc] = useState<Partial<ValidityDocument>>({
     name: '',
-    category: 'AVCB',
+    category: 'ART',
     expirationDate: '',
     warningDays: 30,
   })
@@ -55,7 +55,7 @@ export function ValidityAlertsTab() {
     setDocs(updated)
     saveValidityDocs(updated)
     setIsDialogOpen(false)
-    setNewDoc({ name: '', category: 'AVCB', expirationDate: '', warningDays: 30 })
+    setNewDoc({ name: '', category: 'ART', expirationDate: '', warningDays: 30 })
     toast({ title: 'Documento Adicionado', description: 'Monitoramento de validade ativado.' })
   }
 
@@ -122,7 +122,7 @@ export function ValidityAlertsTab() {
             <ShieldAlert className="h-5 w-5 text-primary" /> Alertas de Validade
           </h3>
           <p className="text-muted-foreground text-sm">
-            Monitore o vencimento de AVCB, laudos e certificações.
+            Monitore o vencimento de ARTs, PGRs, AVCB e laudos técnicos.
           </p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -166,7 +166,11 @@ export function ValidityAlertsTab() {
               return (
                 <TableRow key={doc.id}>
                   <TableCell className="font-medium">{doc.name}</TableCell>
-                  <TableCell>{doc.category}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="font-normal text-xs">
+                      {doc.category}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     {new Date(doc.expirationDate).toLocaleDateString('pt-BR')}
@@ -196,7 +200,7 @@ export function ValidityAlertsTab() {
                 required
                 value={newDoc.name}
                 onChange={(e) => setNewDoc({ ...newDoc, name: e.target.value })}
-                placeholder="Ex: AVCB Galpão Logístico"
+                placeholder="Ex: ART - Estrutura Metálica"
               />
             </div>
             <div className="space-y-2">
@@ -209,6 +213,8 @@ export function ValidityAlertsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="ART">ART (Engenharia)</SelectItem>
+                  <SelectItem value="PGR">PGR (NR-01)</SelectItem>
                   <SelectItem value="AVCB">AVCB / Bombeiros</SelectItem>
                   <SelectItem value="Certificação NR">Certificação NR</SelectItem>
                   <SelectItem value="Licença Ambiental">Licença Ambiental</SelectItem>
