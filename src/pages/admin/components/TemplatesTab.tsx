@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileSignature, Calculator, ClipboardCheck, GraduationCap } from 'lucide-react'
+import { FileSignature, Calculator, ClipboardCheck, GraduationCap, ShieldAlert } from 'lucide-react'
 
 export function TemplatesTab() {
   return (
@@ -51,9 +51,30 @@ export function TemplatesTab() {
 
       <div>
         <h3 className="text-2xl font-bold mb-6 text-brand-navy border-b pb-3">
-          Gerar Documentos NR e Técnicos
+          Gerenciamento de Riscos e NRs
         </h3>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <Card className="hover:shadow-lg transition-all border-primary/20 bg-white flex flex-col">
+            <CardHeader>
+              <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 text-primary">
+                <ShieldAlert className="h-7 w-7" />
+              </div>
+              <CardTitle className="text-xl lg:text-2xl">Programa de Riscos (PGR)</CardTitle>
+              <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
+                Módulo completo para gerenciar o PGR (NR-01) com sincronização automática para as
+                Ordens de Serviço.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="mt-auto">
+              <Button
+                asChild
+                className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-700"
+              >
+                <Link to="/admin/acervo/pgr">Criar/Editar PGR</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card className="hover:shadow-lg transition-all border-primary/20 bg-white flex flex-col">
             <CardHeader>
               <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-4 text-primary">
@@ -79,8 +100,8 @@ export function TemplatesTab() {
               </div>
               <CardTitle className="text-xl lg:text-2xl">Certificado de Treinamento</CardTitle>
               <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
-                Gere certificados de integração e treinamentos de Segurança do Trabalho para validar
-                o engajamento da sua equipe.
+                Gere certificados de integração com lista de presença, fotos de evidência e
+                validação de engajamento.
               </CardDescription>
             </CardHeader>
             <CardContent className="mt-auto">
@@ -98,7 +119,7 @@ export function TemplatesTab() {
               <CardTitle className="text-xl lg:text-2xl">OS NR-01 (Avançada)</CardTitle>
               <CardDescription className="text-sm lg:text-base mt-2 leading-relaxed">
                 Formulário completo de Ordem de Serviço com checklist de dezenas de EPIs e EPCs,
-                voltado para obras maiores.
+                sincronizado com o PGR.
               </CardDescription>
             </CardHeader>
             <CardContent className="mt-auto">

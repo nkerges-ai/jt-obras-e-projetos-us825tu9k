@@ -10,6 +10,7 @@ import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import TemplateEditor from './pages/admin/TemplateEditor'
 import OSNREditor from './pages/admin/OSNREditor'
+import PGREditor from './pages/admin/PGREditor'
 import PrintReport from './pages/admin/PrintReport'
 import PublicGallery from './pages/PublicGallery'
 import PublicSignature from './pages/PublicSignature'
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/admin/template/os-nr01" element={<OSNREditor />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
           <Route path="/admin/acervo/template/:type" element={<EngineeringTemplateEditor />} />
+          <Route path="/admin/acervo/pgr" element={<PGREditor />} />
           <Route path="/cliente/login" element={<ClientLogin />} />
           <Route path="/cliente/dashboard" element={<ClientDashboard />} />
         </Route>

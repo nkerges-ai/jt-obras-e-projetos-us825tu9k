@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -10,8 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getProjects, Project, ServiceOrder } from '@/lib/storage'
+import { getProjects, Project, ServiceOrder, getPGRs } from '@/lib/storage'
 import { EPI_LIST, EPC_LIST } from '@/lib/os-text'
+import { RefreshCw } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface OSFormProps {
   data: Partial<ServiceOrder>
@@ -20,6 +23,8 @@ interface OSFormProps {
 
 export function OSForm({ data, setData }: OSFormProps) {
   const [projects, setProjects] = useState<Project[]>([])
+  const { toast } = useToast()
+
   useEffect(() => setProjects(getProjects()), [])
 
   const updateP = (f: string, v: string) =>
@@ -39,12 +44,47 @@ export function OSForm({ data, setData }: OSFormProps) {
     })
   }
 
+  const handleSyncPGR = () => {
+    const pgrs = getPGRs()
+    const pgr = pgrs.find((p) => p.projectId === data.projectId)
+    if (pgr) {
+      const riscosText = pgr.riscos
+        .map((r) => `> PERIGO: ${r.perigo}\n  MEDIDA: ${r.medidas}`)
+        .join('\n\n')
+      setData({
+        ...data,
+        atividade: {
+          ...data.atividade!,
+          descricao:
+            (data.atividade?.descricao || '') + '\n\n=== RISCOS MAPEADOS (PGR) ===\n' + riscosText,
+        },
+      })
+      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR importados para a OS.' })
+    } else {
+      toast({
+        title: 'PGR não encontrado',
+        description: 'Nenhum PGR cadastrado para esta obra.',
+        variant: 'destructive',
+      })
+    }
+  }
+
   const isFinalizado = data.status === 'Finalizado'
 
   return (
     <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
       <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[80vh] lg:overflow-y-auto">
-        <h2 className="font-bold text-lg text-brand-navy border-b pb-2">Preenchimento da OS</h2>
+        <div className="flex items-center justify-between border-b pb-2">
+          <h2 className="font-bold text-lg text-brand-navy">Preenchimento da OS</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSyncPGR}
+            className="gap-1 h-7 text-xs bg-blue-50 text-blue-700 border-blue-200"
+          >
+            <RefreshCw className="h-3 w-3" /> Sync PGR
+          </Button>
+        </div>
 
         <div className="space-y-2">
           <Label>Obra / Projeto Vinculado</Label>
@@ -77,13 +117,13 @@ export function OSForm({ data, setData }: OSFormProps) {
           <div className="grid grid-cols-2 gap-2">
             <Input
               disabled={isFinalizado}
-              placeholder="[00.000.000/0000-00]"
+              placeholder="[CNPJ]"
               value={data.prestadora?.cnpj}
               onChange={(e) => updateP('cnpj', e.target.value)}
             />
             <Input
               disabled={isFinalizado}
-              placeholder="(11) 90000-0000"
+              placeholder="Telefone"
               value={data.prestadora?.telefone}
               onChange={(e) => updateP('telefone', e.target.value)}
             />
@@ -96,7 +136,7 @@ export function OSForm({ data, setData }: OSFormProps) {
           />
           <Input
             disabled={isFinalizado}
-            placeholder="[Nome do Responsável]"
+            placeholder="Responsável"
             value={data.prestadora?.responsavel}
             onChange={(e) => updateP('responsavel', e.target.value)}
           />
@@ -106,7 +146,7 @@ export function OSForm({ data, setData }: OSFormProps) {
           <Label className="font-bold text-primary">Execução e Atividade</Label>
           <Input
             disabled={isFinalizado}
-            placeholder="[Nome do cliente/ estabelecimento]"
+            placeholder="Local de Execução"
             value={data.execucao?.local}
             onChange={(e) => updateE('local', e.target.value)}
           />
@@ -126,39 +166,17 @@ export function OSForm({ data, setData }: OSFormProps) {
           </div>
           <Input
             disabled={isFinalizado}
-            placeholder="Laboratório de Meio Ambiente"
+            placeholder="Setor"
             value={data.atividade?.setor}
             onChange={(e) => updateA('setor', e.target.value)}
           />
           <Textarea
             disabled={isFinalizado}
-            placeholder="Descrição detalhada da atividade a ser executada..."
-            className="h-20"
+            placeholder="Descrição da atividade e riscos (Pode importar do PGR)..."
+            className="min-h-[120px]"
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}
           />
-        </div>
-
-        <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">Conformidade e Tributos (Opcional)</Label>
-          <div className="space-y-2">
-            <Label className="text-xs">Registro eSocial</Label>
-            <Input
-              disabled={isFinalizado}
-              placeholder="Ex: Matrícula eSocial / S-2240"
-              value={data.compliance?.esocial || ''}
-              onChange={(e) => updateC('esocial', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-xs">Receita Federal (CNO / CNPJ)</Label>
-            <Input
-              disabled={isFinalizado}
-              placeholder="Ex: CNO Ativo, Regular"
-              value={data.compliance?.receita || ''}
-              onChange={(e) => updateC('receita', e.target.value)}
-            />
-          </div>
         </div>
 
         <div className="space-y-3 bg-gray-50 p-3 rounded border">

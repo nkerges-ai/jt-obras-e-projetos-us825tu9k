@@ -18,8 +18,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import {
   ArrowLeft,
@@ -34,6 +34,9 @@ import {
   Upload,
   Fingerprint,
   Trash2,
+  Mail,
+  Link2,
+  Plus,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
@@ -91,13 +94,13 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
       {
         key: 'caracteristicas',
         label: 'Características da Edificação',
-        example: 'Ex: Galpão logístico J-2, risco médio, hidrantes...',
+        example: 'Ex: Galpão logístico J-2, risco médio...',
         type: 'textarea',
       },
       {
         key: 'medidas',
         label: 'Sistemas de Segurança Avaliados',
-        example: 'Ex: Extintores, Iluminação de Emergência, Alarme de Incêndio',
+        example: 'Ex: Extintores, Iluminação de Emergência...',
         type: 'textarea',
       },
     ],
@@ -235,11 +238,6 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
         label: 'Identificação do Instrutor (CREA/MTE)',
         example: 'Ex: João Silva - Téc. Segurança MTE 12345',
       },
-      {
-        key: 'trainee',
-        label: 'Dados do Participante / Treinado',
-        example: 'Ex: Nome completo, CPF, Cargo.',
-      },
     ],
   },
 }
@@ -253,17 +251,23 @@ export default function EngineeringTemplateEditor() {
   const [projectId, setProjectId] = useState('')
   const [isRestricted, setIsRestricted] = useState(true)
   const [formData, setFormData] = useState<Record<string, string>>({})
-  const [profData, setProfData] = useState({
-    name: '',
-    registry: '',
-    document: '',
-    role: '',
-  })
+  const [profData, setProfData] = useState({ name: '', registry: '', document: '', role: '' })
+  const [compliance, setCompliance] = useState({ esocial: '', receita: '' })
 
-  const [compliance, setCompliance] = useState({
-    esocial: '',
-    receita: '',
-  })
+  // Treinamento Evidence & Attendance
+  const [attendanceList, setAttendanceList] = useState<{ id: string; name: string; cpf: string }[]>(
+    [],
+  )
+  const [evidencePhotos, setEvidencePhotos] = useState<string[]>([])
+  const photoRef = useRef<HTMLInputElement>(null)
+
+  // Attachments (Generic)
+  const [attachments, setAttachments] = useState<string[]>([])
+  const attachRef = useRef<HTMLInputElement>(null)
+
+  // Email
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
+  const [emailTo, setEmailTo] = useState('')
 
   // External Signature State
   const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
@@ -275,7 +279,6 @@ export default function EngineeringTemplateEditor() {
   const [uploadedSign, setUploadedSign] = useState<string | null>(null)
   const [govbrLink, setGovbrLink] = useState('')
   const [tempSignature, setTempSignature] = useState<string | null>(null)
-
   const [isBiometricOpen, setIsBiometricOpen] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
   const [adminSignature, setAdminSignature] = useState<TechnicalDocument['adminSignature']>()
@@ -297,25 +300,23 @@ export default function EngineeringTemplateEditor() {
   }, [isAdminSignOpen, signType])
 
   if (!type || !TEMPLATES[type]) return <div className="p-8">Modelo não encontrado.</div>
-
   const config = TEMPLATES[type]
+  const isTraining = type === 'treinamento'
   const selectedProject = projects.find((p) => p.id === projectId)
 
   const handleSave = () => {
-    if (!selectedProject) {
-      toast({ title: 'Erro', description: 'Selecione uma obra vinculada.', variant: 'destructive' })
-      return
-    }
     const doc: TechnicalDocument = {
       id: `doc_${Date.now()}`,
-      name: `${config.title.split(' ')[0]} - ${selectedProject.name}`,
+      name: `${config.title.split(' ')[0]} - ${selectedProject?.name || 'Geral'}`,
       category: config.title.split(' ')[0],
       uploadDate: new Date().toISOString(),
-      projectId: selectedProject.id,
+      projectId: selectedProject?.id || 'global',
       isRestricted: isRestricted,
       url: '#',
       compliance,
       adminSignature: isSigned ? adminSignature : undefined,
+      attendanceList: isTraining ? attendanceList : undefined,
+      evidencePhotos: isTraining ? evidencePhotos : undefined,
     }
     saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
     toast({
@@ -326,116 +327,101 @@ export default function EngineeringTemplateEditor() {
   }
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent(
-      `Olá! Segue o link para o documento: ${config.title} referente à obra ${selectedProject?.name || ''}.`,
-    )
     addLog({
       type: 'WhatsApp',
       recipient: profData.name || 'Participante',
-      message: `Link do documento ${config.title} enviado via WhatsApp.`,
+      message: `Link do documento ${config.title} enviado.`,
       status: 'Enviado',
     })
-    window.open(`https://wa.me/5511940037545?text=${text}`, '_blank')
-    toast({ title: 'Notificação', description: 'Registro de envio automático criado com sucesso.' })
+    window.open(
+      `https://wa.me/5511940037545?text=Ol%C3%A1!+Segue+o+link+para+o+documento.`,
+      '_blank',
+    )
+    toast({ title: 'Notificação', description: 'WhatsApp aberto com sucesso.' })
   }
 
-  const handleFieldChange = (key: string, val: string) => {
-    setFormData((prev) => ({ ...prev, [key]: val }))
+  const handleEmail = (e: React.FormEvent) => {
+    e.preventDefault()
+    addLog({
+      type: 'Email',
+      recipient: emailTo,
+      message: `Documento ${config.title} enviado por e-mail.`,
+      status: 'Enviado',
+    })
+    toast({ title: 'E-mail Enviado', description: `O documento foi enviado para ${emailTo}.` })
+    setIsEmailOpen(false)
   }
 
-  const handleProfChange = (key: string, val: string) => {
-    setProfData((prev) => ({ ...prev, [key]: val }))
+  const handleAttach = (e: React.ChangeEvent<HTMLInputElement>, isEvidence = false) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        if (isEvidence) setEvidencePhotos([...evidencePhotos, ev.target?.result as string])
+        else setAttachments([...attachments, ev.target?.result as string])
+        toast({ title: 'Arquivo Anexado' })
+      }
+      reader.readAsDataURL(file)
+    }
   }
+
+  const addAttendee = () =>
+    setAttendanceList([...attendanceList, { id: `att_${Date.now()}`, name: '', cpf: '' }])
+  const updateAttendee = (id: string, field: string, val: string) =>
+    setAttendanceList(attendanceList.map((a) => (a.id === id ? { ...a, [field]: val } : a)))
+  const removeAttendee = (id: string) =>
+    setAttendanceList(attendanceList.filter((a) => a.id !== id))
 
   const handleRequestSignature = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!selectedProject) {
-      toast({ title: 'Erro', description: 'Selecione uma obra vinculada.', variant: 'destructive' })
-      return
-    }
     const id = `sig_${Date.now()}`
     const sig: DocumentSignature = {
       id,
       documentId: `doc_${Date.now()}`,
-      documentName: `${config.title.split(' ')[0]} - ${selectedProject.name} (${profData.name || 'Participante'})`,
-      clientName: profData.name || 'Participante / Contratado',
+      documentName: `${config.title.split(' ')[0]} - ${selectedProject?.name || 'Geral'}`,
+      clientName: profData.name || 'Participante',
       clientPhone: signPhone,
       status: 'Pendente',
       sentDate: new Date().toISOString(),
     }
     saveSignatures([sig, ...getSignatures()])
-
     const link = `${window.location.origin}/assinatura/${id}`
-    const text = encodeURIComponent(
-      `Olá! Foi solicitada a sua assinatura eletrônica no documento: ${sig.documentName}. Acesse o link para assinar de forma segura: ${link}`,
+    window.open(
+      `https://wa.me/${signPhone.replace(/\D/g, '')}?text=Ol%C3%A1!+Acesse+o+link+para+assinar:+${link}`,
+      '_blank',
     )
-    window.open(`https://wa.me/${signPhone.replace(/\D/g, '')}?text=${text}`, '_blank')
-
-    toast({
-      title: 'Assinatura Solicitada',
-      description: 'Link gerado e WhatsApp aberto para envio.',
-    })
+    toast({ title: 'Assinatura Solicitada' })
     setIsReqSignDialogOpen(false)
-    setSignPhone('')
   }
 
   // Signature Canvas Logic
-  const getCoordinates = (e: any) => {
-    const canvas = canvasRef.current
-    if (!canvas) return { x: 0, y: 0 }
-    const rect = canvas.getBoundingClientRect()
-    const clientX = e.touches ? e.touches[0].clientX : e.nativeEvent.clientX
-    const clientY = e.touches ? e.touches[0].clientY : e.nativeEvent.clientY
-    return { x: clientX - rect.left, y: clientY - rect.top }
-  }
-
   const startDrawing = (e: any) => {
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
-    const { x, y } = getCoordinates(e)
+    const rect = canvasRef.current!.getBoundingClientRect()
+    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
+    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
     ctx.beginPath()
     ctx.moveTo(x, y)
     setIsDrawing(true)
   }
-
   const draw = (e: any) => {
     if (!isDrawing) return
     const ctx = canvasRef.current?.getContext('2d')
     if (!ctx) return
-    const { x, y } = getCoordinates(e)
+    const rect = canvasRef.current!.getBoundingClientRect()
+    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
+    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
     ctx.lineTo(x, y)
     ctx.stroke()
   }
-
   const stopDrawing = () => setIsDrawing(false)
 
-  const clearSignature = () =>
-    canvasRef.current
-      ?.getContext('2d')
-      ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-
   const handleSaveAdminSignature = () => {
-    if (signType === 'draw') {
-      if (!canvasRef.current) return
+    if (signType === 'draw' && canvasRef.current)
       setTempSignature(canvasRef.current.toDataURL('image/png'))
-    } else if (signType === 'upload') {
-      if (!uploadedSign) {
-        toast({ title: 'Atenção', description: 'Faça upload da imagem.', variant: 'destructive' })
-        return
-      }
-      setTempSignature(uploadedSign)
-    } else if (signType === 'govbr') {
-      if (!govbrLink) {
-        toast({
-          title: 'Atenção',
-          description: 'Insira o link de validação.',
-          variant: 'destructive',
-        })
-        return
-      }
-      setTempSignature('govbr')
-    }
-
+    else if (signType === 'upload') setTempSignature(uploadedSign)
+    else if (signType === 'govbr') setTempSignature('govbr')
     setIsAdminSignOpen(false)
     setTimeout(() => setIsBiometricOpen(true), 300)
   }
@@ -450,11 +436,7 @@ export default function EngineeringTemplateEditor() {
     })
     setIsSigned(true)
     setIsBiometricOpen(false)
-
-    toast({
-      title: 'Documento Assinado',
-      description: 'A assinatura e validação foram aplicadas com sucesso.',
-    })
+    toast({ title: 'Documento Assinado' })
   }
 
   return (
@@ -473,11 +455,33 @@ export default function EngineeringTemplateEditor() {
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <h1 className="font-bold text-lg text-brand-navy hidden sm:block">
-              Preenchimento: {config.title}
+            <h1 className="font-bold text-lg text-brand-navy hidden sm:block truncate max-w-[200px] md:max-w-md">
+              Edição: {config.title}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto">
+            <input
+              type="file"
+              ref={attachRef}
+              className="hidden"
+              onChange={(e) => handleAttach(e, false)}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => attachRef.current?.click()}
+              className="gap-2 hidden md:flex"
+            >
+              <Upload className="h-4 w-4 text-blue-600" /> Anexar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEmailOpen(true)}
+              className="gap-2 hidden md:flex"
+            >
+              <Mail className="h-4 w-4 text-blue-500" /> Email
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -486,148 +490,24 @@ export default function EngineeringTemplateEditor() {
             >
               <MessageCircle className="h-4 w-4 text-green-600" /> WhatsApp
             </Button>
-
-            <Dialog open={isReqSignDialogOpen} onOpenChange={setIsReqSignDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
-                >
-                  <ShieldCheck className="h-4 w-4" />{' '}
-                  <span className="hidden sm:inline">Coletar Assinatura</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Solicitar Assinatura Eletrônica</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label>Nome do Signatário (Participante/Prestador)</Label>
-                    <Input
-                      value={profData.name}
-                      disabled
-                      className="bg-gray-50"
-                      placeholder="Preencha no painel lateral"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>WhatsApp / Telefone para envio</Label>
-                    <Input
-                      required
-                      placeholder="(11) 99999-9999"
-                      value={signPhone}
-                      onChange={(e) => setSignPhone(e.target.value)}
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      className="w-full gap-2 mt-2 bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <Send className="h-4 w-4" /> Gerar Link e Enviar
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsReqSignDialogOpen(true)}
+              className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
+            >
+              <Link2 className="h-4 w-4" />{' '}
+              <span className="hidden lg:inline">Solicitar Assinatura</span>
+            </Button>
             {!isSigned ? (
-              <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
-                    <PenTool className="h-4 w-4" />{' '}
-                    <span className="hidden sm:inline">Assinar (JT Obras)</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Assinatura Digital - Emissora</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 pt-4">
-                    <Tabs
-                      value={signType}
-                      onValueChange={(v) => setSignType(v as any)}
-                      className="w-full"
-                    >
-                      <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="draw" className="gap-1 text-xs">
-                          <PenTool className="h-3 w-3" /> Desenhar
-                        </TabsTrigger>
-                        <TabsTrigger value="upload" className="gap-1 text-xs">
-                          <Upload className="h-3 w-3" /> Imagem
-                        </TabsTrigger>
-                        <TabsTrigger value="govbr" className="gap-1 text-xs">
-                          <Fingerprint className="h-3 w-3" /> Gov.br
-                        </TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="draw" className="space-y-4 mt-4">
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
-                          <canvas
-                            ref={canvasRef}
-                            width={400}
-                            height={200}
-                            className="w-full h-[200px] cursor-crosshair"
-                            onMouseDown={startDrawing}
-                            onMouseMove={draw}
-                            onMouseUp={stopDrawing}
-                            onMouseLeave={stopDrawing}
-                            onTouchStart={startDrawing}
-                            onTouchMove={draw}
-                            onTouchEnd={stopDrawing}
-                          />
-                        </div>
-                        <div className="flex justify-between">
-                          <Button
-                            variant="ghost"
-                            onClick={clearSignature}
-                            className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" /> Limpar
-                          </Button>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="upload" className="space-y-4 mt-4">
-                        <Input
-                          type="file"
-                          accept="image/png, image/jpeg"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              const reader = new FileReader()
-                              reader.onload = (ev) => setUploadedSign(ev.target?.result as string)
-                              reader.readAsDataURL(file)
-                            }
-                          }}
-                        />
-                        {uploadedSign && (
-                          <img
-                            src={uploadedSign}
-                            className="h-24 object-contain border p-2 rounded bg-white mx-auto mix-blend-multiply"
-                            alt="Preview"
-                          />
-                        )}
-                      </TabsContent>
-                      <TabsContent value="govbr" className="space-y-4 mt-4">
-                        <p className="text-sm text-muted-foreground">
-                          Insira o link de validação da assinatura gerada no Portal Gov.br.
-                        </p>
-                        <Input
-                          placeholder="https://validar.iti.gov.br/..."
-                          value={govbrLink}
-                          onChange={(e) => setGovbrLink(e.target.value)}
-                        />
-                      </TabsContent>
-                    </Tabs>
-                    <div className="pt-4 border-t flex justify-end">
-                      <Button onClick={handleSaveAdminSignature} className="gap-2 w-full sm:w-auto">
-                        <Save className="h-4 w-4" /> Avançar para Validação
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <Button
+                size="sm"
+                onClick={() => setIsAdminSignOpen(true)}
+                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <PenTool className="h-4 w-4" />{' '}
+                <span className="hidden lg:inline">Assinar (JT)</span>
+              </Button>
             ) : (
               <Button
                 size="sm"
@@ -635,41 +515,34 @@ export default function EngineeringTemplateEditor() {
                 className="gap-2 bg-green-100 text-green-700 pointer-events-none"
               >
                 <CheckCircle className="h-4 w-4" />{' '}
-                <span className="hidden sm:inline">Assinado</span>
+                <span className="hidden lg:inline">Assinado</span>
               </Button>
             )}
-
-            <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> <span className="hidden sm:inline">Salvar</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              className="gap-2 hidden md:flex"
+            >
+              <Save className="h-4 w-4" /> Salvar
             </Button>
             <Button
               onClick={() => window.print()}
               size="sm"
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              className="gap-2 bg-brand-navy text-white hover:bg-brand-navy/90"
             >
-              <Printer className="h-4 w-4" /> <span className="hidden sm:inline">Imprimir</span>
+              <Printer className="h-4 w-4" /> Imprimir
             </Button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 mt-8 print:p-0 flex flex-col lg:flex-row gap-8">
-        <div className="w-full lg:w-[400px] shrink-0 space-y-6 print:hidden">
-          <div className="bg-white p-6 rounded-xl border shadow-sm space-y-5">
+        <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
+          <div className="bg-white p-6 rounded-xl border shadow-sm space-y-5 lg:max-h-[80vh] lg:overflow-y-auto">
             <h2 className="font-bold text-xl mb-4 border-b pb-2 text-brand-navy">
               Dados do Documento
             </h2>
-
-            <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-sm mb-4">
-              <div className="flex items-center gap-2 text-blue-800 font-bold mb-2">
-                <Info className="h-4 w-4" /> Preenchimento Automatizado
-              </div>
-              <p className="text-blue-700/80 leading-relaxed text-xs">
-                A JT Obras constará como Emissora / Contratante. Preencha os dados do participante
-                ou contratado para formalizar os registros de NRs e treinamentos.
-              </p>
-            </div>
-
             <div className="space-y-2">
               <Label>Obra / Cliente Vinculado</Label>
               <Select value={projectId} onValueChange={setProjectId}>
@@ -677,50 +550,42 @@ export default function EngineeringTemplateEditor() {
                   <SelectValue placeholder="Selecione a obra..." />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="global">Geral / Sem vínculo específico</SelectItem>
                   {projects.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
-                      {p.name} - {p.client}
+                      {p.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-4 pt-4 border-t mt-4">
-              <h3 className="font-bold text-brand-navy">Dados do Outro Signatário</h3>
-              <div className="space-y-2">
-                <Label>Nome Completo (Participante / Prestador)</Label>
-                <Input
-                  value={profData.name}
-                  onChange={(e) => handleProfChange('name', e.target.value)}
-                  placeholder="Ex: Carlos Silva"
-                />
+            {!isTraining && (
+              <div className="space-y-4 pt-4 border-t mt-4">
+                <h3 className="font-bold text-brand-navy">Dados do Signatário</h3>
+                <div className="space-y-2">
+                  <Label>Nome Completo</Label>
+                  <Input
+                    value={profData.name}
+                    onChange={(e) => setProfData({ ...profData, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Registro / CPF</Label>
+                  <Input
+                    value={profData.document}
+                    onChange={(e) => setProfData({ ...profData, document: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Cargo / Função</Label>
+                  <Input
+                    value={profData.role}
+                    onChange={(e) => setProfData({ ...profData, role: e.target.value })}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Registro / Matrícula (Opcional)</Label>
-                <Input
-                  value={profData.registry}
-                  onChange={(e) => handleProfChange('registry', e.target.value)}
-                  placeholder="Ex: Matrícula 123"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>CPF do Participante</Label>
-                <Input
-                  value={profData.document}
-                  onChange={(e) => handleProfChange('document', e.target.value)}
-                  placeholder="000.000.000-00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Cargo / Função</Label>
-                <Input
-                  value={profData.role}
-                  onChange={(e) => handleProfChange('role', e.target.value)}
-                  placeholder="Ex: Pedreiro"
-                />
-              </div>
-            </div>
+            )}
 
             <div className="space-y-4 pt-4 border-t mt-4">
               <h3 className="font-bold text-brand-navy">Detalhes da Execução</h3>
@@ -731,228 +596,266 @@ export default function EngineeringTemplateEditor() {
                     <Textarea
                       className="min-h-[80px]"
                       value={formData[field.key] || ''}
-                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
                       placeholder={field.example}
                     />
                   ) : (
                     <Input
                       value={formData[field.key] || ''}
-                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
                       placeholder={field.example}
                     />
                   )}
-                  <p className="text-[10px] text-muted-foreground">{field.example}</p>
                 </div>
               ))}
             </div>
 
-            <div className="space-y-4 pt-4 border-t mt-4">
-              <h3 className="font-bold text-brand-navy">Dados de Conformidade Regulatória</h3>
-              <div className="space-y-2">
-                <Label>Dados eSocial (Opcional)</Label>
-                <Input
-                  placeholder="Ex: S-2240, Matrícula 987"
-                  value={compliance.esocial}
-                  onChange={(e) => setCompliance({ ...compliance, esocial: e.target.value })}
+            {isTraining && (
+              <div className="space-y-4 pt-4 border-t mt-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-brand-navy">Lista de Presença</h3>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={addAttendee}
+                    className="h-7 text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" /> Adicionar
+                  </Button>
+                </div>
+                {attendanceList.map((att, i) => (
+                  <div key={att.id} className="flex gap-2 items-center">
+                    <span className="text-xs font-bold w-4">{i + 1}.</span>
+                    <Input
+                      placeholder="Nome Completo"
+                      value={att.name}
+                      onChange={(e) => updateAttendee(att.id, 'name', e.target.value)}
+                      className="h-8 text-xs"
+                    />
+                    <Input
+                      placeholder="CPF"
+                      value={att.cpf}
+                      onChange={(e) => updateAttendee(att.id, 'cpf', e.target.value)}
+                      className="h-8 text-xs w-24"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeAttendee(att.id)}
+                      className="h-8 w-8 text-red-500"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+
+                <h3 className="font-bold text-brand-navy pt-4">Fotos de Evidência</h3>
+                <input
+                  type="file"
+                  ref={photoRef}
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => handleAttach(e, true)}
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-dashed"
+                  onClick={() => photoRef.current?.click()}
+                >
+                  <Upload className="h-4 w-4 mr-2" /> Fazer Upload de Fotos
+                </Button>
+                <div className="flex gap-2 overflow-x-auto py-2">
+                  {evidencePhotos.map((p, i) => (
+                    <img
+                      key={i}
+                      src={p}
+                      alt="Evidência"
+                      className="h-16 w-16 object-cover rounded border"
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Receita Federal do Brasil (Opcional)</Label>
-                <Input
-                  placeholder="Ex: CNO 123.456, Status Regular"
-                  value={compliance.receita}
-                  onChange={(e) => setCompliance({ ...compliance, receita: e.target.value })}
-                />
-              </div>
-            </div>
+            )}
 
             <div className="flex items-center space-x-3 pt-4 border-t mt-6">
               <Switch checked={!isRestricted} onCheckedChange={(c) => setIsRestricted(!c)} />
               <Label className="cursor-pointer text-sm font-semibold text-brand-navy">
-                Liberar para o Cliente <br />
-                <span className="text-xs text-muted-foreground font-normal">
-                  Visível no Portal do Cliente
-                </span>
+                Liberar para o Cliente (Portal)
               </Label>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center print:block print:w-full">
-          <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] relative print:shadow-none print:m-0 print:p-0">
-            <div className="p-[20mm] pb-0">
+        <div className="flex-1 flex flex-col justify-start print:block print:w-full">
+          <div className="bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0">
+            <div className="p-[15mm] border border-gray-400 min-h-[297mm] flex flex-col print:border-gray-800 m-[5mm] print:m-0">
               <header className="border-b-2 border-brand-orange pb-6 mb-10 flex justify-between items-end">
                 <img src={logo} alt="JT Obras" className="h-16 md:h-20 object-contain" />
-                <div className="text-right text-xs md:text-sm text-gray-600 space-y-0.5">
-                  <p className="font-bold text-brand-navy">{COMPANY.name}</p>
+                <div className="text-right text-[11px] text-gray-600 space-y-0.5">
+                  <p className="font-bold text-brand-navy text-[13px]">{COMPANY.name}</p>
                   <p>CNPJ: {COMPANY.cnpj}</p>
                   <p>{COMPANY.address}</p>
                 </div>
               </header>
-            </div>
-            <main className="px-[20mm] pb-[30mm] text-gray-800 text-[14px] leading-relaxed">
-              <h2 className="text-center font-bold text-xl uppercase mb-8 tracking-widest text-brand-navy">
-                {config.title}
-              </h2>
 
-              <div className="border border-gray-400 rounded p-4 mb-4">
-                <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  1. DADOS DA EMPRESA EMISSORA / RESPONSÁVEL
-                </h3>
-                <div className="grid grid-cols-2 gap-2 text-[13px]">
+              <main className="flex-1 text-[13px] leading-relaxed text-gray-800">
+                <h2 className="text-center font-bold text-xl uppercase mb-8 tracking-widest text-brand-navy">
+                  {config.title}
+                </h2>
+                <div className="border border-gray-400 rounded p-3 mb-4 bg-gray-50/50">
                   <p>
-                    <strong>Razão Social:</strong> {COMPANY.name}
-                  </p>
-                  <p>
-                    <strong>CNPJ:</strong> {COMPANY.cnpj}
-                  </p>
-                  <p className="col-span-2">
-                    <strong>Endereço Sede:</strong> {COMPANY.address}
-                  </p>
-                  <p className="col-span-2">
-                    <strong>Representante Técnico:</strong> {COMPANY.responsible}
-                  </p>
-                </div>
-              </div>
-
-              <div className="border border-gray-400 rounded p-4 mb-4">
-                <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  2. DADOS DA OBRA / PROJETO
-                </h3>
-                <div className="grid grid-cols-2 gap-2 text-[13px]">
-                  <p>
-                    <strong>Obra Vinculada:</strong>{' '}
+                    <strong>Obra / Projeto:</strong>{' '}
                     {selectedProject?.name || '___________________________'}
                   </p>
                   <p>
-                    <strong>Cliente / Local:</strong>{' '}
-                    {selectedProject?.client || '___________________________'}
-                  </p>
-                  <p className="col-span-2">
-                    <strong>Data de Emissão do Documento:</strong>{' '}
-                    {new Date().toLocaleDateString('pt-BR')}
+                    <strong>Data de Emissão:</strong> {new Date().toLocaleDateString('pt-BR')}
                   </p>
                 </div>
-              </div>
 
-              <div className="border border-gray-400 rounded p-4 mb-4">
-                <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  3. DADOS DO PARTICIPANTE / PRESTADOR
-                </h3>
-                <div className="grid grid-cols-2 gap-2 text-[13px]">
-                  <p className="col-span-2">
-                    <strong>Nome Completo:</strong>{' '}
-                    {profData.name || '__________________________________________'}
-                  </p>
-                  <p>
-                    <strong>Registro / Matrícula:</strong>{' '}
-                    {profData.registry || '____________________'}
-                  </p>
-                  <p>
-                    <strong>CPF:</strong> {profData.document || '____________________'}
-                  </p>
-                  <p className="col-span-2">
-                    <strong>Função / Cargo:</strong>{' '}
-                    {profData.role || '__________________________________________'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="border border-gray-400 rounded p-4 mb-6 min-h-[150px]">
-                <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  4. DETALHES DO DOCUMENTO / ESPECIFICAÇÕES
-                </h3>
-                <div className="space-y-4 text-[13px]">
-                  {config.fields.map((field) => (
-                    <p key={field.key}>
-                      <strong className="block mb-1">{field.label}:</strong>
-                      <span className="whitespace-pre-wrap block bg-gray-50/50 p-2 rounded border border-transparent">
-                        {formData[field.key] ||
-                          '____________________________________________________'}
-                      </span>
-                    </p>
-                  ))}
-                </div>
-              </div>
-
-              {(compliance.esocial || compliance.receita) && (
-                <div className="border border-gray-400 rounded p-4 mb-6">
+                <div className="border border-gray-400 rounded p-4 mb-6 min-h-[150px]">
                   <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                    5. DADOS DE CONFORMIDADE REGULATÓRIA
+                    DETALHES DO DOCUMENTO
                   </h3>
-                  <div className="grid grid-cols-2 gap-4 text-[13px]">
-                    {compliance.esocial && (
-                      <div>
-                        <strong className="text-gray-600 block mb-1">Registro eSocial:</strong>
-                        <span className="font-medium">{compliance.esocial}</span>
-                      </div>
-                    )}
-                    {compliance.receita && (
-                      <div>
-                        <strong className="text-gray-600 block mb-1">
-                          Receita Federal do Brasil:
-                        </strong>
-                        <span className="font-medium">{compliance.receita}</span>
-                      </div>
-                    )}
+                  <div className="space-y-4">
+                    {config.fields.map((field) => (
+                      <p key={field.key}>
+                        <strong className="block mb-1">{field.label}:</strong>{' '}
+                        <span className="whitespace-pre-wrap block bg-white p-2 border border-gray-200 rounded">
+                          {formData[field.key] || '---'}
+                        </span>
+                      </p>
+                    ))}
                   </div>
                 </div>
-              )}
 
-              <div className="mt-20 flex justify-between gap-8 text-center px-4">
-                <div className="w-1/2 flex flex-col items-center">
-                  {isSigned && adminSignature?.type === 'govbr' ? (
-                    <div className="flex flex-col items-center justify-center h-12 mb-2 text-center">
-                      <span className="text-[10px] font-bold text-blue-800 border border-blue-800 px-2 py-1 rounded bg-blue-50">
-                        ASSINADO GOV.BR
-                      </span>
-                      <a
-                        href={adminSignature.link}
-                        className="text-[8px] text-blue-600 mt-1 underline break-all max-w-[150px]"
-                      >
-                        Verificar Validade
-                      </a>
-                    </div>
-                  ) : isSigned && adminSignature?.data ? (
-                    <div className="h-12 flex items-center justify-center mb-2">
-                      <img
-                        src={adminSignature.data}
-                        alt="Assinatura"
-                        className="max-h-full mix-blend-multiply"
-                      />
-                    </div>
-                  ) : (
-                    <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
-                  )}
-                  {isSigned && <div className="border-t border-black w-full mx-auto mb-2"></div>}
-                  <p className="font-bold text-xs">{COMPANY.responsible}</p>
-                  <p className="text-[10px] text-gray-500 uppercase">
-                    Responsável - {COMPANY.name}
-                  </p>
-                  {isSigned && adminSignature?.biometric && (
-                    <div className="mt-2 flex flex-col items-center">
-                      <p className="text-[8px] text-green-600 font-bold flex items-center gap-1">
-                        <CheckCircle className="w-2 h-2" /> Biometria OK
+                {!isTraining && (
+                  <div className="mt-20 flex justify-between gap-8 text-center px-4">
+                    <div className="w-1/2 flex flex-col items-center">
+                      {isSigned && adminSignature?.type === 'govbr' ? (
+                        <div className="h-12 mb-2 flex items-center">
+                          <span className="text-[10px] font-bold text-blue-800 border px-2 py-1 rounded bg-blue-50">
+                            ASSINADO GOV.BR
+                          </span>
+                        </div>
+                      ) : isSigned && adminSignature?.data ? (
+                        <div className="h-12 flex items-center justify-center mb-2">
+                          <img
+                            src={adminSignature.data}
+                            className="max-h-full mix-blend-multiply"
+                            alt="Assinatura"
+                          />
+                        </div>
+                      ) : (
+                        <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
+                      )}
+                      {isSigned && adminSignature?.type !== 'govbr' && (
+                        <div className="border-t border-black w-full mx-auto mb-2"></div>
+                      )}
+                      <p className="font-bold text-xs">{COMPANY.responsible}</p>
+                      <p className="text-[10px] text-gray-500 uppercase">
+                        Emissor - {COMPANY.name}
                       </p>
-                      <p className="text-[7px] text-gray-400">{adminSignature.date}</p>
                     </div>
-                  )}
-                </div>
-                <div className="w-1/2 flex flex-col items-center">
-                  <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
-                  <p className="font-bold text-xs">
-                    {profData.name || 'Assinatura do Participante'}
-                  </p>
-                  <p className="text-[10px] text-gray-500 uppercase">
-                    Declarante / Treinado
-                    {profData.role ? ` - ${profData.role}` : ''}
-                  </p>
-                </div>
-              </div>
-            </main>
+                    <div className="w-1/2 flex flex-col items-center">
+                      <div className="border-t border-black w-full mx-auto mb-2 mt-12"></div>
+                      <p className="font-bold text-xs">{profData.name || 'Assinatura'}</p>
+                      <p className="text-[10px] text-gray-500 uppercase">Recebedor / Cliente</p>
+                    </div>
+                  </div>
+                )}
+              </main>
+
+              <footer className="mt-8 pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
+                <span>
+                  {COMPANY.name} - CNPJ: {COMPANY.cnpj}
+                </span>
+                <span>{COMPANY.address}</span>
+                <span className="print:block hidden">Página 1</span>
+              </footer>
+            </div>
           </div>
+
+          {/* Append Training Attendance List if applicable */}
+          {isTraining && attendanceList.length > 0 && (
+            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8">
+              <h2 className="text-lg font-bold mb-4 text-center uppercase">Lista de Presença</h2>
+              <table className="w-full border-collapse border border-black text-[12px] text-center">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border border-black p-2">Nº</th>
+                    <th className="border border-black p-2">Nome Completo</th>
+                    <th className="border border-black p-2">CPF</th>
+                    <th className="border border-black p-2">Assinatura</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceList.map((att, i) => (
+                    <tr key={att.id}>
+                      <td className="border border-black p-2">{i + 1}</td>
+                      <td className="border border-black p-2">{att.name}</td>
+                      <td className="border border-black p-2">{att.cpf}</td>
+                      <td className="border border-black p-2"></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Append Evidence Photos */}
+          {isTraining && evidencePhotos.length > 0 && (
+            <div className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8">
+              <h2 className="text-lg font-bold mb-6 text-center uppercase">
+                Relatório Fotográfico (Evidências)
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {evidencePhotos.map((photo, i) => (
+                  <div key={i} className="border border-gray-300 p-2">
+                    <img src={photo} alt="Evidência" className="w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Append Generic Attachments */}
+          {attachments.map((att, i) => (
+            <div
+              key={i}
+              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8"
+            >
+              <h3 className="text-lg font-bold mb-4">Anexo {i + 1}</h3>
+              <img src={att} className="max-w-full" alt="Anexo" />
+            </div>
+          ))}
         </div>
       </div>
+
+      <Dialog open={isEmailOpen} onOpenChange={setIsEmailOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enviar por E-mail</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEmail} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label>E-mail do Destinatário</Label>
+              <Input
+                type="email"
+                required
+                value={emailTo}
+                onChange={(e) => setEmailTo(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Enviar E-mail
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

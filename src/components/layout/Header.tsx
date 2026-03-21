@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Lock, Phone } from 'lucide-react'
+import { Menu, X, Lock, Phone, UserCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/logotipo-c129e.jpg'
 
@@ -66,17 +66,23 @@ export function Header() {
           >
             Clientes
           </button>
-          <button
-            onClick={() => scrollToSection('faq')}
-            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
-          >
-            Dúvidas
-          </button>
         </nav>
 
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="text-brand-navy hover:text-brand-orange hover:bg-orange-50"
+          >
+            <Link to="/admin/login">
+              <Lock className="h-4 w-4 mr-2" /> Administrativo
+            </Link>
+          </Button>
           <Button variant="outline" size="sm" asChild className="border-brand-navy text-brand-navy">
-            <Link to="/cliente/login">Área do Cliente</Link>
+            <Link to="/cliente/login">
+              <UserCircle className="h-4 w-4 mr-2" /> Área do Cliente
+            </Link>
           </Button>
           <Button size="sm" asChild className="bg-brand-orange hover:bg-brand-orange/90 gap-2">
             <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
@@ -117,10 +123,16 @@ export function Header() {
               Clientes
             </button>
             <Link
+              to="/admin/login"
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"
+            >
+              <Lock className="h-4 w-4" /> Acesso Administrativo
+            </Link>
+            <Link
               to="/cliente/login"
               className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"
             >
-              <Lock className="h-4 w-4" /> Área do Cliente
+              <UserCircle className="h-4 w-4" /> Área do Cliente
             </Link>
             <Button className="w-full bg-brand-orange hover:bg-brand-orange/90 gap-2" asChild>
               <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">

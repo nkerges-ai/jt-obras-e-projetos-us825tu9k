@@ -85,6 +85,31 @@ export interface BiometricValidation {
   userAgent: string
 }
 
+export interface PGRRisk {
+  id: string
+  atividade: string
+  perigo: string
+  dano: string
+  medidas: string
+}
+
+export interface PGRDocument {
+  id: string
+  projectId: string
+  date: string
+  empresa: string
+  cnpj: string
+  elaborador: string
+  riscos: PGRRisk[]
+  adminSignature?: {
+    type: 'draw' | 'upload' | 'govbr'
+    data?: string
+    link?: string
+    date: string
+    biometric?: BiometricValidation
+  }
+}
+
 export interface ServiceOrder {
   id: string
   osNumber: string
@@ -125,6 +150,8 @@ export interface TechnicalDocument {
   projectId: string
   isRestricted: boolean
   url: string
+  attendanceList?: { id: string; name: string; cpf: string; signature?: string }[]
+  evidencePhotos?: string[]
   compliance?: {
     esocial?: string
     receita?: string
@@ -245,6 +272,15 @@ export const getInventory = (): Material[] => {
 
 export const saveInventory = (inventory: Material[]) => {
   localStorage.setItem('jt_inventory_v4', JSON.stringify(inventory))
+}
+
+export const getPGRs = (): PGRDocument[] => {
+  const data = localStorage.getItem('jt_pgr_v4')
+  return data ? JSON.parse(data) : []
+}
+
+export const savePGRs = (pgrs: PGRDocument[]) => {
+  localStorage.setItem('jt_pgr_v4', JSON.stringify(pgrs))
 }
 
 export const getServiceOrders = (): ServiceOrder[] => {
