@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Trash2, ListChecks, Building2 } from 'lucide-react'
+import { Plus, Trash2, Building2 } from 'lucide-react'
 import { PGRDocument, Project, Contractor, getContractors } from '@/lib/storage'
 import { STANDARD_ACTIVITIES } from '@/lib/pgr-data'
 import { useToast } from '@/hooks/use-toast'
@@ -41,11 +41,15 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
         atividade: currentActivity.name,
         perigo: r.perigo,
         dano: r.dano,
+        probabilidade: r.probabilidade,
+        severidade: r.severidade,
+        nivelRisco: r.nivelRisco,
         medidas: r.medidas,
       }))
     setData({ ...data, riscos: [...(data.riscos || []), ...risksToAdd] })
     setSelectedActivityId('')
     setSelectedRisks([])
+    toast({ title: 'Riscos Adicionados', description: 'Matriz de riscos atualizada.' })
   }
 
   const handleSelectContractor = (id: string) => {
@@ -77,7 +81,14 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
       ...data,
       planoAcao: [
         ...(data.planoAcao || []),
-        { id: `ap_${Date.now()}`, what: '', who: '', when: '', status: 'Pendente' as const },
+        {
+          id: `ap_${Date.now()}`,
+          what: '',
+          who: '',
+          startDate: new Date().toISOString().split('T')[0],
+          endDate: new Date().toISOString().split('T')[0],
+          status: 'Pendente',
+        },
       ],
     })
   const updateActionPlan = (id: string, field: string, value: string) =>
@@ -90,7 +101,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
 
   return (
     <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0 space-y-6 print:hidden">
-      <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[80vh] lg:overflow-y-auto">
+      <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[85vh] lg:overflow-y-auto custom-scrollbar">
         <h2 className="font-bold text-lg text-brand-navy border-b pb-2">Preenchimento do PGR</h2>
 
         <div className="space-y-2">
@@ -157,7 +168,9 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
         </div>
 
         <div className="space-y-4 bg-blue-50/50 p-3 rounded border border-blue-100">
-          <Label className="font-bold text-blue-800">Seleção Rápida de Atividades</Label>
+          <Label className="font-bold text-blue-800">
+            Inclusão Rápida: Matriz de Riscos (NR-01)
+          </Label>
           <Select
             value={selectedActivityId}
             onValueChange={(v) => {
@@ -166,7 +179,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
             }}
           >
             <SelectTrigger className="bg-white">
-              <SelectValue placeholder="Escolha uma atividade..." />
+              <SelectValue placeholder="Escolha uma atividade padrão..." />
             </SelectTrigger>
             <SelectContent>
               {STANDARD_ACTIVITIES.map((a) => (
@@ -180,10 +193,10 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
           {currentActivity && (
             <div className="space-y-2 mt-3 bg-white p-3 rounded border text-sm">
               <p className="font-semibold text-xs text-gray-600 mb-2">
-                Selecione os riscos aplicáveis:
+                Selecione os riscos aplicáveis à frente de serviço:
               </p>
               {currentActivity.risks.map((r, idx) => (
-                <div key={idx} className="flex items-start space-x-2">
+                <div key={idx} className="flex items-start space-x-2 bg-gray-50 p-2 rounded">
                   <Checkbox
                     id={`risk-${idx}`}
                     checked={selectedRisks.includes(idx)}
@@ -196,7 +209,9 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                     <Label htmlFor={`risk-${idx}`} className="font-bold text-xs cursor-pointer">
                       {r.perigo}
                     </Label>
-                    <p className="text-[10px] text-muted-foreground">{r.medidas}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">
+                      Risco {r.nivelRisco} - {r.medidas}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -207,7 +222,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 onClick={handleAddStandardRisks}
                 disabled={selectedRisks.length === 0}
               >
-                Adicionar Riscos Selecionados
+                Integrar à Matriz de Riscos
               </Button>
             </div>
           )}
@@ -215,7 +230,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
 
         <div className="space-y-4 bg-gray-50 p-3 rounded border">
           <div className="flex items-center justify-between">
-            <Label className="font-bold text-primary">Matriz de Riscos</Label>
+            <Label className="font-bold text-primary">Matriz de Riscos (Personalizada)</Label>
             <Button
               type="button"
               size="sm"
@@ -227,25 +242,29 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
             </Button>
           </div>
           {(data.riscos || []).length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-4">Nenhum risco mapeado.</p>
+            <p className="text-xs text-muted-foreground text-center py-4">
+              Matriz de riscos vazia.
+            </p>
           )}
           {(data.riscos || []).map((risco, idx) => (
             <div
               key={risco.id}
-              className="p-3 border bg-white rounded shadow-sm relative space-y-3"
+              className="p-3 border border-gray-200 bg-white rounded shadow-sm relative space-y-3"
             >
-              <div className="absolute top-2 right-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-[11px] font-bold text-gray-500 uppercase">
+                  Item Avaliado #{idx + 1}
+                </p>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-red-500 hover:bg-red-50"
+                  className="h-6 w-6 text-red-500 hover:bg-red-50 -mt-1 -mr-1"
                   onClick={() => removeRisk(risco.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs font-bold text-gray-500 mb-2">Fator de Risco {idx + 1}</p>
               <div className="space-y-1">
                 <Label className="text-[10px] uppercase text-muted-foreground">
                   Atividade / Fonte Geradora
@@ -258,7 +277,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] uppercase text-muted-foreground">
-                  Perigo / Risco Identificado
+                  Perigo / Risco
                 </Label>
                 <Input
                   value={risco.perigo}
@@ -276,6 +295,57 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                   className="h-8 text-sm"
                 />
               </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-muted-foreground">Prob.</Label>
+                  <Select
+                    value={risco.probabilidade || ''}
+                    onValueChange={(v) => updateRisk(risco.id, 'probabilidade', v)}
+                  >
+                    <SelectTrigger className="h-8 text-xs px-2">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Baixa">Baixa</SelectItem>
+                      <SelectItem value="Média">Média</SelectItem>
+                      <SelectItem value="Alta">Alta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-muted-foreground">Sev.</Label>
+                  <Select
+                    value={risco.severidade || ''}
+                    onValueChange={(v) => updateRisk(risco.id, 'severidade', v)}
+                  >
+                    <SelectTrigger className="h-8 text-xs px-2">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Baixa">Baixa</SelectItem>
+                      <SelectItem value="Média">Média</SelectItem>
+                      <SelectItem value="Alta">Alta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-brand-navy font-bold">Nível</Label>
+                  <Select
+                    value={risco.nivelRisco || ''}
+                    onValueChange={(v) => updateRisk(risco.id, 'nivelRisco', v)}
+                  >
+                    <SelectTrigger className="h-8 text-xs px-2 font-semibold">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Baixo">Baixo</SelectItem>
+                      <SelectItem value="Médio">Médio</SelectItem>
+                      <SelectItem value="Alto">Alto</SelectItem>
+                      <SelectItem value="Crítico">Crítico</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="space-y-1">
                 <Label className="text-[10px] uppercase text-muted-foreground">
                   Medidas de Controle Preventivas
@@ -285,6 +355,102 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                   onChange={(e) => updateRisk(risco.id, 'medidas', e.target.value)}
                   className="min-h-[60px] text-sm"
                 />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-4 bg-orange-50/50 p-3 rounded border border-orange-100">
+          <div className="flex items-center justify-between">
+            <Label className="font-bold text-brand-orange">Planos de Ação (Mitigação)</Label>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={addActionPlan}
+              className="h-7 text-xs gap-1 border-orange-200 text-orange-700 bg-white hover:bg-orange-50"
+            >
+              <Plus className="h-3 w-3" /> Nova Ação
+            </Button>
+          </div>
+          {(data.planoAcao || []).length === 0 && (
+            <p className="text-xs text-muted-foreground text-center py-4">
+              Nenhuma ação cadastrada.
+            </p>
+          )}
+          {(data.planoAcao || []).map((plano, idx) => (
+            <div
+              key={plano.id}
+              className="p-3 border bg-white rounded shadow-sm relative space-y-3"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute top-1 right-1 h-6 w-6 text-red-500"
+                onClick={() => removeActionPlan(plano.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <div className="space-y-1 pr-6">
+                <Label className="text-[10px] uppercase text-muted-foreground">
+                  Ação a ser executada
+                </Label>
+                <Input
+                  value={plano.what}
+                  onChange={(e) => updateActionPlan(plano.id, 'what', e.target.value)}
+                  className="h-8 text-sm"
+                  placeholder="Ex: Treinamento NR-35"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase text-muted-foreground">Responsável</Label>
+                <Input
+                  value={plano.who}
+                  onChange={(e) => updateActionPlan(plano.id, 'who', e.target.value)}
+                  className="h-8 text-sm"
+                  placeholder="Nome ou Cargo"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-muted-foreground">Data Início</Label>
+                  <Input
+                    type="date"
+                    value={
+                      plano.startDate ? new Date(plano.startDate).toISOString().split('T')[0] : ''
+                    }
+                    onChange={(e) => updateActionPlan(plano.id, 'startDate', e.target.value)}
+                    className="h-8 text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-muted-foreground">
+                    Data Fim / Prazo
+                  </Label>
+                  <Input
+                    type="date"
+                    value={plano.endDate ? new Date(plano.endDate).toISOString().split('T')[0] : ''}
+                    onChange={(e) => updateActionPlan(plano.id, 'endDate', e.target.value)}
+                    className="h-8 text-xs"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase text-muted-foreground">Status Atual</Label>
+                <Select
+                  value={plano.status}
+                  onValueChange={(v) => updateActionPlan(plano.id, 'status', v)}
+                >
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pendente">Pendente</SelectItem>
+                    <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+                    <SelectItem value="Concluído">Concluído</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           ))}

@@ -90,6 +90,9 @@ export interface PGRRisk {
   atividade: string
   perigo: string
   dano: string
+  probabilidade?: 'Baixa' | 'Média' | 'Alta' | string
+  severidade?: 'Baixa' | 'Média' | 'Alta' | string
+  nivelRisco?: 'Baixo' | 'Médio' | 'Alto' | 'Crítico' | string
   medidas: string
 }
 
@@ -97,7 +100,9 @@ export interface PGRActionPlan {
   id: string
   what: string
   who: string
-  when: string
+  startDate?: string
+  endDate?: string
+  when?: string // Deprecated, kept for backward compatibility
   status: 'Pendente' | 'Em Andamento' | 'Concluído'
 }
 
@@ -232,7 +237,6 @@ export interface RentalRequest {
   requestDate: string
 }
 
-// New Models for User Story
 export interface Contractor {
   id: string
   name: string
@@ -261,11 +265,11 @@ export interface CompanyAsset {
 // Pre-filled Examples
 const DEFAULT_CONTRACTOR: Contractor = {
   id: 'c_ex_1',
-  name: 'Construtora Exemplo S.A.',
-  cnpj: '12.345.678/0001-90',
-  address: 'Av. Paulista, 1000 - São Paulo, SP',
-  contact: 'Carlos Diretor',
-  email: 'contato@construtoraexemplo.com',
+  name: 'JT Obras e Projetos LTDA',
+  cnpj: '63.243.791/0001-09',
+  address: 'Rua Tommaso Giordani, 371 vila Guacuri – SP',
+  contact: 'Eng. Responsável',
+  email: 'contato@jtobras.com',
 }
 
 const DEFAULT_EMPLOYEE: Employee = {
@@ -284,7 +288,7 @@ const DEFAULT_EMPLOYEE: Employee = {
       nr: 'NR-10',
       date: '2024-01-20',
       expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
-    }, // Vencendo logo
+    },
   ],
 }
 
@@ -292,24 +296,67 @@ const EXAMPLE_PGR: PGRDocument = {
   id: 'example_pgr_1',
   projectId: 'global',
   date: new Date().toISOString(),
-  empresa: 'JT Obras - Exemplo',
+  empresa: 'JT Obras e Manutenções LTDA',
   cnpj: '63.243.791/0001-09',
-  elaborador: 'Eng. Responsável Exemplo',
+  elaborador: 'Engenharia de Segurança do Trabalho',
   riscos: [
     {
       id: 'r_1',
-      atividade: 'Trabalho em Altura',
-      perigo: 'Queda',
-      dano: 'Fratura, Óbito',
-      medidas: 'Uso de Cinto tipo paraquedista com duplo talabarte.',
+      atividade: 'Trabalho em Altura (Fachada/Telhado)',
+      perigo: 'Queda de trabalhador com diferença de nível',
+      dano: 'Lesões graves, fraturas, óbito',
+      probabilidade: 'Média',
+      severidade: 'Alta',
+      nivelRisco: 'Alto',
+      medidas:
+        'Uso de Cinto tipo paraquedista com duplo talabarte ancorado em linha de vida independente. Treinamento NR-35. Emissão de PT.',
+    },
+    {
+      id: 'r_2',
+      atividade: 'Manutenção em Painéis Elétricos',
+      perigo: 'Choque elétrico por contato direto/indireto',
+      dano: 'Queimaduras, fibrilação ventricular, óbito',
+      probabilidade: 'Baixa',
+      severidade: 'Alta',
+      nivelRisco: 'Médio',
+      medidas:
+        'Desenergização e bloqueio (LOTO); Uso de EPI dielétrico adequado à classe de tensão; Autorização formal (NR-10).',
+    },
+    {
+      id: 'r_3',
+      atividade: 'Obras Civis (Demolição/Alvenaria)',
+      perigo: 'Inalação de poeira mineral (Sílica) e Ruído',
+      dano: 'Doenças respiratórias e perda auditiva (PAIR)',
+      probabilidade: 'Alta',
+      severidade: 'Média',
+      nivelRisco: 'Alto',
+      medidas:
+        'Umidificação constante do local; Uso obrigatório de máscara PFF2/N95 e protetor auditivo tipo concha/plug; Revezamento.',
     },
   ],
   planoAcao: [
     {
       id: 'pa_1',
-      what: 'Treinamento NR35',
-      who: 'Téc. Segurança',
-      when: new Date().toISOString(),
+      what: 'Instalação de Linha de Vida Fixa (Mitigação Estrutural)',
+      who: 'Engenharia Estrutural',
+      startDate: new Date().toISOString(),
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+      status: 'Em Andamento',
+    },
+    {
+      id: 'pa_2',
+      what: 'Treinamento e Reciclagem NR-10, NR-18 e NR-35',
+      who: 'Téc. de Segurança (SESMT)',
+      startDate: new Date().toISOString(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+      status: 'Pendente',
+    },
+    {
+      id: 'pa_3',
+      what: 'Fornecimento de novos EPIs específicos (Dielétricos e Altura)',
+      who: 'Departamento de Compras',
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
       status: 'Concluído',
     },
   ],
@@ -322,14 +369,17 @@ const EXAMPLE_OS: ServiceOrder = {
   projectId: 'global',
   date: new Date().toISOString(),
   prestadora: {
-    nome: 'Construtora Exemplo S.A.',
-    cnpj: '12.345.678/0001-90',
-    endereco: 'Av. Paulista, 1000',
-    responsavel: 'Carlos Diretor',
+    nome: 'JT Obras e Manutenções LTDA',
+    cnpj: '63.243.791/0001-09',
+    endereco: 'Rua Tommaso Giordani, 371',
+    responsavel: 'Eng. Responsável',
     telefone: '11999999999',
   },
   execucao: { local: 'Fachada Leste', dataInicio: '2024-01-01', dataFim: '2024-12-31' },
-  atividade: { descricao: 'Pintura de Fachada externa com uso de balancim', setor: 'Externa' },
+  atividade: {
+    descricao: 'Pintura de Fachada externa com uso de balancim e tratamento estrutural',
+    setor: 'Externa',
+  },
   epis: [
     'Capacete de segurança com jugular',
     'Cinturão de segurança tipo paraquedista',
@@ -401,15 +451,22 @@ export const saveInventory = (inventory: Material[]) => {
 }
 
 export const getPGRs = (): PGRDocument[] => {
-  const data = localStorage.getItem('jt_pgr_v4')
+  const data = localStorage.getItem('jt_pgr_v5')
   if (!data) {
+    // Migration logic or initial seeding
+    const oldData = localStorage.getItem('jt_pgr_v4')
+    if (oldData) {
+      const parsed = JSON.parse(oldData)
+      savePGRs(parsed)
+      return parsed
+    }
     savePGRs([EXAMPLE_PGR])
     return [EXAMPLE_PGR]
   }
   return JSON.parse(data)
 }
 export const savePGRs = (pgrs: PGRDocument[]) => {
-  localStorage.setItem('jt_pgr_v4', JSON.stringify(pgrs))
+  localStorage.setItem('jt_pgr_v5', JSON.stringify(pgrs))
 }
 
 export const getServiceOrders = (): ServiceOrder[] => {
@@ -484,7 +541,6 @@ export const saveRentalRequests = (reqs: RentalRequest[]) => {
   localStorage.setItem('jt_rental_requests_v4', JSON.stringify(reqs))
 }
 
-// New Storage for Cadastros e Ativos
 export const getContractors = (): Contractor[] => {
   const data = localStorage.getItem('jt_contractors_v1')
   if (!data) {

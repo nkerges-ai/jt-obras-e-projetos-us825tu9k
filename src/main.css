@@ -106,6 +106,17 @@
   .slide-in-from-bottom-4 {
     animation-name: slideInFromBottom;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
 }
 
 @keyframes fadeIn {
@@ -126,26 +137,30 @@
   }
 }
 
+/* Print Specific Rules for Perfect A4 formatting */
 @media print {
   @page {
-    margin: 15mm;
     size: A4;
+    margin: 12mm 15mm;
     @bottom-right {
       content: 'Página ' counter(page) ' de ' counter(pages);
-      font-size: 9pt;
+      font-size: 8pt;
       color: #666;
     }
     @bottom-left {
-      content: 'JT OBRAS E MANUTENÇÕES LTDA';
-      font-size: 9pt;
+      content: 'JT OBRAS E MANUTENÇÕES LTDA - Gestão SST';
+      font-size: 8pt;
       color: #666;
     }
   }
+
   body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     background: white;
+    font-size: 11pt; /* Better baseline for printing */
   }
+
   .print\:hidden {
     display: none !important;
   }
@@ -155,19 +170,65 @@
   .print\:w-full {
     width: 100% !important;
   }
-  .print\:p-0 {
-    padding: 0 !important;
-  }
-  .print\:m-0 {
+
+  /* Reset document container constraints for native browser printing */
+  .print-page-container {
+    width: 100% !important;
+    max-width: none !important;
     margin: 0 !important;
-  }
-  .print\:shadow-none {
+    padding: 0 !important;
     box-shadow: none !important;
+    border: none !important;
   }
-  .print\:bg-white {
-    background-color: white !important;
+
+  /* Table and Layout Protections */
+  table {
+    page-break-inside: auto;
+    width: 100%;
   }
-  .print\:border-gray-800 {
-    border-color: #1f2937 !important;
+
+  .print-table-header {
+    display: table-header-group;
+  }
+
+  .print-row-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Force headers to print at top of specific blocks */
+  .print-header-group {
+    page-break-before: auto;
+  }
+
+  /* Footer locking */
+  .print-footer {
+    display: table-footer-group;
+    position: relative;
+    bottom: 0;
+  }
+
+  /* Overrides for background colors that might be lost */
+  .bg-brand-navy {
+    background-color: #1e293b !important;
+    color: white !important;
+  }
+  .bg-brand-orange {
+    background-color: #f97316 !important;
+    color: white !important;
+  }
+  .bg-gray-200 {
+    background-color: #e5e7eb !important;
+  }
+  .bg-gray-100 {
+    background-color: #f3f4f6 !important;
+  }
+  .bg-gray-50 {
+    background-color: #f9fafb !important;
   }
 }

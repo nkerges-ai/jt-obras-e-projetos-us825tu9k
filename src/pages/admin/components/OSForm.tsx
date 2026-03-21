@@ -55,22 +55,36 @@ export function OSForm({ data, setData }: OSFormProps) {
 
   const handleSyncPGR = () => {
     const pgrs = getPGRs()
-    const pgr = pgrs.find((p) => p.projectId === data.projectId)
-    if (pgr) {
+    const pgr = pgrs.find((p) => p.projectId === data.projectId) || pgrs[0] // Fallback to first/global if not found strictly by project for demo purposes
+
+    if (pgr && pgr.riscos && pgr.riscos.length > 0) {
       const riscosText = pgr.riscos
-        .map((r) => `> PERIGO: ${r.perigo}\n  MEDIDA: ${r.medidas}`)
+        .map(
+          (r) =>
+            `> RISCO AVALIADO: ${r.perigo} (Nível: ${r.nivelRisco || 'Não definido'})\n  MEDIDA PREVENTIVA: ${r.medidas}`,
+        )
         .join('\n\n')
+
       setData({
         ...data,
         atividade: {
           ...data.atividade!,
           descricao:
-            (data.atividade?.descricao || '') + '\n\n=== RISCOS MAPEADOS (PGR) ===\n' + riscosText,
+            (data.atividade?.descricao ? data.atividade.descricao + '\n\n' : '') +
+            '=== RISCOS E MEDIDAS IMPORTADOS DO PGR ===\n' +
+            riscosText,
         },
       })
-      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR importados.' })
+      toast({
+        title: 'Sincronização Concluída',
+        description: 'Dados do PGR (NR-01) importados para a descrição da atividade.',
+      })
     } else {
-      toast({ title: 'PGR não encontrado', variant: 'destructive' })
+      toast({
+        title: 'PGR Incompatível',
+        description: 'Nenhum risco encontrado para sincronizar.',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -95,16 +109,16 @@ export function OSForm({ data, setData }: OSFormProps) {
 
   return (
     <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
-      <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[80vh] lg:overflow-y-auto">
+      <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[85vh] lg:overflow-y-auto custom-scrollbar">
         <div className="flex items-center justify-between border-b pb-2">
           <h2 className="font-bold text-lg text-brand-navy">Preenchimento da OS</h2>
           <Button
             variant="outline"
             size="sm"
             onClick={handleSyncPGR}
-            className="gap-1 h-7 text-xs bg-blue-50 text-blue-700 border-blue-200"
+            className="gap-1 h-7 text-xs bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
           >
-            <RefreshCw className="h-3 w-3" /> Sync PGR
+            <RefreshCw className="h-3 w-3" /> Importar PGR
           </Button>
         </div>
 
@@ -213,8 +227,8 @@ export function OSForm({ data, setData }: OSFormProps) {
           />
           <Textarea
             disabled={isFinalizado}
-            placeholder="Descrição da atividade e riscos..."
-            className="min-h-[120px]"
+            placeholder="Descrição detalhada da atividade e riscos inerentes..."
+            className="min-h-[140px] text-xs"
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}
           />
