@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -11,9 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Trash2, ListChecks } from 'lucide-react'
-import { PGRDocument, Project } from '@/lib/storage'
+import { Plus, Trash2, ListChecks, Building2 } from 'lucide-react'
+import { PGRDocument, Project, Contractor, getContractors } from '@/lib/storage'
 import { STANDARD_ACTIVITIES } from '@/lib/pgr-data'
+import { useToast } from '@/hooks/use-toast'
 
 interface PGRFormProps {
   data: Partial<PGRDocument>
@@ -22,8 +23,12 @@ interface PGRFormProps {
 }
 
 export function PGRForm({ data, setData, projects }: PGRFormProps) {
+  const { toast } = useToast()
   const [selectedActivityId, setSelectedActivityId] = useState<string>('')
   const [selectedRisks, setSelectedRisks] = useState<number[]>([])
+  const [contractors, setContractors] = useState<Contractor[]>([])
+
+  useEffect(() => setContractors(getContractors()), [])
 
   const currentActivity = STANDARD_ACTIVITIES.find((a) => a.id === selectedActivityId)
 
@@ -43,43 +48,45 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
     setSelectedRisks([])
   }
 
-  const addManualRisk = () => {
-    const newRisk = { id: `r_${Date.now()}`, atividade: '', perigo: '', dano: '', medidas: '' }
-    setData({ ...data, riscos: [...(data.riscos || []), newRisk] })
+  const handleSelectContractor = (id: string) => {
+    const c = contractors.find((c) => c.id === id)
+    if (c) {
+      setData({ ...data, empresa: c.name, cnpj: c.cnpj })
+      toast({ title: 'Autopreenchimento', description: 'Dados da empresa inseridos.' })
+    }
   }
 
-  const removeRisk = (id: string) => {
+  const addManualRisk = () =>
+    setData({
+      ...data,
+      riscos: [
+        ...(data.riscos || []),
+        { id: `r_${Date.now()}`, atividade: '', perigo: '', dano: '', medidas: '' },
+      ],
+    })
+  const removeRisk = (id: string) =>
     setData({ ...data, riscos: (data.riscos || []).filter((r) => r.id !== id) })
-  }
-
-  const updateRisk = (id: string, field: string, value: string) => {
+  const updateRisk = (id: string, field: string, value: string) =>
     setData({
       ...data,
       riscos: (data.riscos || []).map((r) => (r.id === id ? { ...r, [field]: value } : r)),
     })
-  }
 
-  const addActionPlan = () => {
-    const newPlan = {
-      id: `ap_${Date.now()}`,
-      what: '',
-      who: '',
-      when: '',
-      status: 'Pendente' as const,
-    }
-    setData({ ...data, planoAcao: [...(data.planoAcao || []), newPlan] })
-  }
-
-  const updateActionPlan = (id: string, field: string, value: string) => {
+  const addActionPlan = () =>
+    setData({
+      ...data,
+      planoAcao: [
+        ...(data.planoAcao || []),
+        { id: `ap_${Date.now()}`, what: '', who: '', when: '', status: 'Pendente' as const },
+      ],
+    })
+  const updateActionPlan = (id: string, field: string, value: string) =>
     setData({
       ...data,
       planoAcao: (data.planoAcao || []).map((p) => (p.id === id ? { ...p, [field]: value } : p)),
     })
-  }
-
-  const removeActionPlan = (id: string) => {
+  const removeActionPlan = (id: string) =>
     setData({ ...data, planoAcao: (data.planoAcao || []).filter((p) => p.id !== id) })
-  }
 
   return (
     <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0 space-y-6 print:hidden">
@@ -103,7 +110,26 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
         </div>
 
         <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">Identificação da Empresa (Contratada)</Label>
+          <div className="flex items-center justify-between">
+            <Label className="font-bold text-primary">Identificação da Empresa</Label>
+          </div>
+          <div className="space-y-2 pb-2 border-b border-gray-200">
+            <Label className="text-xs text-muted-foreground flex items-center gap-1">
+              <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
+            </Label>
+            <Select onValueChange={handleSelectContractor}>
+              <SelectTrigger className="h-8 text-xs bg-white">
+                <SelectValue placeholder="Selecionar Contratante..." />
+              </SelectTrigger>
+              <SelectContent>
+                {contractors.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <Label className="text-xs">Razão Social</Label>
             <Input
@@ -131,9 +157,7 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
         </div>
 
         <div className="space-y-4 bg-blue-50/50 p-3 rounded border border-blue-100">
-          <Label className="font-bold text-blue-800">
-            Seleção Rápida de Atividades (Riscos Padrão)
-          </Label>
+          <Label className="font-bold text-blue-800">Seleção Rápida de Atividades</Label>
           <Select
             value={selectedActivityId}
             onValueChange={(v) => {
@@ -202,11 +226,9 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
               <Plus className="h-3 w-3" /> Risco Manual
             </Button>
           </div>
-
           {(data.riscos || []).length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">Nenhum risco mapeado.</p>
           )}
-
           {(data.riscos || []).map((risco, idx) => (
             <div
               key={risco.id}
@@ -224,7 +246,6 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 </Button>
               </div>
               <p className="text-xs font-bold text-gray-500 mb-2">Fator de Risco {idx + 1}</p>
-
               <div className="space-y-1">
                 <Label className="text-[10px] uppercase text-muted-foreground">
                   Atividade / Fonte Geradora
@@ -232,7 +253,6 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 <Input
                   value={risco.atividade}
                   onChange={(e) => updateRisk(risco.id, 'atividade', e.target.value)}
-                  placeholder="Ex: Trabalho em altura"
                   className="h-8 text-sm"
                 />
               </div>
@@ -243,7 +263,6 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 <Input
                   value={risco.perigo}
                   onChange={(e) => updateRisk(risco.id, 'perigo', e.target.value)}
-                  placeholder="Ex: Queda de nível"
                   className="h-8 text-sm"
                 />
               </div>
@@ -254,7 +273,6 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 <Input
                   value={risco.dano}
                   onChange={(e) => updateRisk(risco.id, 'dano', e.target.value)}
-                  placeholder="Ex: Fraturas, óbito"
                   className="h-8 text-sm"
                 />
               </div>
@@ -265,89 +283,8 @@ export function PGRForm({ data, setData, projects }: PGRFormProps) {
                 <Textarea
                   value={risco.medidas}
                   onChange={(e) => updateRisk(risco.id, 'medidas', e.target.value)}
-                  placeholder="Ex: Uso de cinto tipo paraquedista..."
                   className="min-h-[60px] text-sm"
                 />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-4 bg-gray-50 p-3 rounded border">
-          <div className="flex items-center justify-between">
-            <Label className="font-bold text-primary">Plano de Ação (5W2H)</Label>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={addActionPlan}
-              className="h-7 text-xs gap-1"
-            >
-              <ListChecks className="h-3 w-3" /> Nova Ação
-            </Button>
-          </div>
-
-          {(data.planoAcao || []).length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-4">
-              Nenhuma ação cadastrada.
-            </p>
-          )}
-
-          {(data.planoAcao || []).map((plan) => (
-            <div key={plan.id} className="p-3 border bg-white rounded shadow-sm relative space-y-2">
-              <div className="absolute top-2 right-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-red-500 hover:bg-red-50"
-                  onClick={() => removeActionPlan(plan.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="space-y-1 pr-8">
-                <Label className="text-[10px] uppercase">O que fazer (Ação)</Label>
-                <Input
-                  value={plan.what}
-                  onChange={(e) => updateActionPlan(plan.id, 'what', e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase">Quem (Responsável)</Label>
-                  <Input
-                    value={plan.who}
-                    onChange={(e) => updateActionPlan(plan.id, 'who', e.target.value)}
-                    className="h-8 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase">Quando (Prazo)</Label>
-                  <Input
-                    type="date"
-                    value={plan.when}
-                    onChange={(e) => updateActionPlan(plan.id, 'when', e.target.value)}
-                    className="h-8 text-sm"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1 pt-1">
-                <Label className="text-[10px] uppercase">Status</Label>
-                <Select
-                  value={plan.status}
-                  onValueChange={(v) => updateActionPlan(plan.id, 'status', v)}
-                >
-                  <SelectTrigger className="h-8 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Pendente">Pendente</SelectItem>
-                    <SelectItem value="Em Andamento">Em Andamento</SelectItem>
-                    <SelectItem value="Concluído">Concluído</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
           ))}

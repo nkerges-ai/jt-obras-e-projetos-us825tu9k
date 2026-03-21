@@ -11,9 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getProjects, Project, ServiceOrder, getPGRs } from '@/lib/storage'
+import {
+  getProjects,
+  getContractors,
+  Project,
+  Contractor,
+  ServiceOrder,
+  getPGRs,
+} from '@/lib/storage'
 import { EPI_LIST, EPC_LIST } from '@/lib/os-text'
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw, Building2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface OSFormProps {
@@ -23,9 +30,13 @@ interface OSFormProps {
 
 export function OSForm({ data, setData }: OSFormProps) {
   const [projects, setProjects] = useState<Project[]>([])
+  const [contractors, setContractors] = useState<Contractor[]>([])
   const { toast } = useToast()
 
-  useEffect(() => setProjects(getProjects()), [])
+  useEffect(() => {
+    setProjects(getProjects())
+    setContractors(getContractors())
+  }, [])
 
   const updateP = (f: string, v: string) =>
     setData({ ...data, prestadora: { ...data.prestadora!, [f]: v } })
@@ -33,8 +44,6 @@ export function OSForm({ data, setData }: OSFormProps) {
     setData({ ...data, execucao: { ...data.execucao!, [f]: v } })
   const updateA = (f: string, v: string) =>
     setData({ ...data, atividade: { ...data.atividade!, [f]: v } })
-  const updateC = (f: string, v: string) =>
-    setData({ ...data, compliance: { ...(data.compliance || {}), [f]: v } })
 
   const toggleArr = (key: 'epis' | 'epcs', item: string) => {
     const arr = data[key] || []
@@ -59,13 +68,26 @@ export function OSForm({ data, setData }: OSFormProps) {
             (data.atividade?.descricao || '') + '\n\n=== RISCOS MAPEADOS (PGR) ===\n' + riscosText,
         },
       })
-      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR importados para a OS.' })
+      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR importados.' })
     } else {
-      toast({
-        title: 'PGR não encontrado',
-        description: 'Nenhum PGR cadastrado para esta obra.',
-        variant: 'destructive',
+      toast({ title: 'PGR não encontrado', variant: 'destructive' })
+    }
+  }
+
+  const handleSelectContractor = (id: string) => {
+    const c = contractors.find((c) => c.id === id)
+    if (c) {
+      setData({
+        ...data,
+        prestadora: {
+          ...data.prestadora,
+          nome: c.name,
+          cnpj: c.cnpj,
+          endereco: c.address,
+          responsavel: c.contact,
+        },
       })
+      toast({ title: 'Autopreenchimento', description: 'Dados do contratante inseridos.' })
     }
   }
 
@@ -107,7 +129,26 @@ export function OSForm({ data, setData }: OSFormProps) {
         </div>
 
         <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">Dados da Prestadora</Label>
+          <div className="flex items-center justify-between">
+            <Label className="font-bold text-primary">Dados da Prestadora</Label>
+          </div>
+          <div className="space-y-2 pb-2 border-b border-gray-200">
+            <Label className="text-xs text-muted-foreground flex items-center gap-1">
+              <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
+            </Label>
+            <Select disabled={isFinalizado} onValueChange={handleSelectContractor}>
+              <SelectTrigger className="h-8 text-xs bg-white">
+                <SelectValue placeholder="Selecionar Contratante..." />
+              </SelectTrigger>
+              <SelectContent>
+                {contractors.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <Input
             disabled={isFinalizado}
             placeholder="[Nome do cliente/ estabelecimento]"
@@ -172,7 +213,7 @@ export function OSForm({ data, setData }: OSFormProps) {
           />
           <Textarea
             disabled={isFinalizado}
-            placeholder="Descrição da atividade e riscos (Pode importar do PGR)..."
+            placeholder="Descrição da atividade e riscos..."
             className="min-h-[120px]"
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}

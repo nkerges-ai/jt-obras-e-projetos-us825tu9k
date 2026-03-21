@@ -11,22 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import {
   ArrowLeft,
   Printer,
   Mail,
-  Send,
   MessageCircle,
   PenTool,
   CheckCircle,
-  Save,
-  Trash2,
-  ShieldCheck,
   Upload,
   Fingerprint,
   Link2,
+  Stamp,
+  Building2,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
@@ -36,12 +33,24 @@ import {
   saveSignatures,
   getSignatures,
   DocumentSignature,
+  getCompanyAssets,
+  getContractors,
+  Contractor,
 } from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export default function TemplateEditor() {
   const { type } = useParams<{ type: string }>()
   const { toast } = useToast()
+
+  const [contractors, setContractors] = useState<Contractor[]>([])
 
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
   const [emailData, setEmailData] = useState({ to: '', subject: '' })
@@ -81,6 +90,10 @@ export default function TemplateEditor() {
   })
 
   useEffect(() => {
+    setContractors(getContractors())
+  }, [])
+
+  useEffect(() => {
     if (isSignDialogOpen && canvasRef.current && signType === 'draw') {
       const ctx = canvasRef.current.getContext('2d')
       if (ctx) {
@@ -99,70 +112,31 @@ export default function TemplateEditor() {
 
   const handlePrint = () => window.print()
 
-  const handleAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        setAttachments([...attachments, ev.target?.result as string])
-        toast({ title: 'Anexo Adicionado' })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleWhatsApp = () => {
-    const text = encodeURIComponent(`Olá! Segue o link para o ${title} referente aos serviços.`)
-    addLog({
-      type: 'WhatsApp',
-      recipient: data.clientName || 'Cliente',
-      message: `Link gerado.`,
-      status: 'Enviado',
-    })
-    window.open(`https://wa.me/5511940037545?text=${text}`, '_blank')
-    toast({ title: 'Notificação WhatsApp' })
-  }
-
-  const handleRequestSignature = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!data.clientName) {
+  const applyCompanyAsset = () => {
+    const assets = getCompanyAssets()
+    const asset =
+      assets.find((a) => a.type === 'signature') || assets.find((a) => a.type === 'stamp')
+    if (asset) {
+      setSignatureData(asset.dataUrl)
+      setFinalSignatureType('upload')
+      setSignatureDate(new Date().toLocaleString('pt-BR'))
+      setIsSigned(true)
+      toast({ title: 'Validação Aplicada', description: 'Ativo oficial da empresa inserido.' })
+    } else {
       toast({
-        title: 'Nome Necessário',
-        description: 'Preencha o nome do cliente.',
+        title: 'Não Encontrado',
+        description: 'Nenhum ativo configurado na Biblioteca.',
         variant: 'destructive',
       })
-      return
     }
-    const id = `sig_${Date.now()}`
-    const sig: DocumentSignature = {
-      id,
-      documentId: `doc_template_${Date.now()}`,
-      documentName: `${title} - ${data.clientName}`,
-      clientName: data.clientName,
-      clientPhone: reqSignPhone,
-      status: 'Pendente',
-      sentDate: new Date().toISOString(),
-    }
-    saveSignatures([sig, ...getSignatures()])
-    const link = `${window.location.origin}/assinatura/${id}`
-    const text = encodeURIComponent(`Olá! Assine o documento: ${link}`)
-    window.open(`https://wa.me/${reqSignPhone.replace(/\D/g, '')}?text=${text}`, '_blank')
-    toast({ title: 'Assinatura Solicitada' })
-    setIsReqSignDialogOpen(false)
-    setReqSignPhone('')
   }
 
-  const handleSendEmail = (e: React.FormEvent) => {
-    e.preventDefault()
-    addLog({
-      type: 'Email',
-      recipient: emailData.to,
-      message: `Documento enviado.`,
-      status: 'Enviado',
-    })
-    toast({ title: 'E-mail enviado' })
-    setIsEmailDialogOpen(false)
-    setEmailData({ to: '', subject: '' })
+  const handleSelectContractor = (id: string) => {
+    const c = contractors.find((c) => c.id === id)
+    if (c) {
+      setData({ ...data, clientName: c.name, document: c.cnpj, address: c.address })
+      toast({ title: 'Autopreenchimento', description: 'Dados do contratante inseridos.' })
+    }
   }
 
   const startDrawing = (e: any) => {
@@ -227,141 +201,84 @@ export default function TemplateEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            <input type="file" ref={attachRef} className="hidden" onChange={handleAttach} />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => attachRef.current?.click()}
-              className="gap-2 hidden md:flex"
-            >
-              <Upload className="h-4 w-4 text-blue-600" /> Anexar
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsEmailDialogOpen(true)}
-              className="gap-2 hidden md:flex"
-            >
-              <Mail className="h-4 w-4 text-blue-500" /> Email
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleWhatsApp}
-              className="gap-2 hidden sm:flex"
-            >
-              <MessageCircle className="h-4 w-4 text-green-600" /> WhatsApp
-            </Button>
-
-            <Dialog open={isReqSignDialogOpen} onOpenChange={setIsReqSignDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 border-green-200"
-                >
-                  <Link2 className="h-4 w-4" />{' '}
-                  <span className="hidden lg:inline">Sol. Assinatura</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Solicitar Assinatura</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label>Telefone WhatsApp</Label>
-                    <Input
-                      required
-                      value={reqSignPhone}
-                      onChange={(e) => setReqSignPhone(e.target.value)}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Gerar Link
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-
             {!isSigned ? (
-              <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="sm"
-                    className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
-                  >
-                    <PenTool className="h-4 w-4" />{' '}
-                    <span className="hidden sm:inline">Assinar</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Assinatura Digital</DialogTitle>
-                  </DialogHeader>
-                  <Tabs
-                    value={signType}
-                    onValueChange={(v) => setSignType(v as any)}
-                    className="w-full pt-4"
-                  >
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="draw" className="gap-1 text-xs">
-                        <PenTool className="h-3 w-3" /> Desenhar
-                      </TabsTrigger>
-                      <TabsTrigger value="upload" className="gap-1 text-xs">
-                        <Upload className="h-3 w-3" /> Imagem
-                      </TabsTrigger>
-                      <TabsTrigger value="govbr" className="gap-1 text-xs">
-                        <Fingerprint className="h-3 w-3" /> Gov.br
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="draw" className="space-y-4 mt-4">
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
-                        <canvas
-                          ref={canvasRef}
-                          width={400}
-                          height={200}
-                          className="w-full h-[200px] cursor-crosshair"
-                          onMouseDown={startDrawing}
-                          onMouseMove={draw}
-                          onMouseUp={stopDrawing}
-                          onMouseLeave={stopDrawing}
-                          onTouchStart={startDrawing}
-                          onTouchMove={draw}
-                          onTouchEnd={stopDrawing}
-                        />
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="upload" className="space-y-4 mt-4">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0]
-                          if (f) {
-                            const r = new FileReader()
-                            r.onload = (ev) => setUploadedSign(ev.target?.result as string)
-                            r.readAsDataURL(f)
-                          }
-                        }}
-                      />
-                    </TabsContent>
-                    <TabsContent value="govbr" className="space-y-4 mt-4">
-                      <Input
-                        placeholder="Link de validação"
-                        value={govbrLink}
-                        onChange={(e) => setGovbrLink(e.target.value)}
-                      />
-                    </TabsContent>
-                    <Button onClick={handleSaveDrawing} className="w-full mt-4">
-                      Avançar
+              <>
+                <Button
+                  size="sm"
+                  onClick={applyCompanyAsset}
+                  variant="outline"
+                  className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
+                >
+                  <Stamp className="h-4 w-4" /> Validar Oficial
+                </Button>
+                <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
+                    >
+                      <PenTool className="h-4 w-4" />{' '}
+                      <span className="hidden sm:inline">Assinar</span>
                     </Button>
-                  </Tabs>
-                </DialogContent>
-              </Dialog>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Assinatura Digital</DialogTitle>
+                    </DialogHeader>
+                    <Tabs
+                      value={signType}
+                      onValueChange={(v) => setSignType(v as any)}
+                      className="w-full pt-4"
+                    >
+                      <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="draw" className="gap-1 text-xs">
+                          <PenTool className="h-3 w-3" /> Desenhar
+                        </TabsTrigger>
+                        <TabsTrigger value="upload" className="gap-1 text-xs">
+                          <Upload className="h-3 w-3" /> Imagem
+                        </TabsTrigger>
+                        <TabsTrigger value="govbr" className="gap-1 text-xs">
+                          <Fingerprint className="h-3 w-3" /> Gov.br
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="draw" className="space-y-4 mt-4">
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
+                          <canvas
+                            ref={canvasRef}
+                            width={400}
+                            height={200}
+                            className="w-full h-[200px] cursor-crosshair"
+                            onMouseDown={startDrawing}
+                            onMouseMove={draw}
+                            onMouseUp={stopDrawing}
+                            onMouseLeave={stopDrawing}
+                            onTouchStart={startDrawing}
+                            onTouchMove={draw}
+                            onTouchEnd={stopDrawing}
+                          />
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="upload" className="space-y-4 mt-4">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0]
+                            if (f) {
+                              const r = new FileReader()
+                              r.onload = (ev) => setUploadedSign(ev.target?.result as string)
+                              r.readAsDataURL(f)
+                            }
+                          }}
+                        />
+                      </TabsContent>
+                      <Button onClick={handleSaveDrawing} className="w-full mt-4">
+                        Avançar
+                      </Button>
+                    </Tabs>
+                  </DialogContent>
+                </Dialog>
+              </>
             ) : (
               <Button
                 size="sm"
@@ -372,7 +289,6 @@ export default function TemplateEditor() {
                 <span className="hidden sm:inline">Assinado</span>
               </Button>
             )}
-
             <Button
               onClick={handlePrint}
               size="sm"
@@ -390,6 +306,23 @@ export default function TemplateEditor() {
             <h2 className="font-bold text-xl mb-4 border-b pb-2 text-brand-navy">
               Dados do Documento
             </h2>
+            <div className="space-y-2 pb-2 border-b border-gray-100">
+              <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
+              </Label>
+              <Select disabled={isSigned} onValueChange={handleSelectContractor}>
+                <SelectTrigger className="h-8 text-xs bg-white">
+                  <SelectValue placeholder="Selecionar Contratante..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {contractors.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label>Nome do Cliente / Empresa</Label>
               <Input
@@ -550,7 +483,6 @@ export default function TemplateEditor() {
                   </div>
                 </div>
               </main>
-
               <footer className="mt-8 pt-4 border-t border-gray-300 flex justify-between items-center text-[9px] text-gray-500">
                 <span>JT OBRAS E MANUTENÇÕES LTDA - CNPJ: 63.243.791/0001-09</span>
                 <span>(11) 94003-7545</span>
@@ -558,40 +490,8 @@ export default function TemplateEditor() {
               </footer>
             </div>
           </div>
-
-          {attachments.map((att, i) => (
-            <div
-              key={i}
-              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8"
-            >
-              <h3 className="text-lg font-bold mb-4">Anexo {i + 1}</h3>
-              <img src={att} className="max-w-full" alt="Anexo" />
-            </div>
-          ))}
         </div>
       </div>
-
-      <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enviar por E-mail</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSendEmail} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>E-mail</Label>
-              <Input
-                type="email"
-                required
-                value={emailData.to}
-                onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Enviar
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

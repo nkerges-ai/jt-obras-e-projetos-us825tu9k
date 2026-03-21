@@ -15,9 +15,9 @@ import {
   PenTool,
   Upload,
   Fingerprint,
-  Trash2,
   Mail,
   Link2,
+  Stamp,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -29,6 +29,7 @@ import {
   getSignatures,
   saveSignatures,
   DocumentSignature,
+  getCompanyAssets,
 } from '@/lib/storage'
 import { OSForm } from './components/OSForm'
 import { OSPreview } from './components/OSPreview'
@@ -50,10 +51,8 @@ export default function OSNREditor() {
 
   const [attachments, setAttachments] = useState<string[]>([])
   const attachRef = useRef<HTMLInputElement>(null)
-
   const [isEmailOpen, setIsEmailOpen] = useState(false)
   const [emailTo, setEmailTo] = useState('')
-
   const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
   const [signPhone, setSignPhone] = useState('')
 
@@ -65,7 +64,6 @@ export default function OSNREditor() {
   const [tempSignature, setTempSignature] = useState<string | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
-
   const [isAdminBiometricOpen, setIsAdminBiometricOpen] = useState(false)
 
   useEffect(() => {
@@ -83,64 +81,27 @@ export default function OSNREditor() {
     toast({ title: 'Rascunho Salvo', description: 'Ordem de Serviço salva com sucesso.' })
   }
 
-  const handleAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        setAttachments([...attachments, ev.target?.result as string])
-        toast({ title: 'Anexo Adicionado' })
-      }
-      reader.readAsDataURL(file)
+  const applyCompanyAsset = () => {
+    const assets = getCompanyAssets()
+    const asset =
+      assets.find((a) => a.type === 'signature') || assets.find((a) => a.type === 'stamp')
+    if (asset) {
+      setData({
+        ...data,
+        adminSignature: {
+          type: 'upload',
+          data: asset.dataUrl,
+          date: new Date().toLocaleString('pt-BR'),
+        },
+      })
+      toast({ title: 'Validação Aplicada', description: 'Ativo oficial da empresa inserido.' })
+    } else {
+      toast({
+        title: 'Não Encontrado',
+        description: 'Nenhum ativo configurado na Biblioteca.',
+        variant: 'destructive',
+      })
     }
-  }
-
-  const handleEmail = (e: React.FormEvent) => {
-    e.preventDefault()
-    addLog({
-      type: 'Email',
-      recipient: emailTo,
-      message: `OS ${data.osNumber} enviada por e-mail.`,
-      status: 'Enviado',
-    })
-    toast({ title: 'E-mail Enviado', description: `OS enviada para ${emailTo}.` })
-    setIsEmailOpen(false)
-  }
-
-  const handleWhatsApp = () => {
-    addLog({
-      type: 'WhatsApp',
-      recipient: data.prestadora?.nome || 'Prestadora',
-      message: `Link da OS NR01 ${data.osNumber} gerado.`,
-      status: 'Enviado',
-    })
-    window.open(
-      `https://wa.me/5511940037545?text=Ol%C3%A1!+Segue+a+Ordem+de+Servi%C3%A7o+NR01.`,
-      '_blank',
-    )
-    toast({ title: 'Notificação', description: 'Mensagem de WhatsApp disparada.' })
-  }
-
-  const handleRequestSignature = (e: React.FormEvent) => {
-    e.preventDefault()
-    const id = `sig_${Date.now()}`
-    const sig: DocumentSignature = {
-      id,
-      documentId: data.id || `os_temp`,
-      documentName: `OS NR-01 - ${data.prestadora?.nome || 'Prestadora'}`,
-      clientName: data.prestadora?.nome || 'Prestadora',
-      clientPhone: signPhone,
-      status: 'Pendente',
-      sentDate: new Date().toISOString(),
-    }
-    saveSignatures([sig, ...getSignatures()])
-    const link = `${window.location.origin}/assinatura/${id}`
-    window.open(
-      `https://wa.me/${signPhone.replace(/\D/g, '')}?text=Ol%C3%A1!+Por+favor+assine+a+OS:+${link}`,
-      '_blank',
-    )
-    toast({ title: 'Assinatura Solicitada' })
-    setIsReqSignDialogOpen(false)
   }
 
   // Draw Logic
@@ -219,49 +180,34 @@ export default function OSNREditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            <input type="file" ref={attachRef} className="hidden" onChange={handleAttach} />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => attachRef.current?.click()}
-              className="gap-2 hidden md:flex"
-            >
-              <Upload className="h-4 w-4 text-blue-600" /> Anexar
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsEmailOpen(true)}
-              className="gap-2 hidden md:flex"
-            >
-              <Mail className="h-4 w-4 text-blue-500" /> Email
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleWhatsApp}
-              className="gap-2 hidden sm:flex"
-            >
-              <MessageCircle className="h-4 w-4 text-green-600" /> WhatsApp
-            </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsReqSignDialogOpen(true)}
-              className="gap-2 border-green-200 text-green-700 bg-green-50 hover:bg-green-100"
+              className="gap-2 border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hidden lg:flex"
             >
               <Link2 className="h-4 w-4" /> Sol. Assinatura
             </Button>
 
             {!data.adminSignature ? (
-              <Button
-                size="sm"
-                onClick={() => setIsAdminSignOpen(true)}
-                variant="outline"
-                className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
-              >
-                <PenTool className="h-4 w-4" /> Assinar (JT)
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={applyCompanyAsset}
+                  variant="outline"
+                  className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
+                >
+                  <Stamp className="h-4 w-4" /> Validar Oficial
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setIsAdminSignOpen(true)}
+                  variant="outline"
+                  className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
+                >
+                  <PenTool className="h-4 w-4" /> Assinar (JT)
+                </Button>
+              </>
             ) : (
               <Button
                 size="sm"
@@ -308,60 +254,9 @@ export default function OSNREditor() {
         <OSForm data={data} setData={setData} />
         <div className="flex-1 flex flex-col">
           <OSPreview data={data} />
-          {attachments.map((att, i) => (
-            <div
-              key={i}
-              className="print:block hidden bg-white shadow-xl w-full max-w-[210mm] mx-auto min-h-[297mm] p-[15mm] border border-gray-400 mt-8"
-            >
-              <h3 className="text-lg font-bold mb-4">Anexo {i + 1}</h3>
-              <img src={att} className="max-w-full" alt="Anexo" />
-            </div>
-          ))}
         </div>
       </div>
 
-      <Dialog open={isEmailOpen} onOpenChange={setIsEmailOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enviar OS por E-mail</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleEmail} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>E-mail do Destinatário</Label>
-              <Input
-                type="email"
-                required
-                value={emailTo}
-                onChange={(e) => setEmailTo(e.target.value)}
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Enviar E-mail
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={isReqSignDialogOpen} onOpenChange={setIsReqSignDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Solicitar Assinatura</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>Telefone WhatsApp (Destinatário)</Label>
-              <Input
-                required
-                value={signPhone}
-                onChange={(e) => setSignPhone(e.target.value)}
-                placeholder="(11) 99999-9999"
-              />
-            </div>
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-              Gerar Link Seguro
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
       <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -412,13 +307,6 @@ export default function OSNREditor() {
                     r.readAsDataURL(f)
                   }
                 }}
-              />
-            </TabsContent>
-            <TabsContent value="govbr" className="space-y-4 mt-4">
-              <Input
-                placeholder="Link de validação"
-                value={govbrLink}
-                onChange={(e) => setGovbrLink(e.target.value)}
               />
             </TabsContent>
             <Button onClick={handleSaveAdminSignature} className="w-full mt-4">

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { LogOut, Cloud, RefreshCw, Smartphone, Info } from 'lucide-react'
+import { LogOut, Cloud, RefreshCw, Smartphone, Info, Wifi, WifiOff } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
+import { useNetwork } from '@/hooks/use-network'
+
 import { ProjectsTab } from './components/ProjectsTab'
 import { DocumentsTab } from './components/DocumentsTab'
 import { TemplatesTab } from './components/TemplatesTab'
@@ -16,11 +18,15 @@ import { InvoicesTab } from './components/InvoicesTab'
 import { LibraryTab } from './components/LibraryTab'
 import { ValidityAlertsTab } from './components/ValidityAlertsTab'
 import { B2BTab } from './components/B2BTab'
+import { RegistrationsTab } from './components/RegistrationsTab'
+import { TrainingExpirationsTab } from './components/TrainingExpirationsTab'
+import { CompanyAssetsTab } from './components/CompanyAssetsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const isOnline = useNetwork()
   const [isSyncing, setIsSyncing] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [syncKey, setSyncKey] = useState(0)
@@ -44,6 +50,14 @@ export default function AdminDashboard() {
   }
 
   const handleSync = () => {
+    if (!isOnline) {
+      toast({
+        title: 'Modo Offline',
+        description: 'Você está sem conexão com a internet. Os dados estão salvos localmente.',
+        variant: 'destructive',
+      })
+      return
+    }
     setIsSyncing(true)
     setTimeout(() => {
       setSyncKey((prev) => prev + 1)
@@ -69,13 +83,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-7xl">
+    <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-[1400px]">
       <Alert className="mb-8 bg-blue-50 text-blue-900 border-blue-200">
         <Info className="h-4 w-4 text-blue-600" />
-        <AlertTitle>Ambiente de Desenvolvimento (Skip)</AlertTitle>
+        <AlertTitle>Ambiente de Desenvolvimento</AlertTitle>
         <AlertDescription>
-          Para que as últimas alterações de código fiquem disponíveis permanentemente online,
-          lembre-se de clicar no botão <strong>"Publish"</strong> na interface da Skip.
+          Dados são salvos no cache local do navegador, garantindo pleno funcionamento offline em
+          campo.
         </AlertDescription>
       </Alert>
 
@@ -85,10 +99,21 @@ export default function AdminDashboard() {
             Portal Administrativo
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Gestão integrada de obras, custos, estoque e agenda.
+            Gestão integrada de obras, cadastros, NRs e estoque.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div
+            className={cn(
+              'flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border shadow-sm',
+              isOnline
+                ? 'bg-green-50 text-green-700 border-green-200'
+                : 'bg-red-50 text-red-700 border-red-200',
+            )}
+          >
+            {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+            <span className="font-medium hidden sm:inline">{isOnline ? 'Online' : 'Offline'}</span>
+          </div>
           <Button
             variant="outline"
             onClick={handleInstallPWA}
@@ -104,7 +129,7 @@ export default function AdminDashboard() {
               )}
             />
             <span className="font-medium hidden sm:inline">
-              {isSyncing ? 'Sincronizando...' : 'Backup Online'}
+              {isSyncing ? 'Sincronizando...' : 'Backup'}
             </span>
             <Button
               variant="ghost"
@@ -126,62 +151,71 @@ export default function AdminDashboard() {
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
           <TabsTrigger
             value="projetos"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Projetos e Custos
           </TabsTrigger>
           <TabsTrigger
+            value="cadastros"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Cadastros
+          </TabsTrigger>
+          <TabsTrigger
+            value="vencimentos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Vencimentos NRs
+          </TabsTrigger>
+          <TabsTrigger
+            value="ativos"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Assinaturas Oficiais
+          </TabsTrigger>
+          <TabsTrigger
             value="estoque"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Estoque
           </TabsTrigger>
           <TabsTrigger
             value="b2b"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            B2B - EPIs e Locação
-          </TabsTrigger>
-          <TabsTrigger
-            value="nfs"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Notas Fiscais
-          </TabsTrigger>
-          <TabsTrigger
-            value="chamados"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Chamados
-          </TabsTrigger>
-          <TabsTrigger
-            value="agenda"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Agenda Técnica
+            B2B - EPIs
           </TabsTrigger>
           <TabsTrigger
             value="acervo"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Acervo Técnico
           </TabsTrigger>
           <TabsTrigger
-            value="alertas"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Validades e Alertas
-          </TabsTrigger>
-          <TabsTrigger
             value="modelos"
-            className="text-sm md:text-base h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             Gerar Modelos
+          </TabsTrigger>
+          <TabsTrigger
+            value="chamados"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Chamados
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="projetos">
           <ProjectsTab key={`proj-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="cadastros">
+          <RegistrationsTab key={`cad-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="vencimentos">
+          <TrainingExpirationsTab key={`ven-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="ativos">
+          <CompanyAssetsTab key={`ast-${syncKey}`} />
         </TabsContent>
         <TabsContent value="estoque">
           <InventoryTab key={`inv-${syncKey}`} />
@@ -189,23 +223,14 @@ export default function AdminDashboard() {
         <TabsContent value="b2b">
           <B2BTab key={`b2b-${syncKey}`} />
         </TabsContent>
-        <TabsContent value="nfs">
-          <InvoicesTab key={`nf-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="chamados">
-          <TicketsTab key={`tck-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="agenda">
-          <AgendaTab key={`ag-${syncKey}`} />
-        </TabsContent>
         <TabsContent value="acervo">
           <LibraryTab key={`lib-${syncKey}`} />
         </TabsContent>
-        <TabsContent value="alertas">
-          <ValidityAlertsTab key={`val-${syncKey}`} />
-        </TabsContent>
         <TabsContent value="modelos">
           <TemplatesTab />
+        </TabsContent>
+        <TabsContent value="chamados">
+          <TicketsTab key={`tck-${syncKey}`} />
         </TabsContent>
       </Tabs>
     </div>
