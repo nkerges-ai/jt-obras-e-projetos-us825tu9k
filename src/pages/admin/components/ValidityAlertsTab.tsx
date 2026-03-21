@@ -33,6 +33,7 @@ export function ValidityAlertsTab() {
     category: 'ART',
     expirationDate: '',
     warningDays: 30,
+    clientEmail: '',
   })
 
   useEffect(() => {
@@ -49,13 +50,14 @@ export function ValidityAlertsTab() {
       category: newDoc.category || 'Outros',
       expirationDate: newDoc.expirationDate,
       warningDays: Number(newDoc.warningDays) || 30,
+      clientEmail: newDoc.clientEmail || undefined,
     }
 
     const updated = [...docs, doc]
     setDocs(updated)
     saveValidityDocs(updated)
     setIsDialogOpen(false)
-    setNewDoc({ name: '', category: 'ART', expirationDate: '', warningDays: 30 })
+    setNewDoc({ name: '', category: 'ART', expirationDate: '', warningDays: 30, clientEmail: '' })
     toast({ title: 'Documento Adicionado', description: 'Monitoramento de validade ativado.' })
   }
 
@@ -69,6 +71,17 @@ export function ValidityAlertsTab() {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
       if (diffDays <= doc.warningDays && diffDays >= 0) {
+        // Send email to client if it's 30 or 7 days exactly (simulated condition)
+        if ((diffDays === 30 || diffDays === 7 || diffDays === 1) && doc.clientEmail) {
+          addLog({
+            type: 'Email',
+            recipient: doc.clientEmail,
+            message: `Notificação Automática: O documento "${doc.name}" expira em ${diffDays} dias (Vencimento: ${expDate.toLocaleDateString('pt-BR')}).`,
+            status: 'Enviado',
+          })
+          alertedCount++
+        }
+
         addLog({
           type: 'WhatsApp',
           recipient: 'Joel Nascimento (Gestor)',
@@ -90,7 +103,7 @@ export function ValidityAlertsTab() {
     if (alertedCount > 0) {
       toast({
         title: 'Notificações Disparadas',
-        description: `${alertedCount} alertas foram enviados com sucesso.`,
+        description: `Foram enviadas ${alertedCount} notificações e alertas por email e sistema.`,
       })
     } else {
       toast({
@@ -119,10 +132,10 @@ export function ValidityAlertsTab() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-primary" /> Alertas de Validade
+            <ShieldAlert className="h-5 w-5 text-primary" /> Alertas de Validade e ARTs
           </h3>
           <p className="text-muted-foreground text-sm">
-            Monitore o vencimento de ARTs, PGRs, AVCB e laudos técnicos.
+            Monitore o vencimento de ARTs, PGRs, e ative notificações por e-mail para os clientes.
           </p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -148,15 +161,16 @@ export function ValidityAlertsTab() {
             <TableRow>
               <TableHead>Documento Monitorado</TableHead>
               <TableHead>Categoria</TableHead>
+              <TableHead>Notificação Cliente</TableHead>
               <TableHead>Data de Vencimento</TableHead>
-              <TableHead>Alerta (Dias)</TableHead>
+              <TableHead>Alerta</TableHead>
               <TableHead className="text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {docs.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   Nenhum documento sendo monitorado.
                 </TableCell>
               </TableRow>
@@ -170,6 +184,9 @@ export function ValidityAlertsTab() {
                     <Badge variant="secondary" className="font-normal text-xs">
                       {doc.category}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {doc.clientEmail ? doc.clientEmail : 'Nenhuma'}
                   </TableCell>
                   <TableCell className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
@@ -204,6 +221,15 @@ export function ValidityAlertsTab() {
               />
             </div>
             <div className="space-y-2">
+              <Label>E-mail do Cliente (Opcional - Notificará 30 e 7 dias antes)</Label>
+              <Input
+                type="email"
+                value={newDoc.clientEmail || ''}
+                onChange={(e) => setNewDoc({ ...newDoc, clientEmail: e.target.value })}
+                placeholder="Ex: cliente@empresa.com.br"
+              />
+            </div>
+            <div className="space-y-2">
               <Label>Categoria</Label>
               <Select
                 value={newDoc.category}
@@ -234,7 +260,7 @@ export function ValidityAlertsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Avisar com antecedência (dias)</Label>
+                <Label>Avisar interno (dias)</Label>
                 <Input
                   type="number"
                   min="1"

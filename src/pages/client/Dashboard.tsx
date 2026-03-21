@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,6 +15,7 @@ import {
   Lock,
   CalendarDays,
   BriefcaseBusiness,
+  ClipboardList,
 } from 'lucide-react'
 import {
   getProjects,
@@ -27,6 +28,7 @@ import {
   getEquipment,
   getRentalRequests,
   saveRentalRequests,
+  getSignatures,
   Project,
   Ticket,
   TechnicalDocument,
@@ -34,6 +36,7 @@ import {
   Ppe,
   Equipment,
   RentalRequest,
+  DocumentSignature,
 } from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
@@ -51,6 +54,7 @@ export default function ClientDashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [techDocs, setTechDocs] = useState<TechnicalDocument[]>([])
   const [requests, setRequests] = useState<DocumentAccessRequest[]>([])
+  const [signatures, setSignatures] = useState<DocumentSignature[]>([])
 
   const [ppes, setPpes] = useState<Ppe[]>([])
   const [equipments, setEquipments] = useState<Equipment[]>([])
@@ -72,6 +76,8 @@ export default function ClientDashboard() {
 
       const allReqs = getAccessRequests()
       setRequests(allReqs.filter((r) => r.projectId === projectId))
+
+      setSignatures(getSignatures())
 
       setPpes(getPpe())
       setEquipments(getEquipment())
@@ -135,7 +141,7 @@ export default function ClientDashboard() {
       itemName: type === 'EPI' ? (item as Ppe).name : (item as Equipment).type,
       projectId: project.id,
       clientName: project.client,
-      quantity: 1, // Defaulting to 1 for simplicity in client UI
+      quantity: 1,
       status: 'Pendente',
       requestDate: new Date().toISOString(),
     }
@@ -171,7 +177,13 @@ export default function ClientDashboard() {
             value="resumo"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            <ImageIcon className="h-4 w-4 mr-2" /> Resumo e Fotos
+            <ImageIcon className="h-4 w-4 mr-2" /> Fotos da Obra
+          </TabsTrigger>
+          <TabsTrigger
+            value="relatorios"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <ClipboardList className="h-4 w-4 mr-2" /> Relatórios
           </TabsTrigger>
           <TabsTrigger
             value="cronograma"
@@ -183,7 +195,7 @@ export default function ClientDashboard() {
             value="acervo"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            <FolderOpen className="h-4 w-4 mr-2" /> Acervo Técnico
+            <FolderOpen className="h-4 w-4 mr-2" /> Documentos e Contratos
           </TabsTrigger>
           <TabsTrigger
             value="locacao"
@@ -270,6 +282,66 @@ export default function ClientDashboard() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="relatorios">
+          <Card className="bg-white border-none shadow-sm mb-6">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg text-brand-navy">
+                Acompanhamento e Relatórios de Obra
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {!project.reports || project.reports.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground bg-gray-50 rounded-xl border border-dashed">
+                  <ClipboardList className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Nenhum relatório de acompanhamento disponível ainda.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {project.reports
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((report) => (
+                      <div
+                        key={report.id}
+                        className="border border-brand-light/20 rounded-xl p-5 bg-gray-50/50 shadow-sm"
+                      >
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
+                          <h4 className="font-bold text-brand-navy text-lg flex items-center gap-2">
+                            <CalendarDays className="h-5 w-5 text-primary" />
+                            Data: {new Date(report.date).toLocaleDateString('pt-BR')}
+                          </h4>
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 w-fit text-sm"
+                          >
+                            Progresso: {report.progress}%
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap mb-4 bg-white p-4 rounded-lg border">
+                          {report.summary}
+                        </p>
+                        {report.photos && report.photos.length > 0 && (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+                            {report.photos.map((p, idx) => (
+                              <div
+                                key={idx}
+                                className="aspect-square rounded-lg border overflow-hidden shadow-sm"
+                              >
+                                <img
+                                  src={p}
+                                  className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="cronograma">
           <Card className="bg-white border-none shadow-sm">
             <CardHeader className="border-b pb-4">
@@ -284,7 +356,7 @@ export default function ClientDashboard() {
         <TabsContent value="acervo">
           <Card className="bg-white border-none shadow-sm">
             <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg">Acervo Técnico e Documentos</CardTitle>
+              <CardTitle className="text-lg text-brand-navy">Acervo Técnico e Contratos</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y">
@@ -295,6 +367,7 @@ export default function ClientDashboard() {
                 )}
                 {techDocs.map((doc) => {
                   const req = requests.find((r) => r.documentId === doc.id)
+                  const sig = signatures.find((s) => s.documentId === doc.id)
                   const canDownload = !doc.isRestricted || req?.status === 'Aprovado'
 
                   return (
@@ -316,35 +389,55 @@ export default function ClientDashboard() {
                         </div>
                       </div>
 
-                      {canDownload ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-2"
-                          onClick={() =>
-                            toast({
-                              title: 'Download Iniciado',
-                              description: 'O documento está sendo baixado.',
-                            })
-                          }
-                        >
-                          <Download className="h-4 w-4" /> Baixar
-                        </Button>
-                      ) : (
-                        <Button
-                          variant={req ? 'secondary' : 'default'}
-                          size="sm"
-                          className="gap-2"
-                          disabled={!!req}
-                          onClick={() => handleRequestAccess(doc.id)}
-                        >
-                          {req?.status === 'Pendente'
-                            ? 'Aprovação Pendente'
-                            : req?.status === 'Negado'
-                              ? 'Acesso Negado'
-                              : 'Solicitar Acesso'}
-                        </Button>
-                      )}
+                      <div className="flex flex-wrap gap-2 items-center justify-end">
+                        {sig && sig.status === 'Pendente' && (
+                          <Button
+                            size="sm"
+                            className="bg-brand-orange hover:bg-[#cf6d18] text-white animate-pulse shadow-md"
+                            asChild
+                          >
+                            <Link to={`/assinatura/${sig.id}`}>Assinar Documento</Link>
+                          </Button>
+                        )}
+                        {sig && sig.status === 'Assinado' && (
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 h-9 font-bold px-3"
+                          >
+                            <CheckCircle2 className="w-3 h-3 mr-1" /> Assinado
+                          </Badge>
+                        )}
+
+                        {canDownload ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() =>
+                              toast({
+                                title: 'Download Iniciado',
+                                description: 'O documento está sendo baixado.',
+                              })
+                            }
+                          >
+                            <Download className="h-4 w-4" /> Baixar
+                          </Button>
+                        ) : (
+                          <Button
+                            variant={req ? 'secondary' : 'default'}
+                            size="sm"
+                            className="gap-2"
+                            disabled={!!req}
+                            onClick={() => handleRequestAccess(doc.id)}
+                          >
+                            {req?.status === 'Pendente'
+                              ? 'Aprovação Pendente'
+                              : req?.status === 'Negado'
+                                ? 'Acesso Negado'
+                                : 'Solicitar Acesso'}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   )
                 })}

@@ -26,6 +26,14 @@ export interface ProjectPhase {
   progress: number
 }
 
+export interface ConstructionReport {
+  id: string
+  date: string
+  progress: number
+  summary: string
+  photos: string[]
+}
+
 export interface Project {
   id: string
   name: string
@@ -39,6 +47,7 @@ export interface Project {
   expenses: Expense[]
   photos: Photo[]
   phases?: ProjectPhase[]
+  reports?: ConstructionReport[]
 }
 
 export interface CalendarEvent {
@@ -220,6 +229,7 @@ export interface ValidityDocument {
   category: string
   expirationDate: string
   warningDays: number
+  clientEmail?: string
 }
 
 export interface Ppe {
@@ -444,11 +454,11 @@ const EXAMPLE_DOC_NR35: TechnicalDocument = {
 
 // Accessors
 export const getProjects = (): Project[] => {
-  const data = localStorage.getItem('jt_projects_v4')
+  const data = localStorage.getItem('jt_projects_v5')
   return data ? JSON.parse(data) : []
 }
 export const saveProjects = (projects: Project[]) => {
-  localStorage.setItem('jt_projects_v4', JSON.stringify(projects))
+  localStorage.setItem('jt_projects_v5', JSON.stringify(projects))
 }
 
 export const getEvents = (): CalendarEvent[] => {
