@@ -22,10 +22,17 @@ import {
   CheckCircle,
   Save,
   Trash2,
+  ShieldCheck,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
-import { addLog, BiometricValidation } from '@/lib/storage'
+import {
+  addLog,
+  BiometricValidation,
+  saveSignatures,
+  getSignatures,
+  DocumentSignature,
+} from '@/lib/storage'
 import { BiometricCapture } from '@/components/BiometricCapture'
 
 export default function TemplateEditor() {
@@ -36,6 +43,9 @@ export default function TemplateEditor() {
   const [emailData, setEmailData] = useState({ to: '', subject: '' })
 
   const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
+  const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
+  const [reqSignPhone, setReqSignPhone] = useState('')
+
   const [isSigned, setIsSigned] = useState(false)
   const [signatureData, setSignatureData] = useState<string | null>(null)
   const [signatureDate, setSignatureDate] = useState<string | null>(null)
@@ -92,6 +102,42 @@ export default function TemplateEditor() {
       title: 'Notificação WhatsApp',
       description: 'Registro de envio automático criado com sucesso.',
     })
+  }
+
+  const handleRequestSignature = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!data.clientName) {
+      toast({
+        title: 'Nome Necessário',
+        description: 'Preencha o nome do cliente antes de solicitar assinatura.',
+        variant: 'destructive',
+      })
+      return
+    }
+    const id = `sig_${Date.now()}`
+    const sig: DocumentSignature = {
+      id,
+      documentId: `doc_template_${Date.now()}`,
+      documentName: `${title} - ${data.clientName}`,
+      clientName: data.clientName,
+      clientPhone: reqSignPhone,
+      status: 'Pendente',
+      sentDate: new Date().toISOString(),
+    }
+    saveSignatures([sig, ...getSignatures()])
+
+    const link = `${window.location.origin}/assinatura/${id}`
+    const text = encodeURIComponent(
+      `Olá! Foi solicitada a sua assinatura eletrônica no documento: ${sig.documentName}. Acesse o link seguro: ${link}`,
+    )
+    window.open(`https://wa.me/${reqSignPhone.replace(/\D/g, '')}?text=${text}`, '_blank')
+
+    toast({
+      title: 'Assinatura Solicitada',
+      description: 'Link gerado e WhatsApp aberto para envio.',
+    })
+    setIsReqSignDialogOpen(false)
+    setReqSignPhone('')
   }
 
   const handleSendEmail = (e: React.FormEvent) => {
@@ -192,6 +238,52 @@ export default function TemplateEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
+            <Dialog open={isReqSignDialogOpen} onOpenChange={setIsReqSignDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
+                >
+                  <ShieldCheck className="h-4 w-4" />{' '}
+                  <span className="hidden sm:inline">Solicitar Assinatura (Cliente)</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Solicitar Assinatura do Cliente</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Cliente / Empresa</Label>
+                    <Input
+                      value={data.clientName}
+                      disabled
+                      className="bg-gray-50"
+                      placeholder="Preencha no painel lateral"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>WhatsApp / Telefone para envio</Label>
+                    <Input
+                      required
+                      placeholder="(11) 99999-9999"
+                      value={reqSignPhone}
+                      onChange={(e) => setReqSignPhone(e.target.value)}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="w-full gap-2 mt-2 bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Send className="h-4 w-4" /> Gerar Link e Enviar
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
             <Button variant="outline" size="sm" onClick={handleWhatsApp} className="gap-2">
               <MessageCircle className="h-4 w-4 text-green-600" />{' '}
               <span className="hidden sm:inline">WhatsApp</span>
@@ -242,12 +334,12 @@ export default function TemplateEditor() {
                 <DialogTrigger asChild>
                   <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
                     <PenTool className="h-4 w-4" />{' '}
-                    <span className="hidden sm:inline">Assinar</span>
+                    <span className="hidden sm:inline">Assinar (Administrador)</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
-                    <DialogTitle>Assinatura Digital</DialogTitle>
+                    <DialogTitle>Assinatura Digital - Interna</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <p className="text-sm text-muted-foreground">
@@ -394,9 +486,10 @@ export default function TemplateEditor() {
                 {isContrato ? (
                   <>
                     <p>
-                      <strong>CONTRATANTE:</strong> {data.clientName || '[NOME DO CLIENTE]'},
-                      inscrito(a) no CPF/CNPJ sob o nº {data.document || '[DOCUMENTO]'}, com
-                      sede/residência em {data.address || '[ENDEREÇO COMPLETO]'}.
+                      <strong>CONTRATANTE:</strong>{' '}
+                      {data.clientName || '____________________________________'}, inscrito(a) no
+                      CPF/CNPJ sob o nº {data.document || '____________________'}, com
+                      sede/residência em {data.address || '____________________________________'}.
                     </p>
                     <p>
                       <strong>CONTRATADA:</strong> JT Obras e Manutenções LTDA, inscrita no CNPJ sob
@@ -415,7 +508,8 @@ export default function TemplateEditor() {
                       <p className="pl-4">
                         O presente contrato tem como objeto a prestação dos serviços de:{' '}
                         <span className="font-medium whitespace-pre-wrap">
-                          {data.description || '[DESCRIÇÃO DETALHADA DOS SERVIÇOS]'}
+                          {data.description ||
+                            '____________________________________________________________________'}
                         </span>
                         , a serem realizados no endereço da CONTRATANTE.
                       </p>
@@ -426,16 +520,15 @@ export default function TemplateEditor() {
                       </p>
                       <p className="pl-4">
                         Pelos serviços prestados, a CONTRATANTE pagará à CONTRATADA o valor total de
-                        R$ {data.value || '[VALOR]'}, com as condições de pagamento previamente
+                        R$ {data.value || '___________'}, com as condições de pagamento previamente
                         acordadas entre as partes.
                       </p>
                       <p>
                         <strong className="text-brand-navy">Cláusula 3ª - Do Prazo</strong>
                       </p>
                       <p className="pl-4">
-                        Os serviços serão executados e entregues até{' '}
-                        {data.date || '[PRAZO DE EXECUÇÃO]'}, salvo em casos de força maior ou
-                        atrasos não imputáveis à CONTRATADA.
+                        Os serviços serão executados e entregues até {data.date || '___________'},
+                        salvo em casos de força maior ou atrasos não imputáveis à CONTRATADA.
                       </p>
                     </div>
                     <div className="mt-16 text-center space-y-16">
@@ -464,8 +557,8 @@ export default function TemplateEditor() {
                           {isSigned && signatureData && (
                             <div className="border-t border-black w-full mb-2"></div>
                           )}
-                          <p className="font-bold text-sm">CONTRATANTE</p>
-                          <p className="text-xs">{data.clientName || 'Assinatura do Cliente'}</p>
+                          <p className="font-bold text-sm">CONTRATADA</p>
+                          <p className="text-xs">JT Obras e Manutenções LTDA</p>
                           {isSigned && (
                             <div className="mt-1 flex flex-col items-center">
                               <p className="text-[10px] text-green-600 flex items-center gap-1 font-bold">
@@ -492,8 +585,10 @@ export default function TemplateEditor() {
                         </div>
                         <div className="w-full sm:w-1/2 px-4 flex flex-col items-center">
                           <div className="border-t border-black mb-2 mt-16 w-full"></div>
-                          <p className="font-bold text-sm">CONTRATADA</p>
-                          <p className="text-xs">JT Obras e Manutenções LTDA</p>
+                          <p className="font-bold text-sm">CONTRATANTE</p>
+                          <p className="text-xs">
+                            {data.clientName || 'Assinatura do Cliente / Contratante'}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -501,14 +596,16 @@ export default function TemplateEditor() {
                 ) : (
                   <>
                     <p>
-                      <strong>À {data.clientName || '[NOME DO CLIENTE]'}</strong>
+                      <strong>À {data.clientName || '___________________________'}</strong>
                       <br />
                       Aos cuidados do departamento responsável.
                     </p>
                     <p className="pt-4">
                       Apresentamos a nossa proposta comercial e técnica para a execução dos serviços
                       solicitados no endereço:{' '}
-                      <span className="font-medium">{data.address || '[ENDEREÇO DO PROJETO]'}</span>
+                      <span className="font-medium">
+                        {data.address || '____________________________________'}
+                      </span>
                       .
                     </p>
                     <div className="space-y-4 pt-4">
@@ -516,20 +613,21 @@ export default function TemplateEditor() {
                         <strong className="text-brand-navy">1. Escopo dos Serviços</strong>
                       </p>
                       <div className="pl-4 whitespace-pre-wrap">
-                        {data.description || '[DESCRIÇÃO DETALHADA DOS SERVIÇOS]'}
+                        {data.description ||
+                          '____________________________________________________________________\n____________________________________________________________________'}
                       </div>
                       <p>
                         <strong className="text-brand-navy">2. Investimento</strong>
                       </p>
                       <p className="pl-4">
                         O valor total para a realização dos serviços descritos acima é de:{' '}
-                        <strong>R$ {data.value || '[VALOR]'}</strong>.
+                        <strong>R$ {data.value || '___________'}</strong>.
                       </p>
                       <p>
                         <strong className="text-brand-navy">3. Validade e Prazos</strong>
                       </p>
                       <ul className="pl-8 list-disc space-y-2">
-                        <li>Validade desta proposta: {data.date || '[VALIDADE]'}</li>
+                        <li>Validade desta proposta: {data.date || '___________'}</li>
                         <li>
                           A emissão de nota fiscal, custos com impostos e encargos trabalhistas
                           estão inclusos neste valor.

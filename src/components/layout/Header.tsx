@@ -1,141 +1,133 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, HardHat, Lock, UserCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Menu, X, Lock, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-const navigation = [
-  { name: 'Início', href: '/' },
-  { name: 'Portfólio', href: '/portfolio' },
-]
+import logo from '@/assets/logotipo-c129e.jpg'
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const location = useLocation()
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location])
+
+  const scrollToSection = (id: string) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${id}`
+      return
+    }
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+    setIsMobileMenuOpen(false)
+  }
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
-      <div className="container mx-auto px-6 py-5 md:px-12 md:py-7 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-4 group">
-          <div className="bg-primary p-3 rounded-xl group-hover:bg-primary/90 transition-colors shadow-sm">
-            <HardHat className="h-8 w-8 text-primary-foreground" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-extrabold tracking-tight leading-none">
-              JT Obras
-            </span>
-            <span className="text-xs md:text-sm text-muted-foreground font-medium mt-1">
-              e Projetos
-            </span>
-          </div>
+    <header
+      className={cn(
+        'fixed top-0 z-50 w-full transition-all duration-300 print:hidden',
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-white py-4',
+      )}
+    >
+      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo} alt="JT Obras e Manutenções" className="h-10 md:h-12 object-contain" />
         </Link>
-        <div className="hidden md:flex md:items-center md:gap-x-12">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn(
-                'text-base font-semibold transition-colors hover:text-primary',
-                location.pathname === item.href ? 'text-primary' : 'text-muted-foreground',
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
-          <Link
-            to="/cliente/login"
-            title="Portal do Cliente"
-            className="text-muted-foreground hover:text-primary transition-colors"
+
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-8">
+          <button
+            onClick={() => scrollToSection('servicos')}
+            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
           >
-            <UserCircle className="h-5 w-5" />
-          </Link>
+            Serviços
+          </button>
           <Link
-            to="/admin"
-            title="Área Administrativa"
-            className="text-muted-foreground hover:text-primary transition-colors"
+            to="/portfolio"
+            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
           >
-            <Lock className="h-5 w-5" />
+            Portfólio
           </Link>
-          <Button size="lg" className="font-bold rounded-full px-8 shadow-md">
-            Solicitar Orçamento
+          <button
+            onClick={() => scrollToSection('clientes')}
+            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
+          >
+            Clientes
+          </button>
+          <button
+            onClick={() => scrollToSection('faq')}
+            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
+          >
+            Dúvidas
+          </button>
+        </nav>
+
+        <div className="hidden lg:flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild className="border-brand-navy text-brand-navy">
+            <Link to="/cliente/login">Área do Cliente</Link>
+          </Button>
+          <Button size="sm" asChild className="bg-brand-orange hover:bg-brand-orange/90 gap-2">
+            <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+              <Phone className="h-4 w-4" /> Solicitar Orçamento
+            </a>
           </Button>
         </div>
-        <div className="flex md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(true)}
-            className="h-12 w-12"
-          >
-            <span className="sr-only">Abrir menu</span>
-            <Menu className="h-8 w-8" aria-hidden="true" />
-          </Button>
-        </div>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="lg:hidden p-2 text-brand-navy"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-background md:hidden px-6 py-6 overflow-y-auto">
-          <div className="flex items-center justify-between mb-10">
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg animate-in slide-in-from-top-2">
+          <nav className="flex flex-col p-4 space-y-4">
+            <button
+              onClick={() => scrollToSection('servicos')}
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
+            >
+              Serviços
+            </button>
             <Link
-              to="/"
-              className="flex items-center gap-4"
-              onClick={() => setMobileMenuOpen(false)}
+              to="/portfolio"
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
             >
-              <div className="bg-primary p-3 rounded-xl">
-                <HardHat className="h-8 w-8 text-primary-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-extrabold leading-none">JT Obras</span>
-                <span className="text-xs text-muted-foreground font-medium mt-1">e Projetos</span>
-              </div>
+              Portfólio
             </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileMenuOpen(false)}
-              className="h-12 w-12"
+            <button
+              onClick={() => scrollToSection('clientes')}
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
             >
-              <span className="sr-only">Fechar menu</span>
-              <X className="h-8 w-8" aria-hidden="true" />
-            </Button>
-          </div>
-          <div className="flex flex-col gap-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  'text-2xl font-bold',
-                  location.pathname === item.href ? 'text-primary' : 'text-foreground',
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
+              Clientes
+            </button>
             <Link
               to="/cliente/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                'text-2xl font-bold flex items-center gap-3',
-                location.pathname.startsWith('/cliente') ? 'text-primary' : 'text-foreground',
-              )}
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"
             >
-              <UserCircle className="h-6 w-6" /> Portal do Cliente
+              <Lock className="h-4 w-4" /> Área do Cliente
             </Link>
-            <Link
-              to="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                'text-2xl font-bold flex items-center gap-3',
-                location.pathname.startsWith('/admin') ? 'text-primary' : 'text-foreground',
-              )}
-            >
-              <Lock className="h-6 w-6" /> Área Administrativa
-            </Link>
-            <Button size="lg" className="w-full mt-8 font-bold rounded-full py-6 text-lg">
-              Solicitar Orçamento
+            <Button className="w-full bg-brand-orange hover:bg-brand-orange/90 gap-2" asChild>
+              <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+                <Phone className="h-4 w-4" /> Falar no WhatsApp
+              </a>
             </Button>
-          </div>
+          </nav>
         </div>
       )}
     </header>

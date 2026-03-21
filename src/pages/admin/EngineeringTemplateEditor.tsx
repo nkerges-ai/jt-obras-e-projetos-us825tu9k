@@ -161,6 +161,70 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
       },
     ],
   },
+  osnr01: {
+    title: 'Ordem de Serviço (NR-01) - Documento Simples',
+    fields: [
+      {
+        key: 'employee',
+        label: 'Dados do Colaborador / Função',
+        example: 'Ex: Nome: Carlos Silva, CPF: ..., Função: Pedreiro',
+      },
+      {
+        key: 'jobDesc',
+        label: 'Descrição da Atividade',
+        type: 'textarea',
+        example: 'Ex: Reparos na estrutura de alvenaria e pintura.',
+      },
+      {
+        key: 'risks',
+        label: 'Riscos Identificados',
+        type: 'textarea',
+        example: 'Ex: Queda de mesmo nível, inalação de poeira...',
+      },
+      {
+        key: 'preventive',
+        label: 'Medidas Preventivas (EPI/EPC)',
+        type: 'textarea',
+        example: 'Ex: Uso de botina de segurança, máscara PFF2, isolamento da área.',
+      },
+      {
+        key: 'legal',
+        label: 'Declarações Legais',
+        type: 'textarea',
+        example:
+          'Declaro ter recebido treinamento sobre os riscos inerentes à minha atividade e concordo em cumprir todas as normas de segurança.',
+      },
+    ],
+  },
+  treinamento: {
+    title: 'Certificado de Treinamento e Integração',
+    fields: [
+      {
+        key: 'courseTitle',
+        label: 'Título do Treinamento',
+        example: 'Ex: Integração de Segurança e Saúde no Trabalho',
+      },
+      { key: 'date', label: 'Data de Realização', example: 'Ex: 15/10/2023' },
+      { key: 'duration', label: 'Carga Horária (Duração)', example: 'Ex: 4 horas' },
+      {
+        key: 'content',
+        label: 'Conteúdo Programático',
+        type: 'textarea',
+        example:
+          'Ex: Normas Regulamentadoras, uso correto de EPIs, procedimentos em caso de emergência.',
+      },
+      {
+        key: 'instructor',
+        label: 'Identificação do Instrutor (CREA/MTE)',
+        example: 'Ex: João Silva - Téc. Segurança MTE 12345',
+      },
+      {
+        key: 'trainee',
+        label: 'Dados do Participante / Treinado',
+        example: 'Ex: Nome completo, CPF, Cargo.',
+      },
+    ],
+  },
 }
 
 export default function EngineeringTemplateEditor() {
@@ -229,8 +293,8 @@ export default function EngineeringTemplateEditor() {
     const sig: DocumentSignature = {
       id,
       documentId: `doc_${Date.now()}`,
-      documentName: `${config.title.split(' ')[0]} - ${selectedProject.name} (${profData.name || 'Profissional'})`,
-      clientName: profData.name || 'Profissional Contratado',
+      documentName: `${config.title.split(' ')[0]} - ${selectedProject.name} (${profData.name || 'Participante'})`,
+      clientName: profData.name || 'Participante / Contratado',
       clientPhone: signPhone,
       status: 'Pendente',
       sentDate: new Date().toISOString(),
@@ -239,7 +303,7 @@ export default function EngineeringTemplateEditor() {
 
     const link = `${window.location.origin}/assinatura/${id}`
     const text = encodeURIComponent(
-      `Olá! Foi solicitada a sua assinatura eletrônica no documento técnico: ${sig.documentName}. Acesse o link para assinar com validação facial: ${link}`,
+      `Olá! Foi solicitada a sua assinatura eletrônica no documento: ${sig.documentName}. Acesse o link para assinar de forma segura: ${link}`,
     )
     window.open(`https://wa.me/${signPhone.replace(/\D/g, '')}?text=${text}`, '_blank')
 
@@ -279,11 +343,11 @@ export default function EngineeringTemplateEditor() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Solicitar Assinatura Biométrica</DialogTitle>
+                  <DialogTitle>Solicitar Assinatura Eletrônica</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label>Nome do Profissional / Prestador</Label>
+                    <Label>Nome do Signatário (Participante/Prestador)</Label>
                     <Input
                       value={profData.name}
                       disabled
@@ -336,11 +400,11 @@ export default function EngineeringTemplateEditor() {
 
             <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-sm mb-4">
               <div className="flex items-center gap-2 text-blue-800 font-bold mb-2">
-                <Info className="h-4 w-4" /> Preenchimento e Terceiros
+                <Info className="h-4 w-4" /> Preenchimento Automatizado
               </div>
               <p className="text-blue-700/80 leading-relaxed text-xs">
-                A JT Obras constará como Contratante. Preencha os dados do profissional terceirizado
-                ou contratado, garantindo conformidade com NRs e exigências legais.
+                A JT Obras constará como Emissora / Contratante. Preencha os dados do participante
+                ou contratado para formalizar os registros de NRs e treinamentos.
               </p>
             </div>
 
@@ -361,25 +425,25 @@ export default function EngineeringTemplateEditor() {
             </div>
 
             <div className="space-y-4 pt-4 border-t mt-4">
-              <h3 className="font-bold text-brand-navy">Dados do Profissional / Contratado</h3>
+              <h3 className="font-bold text-brand-navy">Dados do Outro Signatário</h3>
               <div className="space-y-2">
-                <Label>Nome do Profissional / Prestador</Label>
+                <Label>Nome Completo (Participante / Prestador)</Label>
                 <Input
                   value={profData.name}
                   onChange={(e) => handleProfChange('name', e.target.value)}
-                  placeholder="Ex: Eng. Carlos Silva"
+                  placeholder="Ex: Carlos Silva"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Registro Profissional (CREA/CAU/MTE)</Label>
+                <Label>Registro / Matrícula (Opcional)</Label>
                 <Input
                   value={profData.registry}
                   onChange={(e) => handleProfChange('registry', e.target.value)}
-                  placeholder="Ex: CREA 123456-7"
+                  placeholder="Ex: Matrícula 123"
                 />
               </div>
               <div className="space-y-2">
-                <Label>CPF / CNPJ do Prestador</Label>
+                <Label>CPF do Participante</Label>
                 <Input
                   value={profData.document}
                   onChange={(e) => handleProfChange('document', e.target.value)}
@@ -391,7 +455,7 @@ export default function EngineeringTemplateEditor() {
                 <Input
                   value={profData.role}
                   onChange={(e) => handleProfChange('role', e.target.value)}
-                  placeholder="Ex: Engenheiro Civil"
+                  placeholder="Ex: Pedreiro"
                 />
               </div>
             </div>
@@ -451,7 +515,7 @@ export default function EngineeringTemplateEditor() {
 
               <div className="border border-gray-400 rounded p-4 mb-4">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  1. DADOS DA CONTRATANTE (EMPRESA)
+                  1. DADOS DA EMPRESA EMISSORA / RESPONSÁVEL
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-[13px]">
                   <p>
@@ -464,7 +528,7 @@ export default function EngineeringTemplateEditor() {
                     <strong>Endereço Sede:</strong> {COMPANY.address}
                   </p>
                   <p className="col-span-2">
-                    <strong>Representante / Diretor:</strong> {COMPANY.responsible}
+                    <strong>Representante Técnico:</strong> {COMPANY.responsible}
                   </p>
                 </div>
               </div>
@@ -479,33 +543,34 @@ export default function EngineeringTemplateEditor() {
                     {selectedProject?.name || '___________________________'}
                   </p>
                   <p>
-                    <strong>Cliente Final:</strong>{' '}
+                    <strong>Cliente / Local:</strong>{' '}
                     {selectedProject?.client || '___________________________'}
                   </p>
                   <p className="col-span-2">
-                    <strong>Data de Emissão:</strong> {new Date().toLocaleDateString('pt-BR')}
+                    <strong>Data de Emissão do Documento:</strong>{' '}
+                    {new Date().toLocaleDateString('pt-BR')}
                   </p>
                 </div>
               </div>
 
               <div className="border border-gray-400 rounded p-4 mb-4">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  3. DADOS DO PROFISSIONAL TÉCNICO / PRESTADOR
+                  3. DADOS DO PARTICIPANTE / PRESTADOR
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-[13px]">
                   <p className="col-span-2">
-                    <strong>Nome / Razão Social:</strong>{' '}
+                    <strong>Nome Completo:</strong>{' '}
                     {profData.name || '__________________________________________'}
                   </p>
                   <p>
-                    <strong>Registro (CREA/CAU/MTE):</strong>{' '}
+                    <strong>Registro / Matrícula:</strong>{' '}
                     {profData.registry || '____________________'}
                   </p>
                   <p>
-                    <strong>CPF/CNPJ:</strong> {profData.document || '____________________'}
+                    <strong>CPF:</strong> {profData.document || '____________________'}
                   </p>
                   <p className="col-span-2">
-                    <strong>Cargo / Função:</strong>{' '}
+                    <strong>Função / Cargo:</strong>{' '}
                     {profData.role || '__________________________________________'}
                   </p>
                 </div>
@@ -513,7 +578,7 @@ export default function EngineeringTemplateEditor() {
 
               <div className="border border-gray-400 rounded p-4 mb-6 min-h-[150px]">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  4. DETALHES TÉCNICOS E ESPECIFICAÇÕES
+                  4. DETALHES DO DOCUMENTO / ESPECIFICAÇÕES
                 </h3>
                 <div className="space-y-4 text-[13px]">
                   {config.fields.map((field) => (
@@ -533,14 +598,16 @@ export default function EngineeringTemplateEditor() {
                   <div className="border-t border-black w-full mx-auto mb-2"></div>
                   <p className="font-bold text-xs">{COMPANY.responsible}</p>
                   <p className="text-[10px] text-gray-500 uppercase">
-                    Contratante - {COMPANY.name}
+                    Responsável - {COMPANY.name}
                   </p>
                 </div>
                 <div className="w-1/2">
                   <div className="border-t border-black w-full mx-auto mb-2"></div>
-                  <p className="font-bold text-xs">{profData.name || 'Nome do Profissional'}</p>
+                  <p className="font-bold text-xs">
+                    {profData.name || 'Assinatura do Participante'}
+                  </p>
                   <p className="text-[10px] text-gray-500 uppercase">
-                    Contratado / Responsável Técnico
+                    Declarante / Treinado
                     {profData.role ? ` - ${profData.role}` : ''}
                   </p>
                 </div>

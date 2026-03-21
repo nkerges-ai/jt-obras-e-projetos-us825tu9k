@@ -20,16 +20,27 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { HardHat, Wrench, Plus, BriefcaseBusiness } from 'lucide-react'
+import { HardHat, Wrench, Plus, BriefcaseBusiness, Check, X, Bell } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getPpe, savePpe, getEquipment, saveEquipment, Ppe, Equipment } from '@/lib/storage'
+import {
+  getPpe,
+  savePpe,
+  getEquipment,
+  saveEquipment,
+  getRentalRequests,
+  saveRentalRequests,
+  Ppe,
+  Equipment,
+  RentalRequest,
+} from '@/lib/storage'
 
 export function B2BTab() {
   const { toast } = useToast()
 
   const [ppes, setPpes] = useState<Ppe[]>([])
   const [equipments, setEquipments] = useState<Equipment[]>([])
+  const [requests, setRequests] = useState<RentalRequest[]>([])
 
   const [isPpeOpen, setIsPpeOpen] = useState(false)
   const [isEqOpen, setIsEqOpen] = useState(false)
@@ -50,6 +61,7 @@ export function B2BTab() {
   useEffect(() => {
     setPpes(getPpe())
     setEquipments(getEquipment())
+    setRequests(getRentalRequests())
   }, [])
 
   const handleAddPpe = (e: React.FormEvent) => {
@@ -87,21 +99,42 @@ export function B2BTab() {
     toast({ title: 'Equipamento Adicionado', description: 'Item cadastrado para locação.' })
   }
 
+  const handleUpdateStatus = (id: string, status: 'Aprovado' | 'Rejeitado') => {
+    const updated = requests.map((r) => (r.id === id ? { ...r, status } : r))
+    setRequests(updated)
+    saveRentalRequests(updated)
+    toast({
+      title: 'Status Atualizado',
+      description: `A solicitação foi marcada como ${status.toLowerCase()}.`,
+    })
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <BriefcaseBusiness className="h-5 w-5 text-primary" /> B2B - EPIs e Locação
+            <BriefcaseBusiness className="h-5 w-5 text-primary" /> Locação e Aprovações B2B
           </h3>
           <p className="text-muted-foreground text-sm">
-            Catálogo de equipamentos de segurança e locação de maquinário pesado.
+            Gerencie seu catálogo de EPIs e equipamentos e aprove solicitações de clientes.
           </p>
         </div>
       </div>
 
-      <Tabs defaultValue="epi" className="w-full">
+      <Tabs defaultValue="solicitacoes" className="w-full">
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-6">
+          <TabsTrigger
+            value="solicitacoes"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <Bell className="h-4 w-4 mr-2" /> Solicitações Pendentes
+            {requests.filter((r) => r.status === 'Pendente').length > 0 && (
+              <span className="ml-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">
+                {requests.filter((r) => r.status === 'Pendente').length}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger
             value="epi"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
@@ -115,6 +148,81 @@ export function B2BTab() {
             <Wrench className="h-4 w-4 mr-2" /> Equipamentos (Locação)
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="solicitacoes" className="space-y-4">
+          <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+            <Table>
+              <TableHeader className="bg-secondary/50">
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Cliente / Obra</TableHead>
+                  <TableHead>Item Solicitado</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {requests.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      Nenhuma solicitação de locação encontrada.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {requests.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {new Date(r.requestDate).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="font-medium">{r.clientName}</TableCell>
+                    <TableCell>
+                      <span className="font-medium">{r.itemName}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {r.itemType} {r.quantity ? `(Qtd: ${r.quantity})` : ''}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          r.status === 'Aprovado'
+                            ? 'bg-green-50 text-green-700'
+                            : r.status === 'Rejeitado'
+                              ? 'bg-red-50 text-red-700'
+                              : 'bg-yellow-50 text-yellow-700'
+                        }
+                      >
+                        {r.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {r.status === 'Pendente' && (
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            onClick={() => handleUpdateStatus(r.id, 'Aprovado')}
+                          >
+                            <Check className="h-4 w-4 mr-1" /> Aprovar
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleUpdateStatus(r.id, 'Rejeitado')}
+                          >
+                            <X className="h-4 w-4 mr-1" /> Rejeitar
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
 
         <TabsContent value="epi" className="space-y-4">
           <div className="flex justify-end">

@@ -1,221 +1,135 @@
-import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook, MessageCircle } from 'lucide-react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { HardHat, Facebook, Instagram, Linkedin, ShieldCheck } from 'lucide-react'
 import logo from '@/assets/logotipo-c129e.jpg'
 
-const TikTokIcon = ({ size = 20 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-)
-
 export function Footer() {
-  const currentYear = new Date().getFullYear()
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith('/#')) {
-      e.preventDefault()
-      const targetId = href.replace('/#', '')
-      if (location.pathname !== '/') {
-        navigate('/')
-        setTimeout(() => {
-          const element = document.getElementById(targetId)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' })
-          }
-        }, 100)
-      } else {
-        const element = document.getElementById(targetId)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-    }
-  }
-
   return (
-    <footer className="bg-brand-navy text-white pt-16 pb-8 print:hidden">
+    <footer className="bg-brand-navy text-white pt-20 pb-10">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Company Info */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold mb-4 text-brand-light">JT Obras e manutenções ltda</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Especialistas em obras complexas, reformas comerciais e manutenções com rígido padrão
-              de segurança e excelência.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+          <div className="space-y-6">
+            <div className="bg-white p-2 rounded-lg inline-block">
+              <img src={logo} alt="JT Obras" className="h-12 object-contain" />
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              Excelência e segurança em manutenção predial, industrial e soluções corporativas desde
+              a fundação.
             </p>
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-4">
               <a
                 href="#"
-                className="text-gray-300 hover:text-brand-orange transition-colors"
-                aria-label="Instagram"
+                className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-orange transition-colors"
               >
-                <Instagram size={20} />
+                <Facebook className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-gray-300 hover:text-brand-orange transition-colors"
-                aria-label="Facebook"
+                className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-orange transition-colors"
               >
-                <Facebook size={20} />
+                <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-gray-300 hover:text-brand-orange transition-colors"
-                aria-label="TikTok"
+                className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-orange transition-colors"
               >
-                <TikTokIcon size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-brand-orange transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={20} />
+                <Linkedin className="h-5 w-5" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-brand-light">Links Rápidos</h3>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <HardHat className="h-5 w-5 text-brand-orange" />
+              Nossos Serviços
+            </h4>
+            <ul className="space-y-4 text-gray-400 text-sm">
               <li>
-                <Link to="/" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/portfolio"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Exemplos de Obras
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="/#dicas"
-                  onClick={(e) => handleNavClick(e, '/#dicas')}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Dicas de Obras
+                <a href="/#servicos" className="hover:text-brand-orange transition-colors">
+                  Manutenção de Fachadas
                 </a>
               </li>
               <li>
-                <Link
-                  to="/admin"
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Área Administrativa
-                </Link>
+                <a href="/#servicos" className="hover:text-brand-orange transition-colors">
+                  Climatização e AC
+                </a>
               </li>
               <li>
-                <a
-                  href="/#sobre"
-                  onClick={(e) => handleNavClick(e, '/#sobre')}
-                  className="text-gray-300 hover:text-white transition-colors text-sm"
-                >
-                  Sobre Nós
+                <a href="/#servicos" className="hover:text-brand-orange transition-colors">
+                  Instalações Elétricas
+                </a>
+              </li>
+              <li>
+                <a href="/#servicos" className="hover:text-brand-orange transition-colors">
+                  Reformas Estruturais
+                </a>
+              </li>
+              <li>
+                <a href="/#servicos" className="hover:text-brand-orange transition-colors">
+                  Laudos e Vistorias (NRs)
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Services */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-brand-light">Especialidades</h3>
-            <ul className="space-y-3">
-              <li className="text-gray-300 text-sm">Reformas Comerciais</li>
-              <li className="text-gray-300 text-sm">Manutenção Predial</li>
-              <li className="text-gray-300 text-sm">Adequação NR 10 e NR 35</li>
-              <li className="text-gray-300 text-sm">Projetos Estruturais</li>
-              <li className="text-gray-300 text-sm">Gestão de Obras</li>
+            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-brand-orange" />
+              Institucional
+            </h4>
+            <ul className="space-y-4 text-gray-400 text-sm">
+              <li>
+                <a href="/#sobre" className="hover:text-brand-orange transition-colors">
+                  Sobre a Empresa
+                </a>
+              </li>
+              <li>
+                <Link to="/portfolio" className="hover:text-brand-orange transition-colors">
+                  Portfólio de Obras
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin/login" className="hover:text-brand-orange transition-colors">
+                  Acesso Administrativo
+                </Link>
+              </li>
+              <li>
+                <Link to="/cliente/login" className="hover:text-brand-orange transition-colors">
+                  Portal do Cliente
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-brand-light">Contato</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="text-brand-orange shrink-0 mt-0.5" size={18} />
-                <span className="text-gray-300 text-sm">
-                  Rua Tommaso Giordani, 371, Vila Guacuri
-                  <br />
-                  São Paulo – SP, CEP 04.475-210
-                </span>
+            <h4 className="text-lg font-bold mb-6">Contato Rápido</h4>
+            <ul className="space-y-4 text-gray-400 text-sm">
+              <li>
+                <strong className="block text-white mb-1">Diretoria Técnica</strong>
+                <a href="https://wa.me/5511940037545" className="hover:text-brand-orange">
+                  (11) 94003-7545 (Joel)
+                </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone className="text-brand-orange shrink-0 mt-0.5" size={18} />
-                <div className="flex flex-col gap-2">
-                  <a
-                    href="https://wa.me/5511940037545"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
-                  >
-                    <MessageCircle
-                      size={14}
-                      className="text-brand-light group-hover:text-brand-orange"
-                    />
-                    <span>Joel Nascimento: +55 11 94003-7545</span>
-                  </a>
-                  <a
-                    href="https://wa.me/5511947069293"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-gray-300 hover:text-brand-orange transition-colors text-sm group"
-                  >
-                    <MessageCircle
-                      size={14}
-                      className="text-brand-light group-hover:text-brand-orange"
-                    />
-                    <span>Tatiana (Financeiro): +55 11 94706-9293</span>
-                  </a>
-                </div>
+              <li>
+                <strong className="block text-white mb-1">Comercial / Administrativo</strong>
+                <a href="https://wa.me/5511947069293" className="hover:text-brand-orange">
+                  (11) 94706-9293 (Tatiana)
+                </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="text-brand-orange shrink-0" size={18} />
-                <span className="text-gray-300 text-sm">jt.obrasemanutencao@gmail.com</span>
+              <li>
+                <strong className="block text-white mb-1">E-mail Corporativo</strong>
+                <a href="mailto:jt.obrasemanutencao@gmail.com" className="hover:text-brand-orange">
+                  jt.obrasemanutencao@gmail.com
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar with Logo and Legal Data */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-4 flex-col md:flex-row text-center md:text-left">
-            <div className="bg-white p-3 rounded shadow-sm">
-              <img
-                src={logo}
-                alt="Logo JT Obras e manutenções ltda"
-                className="h-16 md:h-20 w-auto object-contain"
-              />
-            </div>
-            <div>
-              <p className="text-sm text-gray-400 font-medium">JT Obras e manutenções ltda</p>
-              <p className="text-xs text-gray-500 mt-1">
-                CNPJ: 63.243.791/0001-09 | IE: 156.392.261.116
-                <br />
-                Regime: Simples Nacional | Diretor: Joel Nascimento de Paula
-              </p>
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-500 text-center md:text-right">
-            &copy; {currentYear} Todos os direitos reservados.
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+          <p>
+            © {new Date().getFullYear()} JT Obras e Manutenções LTDA. Todos os direitos reservados.
           </p>
+          <p>CNPJ: 63.243.791/0001-09</p>
         </div>
       </div>
     </footer>

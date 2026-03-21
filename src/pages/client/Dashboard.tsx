@@ -14,6 +14,7 @@ import {
   FolderOpen,
   Lock,
   CalendarDays,
+  BriefcaseBusiness,
 } from 'lucide-react'
 import {
   getProjects,
@@ -22,10 +23,17 @@ import {
   getTechnicalDocuments,
   getAccessRequests,
   saveAccessRequests,
+  getPpe,
+  getEquipment,
+  getRentalRequests,
+  saveRentalRequests,
   Project,
   Ticket,
   TechnicalDocument,
   DocumentAccessRequest,
+  Ppe,
+  Equipment,
+  RentalRequest,
 } from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
@@ -44,6 +52,10 @@ export default function ClientDashboard() {
   const [techDocs, setTechDocs] = useState<TechnicalDocument[]>([])
   const [requests, setRequests] = useState<DocumentAccessRequest[]>([])
 
+  const [ppes, setPpes] = useState<Ppe[]>([])
+  const [equipments, setEquipments] = useState<Equipment[]>([])
+  const [clientRentals, setClientRentals] = useState<RentalRequest[]>([])
+
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
   const [newTicketDesc, setNewTicketDesc] = useState('')
 
@@ -60,6 +72,10 @@ export default function ClientDashboard() {
 
       const allReqs = getAccessRequests()
       setRequests(allReqs.filter((r) => r.projectId === projectId))
+
+      setPpes(getPpe())
+      setEquipments(getEquipment())
+      setClientRentals(getRentalRequests().filter((r) => r.projectId === projectId))
     }
   }, [projectId])
 
@@ -111,6 +127,27 @@ export default function ClientDashboard() {
     })
   }
 
+  const handleRentalRequest = (item: Ppe | Equipment, type: 'EPI' | 'Equipamento') => {
+    const newReq: RentalRequest = {
+      id: `rent_${Date.now()}`,
+      itemId: item.id,
+      itemType: type,
+      itemName: type === 'EPI' ? (item as Ppe).name : (item as Equipment).type,
+      projectId: project.id,
+      clientName: project.client,
+      quantity: 1, // Defaulting to 1 for simplicity in client UI
+      status: 'Pendente',
+      requestDate: new Date().toISOString(),
+    }
+    const allRentals = getRentalRequests()
+    saveRentalRequests([newReq, ...allRentals])
+    setClientRentals([newReq, ...clientRentals])
+    toast({
+      title: 'Solicitação Enviada',
+      description: 'O administrador avaliará seu pedido de locação/EPI.',
+    })
+  }
+
   const antes = project.photos.filter((p) => p.type === 'Antes')
   const depois = project.photos.filter((p) => p.type === 'Depois')
 
@@ -147,6 +184,12 @@ export default function ClientDashboard() {
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
             <FolderOpen className="h-4 w-4 mr-2" /> Acervo Técnico
+          </TabsTrigger>
+          <TabsTrigger
+            value="locacao"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <BriefcaseBusiness className="h-4 w-4 mr-2" /> Locação / EPIs
           </TabsTrigger>
           <TabsTrigger
             value="chamados"
@@ -305,6 +348,115 @@ export default function ClientDashboard() {
                     </div>
                   )
                 })}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="locacao">
+          <Card className="bg-white border-none shadow-sm mb-6">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg">Catálogo de Equipamentos e EPIs</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-8">
+                {clientRentals.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-bold text-muted-foreground mb-4 uppercase">
+                      Minhas Solicitações
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                      {clientRentals.map((r) => (
+                        <div key={r.id} className="border rounded-lg p-4 bg-gray-50 flex flex-col">
+                          <p className="font-bold text-brand-navy">{r.itemName}</p>
+                          <p className="text-xs text-muted-foreground mb-3">Tipo: {r.itemType}</p>
+                          <Badge
+                            className="mt-auto w-fit"
+                            variant={
+                              r.status === 'Aprovado'
+                                ? 'default'
+                                : r.status === 'Rejeitado'
+                                  ? 'destructive'
+                                  : 'secondary'
+                            }
+                          >
+                            {r.status}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-sm font-bold text-muted-foreground mb-4 uppercase">
+                      EPIs Disponíveis
+                    </h3>
+                    <div className="space-y-3">
+                      {ppes.filter((p) => p.availability > 0).length === 0 ? (
+                        <p className="text-xs text-muted-foreground">Nenhum EPI disponível.</p>
+                      ) : (
+                        ppes
+                          .filter((p) => p.availability > 0)
+                          .map((p) => (
+                            <div
+                              key={p.id}
+                              className="flex items-center justify-between border-b pb-2"
+                            >
+                              <div>
+                                <p className="font-medium text-sm">{p.name}</p>
+                                <p className="text-xs text-muted-foreground">{p.category}</p>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleRentalRequest(p, 'EPI')}
+                              >
+                                Solicitar
+                              </Button>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-muted-foreground mb-4 uppercase">
+                      Equipamentos para Locação
+                    </h3>
+                    <div className="space-y-3">
+                      {equipments.filter((e) => e.rentalStatus === 'Disponível').length === 0 ? (
+                        <p className="text-xs text-muted-foreground">
+                          Nenhum equipamento disponível.
+                        </p>
+                      ) : (
+                        equipments
+                          .filter((e) => e.rentalStatus === 'Disponível')
+                          .map((e) => (
+                            <div
+                              key={e.id}
+                              className="flex items-center justify-between border-b pb-2"
+                            >
+                              <div>
+                                <p className="font-medium text-sm">{e.type}</p>
+                                <p className="text-xs text-muted-foreground truncate max-w-[150px]">
+                                  {e.specs}
+                                </p>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleRentalRequest(e, 'Equipamento')}
+                              >
+                                Solicitar
+                              </Button>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
