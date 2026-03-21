@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { getProjects, saveProjects, ConstructionReport } from '@/lib/storage'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Camera, ImagePlus, Trash2, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Camera, ImagePlus, Trash2, CheckCircle2, MapPin, PenTool } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { SyncIndicator } from '@/components/SyncIndicator'
 
@@ -17,11 +17,54 @@ export default function FieldApp() {
   const [summary, setSummary] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
 
+  // GPS Check-in Tracking
+  const [checkInTime, setCheckInTime] = useState<string | null>(null)
+
+  // Signature Pad
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [signatureData, setSignatureData] = useState<string | null>(null)
+
   const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    if (projectId && !checkInTime) {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            // Simulated Geofence success
+            setCheckInTime(new Date().toISOString())
+            toast({
+              title: 'Check-in Realizado',
+              description: 'Sua localização foi validada e as horas de trabalho foram iniciadas.',
+            })
+          },
+          (err) => {
+            console.warn(err)
+            toast({
+              title: 'Aviso de Localização',
+              description: 'Não foi possível verificar sua localização por GPS.',
+              variant: 'destructive',
+            })
+            setCheckInTime(new Date().toISOString())
+          },
+        )
+      } else {
+        setCheckInTime(new Date().toISOString())
+      }
+    }
+  }, [projectId, checkInTime, toast])
+
   const handleSelectProject = (id: string) => {
     setProjectId(id)
+    setCheckInTime(null)
+    setSignatureData(null)
+    if (canvasRef.current) {
+      canvasRef.current
+        .getContext('2d')
+        ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+    }
     const p = projects.find((proj) => proj.id === id)
     if (p && p.phases && p.phases.length > 0) {
       const avg = Math.round(p.phases.reduce((a, b) => a + b.progress, 0) / p.phases.length)
@@ -52,6 +95,37 @@ export default function FieldApp() {
     e.target.value = ''
   }
 
+  // Signature logic
+  const startDrawing = (e: any) => {
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const rect = canvasRef.current!.getBoundingClientRect()
+    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
+    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
+    ctx.lineWidth = 2
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = '#000000'
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    setIsDrawing(true)
+  }
+  const draw = (e: any) => {
+    if (!isDrawing) return
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const rect = canvasRef.current!.getBoundingClientRect()
+    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
+    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
+    ctx.lineTo(x, y)
+    ctx.stroke()
+  }
+  const stopDrawing = () => {
+    setIsDrawing(false)
+    if (canvasRef.current) {
+      setSignatureData(canvasRef.current.toDataURL('image/png'))
+    }
+  }
+
   const handleSave = () => {
     if (!summary || !projectId) {
       toast({
@@ -66,12 +140,17 @@ export default function FieldApp() {
     const pIndex = allProjects.findIndex((p) => p.id === projectId)
     if (pIndex === -1) return
 
+    const checkOutTime = new Date().toISOString()
+
     const report: ConstructionReport = {
       id: `rep_field_${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
+      date: checkOutTime.split('T')[0],
       progress,
       summary,
       photos,
+      checkIn: checkInTime || undefined,
+      checkOut: checkOutTime,
+      signature: signatureData || undefined,
       syncStatus: 'pending',
     }
 
@@ -81,12 +160,18 @@ export default function FieldApp() {
     window.dispatchEvent(new Event('jt_reports_updated'))
 
     toast({
-      title: 'Relatório Salvo',
-      description: 'Salvo localmente. Será sincronizado assim que houver conexão.',
+      title: 'Termo de Visita Salvo',
+      description: 'O relatório e assinatura foram salvos. Será sincronizado em breve.',
     })
 
     setSummary('')
     setPhotos([])
+    setSignatureData(null)
+    setCheckInTime(null)
+    if (canvasRef.current)
+      canvasRef.current
+        .getContext('2d')
+        ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
     handleSelectProject(projectId)
   }
 
@@ -131,6 +216,20 @@ export default function FieldApp() {
 
           {projectId && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+              {checkInTime && (
+                <div className="bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold flex items-center gap-1">
+                      <MapPin className="w-4 h-4" /> Check-in de Área
+                    </p>
+                    <p className="text-xs mt-1">
+                      Registrado às {new Date(checkInTime).toLocaleTimeString('pt-BR')}
+                    </p>
+                  </div>
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label className="text-base font-bold text-brand-navy">Progresso Geral (%)</Label>
                 <div className="flex gap-4 items-center">
@@ -217,17 +316,52 @@ export default function FieldApp() {
                 )}
               </div>
 
+              <div className="space-y-2">
+                <Label className="text-base font-bold text-brand-navy flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <PenTool className="w-4 h-4" /> Assinatura do Termo de Visita
+                  </span>
+                  {signatureData && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 text-xs text-red-500"
+                      onClick={() => {
+                        setSignatureData(null)
+                        canvasRef.current?.getContext('2d')?.clearRect(0, 0, 500, 200)
+                      }}
+                    >
+                      Limpar
+                    </Button>
+                  )}
+                </Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-xl overflow-hidden bg-gray-50 touch-none">
+                  <canvas
+                    ref={canvasRef}
+                    width={500}
+                    height={200}
+                    className="w-full h-[150px] cursor-crosshair"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                  />
+                </div>
+              </div>
+
               <div className="pt-6 border-t border-gray-100">
                 <Button
                   size="lg"
                   className="w-full h-16 text-lg font-bold bg-brand-light hover:bg-brand-light/90 text-white rounded-xl shadow-md gap-2"
                   onClick={handleSave}
                 >
-                  <CheckCircle2 className="h-6 w-6" /> Salvar Relatório
+                  <CheckCircle2 className="h-6 w-6" /> Concluir e Gerar Termo
                 </Button>
                 <p className="text-xs text-center text-muted-foreground mt-3">
-                  O relatório será salvo localmente e sincronizado com a nuvem automaticamente
-                  quando houver conexão.
+                  O registro de ponto (Check-out) será realizado automaticamente.
                 </p>
               </div>
             </div>

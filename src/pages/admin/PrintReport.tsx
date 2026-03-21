@@ -11,6 +11,7 @@ export default function PrintReport() {
 
   const searchParams = new URLSearchParams(window.location.search)
   const reportIds = searchParams.get('reports')?.split(',') || []
+  const singleReportId = searchParams.get('reportId')
 
   useEffect(() => {
     const projects = getProjects()
@@ -66,7 +67,7 @@ export default function PrintReport() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild className="gap-2 text-brand-navy">
             <Link to="/admin">
-              <ArrowLeft className="h-4 w-4" /> Voltar ao Painel
+              <ArrowLeft className="h-4 w-4" /> Voltar
             </Link>
           </Button>
           <Button
@@ -85,7 +86,9 @@ export default function PrintReport() {
               ? 'Relatório de Custos e Insumos'
               : type === 'dossier'
                 ? 'Dossiê do Projeto'
-                : 'Resumo e Evolução da Obra'
+                : type === 'termo'
+                  ? 'Termo de Visita Técnica'
+                  : 'Resumo e Evolução da Obra'
           }
         >
           <div className="bg-gray-50 border border-brand-navy/20 p-5 rounded-lg mb-8 text-sm shadow-sm text-gray-800">
@@ -118,6 +121,96 @@ export default function PrintReport() {
               </div>
             </div>
           </div>
+
+          {type === 'termo' && singleReportId && (
+            <div className="space-y-8 pb-10">
+              {(() => {
+                const report = project.reports?.find((r) => r.id === singleReportId)
+                if (!report)
+                  return <p className="text-center text-red-500">Relatório não encontrado.</p>
+
+                const checkInDate = report.checkIn ? new Date(report.checkIn) : null
+                const checkOutDate = report.checkOut ? new Date(report.checkOut) : null
+                let hoursWorked = ''
+
+                if (checkInDate && checkOutDate) {
+                  const diffMs = checkOutDate.getTime() - checkInDate.getTime()
+                  const diffHrs = Math.floor(diffMs / 3600000)
+                  const diffMins = Math.round((diffMs % 3600000) / 60000)
+                  hoursWorked = `${diffHrs}h ${diffMins}m`
+                }
+
+                return (
+                  <>
+                    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                      <div className="bg-brand-navy text-white px-5 py-3 font-bold uppercase tracking-wider text-sm flex justify-between">
+                        <span>Registro de Operação em Campo</span>
+                        <span>{new Date(report.date).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                      <div className="p-6 bg-white space-y-6">
+                        <div className="grid grid-cols-3 gap-4 border-b border-gray-100 pb-6 text-center">
+                          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">
+                              Check-in (Entrada GPS)
+                            </p>
+                            <p className="text-lg font-bold text-brand-navy">
+                              {checkInDate
+                                ? checkInDate.toLocaleTimeString('pt-BR')
+                                : 'Não Registrado'}
+                            </p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">
+                              Check-out (Saída)
+                            </p>
+                            <p className="text-lg font-bold text-brand-navy">
+                              {checkOutDate
+                                ? checkOutDate.toLocaleTimeString('pt-BR')
+                                : 'Não Registrado'}
+                            </p>
+                          </div>
+                          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <p className="text-[10px] uppercase font-bold text-blue-700 mb-1">
+                              Horas Totais
+                            </p>
+                            <p className="text-lg font-bold text-blue-900">
+                              {hoursWorked || '---'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase mb-2">
+                            Resumo da Visita / Atividades
+                          </p>
+                          <p className="text-sm bg-gray-50 p-4 rounded-lg border text-gray-800 whitespace-pre-wrap leading-relaxed">
+                            {report.summary}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {report.signature && (
+                      <div className="mt-16 text-center break-inside-avoid px-8 max-w-sm mx-auto">
+                        <img
+                          src={report.signature}
+                          alt="Assinatura"
+                          className="h-24 object-contain mix-blend-multiply mx-auto mb-2 border-b border-gray-400 w-full"
+                        />
+                        <p className="font-bold text-brand-navy text-sm">{project.client}</p>
+                        <p className="text-[10px] text-gray-500 uppercase mt-1">
+                          Assinatura de Validação - Responsável / Cliente
+                        </p>
+                        <p className="text-[9px] text-gray-400 mt-2">
+                          Documento assinado digitalmente em campo via App.
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
+            </div>
+          )}
 
           {type === 'dossier' && (
             <div className="space-y-12 pb-10">

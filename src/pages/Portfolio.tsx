@@ -1,7 +1,6 @@
 import { FadeIn } from '@/components/animations/FadeIn'
 import { CheckCircle2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
 import imgExternal from '@/assets/whatsapp-image-2026-03-17-at-19.27.50-91cc3.jpeg'
 import imgAC from '@/assets/whatsapp-image-2026-03-17-at-19.27.46-76526.jpeg'
 import imgPrev from '@/assets/whatsapp-image-2026-03-17-at-19.27.47-95b76.jpeg'
@@ -109,12 +108,16 @@ export default function Portfolio() {
                     <Button
                       asChild
                       size="lg"
-                      className="rounded-full font-bold px-8 h-14 text-base shadow-md"
+                      className="rounded-full font-bold px-8 h-14 text-base shadow-md group"
                     >
-                      <Link to="/#contato">
+                      <a
+                        href="https://wa.me/5511940037545"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Solicitar orçamento similar
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Link>
+                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      </a>
                     </Button>
                   </div>
                 </div>
@@ -138,7 +141,7 @@ export default function Portfolio() {
               asChild
               className="rounded-full font-bold h-14 px-10 text-lg hover:scale-105 transition-transform"
             >
-              <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
                 Fale com um Especialista Agora
               </a>
             </Button>

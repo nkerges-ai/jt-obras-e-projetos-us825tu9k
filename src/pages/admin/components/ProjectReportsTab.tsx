@@ -389,14 +389,32 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
                           >
                             {report.status || 'Pendente'}
                           </Badge>
+                          {report.signature && (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] bg-blue-50 text-blue-700 border-blue-200 uppercase tracking-wider"
+                            >
+                              Termo de Visita
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
+                      {report.signature && (
+                        <Button variant="outline" size="sm" asChild className="h-9">
+                          <Link
+                            to={`/admin/print/termo/${project.id}?reportId=${report.id}`}
+                            target="_blank"
+                          >
+                            Imprimir Termo
+                          </Link>
+                        </Button>
+                      )}
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-green-600 border-green-200 hover:bg-green-50 flex-1 sm:flex-none"
+                        className="text-green-600 border-green-200 hover:bg-green-50 flex-1 sm:flex-none h-9"
                         onClick={() => handleSendWhatsApp(report)}
                       >
                         <MessageCircle className="h-4 w-4 mr-2" /> Enviar para Validação
@@ -404,7 +422,7 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9"
                         onClick={() => handleDeleteReport(report.id)}
                       >
                         <Trash2 className="h-4 w-4" />

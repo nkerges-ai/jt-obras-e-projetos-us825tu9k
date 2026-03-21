@@ -36,6 +36,17 @@ export interface ConstructionReport {
   status?: 'Pendente' | 'Aprovado'
   approvalLog?: { date: string; user: string }
   comparisons?: { id: string; before: string; after: string; label: string }[]
+  signature?: string
+  checkIn?: string
+  checkOut?: string
+}
+
+export interface BillingInstallment {
+  id: string
+  description: string
+  dueDate: string
+  amount: number
+  status: 'Pago' | 'Pendente' | 'Atrasado'
 }
 
 export interface Project {
@@ -52,6 +63,7 @@ export interface Project {
   photos: Photo[]
   phases?: ProjectPhase[]
   reports?: ConstructionReport[]
+  billing?: BillingInstallment[]
 }
 
 export interface CalendarEvent {
@@ -475,11 +487,21 @@ const EXAMPLE_DOC_NR35: TechnicalDocument = {
 
 // Accessors
 export const getProjects = (): Project[] => {
-  const data = localStorage.getItem('jt_projects_v5')
-  return data ? JSON.parse(data) : []
+  const data = localStorage.getItem('jt_projects_v6')
+  if (data) return JSON.parse(data)
+
+  // Fallback to older version if exists, then migrate
+  const oldData = localStorage.getItem('jt_projects_v5')
+  if (oldData) {
+    const parsed = JSON.parse(oldData)
+    saveProjects(parsed)
+    return parsed
+  }
+
+  return []
 }
 export const saveProjects = (projects: Project[]) => {
-  localStorage.setItem('jt_projects_v5', JSON.stringify(projects))
+  localStorage.setItem('jt_projects_v6', JSON.stringify(projects))
 }
 
 export const getEvents = (): CalendarEvent[] => {
@@ -523,12 +545,6 @@ export const saveInventory = (inventory: Material[]) => {
 export const getPGRs = (): PGRDocument[] => {
   const data = localStorage.getItem('jt_pgr_v6')
   if (!data) {
-    const oldData = localStorage.getItem('jt_pgr_v5')
-    if (oldData) {
-      const parsed = JSON.parse(oldData)
-      savePGRs(parsed)
-      return parsed
-    }
     savePGRs([EXAMPLE_PGR])
     return [EXAMPLE_PGR]
   }

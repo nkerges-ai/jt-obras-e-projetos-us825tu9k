@@ -17,6 +17,7 @@ import {
   BriefcaseBusiness,
   ClipboardList,
   MessageSquare,
+  Wallet,
 } from 'lucide-react'
 import {
   getProjects,
@@ -77,8 +78,41 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     if (projectId) {
-      const p = getProjects().find((p) => p.id === projectId)
-      if (p) setProject(p)
+      const projects = getProjects()
+      const p = projects.find((p) => p.id === projectId)
+      if (p) {
+        // Inject mock billing timeline if not exists for demo purposes
+        if (!p.billing || p.billing.length === 0) {
+          p.billing = [
+            {
+              id: 'b_1',
+              description: 'Entrada / Sinal',
+              dueDate: p.startDate,
+              amount: p.budget * 0.3,
+              status: 'Pago',
+            },
+            {
+              id: 'b_2',
+              description: 'Parcela Intermediária',
+              dueDate: new Date().toISOString(),
+              amount: p.budget * 0.3,
+              status: 'Pendente',
+            },
+            {
+              id: 'b_3',
+              description: 'Parcela Final',
+              dueDate:
+                p.endDate || new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+              amount: p.budget * 0.4,
+              status: 'Pendente',
+            },
+          ]
+          const pIdx = projects.findIndex((proj) => proj.id === projectId)
+          projects[pIdx] = p
+          saveProjects(projects)
+        }
+        setProject(p)
+      }
 
       const allTickets = getTickets()
       setTickets(allTickets.filter((t) => t.projectId === projectId))
@@ -243,6 +277,12 @@ export default function ClientDashboard() {
             <ClipboardList className="h-4 w-4 mr-2" /> Validação de Relatórios
           </TabsTrigger>
           <TabsTrigger
+            value="faturamento"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <Wallet className="h-4 w-4 mr-2" /> Faturamento
+          </TabsTrigger>
+          <TabsTrigger
             value="resumo"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
@@ -285,6 +325,72 @@ export default function ClientDashboard() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="faturamento">
+          <Card className="bg-white border-none shadow-sm mb-6">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg text-brand-navy flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-primary" /> Linha do Tempo de Faturamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {!project.billing || project.billing.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground bg-gray-50 rounded-xl border border-dashed">
+                  <Wallet className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Nenhum cronograma de faturamento definido.</p>
+                </div>
+              ) : (
+                <div className="relative border-l-2 border-gray-200 ml-4 space-y-8 py-4">
+                  {project.billing.map((item) => (
+                    <div
+                      key={item.id}
+                      className="relative pl-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                    >
+                      <div
+                        className={`absolute -left-[11px] top-1.5 w-5 h-5 rounded-full border-4 border-white shadow-sm ${
+                          item.status === 'Pago'
+                            ? 'bg-green-500'
+                            : item.status === 'Atrasado'
+                              ? 'bg-red-500'
+                              : 'bg-brand-orange'
+                        }`}
+                      />
+                      <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                          <h4 className="font-bold text-brand-navy text-lg">{item.description}</h4>
+                          <Badge
+                            variant="outline"
+                            className={
+                              item.status === 'Pago'
+                                ? 'bg-green-50 text-green-700 border-green-200 w-fit'
+                                : item.status === 'Atrasado'
+                                  ? 'bg-red-50 text-red-700 border-red-200 w-fit'
+                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200 w-fit'
+                            }
+                          >
+                            {item.status}
+                          </Badge>
+                        </div>
+                        <div className="text-sm text-muted-foreground flex flex-col sm:flex-row justify-between gap-1">
+                          <span className="flex items-center gap-1">
+                            <CalendarDays className="w-4 h-4" /> Vencimento:{' '}
+                            {new Date(item.dueDate).toLocaleDateString('pt-BR')}
+                          </span>
+                          <span className="font-extrabold text-gray-800 text-lg">
+                            {new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            }).format(item.amount)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="relatorios">
           <Card className="bg-white border-none shadow-sm mb-6">
             <CardHeader className="border-b pb-4">
@@ -313,6 +419,21 @@ export default function ClientDashboard() {
                             {new Date(report.date).toLocaleDateString('pt-BR')}
                           </h4>
                           <div className="flex items-center gap-3">
+                            {report.signature && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                asChild
+                                className="h-7 text-xs border-brand-light text-brand-light"
+                              >
+                                <Link
+                                  to={`/admin/print/termo/${project.id}?reportId=${report.id}`}
+                                  target="_blank"
+                                >
+                                  Ver Termo de Visita
+                                </Link>
+                              </Button>
+                            )}
                             <Badge
                               variant="outline"
                               className="bg-green-50 text-green-700 text-sm py-1 border-green-200"
