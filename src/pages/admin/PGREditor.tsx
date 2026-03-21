@@ -3,13 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   ArrowLeft,
   Printer,
@@ -19,6 +13,8 @@ import {
   Upload,
   Fingerprint,
   Stamp,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
@@ -34,10 +30,20 @@ import {
 import { BiometricCapture } from '@/components/BiometricCapture'
 import { PGRForm } from './components/PGRForm'
 import { PGRPreview } from './components/PGRPreview'
+import { WizardStepper } from '@/components/WizardStepper'
 
 export default function PGREditor() {
   const { toast } = useToast()
   const navigate = useNavigate()
+
+  const [step, setStep] = useState(1)
+  const wizardSteps = [
+    'Identificação',
+    'Escopo e Textos',
+    'Inventário de Riscos',
+    'Plano de Ação',
+    'Revisão e Assinatura',
+  ]
 
   const [data, setData] = useState<Partial<PGRDocument>>(() => {
     const existing = getPGRs()
@@ -152,68 +158,96 @@ export default function PGREditor() {
         onCapture={finalizeAdminSignature}
         onCancel={() => setIsBiometricOpen(false)}
       />
+
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild className="h-10 w-10">
-              <Link to="/admin">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
+            <Button variant="ghost" size="icon" onClick={() => navigate('/admin')}>
+              <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="font-bold text-lg text-brand-navy truncate hidden md:block">
               Editor de PGR (NR-01)
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            {!data.adminSignature ? (
+            {step === wizardSteps.length && (
               <>
+                {!data.adminSignature ? (
+                  <>
+                    <Button
+                      size="sm"
+                      onClick={applyCompanyAsset}
+                      variant="outline"
+                      className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
+                    >
+                      <Stamp className="h-4 w-4" /> Validar Oficial
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => setIsAdminSignOpen(true)}
+                      className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white hidden sm:flex"
+                    >
+                      <PenTool className="h-4 w-4" /> Assinar
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="gap-2 bg-green-100 text-green-700 pointer-events-none"
+                  >
+                    <CheckCircle className="h-4 w-4" /> Assinado
+                  </Button>
+                )}
                 <Button
-                  size="sm"
-                  onClick={applyCompanyAsset}
                   variant="outline"
-                  className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
+                  size="sm"
+                  onClick={handleSave}
+                  className="gap-2 hidden sm:flex"
                 >
-                  <Stamp className="h-4 w-4" /> Validar Oficial
+                  <Save className="h-4 w-4" /> Salvar
                 </Button>
                 <Button
+                  onClick={() => window.print()}
                   size="sm"
-                  onClick={() => setIsAdminSignOpen(true)}
-                  className="gap-2 bg-brand-navy hidden sm:flex"
+                  className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
                 >
-                  <PenTool className="h-4 w-4" /> Assinar
+                  <Printer className="h-4 w-4" /> Imprimir Documento
                 </Button>
               </>
-            ) : (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-2 bg-green-100 text-green-700 pointer-events-none"
-              >
-                <CheckCircle className="h-4 w-4" /> Assinado
-              </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 hidden sm:flex"
-            >
-              <Save className="h-4 w-4" /> Salvar
-            </Button>
-            <Button
-              onClick={() => window.print()}
-              size="sm"
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Printer className="h-4 w-4" /> Imprimir Documento
-            </Button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 mt-8 print:p-0 print:w-full print:max-w-none flex flex-col lg:flex-row gap-8 items-start">
-        <PGRForm data={data} setData={setData} projects={projects} />
-        <div className="flex-1 flex flex-col">
+      <WizardStepper steps={wizardSteps} currentStep={step} setStep={setStep} />
+
+      <div className="container mx-auto px-4 print:p-0 flex flex-col items-center">
+        {step < wizardSteps.length && (
+          <div className="w-full max-w-3xl bg-white p-6 md:p-8 rounded-xl border shadow-sm print:hidden min-h-[500px] flex flex-col">
+            <PGRForm data={data} setData={setData} projects={projects} currentStep={step} />
+            <div className="flex justify-between mt-auto pt-8 border-t mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setStep(step - 1)}
+                disabled={step === 1}
+                className="gap-2"
+              >
+                <ChevronLeft className="w-4 h-4" /> Voltar
+              </Button>
+              <Button
+                onClick={() => setStep(step + 1)}
+                className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
+              >
+                Avançar <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`w-full flex-col justify-start print:block print:w-full ${step < wizardSteps.length ? 'hidden print:flex' : 'flex'}`}
+        >
           <PGRPreview data={data} />
         </div>
       </div>
@@ -270,12 +304,20 @@ export default function PGREditor() {
                 }}
               />
             </TabsContent>
-          </Tabs>
-          <DialogFooter>
-            <Button onClick={handleSaveAdminSignature} className="w-full mt-4">
+            <TabsContent value="govbr" className="space-y-4 mt-4">
+              <Input
+                placeholder="Código Gov.br"
+                value={govbrLink}
+                onChange={(e) => setGovbrLink(e.target.value)}
+              />
+            </TabsContent>
+            <Button
+              onClick={handleSaveAdminSignature}
+              className="w-full mt-4 bg-brand-navy hover:bg-brand-navy/90 text-white"
+            >
               Avançar para Validação
             </Button>
-          </DialogFooter>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>

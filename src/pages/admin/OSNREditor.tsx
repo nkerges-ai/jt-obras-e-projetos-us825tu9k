@@ -2,41 +2,40 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   ArrowLeft,
   Printer,
   Save,
-  MessageCircle,
   ScanFace,
   CheckCircle,
   PenTool,
   Upload,
   Fingerprint,
-  Mail,
   Link2,
   Stamp,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
   ServiceOrder,
   getServiceOrders,
   saveServiceOrders,
-  addLog,
   BiometricValidation,
-  getSignatures,
-  saveSignatures,
-  DocumentSignature,
   getCompanyAssets,
 } from '@/lib/storage'
 import { OSForm } from './components/OSForm'
 import { OSPreview } from './components/OSPreview'
 import { BiometricCapture } from '@/components/BiometricCapture'
+import { WizardStepper } from '@/components/WizardStepper'
 
 export default function OSNREditor() {
   const { toast } = useToast()
+  const [step, setStep] = useState(1)
+  const wizardSteps = ['Identificação', 'Atividade', 'EPIs e EPCs', 'Revisão e Assinatura']
+
   const [data, setData] = useState<Partial<ServiceOrder>>({
     osNumber: '',
     revision: '00',
@@ -48,13 +47,6 @@ export default function OSNREditor() {
     epcs: [],
     compliance: { esocial: '', receita: '' },
   })
-
-  const [attachments, setAttachments] = useState<string[]>([])
-  const attachRef = useRef<HTMLInputElement>(null)
-  const [isEmailOpen, setIsEmailOpen] = useState(false)
-  const [emailTo, setEmailTo] = useState('')
-  const [isReqSignDialogOpen, setIsReqSignDialogOpen] = useState(false)
-  const [signPhone, setSignPhone] = useState('')
 
   const [isBiometricOpen, setIsBiometricOpen] = useState(false)
   const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
@@ -180,79 +172,96 @@ export default function OSNREditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsReqSignDialogOpen(true)}
-              className="gap-2 border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hidden lg:flex"
-            >
-              <Link2 className="h-4 w-4" /> Sol. Assinatura
-            </Button>
-
-            {!data.adminSignature ? (
+            {step === wizardSteps.length && (
               <>
+                {!data.adminSignature ? (
+                  <>
+                    <Button
+                      size="sm"
+                      onClick={applyCompanyAsset}
+                      variant="outline"
+                      className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
+                    >
+                      <Stamp className="h-4 w-4" /> Validar Oficial
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => setIsAdminSignOpen(true)}
+                      className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white hidden sm:flex"
+                    >
+                      <PenTool className="h-4 w-4" /> Assinar (JT)
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="gap-2 bg-green-100 text-green-700 pointer-events-none hidden sm:flex"
+                  >
+                    <CheckCircle className="h-4 w-4" /> JT Assinado
+                  </Button>
+                )}
+                {!data.biometricValidation ? (
+                  <Button
+                    onClick={() => setIsBiometricOpen(true)}
+                    size="sm"
+                    className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
+                  >
+                    <ScanFace className="h-4 w-4" /> Assinar (Pres.)
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="gap-2 bg-green-100 text-green-700 pointer-events-none"
+                  >
+                    <CheckCircle className="h-4 w-4" /> Pres. Assinado
+                  </Button>
+                )}
                 <Button
-                  size="sm"
-                  onClick={applyCompanyAsset}
                   variant="outline"
-                  className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
+                  size="sm"
+                  onClick={handleSave}
+                  className="gap-2 hidden sm:flex"
                 >
-                  <Stamp className="h-4 w-4" /> Validar Oficial
+                  <Save className="h-4 w-4" /> Salvar
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setIsAdminSignOpen(true)}
-                  variant="outline"
-                  className="gap-2 border-brand-navy text-brand-navy hidden sm:flex"
-                >
-                  <PenTool className="h-4 w-4" /> Assinar (JT)
+                <Button onClick={() => window.print()} size="sm" className="gap-2">
+                  <Printer className="h-4 w-4" /> Imprimir
                 </Button>
               </>
-            ) : (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-2 bg-blue-50 text-blue-700 pointer-events-none hidden sm:flex"
-              >
-                <CheckCircle className="h-4 w-4" /> JT Assinado
-              </Button>
             )}
-
-            {!data.biometricValidation ? (
-              <Button
-                onClick={() => setIsBiometricOpen(true)}
-                size="sm"
-                className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-              >
-                <ScanFace className="h-4 w-4" /> Assinar (Pres.)
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-2 bg-green-100 text-green-700 pointer-events-none"
-              >
-                <CheckCircle className="h-4 w-4" /> Pres. Assinado
-              </Button>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 hidden sm:flex"
-            >
-              <Save className="h-4 w-4" /> Salvar
-            </Button>
-            <Button onClick={() => window.print()} size="sm" className="gap-2">
-              <Printer className="h-4 w-4" /> Imprimir
-            </Button>
           </div>
         </div>
       </div>
-      <div className="container mx-auto px-4 mt-8 print:p-0 print:w-full print:max-w-none flex flex-col lg:flex-row gap-8 items-start">
-        <OSForm data={data} setData={setData} />
-        <div className="flex-1 flex flex-col">
+
+      <WizardStepper steps={wizardSteps} currentStep={step} setStep={setStep} />
+
+      <div className="container mx-auto px-4 print:p-0 flex flex-col items-center">
+        {step < wizardSteps.length && (
+          <div className="w-full max-w-2xl bg-white p-6 md:p-8 rounded-xl border shadow-sm print:hidden min-h-[450px] flex flex-col">
+            <OSForm data={data} setData={setData} currentStep={step} />
+            <div className="flex justify-between mt-auto pt-8 border-t mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setStep(step - 1)}
+                disabled={step === 1}
+                className="gap-2"
+              >
+                <ChevronLeft className="w-4 h-4" /> Voltar
+              </Button>
+              <Button
+                onClick={() => setStep(step + 1)}
+                className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
+              >
+                Avançar <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+        <div
+          className={`w-full flex-col justify-start print:block print:w-full ${step < wizardSteps.length ? 'hidden print:flex' : 'flex'}`}
+        >
           <OSPreview data={data} />
         </div>
       </div>
@@ -260,7 +269,7 @@ export default function OSNREditor() {
       <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Assinatura Emissora</DialogTitle>
+            <DialogTitle>Assinatura Emissora (JT Obras)</DialogTitle>
           </DialogHeader>
           <Tabs
             value={signType}
@@ -309,7 +318,10 @@ export default function OSNREditor() {
                 }}
               />
             </TabsContent>
-            <Button onClick={handleSaveAdminSignature} className="w-full mt-4">
+            <Button
+              onClick={handleSaveAdminSignature}
+              className="w-full mt-4 bg-brand-navy text-white hover:bg-brand-navy/90"
+            >
               Avançar para Validação
             </Button>
           </Tabs>

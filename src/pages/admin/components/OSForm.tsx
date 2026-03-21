@@ -26,9 +26,10 @@ import { useToast } from '@/hooks/use-toast'
 interface OSFormProps {
   data: Partial<ServiceOrder>
   setData: (data: Partial<ServiceOrder>) => void
+  currentStep?: number
 }
 
-export function OSForm({ data, setData }: OSFormProps) {
+export function OSForm({ data, setData, currentStep = 1 }: OSFormProps) {
   const [projects, setProjects] = useState<Project[]>([])
   const [contractors, setContractors] = useState<Contractor[]>([])
   const { toast } = useToast()
@@ -47,16 +48,12 @@ export function OSForm({ data, setData }: OSFormProps) {
 
   const toggleArr = (key: 'epis' | 'epcs', item: string) => {
     const arr = data[key] || []
-    setData({
-      ...data,
-      [key]: arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item],
-    })
+    setData({ ...data, [key]: arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item] })
   }
 
   const handleSyncPGR = () => {
     const pgrs = getPGRs()
-    const pgr = pgrs.find((p) => p.projectId === data.projectId) || pgrs[0] // Fallback to first/global if not found strictly by project for demo purposes
-
+    const pgr = pgrs.find((p) => p.projectId === data.projectId) || pgrs[0]
     if (pgr && pgr.riscos && pgr.riscos.length > 0) {
       const riscosText = pgr.riscos
         .map(
@@ -64,7 +61,6 @@ export function OSForm({ data, setData }: OSFormProps) {
             `> RISCO AVALIADO: ${r.perigo} (Nível: ${r.nivelRisco || 'Não definido'})\n  MEDIDA PREVENTIVA: ${r.medidas}`,
         )
         .join('\n\n')
-
       setData({
         ...data,
         atividade: {
@@ -75,10 +71,7 @@ export function OSForm({ data, setData }: OSFormProps) {
             riscosText,
         },
       })
-      toast({
-        title: 'Sincronização Concluída',
-        description: 'Dados do PGR (NR-01) importados para a descrição da atividade.',
-      })
+      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR (NR-01) importados.' })
     } else {
       toast({
         title: 'PGR Incompatível',
@@ -107,21 +100,10 @@ export function OSForm({ data, setData }: OSFormProps) {
 
   const isFinalizado = data.status === 'Finalizado'
 
-  return (
-    <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 space-y-6 print:hidden">
-      <div className="bg-white p-5 rounded-xl border shadow-sm space-y-5 lg:max-h-[85vh] lg:overflow-y-auto custom-scrollbar">
-        <div className="flex items-center justify-between border-b pb-2">
-          <h2 className="font-bold text-lg text-brand-navy">Preenchimento da OS</h2>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSyncPGR}
-            className="gap-1 h-7 text-xs bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
-          >
-            <RefreshCw className="h-3 w-3" /> Importar PGR
-          </Button>
-        </div>
-
+  if (currentStep === 1) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Identificação Principal</h3>
         <div className="space-y-2">
           <Label>Obra / Projeto Vinculado</Label>
           <Select
@@ -141,17 +123,13 @@ export function OSForm({ data, setData }: OSFormProps) {
             </SelectContent>
           </Select>
         </div>
-
-        <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <div className="flex items-center justify-between">
-            <Label className="font-bold text-primary">Dados da Prestadora</Label>
-          </div>
-          <div className="space-y-2 pb-2 border-b border-gray-200">
-            <Label className="text-xs text-muted-foreground flex items-center gap-1">
-              <Building2 className="h-3 w-3" /> Autopreencher com Cadastro
+        <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <div className="space-y-2 pb-3 border-b border-gray-200">
+            <Label className="text-xs text-brand-navy font-bold flex items-center gap-1">
+              <Building2 className="h-4 w-4" /> Autopreencher com Banco de Dados
             </Label>
             <Select disabled={isFinalizado} onValueChange={handleSelectContractor}>
-              <SelectTrigger className="h-8 text-xs bg-white">
+              <SelectTrigger className="h-10 bg-white">
                 <SelectValue placeholder="Selecionar Contratante..." />
               </SelectTrigger>
               <SelectContent>
@@ -163,55 +141,88 @@ export function OSForm({ data, setData }: OSFormProps) {
               </SelectContent>
             </Select>
           </div>
-          <Input
-            disabled={isFinalizado}
-            placeholder="[Nome do cliente/ estabelecimento]"
-            value={data.prestadora?.nome}
-            onChange={(e) => updateP('nome', e.target.value)}
-          />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-2">
+            <Label>Nome do Estabelecimento / Prestadora</Label>
             <Input
               disabled={isFinalizado}
-              placeholder="[CNPJ]"
-              value={data.prestadora?.cnpj}
-              onChange={(e) => updateP('cnpj', e.target.value)}
-            />
-            <Input
-              disabled={isFinalizado}
-              placeholder="Telefone"
-              value={data.prestadora?.telefone}
-              onChange={(e) => updateP('telefone', e.target.value)}
+              value={data.prestadora?.nome}
+              onChange={(e) => updateP('nome', e.target.value)}
             />
           </div>
-          <Input
-            disabled={isFinalizado}
-            placeholder="Endereço Completo"
-            value={data.prestadora?.endereco}
-            onChange={(e) => updateP('endereco', e.target.value)}
-          />
-          <Input
-            disabled={isFinalizado}
-            placeholder="Responsável"
-            value={data.prestadora?.responsavel}
-            onChange={(e) => updateP('responsavel', e.target.value)}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>CNPJ</Label>
+              <Input
+                disabled={isFinalizado}
+                value={data.prestadora?.cnpj}
+                onChange={(e) => updateP('cnpj', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Telefone</Label>
+              <Input
+                disabled={isFinalizado}
+                value={data.prestadora?.telefone}
+                onChange={(e) => updateP('telefone', e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Endereço Completo</Label>
+            <Input
+              disabled={isFinalizado}
+              value={data.prestadora?.endereco}
+              onChange={(e) => updateP('endereco', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Responsável Local</Label>
+            <Input
+              disabled={isFinalizado}
+              value={data.prestadora?.responsavel}
+              onChange={(e) => updateP('responsavel', e.target.value)}
+            />
+          </div>
         </div>
+      </div>
+    )
+  }
 
-        <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">Execução e Atividade</Label>
+  if (currentStep === 2) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="flex items-center justify-between border-b pb-2">
+          <h3 className="font-bold text-lg text-brand-navy">Execução e Atividade</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSyncPGR}
+            className="gap-1 h-8 text-xs bg-brand-light/10 text-brand-navy border-brand-light/20 hover:bg-brand-light/20"
+          >
+            <RefreshCw className="h-3 w-3" /> Importar PGR
+          </Button>
+        </div>
+        <div className="space-y-2">
+          <Label>Local Exato de Execução</Label>
           <Input
             disabled={isFinalizado}
-            placeholder="Local de Execução"
             value={data.execucao?.local}
             onChange={(e) => updateE('local', e.target.value)}
+            placeholder="Ex: Fachada Sul, Casa de Máquinas..."
           />
-          <div className="grid grid-cols-2 gap-2">
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Data de Início Prevista</Label>
             <Input
               disabled={isFinalizado}
               type="date"
               value={data.execucao?.dataInicio}
               onChange={(e) => updateE('dataInicio', e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Data de Fim Prevista</Label>
             <Input
               disabled={isFinalizado}
               type="date"
@@ -219,55 +230,78 @@ export function OSForm({ data, setData }: OSFormProps) {
               onChange={(e) => updateE('dataFim', e.target.value)}
             />
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label>Setor de Atuação</Label>
           <Input
             disabled={isFinalizado}
-            placeholder="Setor"
             value={data.atividade?.setor}
             onChange={(e) => updateA('setor', e.target.value)}
           />
+        </div>
+        <div className="space-y-2">
+          <Label>Descrição Detalhada e Riscos Inerentes</Label>
           <Textarea
             disabled={isFinalizado}
-            placeholder="Descrição detalhada da atividade e riscos inerentes..."
-            className="min-h-[140px] text-xs"
+            className="min-h-[180px]"
             value={data.atividade?.descricao}
             onChange={(e) => updateA('descricao', e.target.value)}
+            placeholder="Descreva a atividade, equipamentos utilizados e os riscos identificados no PGR..."
           />
         </div>
+      </div>
+    )
+  }
 
-        <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">EPIs Obrigatórios</Label>
-          {EPI_LIST.map((epi) => (
-            <div key={epi} className="flex items-center space-x-2">
-              <Checkbox
-                disabled={isFinalizado}
-                id={epi}
-                checked={data.epis?.includes(epi)}
-                onCheckedChange={() => toggleArr('epis', epi)}
-              />
-              <Label htmlFor={epi} className="text-xs font-normal leading-tight cursor-pointer">
-                {epi}
-              </Label>
+  if (currentStep === 3) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">
+          Definição de EPIs e EPCs
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <Label className="font-bold text-brand-navy text-base">EPIs Obrigatórios</Label>
+            <div className="space-y-3 mt-2">
+              {EPI_LIST.map((epi) => (
+                <div key={epi} className="flex items-center space-x-3">
+                  <Checkbox
+                    disabled={isFinalizado}
+                    id={epi}
+                    checked={data.epis?.includes(epi)}
+                    onCheckedChange={() => toggleArr('epis', epi)}
+                    className="w-5 h-5 rounded border-gray-400"
+                  />
+                  <Label htmlFor={epi} className="text-sm font-medium cursor-pointer leading-tight">
+                    {epi}
+                  </Label>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        <div className="space-y-3 bg-gray-50 p-3 rounded border">
-          <Label className="font-bold text-primary">EPCs Obrigatórios</Label>
-          {EPC_LIST.map((epc) => (
-            <div key={epc} className="flex items-center space-x-2">
-              <Checkbox
-                disabled={isFinalizado}
-                id={epc}
-                checked={data.epcs?.includes(epc)}
-                onCheckedChange={() => toggleArr('epcs', epc)}
-              />
-              <Label htmlFor={epc} className="text-xs font-normal leading-tight cursor-pointer">
-                {epc}
-              </Label>
+          </div>
+          <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <Label className="font-bold text-brand-navy text-base">EPCs Obrigatórios</Label>
+            <div className="space-y-3 mt-2">
+              {EPC_LIST.map((epc) => (
+                <div key={epc} className="flex items-center space-x-3">
+                  <Checkbox
+                    disabled={isFinalizado}
+                    id={epc}
+                    checked={data.epcs?.includes(epc)}
+                    onCheckedChange={() => toggleArr('epcs', epc)}
+                    className="w-5 h-5 rounded border-gray-400"
+                  />
+                  <Label htmlFor={epc} className="text-sm font-medium cursor-pointer leading-tight">
+                    {epc}
+                  </Label>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
+
+  return null
 }
