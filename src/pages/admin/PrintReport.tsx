@@ -9,11 +9,21 @@ export default function PrintReport() {
   const { type, id } = useParams<{ type: string; id: string }>()
   const [project, setProject] = useState<Project | null>(null)
 
+  const searchParams = new URLSearchParams(window.location.search)
+  const reportIds = searchParams.get('reports')?.split(',') || []
+
   useEffect(() => {
     const projects = getProjects()
     const found = projects.find((p) => p.id === id)
     if (found) setProject(found)
   }, [id])
+
+  const selectedReportsList = useMemo(() => {
+    if (!project || !project.reports) return []
+    return project.reports
+      .filter((r) => reportIds.includes(r.id))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  }, [project, reportIds])
 
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
@@ -70,7 +80,13 @@ export default function PrintReport() {
 
       <div className="flex justify-center mt-8 print:mt-0">
         <DocumentLetterhead
-          title={type === 'custos' ? 'Relatório de Custos e Insumos' : 'Resumo e Evolução da Obra'}
+          title={
+            type === 'custos'
+              ? 'Relatório de Custos e Insumos'
+              : type === 'dossier'
+                ? 'Dossiê do Projeto'
+                : 'Resumo e Evolução da Obra'
+          }
         >
           <div className="bg-gray-50 border border-brand-navy/20 p-5 rounded-lg mb-8 text-sm shadow-sm text-gray-800">
             <div className="grid grid-cols-2 gap-6">
@@ -102,6 +118,157 @@ export default function PrintReport() {
               </div>
             </div>
           </div>
+
+          {type === 'dossier' && (
+            <div className="space-y-12 pb-10">
+              <div className="text-center mb-10 border-b border-gray-200 pb-6">
+                <h2 className="text-2xl font-black text-brand-navy mb-2 uppercase tracking-widest">
+                  Dossiê Consolidado da Obra
+                </h2>
+                <p className="text-gray-600">
+                  Documentação integral do progresso e evolução do projeto.
+                </p>
+              </div>
+
+              <div className="mb-12">
+                <h3 className="font-bold text-base mb-4 text-brand-navy border-l-4 border-brand-light pl-3 uppercase tracking-wider">
+                  Índice de Relatórios Integrados
+                </h3>
+                <table className="w-full text-left border-collapse text-sm shadow-sm">
+                  <thead>
+                    <tr className="bg-brand-navy text-white">
+                      <th className="p-3 border border-brand-navy/30">Data do Relatório</th>
+                      <th className="p-3 border border-brand-navy/30">Progresso (%)</th>
+                      <th className="p-3 border border-brand-navy/30">Status</th>
+                      <th className="p-3 border border-brand-navy/30">Validação do Cliente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedReportsList.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="p-4 text-center text-gray-500">
+                          Nenhum relatório selecionado para o dossiê.
+                        </td>
+                      </tr>
+                    )}
+                    {selectedReportsList.map((r, i) => (
+                      <tr key={r.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="p-3 border border-gray-200 font-semibold text-brand-navy">
+                          {new Date(r.date).toLocaleDateString('pt-BR')}
+                        </td>
+                        <td className="p-3 border border-gray-200 font-medium">{r.progress}%</td>
+                        <td className="p-3 border border-gray-200">
+                          <span
+                            className={
+                              r.status === 'Aprovado'
+                                ? 'text-green-600 font-bold'
+                                : 'text-yellow-600 font-bold'
+                            }
+                          >
+                            {r.status || 'Pendente'}
+                          </span>
+                        </td>
+                        <td className="p-3 border border-gray-200 text-xs">
+                          {r.approvalLog
+                            ? `${r.approvalLog.user} (${new Date(r.approvalLog.date).toLocaleDateString('pt-BR')})`
+                            : 'Aprovação Pendente'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {selectedReportsList.map((r) => (
+                <div key={r.id} className="break-before-page pt-8">
+                  <div className="flex justify-between items-end border-b-2 border-brand-light pb-2 mb-6">
+                    <h3 className="font-bold text-xl text-brand-navy uppercase tracking-wider">
+                      Relatório de Acompanhamento
+                    </h3>
+                    <div className="text-right">
+                      <span className="block text-[10px] text-gray-500 uppercase font-bold">
+                        Data de Emissão
+                      </span>
+                      <span className="font-bold text-lg text-brand-navy">
+                        {new Date(r.date).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 border border-gray-200 p-5 rounded-lg mb-8 shadow-sm">
+                    <p className="font-bold text-xs text-brand-light mb-2 uppercase tracking-wider">
+                      Resumo das Atividades Executadas
+                    </p>
+                    <p className="whitespace-pre-wrap text-gray-800 leading-relaxed text-[13px]">
+                      {r.summary}
+                    </p>
+                  </div>
+
+                  {r.comparisons && r.comparisons.length > 0 && (
+                    <div className="mb-10">
+                      <p className="font-bold text-sm text-brand-navy mb-4 border-b border-gray-200 pb-1 uppercase">
+                        Evolução Visual (Antes e Depois)
+                      </p>
+                      <div className="grid grid-cols-2 gap-8">
+                        {r.comparisons.map((cmp) => (
+                          <div
+                            key={cmp.id}
+                            className="break-inside-avoid border border-gray-200 rounded-xl p-3 bg-white shadow-sm flex flex-col"
+                          >
+                            {cmp.label && (
+                              <div className="text-center font-bold text-[11px] text-brand-navy mb-3 uppercase tracking-wider">
+                                {cmp.label}
+                              </div>
+                            )}
+                            <div className="flex gap-3">
+                              <div className="flex-1 border border-gray-200 rounded overflow-hidden">
+                                <div className="text-[10px] text-center bg-gray-100 py-1 font-bold text-gray-500 uppercase">
+                                  Situação Inicial
+                                </div>
+                                <img
+                                  src={cmp.before}
+                                  alt="Antes"
+                                  className="w-full h-40 object-cover"
+                                />
+                              </div>
+                              <div className="flex-1 border border-brand-light/30 rounded overflow-hidden shadow-sm">
+                                <div className="text-[10px] text-center bg-brand-light/10 text-brand-navy py-1 font-bold uppercase">
+                                  Situação Atual
+                                </div>
+                                <img
+                                  src={cmp.after}
+                                  alt="Depois"
+                                  className="w-full h-40 object-cover"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {r.photos && r.photos.length > 0 && (
+                    <div className="break-inside-avoid">
+                      <p className="font-bold text-sm text-brand-navy mb-4 border-b border-gray-200 pb-1 uppercase">
+                        Galeria de Imagens de Acompanhamento
+                      </p>
+                      <div className="grid grid-cols-4 gap-4">
+                        {r.photos.map((p, idx) => (
+                          <div
+                            key={idx}
+                            className="aspect-square border-2 border-white shadow-md rounded-lg overflow-hidden bg-gray-100"
+                          >
+                            <img src={p} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           {type === 'custos' && (
             <>

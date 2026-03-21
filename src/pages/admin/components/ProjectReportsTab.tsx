@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Project, ConstructionReport, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   MessageCircle,
   Upload,
@@ -13,8 +15,11 @@ import {
   Calendar,
   CheckCircle2,
   RefreshCw,
+  FileText,
+  SplitSquareHorizontal,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
 interface ProjectReportsTabProps {
   project: Project
@@ -35,6 +40,10 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
     photos: [],
   })
 
+  const [comparisons, setComparisons] = useState<
+    { id: string; before: string; after: string; label: string }[]
+  >([])
+  const [selectedReports, setSelectedReports] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +69,17 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
     e.target.value = ''
   }
 
+  const handleComparisonChange = (index: number, type: 'before' | 'after', file?: File) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const newCmp = [...comparisons]
+      newCmp[index][type] = e.target?.result as string
+      setComparisons(newCmp)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleAddReport = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newReport.summary || !newReport.date) return
@@ -70,6 +90,8 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
       progress: Number(newReport.progress) || 0,
       summary: newReport.summary,
       photos: newReport.photos || [],
+      comparisons: comparisons.filter((c) => c.before && c.after),
+      status: 'Pendente',
       syncStatus: navigator.onLine ? 'synced' : 'pending',
     }
 
@@ -82,14 +104,16 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
       summary: '',
       photos: [],
     })
+    setComparisons([])
     toast({
       title: 'Relatório Criado',
-      description: 'O relatório foi salvo e pode ser enviado ao cliente.',
+      description: 'O relatório foi salvo e está aguardando validação do cliente.',
     })
   }
 
   const handleDeleteReport = (id: string) => {
     onUpdate({ ...project, reports: (project.reports || []).filter((r) => r.id !== id) })
+    setSelectedReports(selectedReports.filter((rId) => rId !== id))
     window.dispatchEvent(new Event('jt_reports_updated'))
     toast({ title: 'Relatório Removido', description: 'O relatório foi apagado do histórico.' })
   }
@@ -101,13 +125,13 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
         `📅 *Data:* ${new Date(report.date).toLocaleDateString('pt-BR')}\n` +
         `📈 *Progresso Geral:* ${report.progress}%\n\n` +
         `📝 *Resumo do Período:*\n${report.summary}\n\n` +
-        `Acesse a Área do Cliente para ver as fotos e detalhes completos:\n${link}`,
+        `Por favor, acesse a Área do Cliente para validar o relatório e ver as fotos completas:\n${link}`,
     )
     window.open(`https://wa.me/?text=${text}`, '_blank')
     addLog({
       type: 'WhatsApp',
       recipient: project.client,
-      message: `Relatório de Obra enviado (Progresso: ${report.progress}%)`,
+      message: `Relatório de Obra enviado solicitando aprovação (Progresso: ${report.progress}%)`,
       status: 'Enviado',
     })
   }
@@ -155,8 +179,100 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
             className="min-h-[100px] bg-white"
           />
         </div>
-        <div className="space-y-2">
-          <Label>Anexar Fotos ao Relatório</Label>
+
+        <div className="space-y-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-bold text-brand-navy">Comparações Antes e Depois</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="bg-white"
+              onClick={() =>
+                setComparisons([
+                  ...comparisons,
+                  { id: `cmp_${Date.now()}`, before: '', after: '', label: '' },
+                ])
+              }
+            >
+              <SplitSquareHorizontal className="h-4 w-4 mr-2" /> Adicionar Par
+            </Button>
+          </div>
+          {comparisons.map((cmp, index) => (
+            <div
+              key={cmp.id}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-lg border shadow-sm"
+            >
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  Situação Inicial (Antes)
+                </Label>
+                <div className="border border-dashed rounded p-2 text-center relative hover:bg-gray-50 transition-colors h-28">
+                  {cmp.before ? (
+                    <img src={cmp.before} className="w-full h-full object-cover rounded" />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
+                      Upload Antes
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    accept="image/*"
+                    onChange={(e) => handleComparisonChange(index, 'before', e.target.files?.[0])}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-brand-light uppercase tracking-wider">
+                  Situação Atual (Depois)
+                </Label>
+                <div className="border border-dashed rounded p-2 text-center relative hover:bg-gray-50 transition-colors h-28">
+                  {cmp.after ? (
+                    <img src={cmp.after} className="w-full h-full object-cover rounded" />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
+                      Upload Depois
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    accept="image/*"
+                    onChange={(e) => handleComparisonChange(index, 'after', e.target.files?.[0])}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2 flex flex-col justify-between">
+                <div>
+                  <Label className="text-xs">Descrição do Local/Atividade</Label>
+                  <Input
+                    value={cmp.label}
+                    onChange={(e) => {
+                      const newCmp = [...comparisons]
+                      newCmp[index].label = e.target.value
+                      setComparisons(newCmp)
+                    }}
+                    placeholder="Ex: Fachada Sul - Pintura"
+                    className="mt-1 h-9 text-xs"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 self-end"
+                  onClick={() => setComparisons(comparisons.filter((_, i) => i !== index))}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" /> Remover Par
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2 pt-4 border-t border-gray-200">
+          <Label className="text-sm font-bold text-brand-navy">Galeria de Imagens Livres</Label>
           <div className="flex gap-4 items-start flex-col sm:flex-row">
             <input
               type="file"
@@ -174,7 +290,7 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
               className="bg-white shrink-0"
             >
               <Upload className="h-4 w-4 mr-2" />
-              {isUploading ? 'Carregando...' : 'Selecionar Fotos'}
+              {isUploading ? 'Carregando...' : 'Selecionar Fotos Extras'}
             </Button>
             {newReport.photos && newReport.photos.length > 0 && (
               <div className="flex gap-2 overflow-x-auto w-full pb-2">
@@ -187,15 +303,38 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
             )}
           </div>
         </div>
-        <div className="pt-2 border-t flex justify-end">
-          <Button type="submit" className="gap-2">
+        <div className="pt-4 flex justify-end">
+          <Button type="submit" className="gap-2 h-11 px-8">
             <CheckCircle2 className="h-4 w-4" /> Salvar Relatório
           </Button>
         </div>
       </form>
 
       <div className="space-y-4">
-        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Histórico de Relatórios</h3>
+        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Histórico e Validações</h3>
+
+        {selectedReports.length > 0 && (
+          <div className="bg-brand-navy p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center text-white mb-6 shadow-md gap-4 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center gap-3 font-semibold">
+              <FileText className="h-5 w-5 text-brand-light" />
+              <span>
+                {selectedReports.length}{' '}
+                {selectedReports.length === 1 ? 'relatório selecionado' : 'relatórios selecionados'}
+              </span>
+            </div>
+            <Button
+              className="bg-brand-light hover:bg-[#008cc9] text-white whitespace-nowrap"
+              asChild
+            >
+              <Link
+                to={`/admin/print/dossier/${project.id}?reports=${selectedReports.join(',')}`}
+                target="_blank"
+              >
+                Gerar Dossiê da Obra (PDF)
+              </Link>
+            </Button>
+          </div>
+        )}
 
         {!project.reports || project.reports.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground bg-gray-50 rounded-xl">
@@ -206,10 +345,24 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
             {project.reports
               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .map((report) => (
-                <div key={report.id} className="bg-white border rounded-xl p-5 shadow-sm">
+                <div
+                  key={report.id}
+                  className={cn(
+                    'bg-white border-2 rounded-xl p-5 shadow-sm transition-all',
+                    selectedReports.includes(report.id) ? 'border-primary' : 'border-gray-100',
+                  )}
+                >
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 border-b pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 p-2 rounded-lg text-primary">
+                      <Checkbox
+                        checked={selectedReports.includes(report.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) setSelectedReports([...selectedReports, report.id])
+                          else setSelectedReports(selectedReports.filter((id) => id !== report.id))
+                        }}
+                        className="h-5 w-5 data-[state=checked]:bg-primary"
+                      />
+                      <div className="bg-primary/10 p-2 rounded-lg text-primary ml-1">
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
@@ -217,13 +370,26 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
                           Relatório de {new Date(report.date).toLocaleDateString('pt-BR')}
                           {report.syncStatus === 'pending' && (
                             <Badge className="bg-amber-500 hover:bg-amber-600 text-black text-[9px] h-5 px-1.5 shadow-none gap-1">
-                              <RefreshCw className="h-2.5 w-2.5" /> Pendente
+                              <RefreshCw className="h-2.5 w-2.5" />
                             </Badge>
                           )}
                         </h5>
-                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 mt-1 inline-block">
-                          Progresso: {report.progress}%
-                        </span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+                            Progresso: {report.progress}%
+                          </span>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              'text-[10px] uppercase tracking-wider',
+                              report.status === 'Aprovado'
+                                ? 'bg-green-50 text-green-700 border-green-200'
+                                : 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                            )}
+                          >
+                            {report.status || 'Pendente'}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -233,7 +399,7 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
                         className="text-green-600 border-green-200 hover:bg-green-50 flex-1 sm:flex-none"
                         onClick={() => handleSendWhatsApp(report)}
                       >
-                        <MessageCircle className="h-4 w-4 mr-2" /> Enviar Cliente
+                        <MessageCircle className="h-4 w-4 mr-2" /> Enviar para Validação
                       </Button>
                       <Button
                         variant="ghost"
@@ -248,17 +414,46 @@ export function ProjectReportsTab({ project, onUpdate }: ProjectReportsTabProps)
 
                   <p className="text-sm text-gray-700 whitespace-pre-wrap mb-4">{report.summary}</p>
 
+                  {report.comparisons && report.comparisons.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                        Evolução (Antes e Depois)
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {report.comparisons.map((cmp) => (
+                          <div
+                            key={cmp.id}
+                            className="bg-gray-50 rounded border p-1.5 flex gap-1 items-center justify-center relative group overflow-hidden"
+                          >
+                            <img src={cmp.before} className="w-1/2 h-16 object-cover rounded-sm" />
+                            <img src={cmp.after} className="w-1/2 h-16 object-cover rounded-sm" />
+                            {cmp.label && (
+                              <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity p-2 text-center">
+                                {cmp.label}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {report.photos && report.photos.length > 0 && (
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                      {report.photos.map((photo, i) => (
-                        <div key={i} className="aspect-square rounded border overflow-hidden">
-                          <img
-                            src={photo}
-                            alt="Foto Relatório"
-                            className="w-full h-full object-cover hover:scale-105 transition-transform"
-                          />
-                        </div>
-                      ))}
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                        Galeria de Imagens
+                      </p>
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        {report.photos.map((photo, i) => (
+                          <div key={i} className="aspect-square rounded border overflow-hidden">
+                            <img
+                              src={photo}
+                              alt="Foto Relatório"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

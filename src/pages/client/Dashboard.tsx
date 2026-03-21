@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import {
   getProjects,
+  saveProjects,
   getTickets,
   saveTickets,
   getTechnicalDocuments,
@@ -39,6 +40,7 @@ import {
   Equipment,
   RentalRequest,
   DocumentSignature,
+  ConstructionReport,
 } from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
@@ -47,6 +49,8 @@ import { useToast } from '@/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { GanttChart } from '@/components/GanttChart'
 import { ChatWindow } from '@/components/ChatWindow'
+import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export default function ClientDashboard() {
   const navigate = useNavigate()
@@ -67,6 +71,9 @@ export default function ClientDashboard() {
   const [newTicketDesc, setNewTicketDesc] = useState('')
 
   const [unreadClient, setUnreadClient] = useState(0)
+
+  // Track checklist states for report approvals
+  const [approveChecklist, setApproveChecklist] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (projectId) {
@@ -169,6 +176,47 @@ export default function ClientDashboard() {
     })
   }
 
+  const toggleChecklist = (reportId: string, itemIdx: number, checked: boolean) => {
+    setApproveChecklist((prev) => ({ ...prev, [`${reportId}_${itemIdx}`]: checked }))
+  }
+
+  const handleApproveReport = (report: ConstructionReport) => {
+    if (!approveChecklist[`${report.id}_0`] || !approveChecklist[`${report.id}_1`]) {
+      toast({
+        title: 'Atenção Necessária',
+        description: 'Por favor, confirme a leitura e visualização dos itens antes de aprovar.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const updatedReport = {
+      ...report,
+      status: 'Aprovado' as const,
+      approvalLog: {
+        date: new Date().toISOString(),
+        user: project.client,
+      },
+    }
+
+    const updatedReports =
+      project.reports?.map((r) => (r.id === report.id ? updatedReport : r)) || []
+    const updatedProject = { ...project, reports: updatedReports }
+
+    const projects = getProjects()
+    const idx = projects.findIndex((p) => p.id === project.id)
+    if (idx >= 0) {
+      projects[idx] = updatedProject
+      saveProjects(projects)
+    }
+    setProject(updatedProject)
+
+    toast({
+      title: 'Relatório Validado',
+      description: 'A aprovação foi registrada no sistema com sucesso.',
+    })
+  }
+
   const antes = project.photos.filter((p) => p.type === 'Antes')
   const depois = project.photos.filter((p) => p.type === 'Depois')
 
@@ -186,19 +234,19 @@ export default function ClientDashboard() {
         </Button>
       </div>
 
-      <Tabs defaultValue="resumo" className="w-full">
+      <Tabs defaultValue="relatorios" className="w-full">
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-6">
-          <TabsTrigger
-            value="resumo"
-            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            <ImageIcon className="h-4 w-4 mr-2" /> Fotos da Obra
-          </TabsTrigger>
           <TabsTrigger
             value="relatorios"
             className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
           >
-            <ClipboardList className="h-4 w-4 mr-2" /> Relatórios
+            <ClipboardList className="h-4 w-4 mr-2" /> Validação de Relatórios
+          </TabsTrigger>
+          <TabsTrigger
+            value="resumo"
+            className="h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            <ImageIcon className="h-4 w-4 mr-2" /> Galeria de Imagens
           </TabsTrigger>
           <TabsTrigger
             value="cronograma"
@@ -236,6 +284,176 @@ export default function ClientDashboard() {
             <Headset className="h-4 w-4 mr-2" /> Suporte
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="relatorios">
+          <Card className="bg-white border-none shadow-sm mb-6">
+            <CardHeader className="border-b pb-4">
+              <CardTitle className="text-lg text-brand-navy">
+                Acompanhamento e Validação de Obra
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {!project.reports || project.reports.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground bg-gray-50 rounded-xl border border-dashed">
+                  <ClipboardList className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Nenhum relatório de acompanhamento disponível ainda.</p>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {project.reports
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((report) => (
+                      <div
+                        key={report.id}
+                        className="border-2 border-gray-100 rounded-xl p-5 bg-white shadow-sm"
+                      >
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-5 gap-4 border-b pb-4">
+                          <h4 className="font-bold text-brand-navy text-xl flex items-center gap-2">
+                            <CalendarDays className="h-6 w-6 text-primary" />
+                            {new Date(report.date).toLocaleDateString('pt-BR')}
+                          </h4>
+                          <div className="flex items-center gap-3">
+                            <Badge
+                              variant="outline"
+                              className="bg-green-50 text-green-700 text-sm py-1 border-green-200"
+                            >
+                              Progresso: {report.progress}%
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={
+                                report.status === 'Aprovado'
+                                  ? 'bg-blue-50 text-blue-700 border-blue-200 py-1'
+                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200 py-1'
+                              }
+                            >
+                              {report.status === 'Aprovado' ? 'Aprovado' : 'Aprovação Pendente'}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-50/50 p-4 rounded-lg border text-gray-800 mb-6">
+                          <h5 className="font-bold text-sm text-gray-500 uppercase tracking-wider mb-2">
+                            Resumo das Atividades
+                          </h5>
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                            {report.summary}
+                          </p>
+                        </div>
+
+                        {report.comparisons && report.comparisons.length > 0 && (
+                          <div className="mb-6">
+                            <h5 className="font-bold text-sm text-brand-navy border-b pb-2 mb-4 uppercase tracking-wider">
+                              Evolução Visual (Antes e Depois)
+                            </h5>
+                            <div className="grid lg:grid-cols-2 gap-6">
+                              {report.comparisons.map((cmp) => (
+                                <BeforeAfterSlider
+                                  key={cmp.id}
+                                  beforeImage={cmp.before}
+                                  afterImage={cmp.after}
+                                  label={cmp.label}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {report.photos && report.photos.length > 0 && (
+                          <div className="mb-6">
+                            <h5 className="font-bold text-sm text-brand-navy border-b pb-2 mb-4 uppercase tracking-wider">
+                              Galeria de Fotos do Período
+                            </h5>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                              {report.photos.map((p, idx) => (
+                                <div
+                                  key={idx}
+                                  className="aspect-square rounded-lg border overflow-hidden shadow-sm"
+                                >
+                                  <img
+                                    src={p}
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Approval Section */}
+                        {!report.status || report.status === 'Pendente' ? (
+                          <div className="mt-6 bg-blue-50/50 border border-blue-100 rounded-xl p-5 shadow-sm">
+                            <h5 className="font-bold text-brand-navy mb-3 text-lg">
+                              Validação do Cliente
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-4">
+                              Para que o relatório seja formalizado no dossiê da obra, por favor,
+                              confirme a revisão dos itens abaixo.
+                            </p>
+                            <div className="space-y-3 mb-5 bg-white p-4 rounded-lg border border-blue-100">
+                              <div className="flex items-start space-x-3">
+                                <Checkbox
+                                  id={`chk_${report.id}_0`}
+                                  className="mt-0.5"
+                                  checked={approveChecklist[`${report.id}_0`] || false}
+                                  onCheckedChange={(c) => toggleChecklist(report.id, 0, !!c)}
+                                />
+                                <Label
+                                  htmlFor={`chk_${report.id}_0`}
+                                  className="text-sm cursor-pointer leading-tight text-gray-700"
+                                >
+                                  Confirmo que li o resumo das atividades e concordo com o progresso
+                                  relatado de {report.progress}%.
+                                </Label>
+                              </div>
+                              <div className="flex items-start space-x-3">
+                                <Checkbox
+                                  id={`chk_${report.id}_1`}
+                                  className="mt-0.5"
+                                  checked={approveChecklist[`${report.id}_1`] || false}
+                                  onCheckedChange={(c) => toggleChecklist(report.id, 1, !!c)}
+                                />
+                                <Label
+                                  htmlFor={`chk_${report.id}_1`}
+                                  className="text-sm cursor-pointer leading-tight text-gray-700"
+                                >
+                                  Confirmo que visualizei as imagens e os comparativos de evolução
+                                  apresentados neste relatório.
+                                </Label>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => handleApproveReport(report)}
+                              className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white gap-2 h-11 px-8 shadow-md"
+                            >
+                              <CheckCircle2 className="h-5 w-5" /> Confirmar e Aprovar Relatório
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                            <div className="bg-green-100 p-2 rounded-full">
+                              <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-green-800">Relatório Aprovado</p>
+                              <p className="text-sm text-green-700 mt-0.5">
+                                Validado oficialmente por{' '}
+                                <strong>{report.approvalLog?.user}</strong> em{' '}
+                                {report.approvalLog
+                                  ? new Date(report.approvalLog.date).toLocaleString('pt-BR')
+                                  : '-'}
+                                .
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="resumo" className="space-y-6">
           <Card className="bg-white border-none shadow-sm">
@@ -302,66 +520,6 @@ export default function ClientDashboard() {
                       </div>
                     </div>
                   )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="relatorios">
-          <Card className="bg-white border-none shadow-sm mb-6">
-            <CardHeader className="border-b pb-4">
-              <CardTitle className="text-lg text-brand-navy">
-                Acompanhamento e Relatórios de Obra
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              {!project.reports || project.reports.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground bg-gray-50 rounded-xl border border-dashed">
-                  <ClipboardList className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>Nenhum relatório de acompanhamento disponível ainda.</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {project.reports
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                    .map((report) => (
-                      <div
-                        key={report.id}
-                        className="border border-brand-light/20 rounded-xl p-5 bg-gray-50/50 shadow-sm"
-                      >
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
-                          <h4 className="font-bold text-brand-navy text-lg flex items-center gap-2">
-                            <CalendarDays className="h-5 w-5 text-primary" />
-                            Data: {new Date(report.date).toLocaleDateString('pt-BR')}
-                          </h4>
-                          <Badge
-                            variant="outline"
-                            className="bg-green-50 text-green-700 w-fit text-sm"
-                          >
-                            Progresso: {report.progress}%
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-700 whitespace-pre-wrap mb-4 bg-white p-4 rounded-lg border">
-                          {report.summary}
-                        </p>
-                        {report.photos && report.photos.length > 0 && (
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
-                            {report.photos.map((p, idx) => (
-                              <div
-                                key={idx}
-                                className="aspect-square rounded-lg border overflow-hidden shadow-sm"
-                              >
-                                <img
-                                  src={p}
-                                  className="w-full h-full object-cover hover:scale-105 transition-transform"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
                 </div>
               )}
             </CardContent>

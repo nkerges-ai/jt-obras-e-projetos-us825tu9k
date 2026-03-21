@@ -33,6 +33,9 @@ export interface ConstructionReport {
   summary: string
   photos: string[]
   syncStatus?: 'pending' | 'synced'
+  status?: 'Pendente' | 'Aprovado'
+  approvalLog?: { date: string; user: string }
+  comparisons?: { id: string; before: string; after: string; label: string }[]
 }
 
 export interface Project {
