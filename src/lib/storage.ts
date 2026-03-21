@@ -132,6 +132,7 @@ export interface DocumentSignature {
   sentDate: string
   signedDate?: string
   signatureData?: string
+  biometricData?: BiometricValidation
 }
 
 export interface ValidityDocument {

@@ -1,11 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { getSignatures, saveSignatures, DocumentSignature } from '@/lib/storage'
-import { PenTool, CheckCircle, Save, Trash2, ArrowLeft, FileText } from 'lucide-react'
+import {
+  getSignatures,
+  saveSignatures,
+  DocumentSignature,
+  BiometricValidation,
+} from '@/lib/storage'
+import { PenTool, CheckCircle, Save, Trash2, ArrowLeft, FileText, ShieldCheck } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
 import { Card, CardContent } from '@/components/ui/card'
+import { BiometricCapture } from '@/components/BiometricCapture'
 
 export default function PublicSignature() {
   const { id } = useParams<{ id: string }>()
@@ -17,6 +23,9 @@ export default function PublicSignature() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [isSigned, setIsSigned] = useState(false)
 
+  const [isBiometricOpen, setIsBiometricOpen] = useState(false)
+  const [tempSignature, setTempSignature] = useState<string | null>(null)
+
   useEffect(() => {
     const sigs = getSignatures()
     const found = sigs.find((s) => s.id === id)
@@ -27,7 +36,7 @@ export default function PublicSignature() {
   }, [id])
 
   useEffect(() => {
-    if (!isSigned && canvasRef.current) {
+    if (!isSigned && canvasRef.current && !isBiometricOpen) {
       const ctx = canvasRef.current.getContext('2d')
       if (ctx) {
         ctx.lineWidth = 2
@@ -35,7 +44,7 @@ export default function PublicSignature() {
         ctx.strokeStyle = '#000000'
       }
     }
-  }, [isSigned, signatureReq])
+  }, [isSigned, signatureReq, isBiometricOpen])
 
   if (!signatureReq) {
     return (
@@ -86,6 +95,12 @@ export default function PublicSignature() {
   const handleSaveSignature = () => {
     if (!canvasRef.current) return
     const dataUrl = canvasRef.current.toDataURL('image/png')
+    setTempSignature(dataUrl)
+    setIsBiometricOpen(true)
+  }
+
+  const finalizeSignature = (bioData: BiometricValidation) => {
+    if (!tempSignature) return
 
     const sigs = getSignatures()
     const updatedSigs = sigs.map((s) =>
@@ -94,7 +109,8 @@ export default function PublicSignature() {
             ...s,
             status: 'Assinado' as const,
             signedDate: new Date().toISOString(),
-            signatureData: dataUrl,
+            signatureData: tempSignature,
+            biometricData: bioData,
           }
         : s,
     )
@@ -102,15 +118,22 @@ export default function PublicSignature() {
     saveSignatures(updatedSigs)
     setSignatureReq(updatedSigs.find((s) => s.id === signatureReq.id) || signatureReq)
     setIsSigned(true)
+    setIsBiometricOpen(false)
 
     toast({
       title: 'Documento Assinado!',
-      description: 'Sua assinatura foi registrada com sucesso e enviada ao administrador.',
+      description: 'Sua assinatura e validação facial foram registradas com sucesso.',
     })
   }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
+      <BiometricCapture
+        open={isBiometricOpen}
+        onCapture={finalizeSignature}
+        onCancel={() => setIsBiometricOpen(false)}
+      />
+
       <header className="bg-white border-b shadow-sm sticky top-0 z-30">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <img src={logo} alt="JT Obras" className="h-10 object-contain" />
@@ -137,7 +160,8 @@ export default function PublicSignature() {
                 <p className="text-lg font-bold text-brand-navy">{signatureReq.documentName}</p>
                 <p className="text-sm text-blue-700 mt-2">
                   Olá, <strong>{signatureReq.clientName}</strong>. Foi solicitada a sua assinatura
-                  eletrônica para este documento.
+                  eletrônica para este documento, como profissional técnico / contratado
+                  responsável.
                 </p>
               </div>
             </div>
@@ -167,6 +191,17 @@ export default function PublicSignature() {
                     </p>
                   </div>
                 )}
+                {signatureReq.biometricData && (
+                  <div className="flex items-center gap-3 mt-4 border border-green-200 rounded px-4 py-3 bg-green-50 max-w-xs mx-auto justify-center">
+                    <ShieldCheck className="h-8 w-8 text-green-600 shrink-0" />
+                    <div className="text-left leading-tight">
+                      <p className="font-bold text-green-800 text-xs">Validação Facial Ativa</p>
+                      <p className="text-green-600 text-[10px] mt-0.5">
+                        Identidade confirmada e vinculada ao documento.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-6">
@@ -175,8 +210,8 @@ export default function PublicSignature() {
                     <PenTool className="h-5 w-5" /> Desenhe sua assinatura abaixo
                   </label>
                   <p className="text-sm text-muted-foreground">
-                    Use o mouse ou o dedo para assinar no quadro. Esta assinatura tem validade de
-                    aceite técnico para execução ou conclusão de obra.
+                    Use o mouse ou o dedo para assinar no quadro. Após concluir, será solicitada
+                    validação facial.
                   </p>
                 </div>
 
@@ -208,7 +243,7 @@ export default function PublicSignature() {
                     onClick={handleSaveSignature}
                     className="flex-1 bg-brand-orange hover:bg-[#cf6d18] text-white"
                   >
-                    <Save className="h-4 w-4 mr-2" /> Confirmar Assinatura
+                    <Save className="h-4 w-4 mr-2" /> Confirmar e Validar Face
                   </Button>
                 </div>
               </div>

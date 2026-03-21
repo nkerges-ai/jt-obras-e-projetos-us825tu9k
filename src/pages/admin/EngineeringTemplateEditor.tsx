@@ -12,7 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowLeft, Printer, Save, Info } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { ArrowLeft, Printer, Save, Info, ShieldCheck, Send } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import logo from '@/assets/logotipo-c129e.jpg'
 import {
@@ -21,6 +29,9 @@ import {
   saveTechnicalDocuments,
   getTechnicalDocuments,
   TechnicalDocument,
+  DocumentSignature,
+  saveSignatures,
+  getSignatures,
 } from '@/lib/storage'
 
 const COMPANY = {
@@ -42,8 +53,8 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
     title: 'Anotação de Responsabilidade Técnica (ART)',
     fields: [
       {
-        key: 'funcao',
-        label: 'Atividade Técnica / Função',
+        key: 'atividade',
+        label: 'Atividade Técnica / Escopo',
         example: 'Ex: Execução de Obra, Laudo Técnico Estrutural',
       },
       {
@@ -64,6 +75,12 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
         key: 'caracteristicas',
         label: 'Características da Edificação',
         example: 'Ex: Galpão logístico J-2, risco médio, hidrantes...',
+        type: 'textarea',
+      },
+      {
+        key: 'medidas',
+        label: 'Sistemas de Segurança Avaliados',
+        example: 'Ex: Extintores, Iluminação de Emergência, Alarme de Incêndio',
         type: 'textarea',
       },
     ],
@@ -91,6 +108,17 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
         key: 'epis',
         label: 'EPIs / EPCs Obrigatórios',
         example: 'Ex: Cinto paraquedista, talabarte Y, capacete, linha de vida',
+      },
+      {
+        key: 'emissor',
+        label: 'Emissor da PT (Nome / Função)',
+        example: 'Ex: Carlos Silva / Téc. Segurança do Trabalho',
+      },
+      {
+        key: 'equipe',
+        label: 'Equipe de Trabalho (Nomes)',
+        example: 'Ex: João, José, Maria',
+        type: 'textarea',
       },
     ],
   },
@@ -120,6 +148,17 @@ const TEMPLATES: Record<string, { title: string; fields: TemplateField[] }> = {
         example: 'Ex: Exaustor mecânico, medidor de gases, extintor CO2',
         type: 'textarea',
       },
+      {
+        key: 'emissor',
+        label: 'Emissor da ARPT (Nome / Função)',
+        example: 'Ex: Carlos Silva / Téc. Segurança do Trabalho',
+      },
+      {
+        key: 'equipe',
+        label: 'Equipe Envolvida',
+        example: 'Ex: João, José, Maria',
+        type: 'textarea',
+      },
     ],
   },
 }
@@ -133,6 +172,15 @@ export default function EngineeringTemplateEditor() {
   const [projectId, setProjectId] = useState('')
   const [isRestricted, setIsRestricted] = useState(true)
   const [formData, setFormData] = useState<Record<string, string>>({})
+  const [profData, setProfData] = useState({
+    name: '',
+    registry: '',
+    document: '',
+    role: '',
+  })
+
+  const [isSignDialogOpen, setIsSignDialogOpen] = useState(false)
+  const [signPhone, setSignPhone] = useState('')
 
   useEffect(() => setProjects(getProjects()), [])
 
@@ -167,6 +215,42 @@ export default function EngineeringTemplateEditor() {
     setFormData((prev) => ({ ...prev, [key]: val }))
   }
 
+  const handleProfChange = (key: string, val: string) => {
+    setProfData((prev) => ({ ...prev, [key]: val }))
+  }
+
+  const handleRequestSignature = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedProject) {
+      toast({ title: 'Erro', description: 'Selecione uma obra vinculada.', variant: 'destructive' })
+      return
+    }
+    const id = `sig_${Date.now()}`
+    const sig: DocumentSignature = {
+      id,
+      documentId: `doc_${Date.now()}`,
+      documentName: `${config.title.split(' ')[0]} - ${selectedProject.name} (${profData.name || 'Profissional'})`,
+      clientName: profData.name || 'Profissional Contratado',
+      clientPhone: signPhone,
+      status: 'Pendente',
+      sentDate: new Date().toISOString(),
+    }
+    saveSignatures([sig, ...getSignatures()])
+
+    const link = `${window.location.origin}/assinatura/${id}`
+    const text = encodeURIComponent(
+      `Olá! Foi solicitada a sua assinatura eletrônica no documento técnico: ${sig.documentName}. Acesse o link para assinar com validação facial: ${link}`,
+    )
+    window.open(`https://wa.me/${signPhone.replace(/\D/g, '')}?text=${text}`, '_blank')
+
+    toast({
+      title: 'Assinatura Solicitada',
+      description: 'Link gerado e WhatsApp aberto para envio.',
+    })
+    setIsSignDialogOpen(false)
+    setSignPhone('')
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
@@ -182,6 +266,52 @@ export default function EngineeringTemplateEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            <Dialog open={isSignDialogOpen} onOpenChange={setIsSignDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200"
+                >
+                  <ShieldCheck className="h-4 w-4" />{' '}
+                  <span className="hidden sm:inline">Coletar Assinatura</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Solicitar Assinatura Biométrica</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleRequestSignature} className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Profissional / Prestador</Label>
+                    <Input
+                      value={profData.name}
+                      disabled
+                      className="bg-gray-50"
+                      placeholder="Preencha no painel lateral"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>WhatsApp / Telefone para envio</Label>
+                    <Input
+                      required
+                      placeholder="(11) 99999-9999"
+                      value={signPhone}
+                      onChange={(e) => setSignPhone(e.target.value)}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="w-full gap-2 mt-2 bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Send className="h-4 w-4" /> Gerar Link e Enviar
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
             <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
               <Save className="h-4 w-4" />{' '}
               <span className="hidden sm:inline">Salvar no Acervo</span>
@@ -206,11 +336,11 @@ export default function EngineeringTemplateEditor() {
 
             <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg text-sm mb-4">
               <div className="flex items-center gap-2 text-blue-800 font-bold mb-2">
-                <Info className="h-4 w-4" /> Preenchimento Inteligente (NRs)
+                <Info className="h-4 w-4" /> Preenchimento e Terceiros
               </div>
-              <p className="text-blue-700/80 leading-relaxed">
-                Os dados da JT OBRAS E MANUTENÇÕES serão injetados automaticamente no documento.
-                Siga os exemplos para conformidade com normas regulamentadoras.
+              <p className="text-blue-700/80 leading-relaxed text-xs">
+                A JT Obras constará como Contratante. Preencha os dados do profissional terceirizado
+                ou contratado, garantindo conformidade com NRs e exigências legais.
               </p>
             </div>
 
@@ -230,26 +360,65 @@ export default function EngineeringTemplateEditor() {
               </Select>
             </div>
 
-            {config.fields.map((field) => (
-              <div key={field.key} className="space-y-2">
-                <Label>{field.label}</Label>
-                {field.type === 'textarea' ? (
-                  <Textarea
-                    className="min-h-[80px]"
-                    value={formData[field.key] || ''}
-                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    placeholder={field.example}
-                  />
-                ) : (
-                  <Input
-                    value={formData[field.key] || ''}
-                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    placeholder={field.example}
-                  />
-                )}
-                <p className="text-[10px] text-muted-foreground">{field.example}</p>
+            <div className="space-y-4 pt-4 border-t mt-4">
+              <h3 className="font-bold text-brand-navy">Dados do Profissional / Contratado</h3>
+              <div className="space-y-2">
+                <Label>Nome do Profissional / Prestador</Label>
+                <Input
+                  value={profData.name}
+                  onChange={(e) => handleProfChange('name', e.target.value)}
+                  placeholder="Ex: Eng. Carlos Silva"
+                />
               </div>
-            ))}
+              <div className="space-y-2">
+                <Label>Registro Profissional (CREA/CAU/MTE)</Label>
+                <Input
+                  value={profData.registry}
+                  onChange={(e) => handleProfChange('registry', e.target.value)}
+                  placeholder="Ex: CREA 123456-7"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>CPF / CNPJ do Prestador</Label>
+                <Input
+                  value={profData.document}
+                  onChange={(e) => handleProfChange('document', e.target.value)}
+                  placeholder="000.000.000-00"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Cargo / Função</Label>
+                <Input
+                  value={profData.role}
+                  onChange={(e) => handleProfChange('role', e.target.value)}
+                  placeholder="Ex: Engenheiro Civil"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t mt-4">
+              <h3 className="font-bold text-brand-navy">Detalhes da Execução</h3>
+              {config.fields.map((field) => (
+                <div key={field.key} className="space-y-2">
+                  <Label>{field.label}</Label>
+                  {field.type === 'textarea' ? (
+                    <Textarea
+                      className="min-h-[80px]"
+                      value={formData[field.key] || ''}
+                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                      placeholder={field.example}
+                    />
+                  ) : (
+                    <Input
+                      value={formData[field.key] || ''}
+                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                      placeholder={field.example}
+                    />
+                  )}
+                  <p className="text-[10px] text-muted-foreground">{field.example}</p>
+                </div>
+              ))}
+            </div>
 
             <div className="flex items-center space-x-3 pt-4 border-t mt-6">
               <Switch checked={!isRestricted} onCheckedChange={(c) => setIsRestricted(!c)} />
@@ -280,9 +449,9 @@ export default function EngineeringTemplateEditor() {
                 {config.title}
               </h2>
 
-              <div className="border border-gray-400 rounded p-4 mb-6">
+              <div className="border border-gray-400 rounded p-4 mb-4">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  1. DADOS DA CONTRATADA
+                  1. DADOS DA CONTRATANTE (EMPRESA)
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-[13px]">
                   <p>
@@ -295,14 +464,14 @@ export default function EngineeringTemplateEditor() {
                     <strong>Endereço Sede:</strong> {COMPANY.address}
                   </p>
                   <p className="col-span-2">
-                    <strong>Responsável Técnico:</strong> {COMPANY.responsible}
+                    <strong>Representante / Diretor:</strong> {COMPANY.responsible}
                   </p>
                 </div>
               </div>
 
-              <div className="border border-gray-400 rounded p-4 mb-6">
+              <div className="border border-gray-400 rounded p-4 mb-4">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  2. DADOS DA OBRA / CONTRATANTE
+                  2. DADOS DA OBRA / PROJETO
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-[13px]">
                   <p>
@@ -310,7 +479,7 @@ export default function EngineeringTemplateEditor() {
                     {selectedProject?.name || '___________________________'}
                   </p>
                   <p>
-                    <strong>Cliente:</strong>{' '}
+                    <strong>Cliente Final:</strong>{' '}
                     {selectedProject?.client || '___________________________'}
                   </p>
                   <p className="col-span-2">
@@ -319,9 +488,32 @@ export default function EngineeringTemplateEditor() {
                 </div>
               </div>
 
-              <div className="border border-gray-400 rounded p-4 mb-6 min-h-[200px]">
+              <div className="border border-gray-400 rounded p-4 mb-4">
                 <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
-                  3. DETALHES TÉCNICOS E ESPECIFICAÇÕES
+                  3. DADOS DO PROFISSIONAL TÉCNICO / PRESTADOR
+                </h3>
+                <div className="grid grid-cols-2 gap-2 text-[13px]">
+                  <p className="col-span-2">
+                    <strong>Nome / Razão Social:</strong>{' '}
+                    {profData.name || '__________________________________________'}
+                  </p>
+                  <p>
+                    <strong>Registro (CREA/CAU/MTE):</strong>{' '}
+                    {profData.registry || '____________________'}
+                  </p>
+                  <p>
+                    <strong>CPF/CNPJ:</strong> {profData.document || '____________________'}
+                  </p>
+                  <p className="col-span-2">
+                    <strong>Cargo / Função:</strong>{' '}
+                    {profData.role || '__________________________________________'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="border border-gray-400 rounded p-4 mb-6 min-h-[150px]">
+                <h3 className="font-bold border-b border-gray-300 mb-3 pb-1 text-[13px] text-brand-navy">
+                  4. DETALHES TÉCNICOS E ESPECIFICAÇÕES
                 </h3>
                 <div className="space-y-4 text-[13px]">
                   {config.fields.map((field) => (
@@ -336,10 +528,22 @@ export default function EngineeringTemplateEditor() {
                 </div>
               </div>
 
-              <div className="mt-24 text-center">
-                <div className="border-t border-black w-64 mx-auto mb-2"></div>
-                <p className="font-bold text-sm">{COMPANY.responsible}</p>
-                <p className="text-xs text-gray-500">Engenheiro / Responsável Técnico</p>
+              <div className="mt-20 flex justify-between gap-8 text-center px-4">
+                <div className="w-1/2">
+                  <div className="border-t border-black w-full mx-auto mb-2"></div>
+                  <p className="font-bold text-xs">{COMPANY.responsible}</p>
+                  <p className="text-[10px] text-gray-500 uppercase">
+                    Contratante - {COMPANY.name}
+                  </p>
+                </div>
+                <div className="w-1/2">
+                  <div className="border-t border-black w-full mx-auto mb-2"></div>
+                  <p className="font-bold text-xs">{profData.name || 'Nome do Profissional'}</p>
+                  <p className="text-[10px] text-gray-500 uppercase">
+                    Contratado / Responsável Técnico
+                    {profData.role ? ` - ${profData.role}` : ''}
+                  </p>
+                </div>
               </div>
             </main>
           </div>
