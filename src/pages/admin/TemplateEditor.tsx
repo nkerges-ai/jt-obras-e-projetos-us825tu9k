@@ -97,6 +97,7 @@ export default function TemplateEditor() {
     document: '',
     address: '',
     description: '',
+    detailedDescription: '',
     value: '',
     date: '',
     freeContent: '', // For 'timbrado' type
@@ -235,6 +236,15 @@ export default function TemplateEditor() {
   }
 
   const handleSaveToAcervo = () => {
+    let contentStr = ''
+    if (isTimbrado) {
+      contentStr = data.freeContent
+    } else if (isContrato) {
+      contentStr = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS\nNº: ${docNumber}\n\nCONTRATANTE: ${data.clientName}\nCPF/CNPJ: ${data.document}\nENDEREÇO: ${data.address}\n\nCONTRATADA: ${COMPANY_NAME}\n\nCláusula 1ª (Objeto): O objeto deste contrato é a prestação dos seguintes serviços: ${data.description}.\n\nParágrafo Único: ${data.detailedDescription}\n\nCláusula 2ª (Valor): R$ ${data.value}\n\nCláusula 3ª (Prazo): ${data.date}\n\nCláusula 4ª (Obrigações Trabalhistas): A CONTRATADA compromete-se a cumprir todas as obrigações trabalhistas, previdenciárias e fundiárias relativas aos seus empregados envolvidos na prestação dos serviços, isentando a CONTRATANTE de qualquer responsabilidade ou passivo trabalhista decorrente desta relação.\n\nCláusula 5ª (Inexistência de Vínculo): Fica expressamente acordado que não se estabelece por força deste contrato nenhum vínculo empregatício entre a CONTRATANTE e os empregados, prepostos ou terceirizados da CONTRATADA.\n\nCláusula 6ª (Segurança e Saúde Ocupacional): A CONTRATADA obriga-se a fornecer e fiscalizar o uso de Equipamentos de Proteção Individual (EPIs) e Coletiva (EPCs), bem como cumprir todas as Normas Regulamentadoras (NRs) aplicáveis, assumindo integral responsabilidade por acidentes de trabalho.`
+    } else {
+      contentStr = `PROPOSTA COMERCIAL\nNº: ${docNumber}\n\nÀ ${data.clientName}\n\n1. Escopo da Proposta Comercial:\n${data.description}\n\n2. Investimento Necessário: R$ ${data.value}\n\n3. Validade desta Proposta: ${data.date}`
+    }
+
     const doc: TechnicalDocument = {
       id: `doc_${Date.now()}`,
       name: `${title} - ${data.clientName || 'Geral'}`,
@@ -244,6 +254,7 @@ export default function TemplateEditor() {
       isRestricted: false,
       url: '#',
       docNumber: docNumber,
+      content: contentStr,
       adminSignature: isSigned
         ? {
             type: finalSignatureType,
@@ -256,17 +267,31 @@ export default function TemplateEditor() {
     saveTechnicalDocuments([doc, ...getTechnicalDocuments()])
 
     // If photos are attached and a project is selected, link them to the client's project gallery
-    if (projectId !== 'global' && siteImages.length > 0) {
+    if (projectId !== 'global') {
       const allProjects = getProjects()
       const pIndex = allProjects.findIndex((p) => p.id === projectId)
       if (pIndex > -1) {
-        const newPhotos = siteImages.map((img, i) => ({
-          id: `photo_${Date.now()}_${i}`,
-          url: img,
-          type: 'Antes' as const,
-          date: new Date().toISOString(),
-        }))
-        allProjects[pIndex].photos.push(...newPhotos)
+        if (siteImages.length > 0) {
+          const newPhotos = siteImages.map((img, i) => ({
+            id: `photo_${Date.now()}_${i}`,
+            url: img,
+            type: 'Antes' as const,
+            date: new Date().toISOString(),
+          }))
+          allProjects[pIndex].photos.push(...newPhotos)
+        }
+
+        // Sync contract data to Project for cross-document sync
+        if (isContrato) {
+          if (data.description) allProjects[pIndex].description = data.description
+          if (data.detailedDescription)
+            allProjects[pIndex].detailedDescription = data.detailedDescription
+          if (data.value)
+            allProjects[pIndex].budget =
+              Number(data.value.replace(/[^0-9,-]+/g, '').replace(',', '.')) ||
+              allProjects[pIndex].budget
+        }
+
         saveProjects(allProjects)
       }
     }
@@ -391,13 +416,24 @@ export default function TemplateEditor() {
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
             <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Dados Específicos</h3>
             <div className="space-y-2">
-              <Label>Descrição dos Serviços</Label>
+              <Label>Descrição Resumida do Serviço / Objeto</Label>
               <Textarea
-                className="min-h-[120px]"
+                className="min-h-[80px]"
                 value={data.description}
                 onChange={(e) => setData({ ...data, description: e.target.value })}
               />
             </div>
+            {isContrato && (
+              <div className="space-y-2">
+                <Label>Descrição Detalhada do Serviço (Opcional - Cláusula Específica)</Label>
+                <Textarea
+                  className="min-h-[120px]"
+                  value={data.detailedDescription}
+                  onChange={(e) => setData({ ...data, detailedDescription: e.target.value })}
+                  placeholder="Espeficicações técnicas, materiais aplicados, fases, etapas..."
+                />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Valor Total (R$)</Label>
@@ -716,6 +752,14 @@ export default function TemplateEditor() {
                       </span>
                       .
                     </p>
+                    {data.detailedDescription && (
+                      <p>
+                        <strong>Parágrafo Único:</strong>{' '}
+                        <span className="font-medium whitespace-pre-wrap">
+                          {data.detailedDescription}
+                        </span>
+                      </p>
+                    )}
                     <p>
                       <strong>Cláusula 2ª (Valor):</strong> O valor total acordado para a execução é
                       de R$ {data.value || '___________'}.
@@ -723,6 +767,26 @@ export default function TemplateEditor() {
                     <p>
                       <strong>Cláusula 3ª (Prazo):</strong> O prazo estabelecido para execução é de{' '}
                       {data.date || '___________'}.
+                    </p>
+                    <p>
+                      <strong>Cláusula 4ª (Obrigações Trabalhistas):</strong> A CONTRATADA
+                      compromete-se a cumprir todas as obrigações trabalhistas, previdenciárias e
+                      fundiárias relativas aos seus empregados envolvidos na prestação dos serviços,
+                      isentando a CONTRATANTE de qualquer responsabilidade ou passivo trabalhista
+                      decorrente desta relação.
+                    </p>
+                    <p>
+                      <strong>Cláusula 5ª (Inexistência de Vínculo):</strong> Fica expressamente
+                      acordado que não se estabelece por força deste contrato nenhum vínculo
+                      empregatício entre a CONTRATANTE e os empregados, prepostos ou terceirizados
+                      da CONTRATADA.
+                    </p>
+                    <p>
+                      <strong>Cláusula 6ª (Segurança e Saúde Ocupacional):</strong> A CONTRATADA
+                      obriga-se a fornecer e fiscalizar o uso de Equipamentos de Proteção Individual
+                      (EPIs) e Coletiva (EPCs), bem como cumprir todas as Normas Regulamentadoras
+                      (NRs) aplicáveis, assumindo integral responsabilidade por acidentes de
+                      trabalho.
                     </p>
                   </div>
                 </>

@@ -98,6 +98,31 @@ export function OSForm({ data, setData, currentStep = 1 }: OSFormProps) {
     }
   }
 
+  const handleProjectChange = (v: string) => {
+    const proj = projects.find((p) => p.id === v)
+    if (proj) {
+      let combined = data.atividade?.descricao || ''
+      if (proj.description && !combined.includes(proj.description)) {
+        combined += (combined ? '\n\n' : '') + proj.description
+      }
+      if (proj.detailedDescription && !combined.includes(proj.detailedDescription)) {
+        combined += (combined ? '\n\n' : '') + proj.detailedDescription
+      }
+
+      setData({
+        ...data,
+        projectId: v,
+        atividade: { ...data.atividade!, descricao: combined.trim() },
+      })
+
+      if (proj.description || proj.detailedDescription) {
+        toast({ title: 'Autopreenchimento', description: 'Dados da obra sincronizados com a OS.' })
+      }
+    } else {
+      setData({ ...data, projectId: v })
+    }
+  }
+
   const isFinalizado = data.status === 'Finalizado'
 
   if (currentStep === 1) {
@@ -109,7 +134,7 @@ export function OSForm({ data, setData, currentStep = 1 }: OSFormProps) {
           <Select
             disabled={isFinalizado}
             value={data.projectId}
-            onValueChange={(v) => setData({ ...data, projectId: v })}
+            onValueChange={handleProjectChange}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione um contrato..." />

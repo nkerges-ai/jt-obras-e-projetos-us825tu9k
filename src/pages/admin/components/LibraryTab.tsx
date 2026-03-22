@@ -37,6 +37,8 @@ import {
   Mail,
   Search,
   CheckCircle,
+  Eye,
+  Download,
 } from 'lucide-react'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import {
@@ -93,6 +95,8 @@ export function LibraryTab() {
 
   const [isEmailOpen, setIsEmailOpen] = useState(false)
   const [emailTarget, setEmailTarget] = useState<TechnicalDocument | null>(null)
+
+  const [previewDoc, setPreviewDoc] = useState<TechnicalDocument | null>(null)
 
   useEffect(() => {
     setDocs(getTechnicalDocuments())
@@ -168,6 +172,25 @@ export function LibraryTab() {
   const getProjectName = (id: string) => {
     if (id === 'global') return 'Acervo Global e Administrativo'
     return projects.find((p) => p.id === id)?.name || 'Desconhecido'
+  }
+
+  const handleDownload = (doc: TechnicalDocument) => {
+    const element = document.createElement('a')
+    const file = new Blob(
+      [
+        doc.content ||
+          `Documento: ${doc.name}\n\n[Arquivo gerado ou exportado sem conteúdo detalhado em texto. Por favor verifique o documento original.]`,
+      ],
+      { type: 'text/plain' },
+    )
+    element.href = URL.createObjectURL(file)
+    element.download = `${doc.name.replace(/ /g, '_')}.txt`
+    document.body.appendChild(element)
+    element.click()
+    toast({
+      title: 'Download Iniciado',
+      description: 'O arquivo foi gerado e baixado com sucesso.',
+    })
   }
 
   const filteredDocs = docs.filter((doc) => {
@@ -364,6 +387,22 @@ export function LibraryTab() {
                                       <Button
                                         variant="ghost"
                                         size="icon"
+                                        onClick={() => setPreviewDoc(doc)}
+                                        title="Visualizar Documento"
+                                      >
+                                        <Eye className="h-4 w-4 text-gray-600" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDownload(doc)}
+                                        title="Baixar Arquivo"
+                                      >
+                                        <Download className="h-4 w-4 text-gray-600" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => {
                                           setEmailTarget(doc)
                                           setIsEmailOpen(true)
@@ -377,8 +416,8 @@ export function LibraryTab() {
                                           variant="outline"
                                           className={
                                             hasSig.status === 'Assinado'
-                                              ? 'bg-green-100 text-green-800 border-green-200 text-[10px]'
-                                              : 'bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px]'
+                                              ? 'bg-green-100 text-green-800 border-green-200 text-[10px] ml-2'
+                                              : 'bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px] ml-2'
                                           }
                                         >
                                           {hasSig.status}
@@ -387,7 +426,7 @@ export function LibraryTab() {
                                         <Button
                                           variant="ghost"
                                           size="sm"
-                                          className="text-primary gap-1 px-2"
+                                          className="text-primary gap-1 px-2 ml-2"
                                           onClick={() => {
                                             setSigTarget(doc)
                                             setIsSignatureOpen(true)
@@ -596,6 +635,32 @@ export function LibraryTab() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={!!previewDoc} onOpenChange={(open) => !open && setPreviewDoc(null)}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-brand-navy">{previewDoc?.name}</DialogTitle>
+            <DialogDescription>
+              Categoria: {previewDoc?.category} | Número do Documento:{' '}
+              {previewDoc?.docNumber || 'N/A'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-white border shadow-inner p-6 rounded-lg whitespace-pre-wrap text-sm text-gray-800 font-medium leading-relaxed mt-4">
+            {previewDoc?.content || (
+              <span className="text-gray-400 italic">
+                Este documento não possui texto detalhado armazenado no acervo. Apenas metadados
+                disponíveis.
+              </span>
+            )}
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <Button variant="outline" className="gap-2" onClick={() => handleDownload(previewDoc!)}>
+              <Download className="h-4 w-4" /> Exportar / Baixar
+            </Button>
+            <Button onClick={() => setPreviewDoc(null)}>Fechar Visualização</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent>

@@ -56,6 +56,7 @@ export interface Project {
   startDate: string
   endDate?: string
   description?: string
+  detailedDescription?: string
   technicalResponsible?: string
   status: ProjectStatus
   budget: number
@@ -201,6 +202,7 @@ export interface TechnicalDocument {
   url: string
   docNumber?: string
   validade?: string
+  content?: string
   attendanceList?: { id: string; name: string; cpf: string; signature?: string }[]
   evidencePhotos?: string[]
   compliance?: {
