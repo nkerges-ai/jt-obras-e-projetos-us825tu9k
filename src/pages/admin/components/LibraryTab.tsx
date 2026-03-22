@@ -38,7 +38,7 @@ import {
   Search,
   CheckCircle,
   Eye,
-  Download,
+  File as FileIcon,
 } from 'lucide-react'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import {
@@ -206,37 +206,110 @@ export function LibraryTab() {
     return projects.find((p) => p.id === id)?.name || 'Desconhecido'
   }
 
-  const handleDownload = (doc: TechnicalDocument) => {
-    if (doc.url && doc.url !== '#') {
-      const element = document.createElement('a')
-      element.href = doc.url
-      element.download = doc.name
-      document.body.appendChild(element)
-      element.click()
-      document.body.removeChild(element)
+  const handleExportWord = (doc: TechnicalDocument) => {
+    const dateStr = new Date().toISOString().split('T')[0]
+    const safeName = doc.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    const fileName = `${safeName}_${dateStr}.doc`
+
+    if (doc.url && doc.url !== '#' && (!doc.content || doc.content.trim() === '')) {
       toast({
-        title: 'Download Iniciado',
-        description: 'O arquivo no formato original está sendo baixado.',
+        title: 'Exportação Indisponível',
+        description:
+          'Este documento é um arquivo original anexado. Utilize o download de PDF ou a visualização direta.',
+        variant: 'destructive',
       })
       return
     }
 
-    const element = document.createElement('a')
-    const file = new Blob(
-      [
-        doc.content ||
-          `Documento: ${doc.name}\n\n[Arquivo gerado ou exportado sem conteúdo detalhado em texto. Por favor verifique o documento original.]`,
-      ],
-      { type: 'text/plain' },
-    )
-    element.href = URL.createObjectURL(file)
-    element.download = `${doc.name.replace(/ /g, '_')}.txt`
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
+    const content =
+      doc.content ||
+      `Documento: ${doc.name}\n\n[Nenhum conteúdo textual formatado disponível neste registro]`
+
+    const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset='utf-8'><title>${doc.name}</title></head>
+    <body>
+      <h1 style="color: #005A9C; font-family: Arial, sans-serif;">${doc.name}</h1>
+      <p style="font-family: Arial, sans-serif;"><strong>Data de Referência:</strong> ${new Date(doc.uploadDate).toLocaleDateString('pt-BR')}</p>
+      <p style="font-family: Arial, sans-serif;"><strong>Categoria:</strong> ${doc.category}</p>
+      <p style="font-family: Arial, sans-serif;"><strong>Número do Documento:</strong> ${doc.docNumber || 'N/A'}</p>
+      <hr/>
+      <div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5; margin-top: 20px;">${content}</div>
+    </body>
+    </html>`
+
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
+    toast({ title: 'Exportação Concluída', description: 'Arquivo Word gerado com sucesso.' })
+  }
+
+  const handleExportPDF = (doc: TechnicalDocument) => {
+    const dateStr = new Date().toISOString().split('T')[0]
+    const safeName = doc.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+
+    if (
+      doc.url &&
+      doc.url !== '#' &&
+      (doc.url.startsWith('data:application/pdf') || doc.url.startsWith('http'))
+    ) {
+      const link = document.createElement('a')
+      link.href = doc.url
+      link.download = `${safeName}_${dateStr}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      toast({ title: 'Exportação Concluída', description: 'PDF original baixado com sucesso.' })
+      return
+    }
+
+    const content =
+      doc.content ||
+      `Documento: ${doc.name}\nCategoria: ${doc.category}\n\n[Este documento foi anexado como um arquivo de imagem ou binário. Por favor, visualize-o diretamente.]`
+
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${doc.name} - PDF Export</title>
+            <style>
+              @page { margin: 20mm; }
+              body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+              h1 { color: #005A9C; border-bottom: 2px solid #005A9C; padding-bottom: 10px; font-size: 24px; }
+              .meta { font-size: 12px; color: #555; margin-bottom: 30px; }
+              .content { white-space: pre-wrap; font-size: 14px; margin-top: 20px; }
+            </style>
+          </head>
+          <body>
+            <h1>${doc.name}</h1>
+            <div class="meta">
+              <p><strong>Data de Referência:</strong> ${new Date(doc.uploadDate).toLocaleDateString('pt-BR')}</p>
+              <p><strong>Categoria:</strong> ${doc.category}</p>
+              <p><strong>Número do Documento:</strong> ${doc.docNumber || 'N/A'}</p>
+            </div>
+            <div class="content">${content}</div>
+            <script>
+              window.onload = () => {
+                window.print();
+                setTimeout(() => window.close(), 500);
+              }
+            </script>
+          </body>
+        </html>
+      `)
+      printWindow.document.close()
+    }
+
     toast({
-      title: 'Download Iniciado',
-      description: 'O arquivo foi gerado e baixado com sucesso.',
+      title: 'Gerando PDF',
+      description: 'A janela de impressão foi aberta para salvar como PDF.',
     })
   }
 
@@ -369,7 +442,6 @@ export function LibraryTab() {
             ) : (
               <Accordion type="multiple" defaultValue={['global']} className="w-full space-y-4">
                 {sortedPids.map((pid) => {
-                  // Sort documents inside folder by newest first
                   const projectDocs = groupedDocs[pid].sort(
                     (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
                   )
@@ -452,14 +524,30 @@ export function LibraryTab() {
                                           <Button
                                             variant="ghost"
                                             size="icon"
-                                            onClick={() => handleDownload(doc)}
+                                            onClick={() => handleExportPDF(doc)}
                                           >
-                                            <Download className="h-4 w-4 text-gray-600" />
-                                            <span className="sr-only">Baixar arquivo</span>
+                                            <FileIcon className="h-4 w-4 text-red-600" />
+                                            <span className="sr-only">Salvar em PDF</span>
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                          <p>Baixar formato original</p>
+                                          <p>Salvar em PDF</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleExportWord(doc)}
+                                          >
+                                            <FileText className="h-4 w-4 text-blue-600" />
+                                            <span className="sr-only">Salvar em Word</span>
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Salvar em Word</p>
                                         </TooltipContent>
                                       </Tooltip>
 
@@ -724,8 +812,19 @@ export function LibraryTab() {
             )}
           </div>
           <div className="flex justify-end gap-3 mt-6">
-            <Button variant="outline" className="gap-2" onClick={() => handleDownload(previewDoc!)}>
-              <Download className="h-4 w-4" /> Exportar / Baixar
+            <Button
+              variant="outline"
+              className="gap-2 text-blue-700 border-blue-200 hover:bg-blue-50"
+              onClick={() => handleExportWord(previewDoc!)}
+            >
+              <FileText className="h-4 w-4" /> Salvar em Word
+            </Button>
+            <Button
+              variant="outline"
+              className="gap-2 text-red-700 border-red-200 hover:bg-red-50"
+              onClick={() => handleExportPDF(previewDoc!)}
+            >
+              <FileIcon className="h-4 w-4" /> Salvar em PDF
             </Button>
             <Button onClick={() => setPreviewDoc(null)}>Fechar Visualização</Button>
           </div>
