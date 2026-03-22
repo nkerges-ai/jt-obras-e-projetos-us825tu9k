@@ -2,8 +2,9 @@ import { useEffect, useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getProjects, Project } from '@/lib/storage'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Printer } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
+import { ExportDocumentDialog } from '@/components/ExportDocumentDialog'
 
 export default function PrintReport() {
   const { type, id } = useParams<{ type: string; id: string }>()
@@ -61,6 +62,15 @@ export default function PrintReport() {
   const antes = project.photos.filter((p) => p.type === 'Antes')
   const depois = project.photos.filter((p) => p.type === 'Depois')
 
+  const documentTitle =
+    type === 'custos'
+      ? 'Relatório de Custos e Insumos'
+      : type === 'dossier'
+        ? 'Dossiê do Projeto'
+        : type === 'termo'
+          ? 'Termo de Visita Técnica'
+          : 'Resumo e Evolução da Obra'
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
       <div className="bg-white border-b sticky top-0 z-30 print:hidden shadow-sm">
@@ -70,27 +80,12 @@ export default function PrintReport() {
               <ArrowLeft className="h-4 w-4" /> Voltar
             </Link>
           </Button>
-          <Button
-            onClick={() => window.print()}
-            className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
-          >
-            <Printer className="h-4 w-4" /> Imprimir Relatório
-          </Button>
+          <ExportDocumentDialog title={documentTitle} elementId="document-letterhead-root" />
         </div>
       </div>
 
       <div className="flex justify-center mt-8 print:mt-0">
-        <DocumentLetterhead
-          title={
-            type === 'custos'
-              ? 'Relatório de Custos e Insumos'
-              : type === 'dossier'
-                ? 'Dossiê do Projeto'
-                : type === 'termo'
-                  ? 'Termo de Visita Técnica'
-                  : 'Resumo e Evolução da Obra'
-          }
-        >
+        <DocumentLetterhead title={documentTitle}>
           <div className="bg-gray-50 border border-brand-navy/20 p-5 rounded-lg mb-8 text-sm shadow-sm text-gray-800">
             <div className="grid grid-cols-2 gap-6">
               <div>

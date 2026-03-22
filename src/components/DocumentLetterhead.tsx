@@ -1,6 +1,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/logotipo-c129e.jpg'
+import { ExportDocumentDialog } from './ExportDocumentDialog'
 
 interface DocumentLetterheadProps {
   children: React.ReactNode
@@ -19,11 +20,20 @@ export function DocumentLetterhead({
 }: DocumentLetterheadProps) {
   return (
     <div
+      id="document-letterhead-root"
       className={cn(
         'bg-white shadow-xl w-full max-w-[210mm] min-h-[297mm] mx-auto print:shadow-none print:m-0 print:p-0 print-page-container flex flex-col relative',
         className,
       )}
     >
+      {/* Export Action Bar (Hidden on Print) */}
+      <div className="print:hidden bg-gray-50 border-b border-gray-200 px-8 py-3 flex justify-between items-center shrink-0 rounded-t-lg">
+        <span className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">
+          Visualização de Documento
+        </span>
+        <ExportDocumentDialog title={title || 'Documento Oficial'} />
+      </div>
+
       {/* Visual Header Identity - Restored to Previous Version with Blue Tones */}
       <div className="border-b-[6px] border-[#005A9C] shrink-0 print-header-group flex flex-row items-center justify-between px-8 py-6 bg-white">
         <div className="flex items-center gap-4">

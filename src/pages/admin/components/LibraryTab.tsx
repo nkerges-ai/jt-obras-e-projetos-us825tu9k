@@ -39,6 +39,7 @@ import {
   CheckCircle,
   Eye,
   File as FileIcon,
+  Download,
 } from 'lucide-react'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import {
@@ -72,6 +73,8 @@ import {
   AccordionContent,
 } from '@/components/ui/accordion'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { ExportDocumentDialog } from '@/components/ExportDocumentDialog'
+import { exportHtmlToWord } from '@/lib/export-utils'
 
 export function LibraryTab() {
   const { toast } = useToast()
@@ -207,9 +210,7 @@ export function LibraryTab() {
   }
 
   const handleExportWord = (doc: TechnicalDocument) => {
-    const dateStr = new Date().toISOString().split('T')[0]
     const safeName = doc.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-    const fileName = `${safeName}_${dateStr}.doc`
 
     if (doc.url && doc.url !== '#' && (!doc.content || doc.content.trim() === '')) {
       toast({
@@ -225,28 +226,21 @@ export function LibraryTab() {
       doc.content ||
       `Documento: ${doc.name}\n\n[Nenhum conteúdo textual formatado disponível neste registro]`
 
-    const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-    <head><meta charset='utf-8'><title>${doc.name}</title></head>
-    <body>
-      <h1 style="color: #005A9C; font-family: Arial, sans-serif;">${doc.name}</h1>
-      <p style="font-family: Arial, sans-serif;"><strong>Data de Referência:</strong> ${new Date(doc.uploadDate).toLocaleDateString('pt-BR')}</p>
-      <p style="font-family: Arial, sans-serif;"><strong>Categoria:</strong> ${doc.category}</p>
-      <p style="font-family: Arial, sans-serif;"><strong>Número do Documento:</strong> ${doc.docNumber || 'N/A'}</p>
-      <hr/>
-      <div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5; margin-top: 20px;">${content}</div>
-    </body>
-    </html>`
-
-    const blob = new Blob(['\ufeff', html], { type: 'application/msword' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-
+    const htmlWithLetterhead = `
+      <div style="border-bottom: 6px solid #005A9C; padding-bottom: 20px; margin-bottom: 20px;">
+        <h1 style="color: #005A9C; margin: 0; font-size: 16pt;">JT OBRAS E MANUTENÇÕES LTDA</h1>
+        <p style="margin: 2px 0; font-size: 10pt; color: #333; font-weight: bold;">CNPJ: 63.243.791/0001-09 | (11) 94003-7545 | São Paulo - SP</p>
+        ${doc.docNumber ? `<p style="margin: 4px 0 0 0; font-size: 10pt; color: #005A9C; font-weight: bold;">Nº: ${doc.docNumber}</p>` : ''}
+      </div>
+      <h2 style="color: #005A9C; text-align: center; text-transform: uppercase; margin-bottom: 20px;">${doc.name}</h2>
+      <div style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.5; font-size: 11pt;">${content}</div>
+      <div style="border-top: 1px solid #ccc; padding-top: 10px; margin-top: 40px; font-size: 8pt; color: #777;">
+        <p style="margin: 2px 0; font-weight: bold; color: #005A9C;">Dados Cadastrais Oficiais:</p>
+        <p style="margin: 2px 0;">JT Obras e manutenções ltda - CNPJ 63.243.791/0001-09</p>
+        <p style="margin: 2px 0;">Rua Tommaso Giordani, 371 vila Guacuri – São Paulo - SP | CEP 04475-210</p>
+      </div>
+    `
+    exportHtmlToWord(htmlWithLetterhead, safeName)
     toast({ title: 'Exportação Concluída', description: 'Arquivo Word gerado com sucesso.' })
   }
 
@@ -282,19 +276,31 @@ export function LibraryTab() {
             <style>
               @page { margin: 20mm; }
               body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
-              h1 { color: #005A9C; border-bottom: 2px solid #005A9C; padding-bottom: 10px; font-size: 24px; }
-              .meta { font-size: 12px; color: #555; margin-bottom: 30px; }
-              .content { white-space: pre-wrap; font-size: 14px; margin-top: 20px; }
+              .header { border-bottom: 6px solid #005A9C; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+              .header h1 { color: #005A9C; margin: 0; font-size: 16pt; text-transform: uppercase; }
+              .header p { margin: 2px 0; font-size: 10pt; font-weight: 500; }
+              .footer { border-top: 1px solid #e5e7eb; padding-top: 15px; margin-top: 40px; font-size: 9pt; color: #6b7280; display: flex; justify-content: space-between; }
+              .content { white-space: pre-wrap; font-size: 11pt; margin-top: 20px; text-align: justify; }
             </style>
           </head>
           <body>
-            <h1>${doc.name}</h1>
-            <div class="meta">
-              <p><strong>Data de Referência:</strong> ${new Date(doc.uploadDate).toLocaleDateString('pt-BR')}</p>
-              <p><strong>Categoria:</strong> ${doc.category}</p>
-              <p><strong>Número do Documento:</strong> ${doc.docNumber || 'N/A'}</p>
+            <div class="header">
+              <div>
+                <h1>JT OBRAS E MANUTENÇÕES LTDA</h1>
+                <p>CNPJ 63.243.791/0001-09 | (11) 94003-7545 | São Paulo - SP</p>
+              </div>
+              ${doc.docNumber ? `<div style="color: #005A9C; font-weight: bold; border-left: 2px solid #009FE3; padding-left: 10px;">Nº: ${doc.docNumber}</div>` : ''}
             </div>
+            <h2 style="text-align: center; color: #1f2937; text-transform: uppercase; font-size: 14pt; margin: 30px 0;">${doc.name}</h2>
             <div class="content">${content}</div>
+            <div class="footer">
+              <div>
+                <p style="font-weight: bold; color: #005A9C; text-transform: uppercase; margin: 0 0 4px 0;">Dados Cadastrais Oficiais:</p>
+                <p style="margin: 2px 0;">JT Obras e manutenções ltda - CNPJ 63.243.791/0001-09</p>
+                <p style="margin: 2px 0;">Rua Tommaso Giordani, 371 vila Guacuri – São Paulo - SP | CEP 04475-210</p>
+              </div>
+              <div style="font-weight: bold; color: #005A9C; opacity: 0.6; text-transform: uppercase;">Documento Oficial</div>
+            </div>
             <script>
               window.onload = () => {
                 window.print();
@@ -511,45 +517,32 @@ export function LibraryTab() {
                                             onClick={() => setPreviewDoc(doc)}
                                           >
                                             <Eye className="h-4 w-4 text-gray-600" />
-                                            <span className="sr-only">Visualizar Documento</span>
+                                            <span className="sr-only">Visualizar na Tela</span>
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                          <p>Visualizar</p>
+                                          <p>Visualizar na Tela</p>
                                         </TooltipContent>
                                       </Tooltip>
 
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleExportPDF(doc)}
-                                          >
-                                            <FileIcon className="h-4 w-4 text-red-600" />
-                                            <span className="sr-only">Salvar em PDF</span>
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>Salvar em PDF</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleExportWord(doc)}
-                                          >
-                                            <FileText className="h-4 w-4 text-blue-600" />
-                                            <span className="sr-only">Salvar em Word</span>
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>Salvar em Word</p>
-                                        </TooltipContent>
-                                      </Tooltip>
+                                      <ExportDocumentDialog
+                                        title={doc.name}
+                                        onExportWord={() => handleExportWord(doc)}
+                                        onExportPDF={() => handleExportPDF(doc)}
+                                        trigger={
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <Button variant="ghost" size="icon">
+                                                <Download className="h-4 w-4 text-brand-navy" />
+                                                <span className="sr-only">Abrir / Exportar</span>
+                                              </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                              <p>Abrir / Exportar</p>
+                                            </TooltipContent>
+                                          </Tooltip>
+                                        }
+                                      />
 
                                       <Tooltip>
                                         <TooltipTrigger asChild>
@@ -812,21 +805,21 @@ export function LibraryTab() {
             )}
           </div>
           <div className="flex justify-end gap-3 mt-6">
-            <Button
-              variant="outline"
-              className="gap-2 text-blue-700 border-blue-200 hover:bg-blue-50"
-              onClick={() => handleExportWord(previewDoc!)}
-            >
-              <FileText className="h-4 w-4" /> Salvar em Word
+            {previewDoc && (
+              <ExportDocumentDialog
+                title={previewDoc.name}
+                onExportWord={() => handleExportWord(previewDoc)}
+                onExportPDF={() => handleExportPDF(previewDoc)}
+                trigger={
+                  <Button className="gap-2 bg-brand-navy text-white">
+                    <Download className="h-4 w-4" /> Abrir Documento
+                  </Button>
+                }
+              />
+            )}
+            <Button variant="outline" onClick={() => setPreviewDoc(null)}>
+              Fechar Visualização
             </Button>
-            <Button
-              variant="outline"
-              className="gap-2 text-red-700 border-red-200 hover:bg-red-50"
-              onClick={() => handleExportPDF(previewDoc!)}
-            >
-              <FileIcon className="h-4 w-4" /> Salvar em PDF
-            </Button>
-            <Button onClick={() => setPreviewDoc(null)}>Fechar Visualização</Button>
           </div>
         </DialogContent>
       </Dialog>
