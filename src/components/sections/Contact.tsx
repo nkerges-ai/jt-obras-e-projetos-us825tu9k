@@ -1,6 +1,7 @@
 import { FadeIn } from '@/components/animations/FadeIn'
 import { Button } from '@/components/ui/button'
-import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react'
+import { Phone, Mail, MapPin } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export function Contact() {
   return (
@@ -103,11 +104,11 @@ export function Contact() {
                   ></textarea>
                 </div>
                 <Button
-                  className="w-full h-14 text-base font-bold bg-brand-navy hover:bg-brand-navy/90 rounded-xl group"
+                  className="w-full h-14 text-base font-bold bg-[#25D366] hover:bg-[#20b858] text-white rounded-xl group gap-2"
                   onClick={() => window.open('https://wa.me/5511940037545', '_blank')}
                 >
+                  <WhatsAppIcon className="h-5 w-5" />
                   Enviar Solicitação via WhatsApp
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </form>
             </div>

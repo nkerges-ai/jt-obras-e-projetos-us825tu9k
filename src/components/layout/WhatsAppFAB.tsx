@@ -1,4 +1,4 @@
-import { Phone } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export function WhatsAppFAB() {
   const message = encodeURIComponent(
@@ -13,7 +13,7 @@ export function WhatsAppFAB() {
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 hover:shadow-2xl print:hidden"
       aria-label="Contact us on WhatsApp"
     >
-      <Phone className="h-7 w-7" />
+      <WhatsAppIcon className="h-7 w-7" />
     </a>
   )
 }

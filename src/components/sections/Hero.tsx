@@ -1,6 +1,7 @@
-import { ArrowRight, HardHat, ShieldCheck, Ruler } from 'lucide-react'
+import { HardHat, ShieldCheck, Ruler } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FadeIn } from '@/components/animations/FadeIn'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import heroImage from '@/assets/whatsapp-image-2026-03-17-at-19.27.50-91cc3.jpeg'
 
 export function Hero() {
@@ -38,11 +39,11 @@ export function Hero() {
               <Button
                 size="lg"
                 asChild
-                className="bg-brand-orange hover:bg-[#cf6d18] text-white h-14 px-8 text-base font-bold rounded-full group"
+                className="bg-[#25D366] hover:bg-[#20b858] text-white h-14 px-8 text-base font-bold rounded-full group gap-2"
               >
                 <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+                  <WhatsAppIcon className="h-5 w-5" />
                   Fale com um Especialista
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </a>
               </Button>
               <Button

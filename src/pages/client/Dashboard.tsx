@@ -52,6 +52,7 @@ import { GanttChart } from '@/components/GanttChart'
 import { ChatWindow } from '@/components/ChatWindow'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 import { Checkbox } from '@/components/ui/checkbox'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export default function ClientDashboard() {
   const navigate = useNavigate()
@@ -263,9 +264,20 @@ export default function ClientDashboard() {
           </h1>
           <p className="text-muted-foreground mt-1">Acompanhamento da obra: {project.name}</p>
         </div>
-        <Button variant="outline" onClick={handleLogout} className="gap-2">
-          <LogOut className="h-4 w-4" /> Sair
-        </Button>
+        <div className="flex flex-wrap gap-3 items-center shrink-0">
+          <Button
+            asChild
+            variant="default"
+            className="gap-2 bg-[#25D366] hover:bg-[#20b858] text-white"
+          >
+            <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+              <WhatsAppIcon className="h-4 w-4" /> Fale com um especialista
+            </a>
+          </Button>
+          <Button variant="outline" onClick={handleLogout} className="gap-2">
+            <LogOut className="h-4 w-4" /> Sair
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="relatorios" className="w-full">

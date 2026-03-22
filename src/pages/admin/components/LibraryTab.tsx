@@ -33,12 +33,12 @@ import {
   AlertTriangle,
   Activity,
   PenTool,
-  MessageCircle,
   Copy,
   Mail,
   Search,
   CheckCircle,
 } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import {
   getTechnicalDocuments,
   saveTechnicalDocuments,
@@ -538,6 +538,7 @@ export function LibraryTab() {
                                 size="icon"
                                 variant="outline"
                                 title="Enviar WhatsApp"
+                                className="text-[#25D366] border-[#25D366]/30 hover:bg-[#25D366]/10"
                                 onClick={() => {
                                   const text = encodeURIComponent(
                                     `Olá ${sig.clientName}, segue o link para assinatura do documento ${sig.documentName}: ${link}`,
@@ -548,7 +549,7 @@ export function LibraryTab() {
                                   )
                                 }}
                               >
-                                <MessageCircle className="h-4 w-4 text-green-600" />
+                                <WhatsAppIcon className="h-4 w-4" />
                               </Button>
                             </div>
                           ) : (

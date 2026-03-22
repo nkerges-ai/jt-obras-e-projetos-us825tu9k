@@ -6,6 +6,7 @@ import { LogOut, Cloud, RefreshCw, Smartphone, Info, Wifi, WifiOff } from 'lucid
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { useNetwork } from '@/hooks/use-network'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 import { ProjectsTab } from './components/ProjectsTab'
 import { TemplatesTab } from './components/TemplatesTab'
@@ -116,6 +117,15 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <Button asChild variant="outline" className="gap-2 border-brand-navy text-brand-navy">
             <Link to="/campo">App de Campo (Mobile)</Link>
+          </Button>
+          <Button
+            asChild
+            variant="default"
+            className="gap-2 bg-[#25D366] hover:bg-[#20b858] text-white"
+          >
+            <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+              <WhatsAppIcon className="h-4 w-4" /> Fale com um especialista
+            </a>
           </Button>
           <div
             className={cn(

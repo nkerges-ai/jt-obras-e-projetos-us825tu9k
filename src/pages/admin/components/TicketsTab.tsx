@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Headset, Plus, ExternalLink, MessageCircle } from 'lucide-react'
+import { Headset, Plus, ExternalLink } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 import {
   Dialog,
   DialogContent,
@@ -318,7 +319,7 @@ export function TicketsTab() {
               <div className="flex justify-end gap-2 border-t pt-4">
                 <Button
                   variant="outline"
-                  className="gap-2 text-green-600 border-green-200 hover:bg-green-50"
+                  className="gap-2 text-[#25D366] border-[#25D366]/50 hover:bg-[#25D366]/10 hover:text-[#20b858]"
                   onClick={() => {
                     const text = encodeURIComponent(
                       `Olá ${selectedTicket.clientName}! Somos da JT Obras. Recebemos o seu chamado referente à manutenção.`,
@@ -326,7 +327,7 @@ export function TicketsTab() {
                     window.open(`https://wa.me/?text=${text}`, '_blank')
                   }}
                 >
-                  <MessageCircle className="h-4 w-4" /> Contatar Cliente
+                  <WhatsAppIcon className="h-4 w-4" /> Contatar Cliente
                 </Button>
                 <Button onClick={() => setSelectedTicket(null)}>Fechar</Button>
               </div>
