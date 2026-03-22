@@ -70,7 +70,7 @@ export function RegistrationsTab() {
     saveContractors(updated)
     setIsContractorOpen(false)
     setNewContractor({})
-    toast({ title: 'Contratante Salvo', description: 'Cadastro adicionado com sucesso.' })
+    toast({ title: 'Empresa Salva', description: 'Cadastro adicionado com sucesso.' })
   }
 
   const handleSaveEmployee = (e: React.FormEvent) => {
@@ -82,7 +82,7 @@ export function RegistrationsTab() {
     saveEmployees(updated)
     setIsEmployeeOpen(false)
     setNewEmployee({ nrs: [] })
-    toast({ title: 'Parceiro Salvo', description: 'Cadastro e treinamentos atualizados.' })
+    toast({ title: 'Contratado Salvo', description: 'Cadastro e treinamentos atualizados.' })
   }
 
   const handleConfirmDelete = () => {
@@ -96,7 +96,7 @@ export function RegistrationsTab() {
       const updated = employees.filter((e) => e.id !== deleteItem.id)
       setEmployees(updated)
       saveEmployees(updated)
-      toast({ title: 'Parceiro Excluído', description: 'O cadastro foi removido com sucesso.' })
+      toast({ title: 'Contratado Excluído', description: 'O cadastro foi removido com sucesso.' })
     }
     setDeleteItem(null)
   }
@@ -108,24 +108,25 @@ export function RegistrationsTab() {
           <Building2 className="h-5 w-5 text-primary" /> Base de Cadastros Centralizada
         </h3>
         <p className="text-muted-foreground text-sm">
-          Gerencie informações de clientes e parceiros para preenchimento automático de OS e NRs.
+          Gerencie informações de clientes e parceiros para preenchimento automático de Contratos,
+          OS e NRs.
         </p>
       </div>
 
       <Tabs defaultValue="contractors" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="contractors" className="gap-2">
-            <Building2 className="h-4 w-4" /> Contratantes
+            <Building2 className="h-4 w-4" /> Empresas Contratantes
           </TabsTrigger>
           <TabsTrigger value="employees" className="gap-2">
-            <Users className="h-4 w-4" /> Parceiros / Colaboradores
+            <Users className="h-4 w-4" /> Contratados pela JT (Colaboradores)
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="contractors">
           <div className="flex justify-end mb-4">
             <Button onClick={() => setIsContractorOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" /> Novo Contratante
+              <Plus className="h-4 w-4" /> Nova Empresa
             </Button>
           </div>
           <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
@@ -143,7 +144,7 @@ export function RegistrationsTab() {
                 {contractors.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                      Nenhum contratante cadastrado.
+                      Nenhuma empresa contratante cadastrada.
                     </TableCell>
                   </TableRow>
                 )}
@@ -174,7 +175,7 @@ export function RegistrationsTab() {
         <TabsContent value="employees">
           <div className="flex justify-end mb-4">
             <Button onClick={() => setIsEmployeeOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" /> Novo Parceiro / Colaborador
+              <Plus className="h-4 w-4" /> Novo Contratado
             </Button>
           </div>
           <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
@@ -193,7 +194,7 @@ export function RegistrationsTab() {
                 {employees.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
-                      Nenhum parceiro ou colaborador cadastrado.
+                      Nenhum contratado ou colaborador cadastrado.
                     </TableCell>
                   </TableRow>
                 )}
@@ -212,7 +213,7 @@ export function RegistrationsTab() {
                         size="icon"
                         className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8"
                         onClick={() => setDeleteItem({ id: e.id, type: 'employee' })}
-                        title="Excluir parceiro"
+                        title="Excluir contratado"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -228,7 +229,7 @@ export function RegistrationsTab() {
       <Dialog open={isContractorOpen} onOpenChange={setIsContractorOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Novo Contratante</DialogTitle>
+            <DialogTitle>Nova Empresa Contratante</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSaveContractor} className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -266,7 +267,7 @@ export function RegistrationsTab() {
               />
             </div>
             <Button type="submit" className="w-full mt-4">
-              Salvar Cadastro
+              Salvar Empresa
             </Button>
           </form>
         </DialogContent>
@@ -275,7 +276,7 @@ export function RegistrationsTab() {
       <Dialog open={isEmployeeOpen} onOpenChange={setIsEmployeeOpen}>
         <DialogContent className="max-w-md max-h-screen overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Novo Parceiro / Colaborador</DialogTitle>
+            <DialogTitle>Novo Contratado (Colaborador)</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSaveEmployee} className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -385,7 +386,7 @@ export function RegistrationsTab() {
               ))}
             </div>
             <Button type="submit" className="w-full mt-4">
-              Salvar Cadastro
+              Salvar Contratado
             </Button>
           </form>
         </DialogContent>

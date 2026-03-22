@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { Plus, Briefcase, ExternalLink } from 'lucide-react'
+import { Plus, Briefcase, ExternalLink, Link as LinkIcon } from 'lucide-react'
 import { getProjects, saveProjects, Project, ProjectStatus, addLog } from '@/lib/storage'
 import { useToast } from '@/hooks/use-toast'
 import { ProjectDetailsDialog } from './ProjectDetailsDialog'
@@ -193,14 +193,32 @@ export function ProjectsTab() {
                   </Select>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedProject(project)}
-                    className="text-primary gap-1"
-                  >
-                    Gerenciar <ExternalLink className="h-3 w-3" />
-                  </Button>
+                  <div className="flex justify-end gap-2 items-center">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 text-blue-600 border-blue-200 hover:bg-blue-50"
+                      onClick={() => {
+                        const link = `${window.location.origin}/projeto/${project.id}/galeria`
+                        navigator.clipboard.writeText(link)
+                        toast({
+                          title: 'Link Copiado',
+                          description: 'O link de Atualização da Obra foi copiado.',
+                        })
+                      }}
+                      title="Copiar Link de Atualização da Obra"
+                    >
+                      <LinkIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedProject(project)}
+                      className="text-primary gap-1 px-2"
+                    >
+                      Gerenciar <ExternalLink className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

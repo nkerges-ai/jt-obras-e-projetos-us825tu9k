@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { useNetwork } from '@/hooks/use-network'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
+import { OverviewTab } from './components/OverviewTab'
 import { ProjectsTab } from './components/ProjectsTab'
 import { TemplatesTab } from './components/TemplatesTab'
 import { TicketsTab } from './components/TicketsTab'
@@ -171,8 +172,14 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="projetos" className="w-full">
+      <Tabs defaultValue="visao-geral" className="w-full">
         <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
+          <TabsTrigger
+            value="visao-geral"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Visão Geral
+          </TabsTrigger>
           <TabsTrigger
             value="projetos"
             className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
@@ -246,6 +253,9 @@ export default function AdminDashboard() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="visao-geral">
+          <OverviewTab key={`ov-${syncKey}`} />
+        </TabsContent>
         <TabsContent value="projetos">
           <ProjectsTab key={`proj-${syncKey}`} />
         </TabsContent>
