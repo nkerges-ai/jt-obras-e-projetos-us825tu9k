@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Table,
@@ -71,6 +71,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function LibraryTab() {
   const { toast } = useToast()
@@ -80,6 +81,9 @@ export function LibraryTab() {
   const [signatures, setSignatures] = useState<DocumentSignature[]>([])
 
   const [searchTerm, setSearchTerm] = useState('')
+
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [fileDataUrl, setFileDataUrl] = useState<string>('#')
 
   const [isUploadOpen, setIsUploadOpen] = useState(false)
   const [newDoc, setNewDoc] = useState<Partial<TechnicalDocument>>({
@@ -105,6 +109,32 @@ export function LibraryTab() {
     setSignatures(getSignatures())
   }, [])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limite
+        toast({
+          title: 'Arquivo muito grande',
+          description: 'O limite de upload em ambiente de demonstração é de 2MB.',
+          variant: 'destructive',
+        })
+        if (fileRef.current) fileRef.current.value = ''
+        return
+      }
+
+      if (!newDoc.name) {
+        setNewDoc((prev) => ({ ...prev, name: file.name }))
+      }
+
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        setFileDataUrl(ev.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleUpload = (e: React.FormEvent) => {
     e.preventDefault()
     const doc: TechnicalDocument = {
@@ -114,13 +144,15 @@ export function LibraryTab() {
       uploadDate: new Date().toISOString(),
       projectId: newDoc.projectId || 'global',
       isRestricted: !!newDoc.isRestricted,
-      url: '#',
+      url: fileDataUrl,
     }
     const updated = [doc, ...docs]
     setDocs(updated)
     saveTechnicalDocuments(updated)
     setIsUploadOpen(false)
     setNewDoc({ name: '', category: 'Plantas', projectId: 'global', isRestricted: false })
+    setFileDataUrl('#')
+    if (fileRef.current) fileRef.current.value = ''
     toast({ title: 'Documento Adicionado', description: 'Acervo técnico atualizado.' })
   }
 
@@ -175,6 +207,20 @@ export function LibraryTab() {
   }
 
   const handleDownload = (doc: TechnicalDocument) => {
+    if (doc.url && doc.url !== '#') {
+      const element = document.createElement('a')
+      element.href = doc.url
+      element.download = doc.name
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
+      toast({
+        title: 'Download Iniciado',
+        description: 'O arquivo no formato original está sendo baixado.',
+      })
+      return
+    }
+
     const element = document.createElement('a')
     const file = new Blob(
       [
@@ -187,6 +233,7 @@ export function LibraryTab() {
     element.download = `${doc.name.replace(/ /g, '_')}.txt`
     document.body.appendChild(element)
     element.click()
+    document.body.removeChild(element)
     toast({
       title: 'Download Iniciado',
       description: 'O arquivo foi gerado e baixado com sucesso.',
@@ -384,33 +431,56 @@ export function LibraryTab() {
                                   </TableCell>
                                   <TableCell className="text-right">
                                     <div className="flex items-center justify-end gap-1">
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => setPreviewDoc(doc)}
-                                        title="Visualizar Documento"
-                                      >
-                                        <Eye className="h-4 w-4 text-gray-600" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleDownload(doc)}
-                                        title="Baixar Arquivo"
-                                      >
-                                        <Download className="h-4 w-4 text-gray-600" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => {
-                                          setEmailTarget(doc)
-                                          setIsEmailOpen(true)
-                                        }}
-                                        title="Enviar por E-mail"
-                                      >
-                                        <Mail className="h-4 w-4 text-blue-600" />
-                                      </Button>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setPreviewDoc(doc)}
+                                          >
+                                            <Eye className="h-4 w-4 text-gray-600" />
+                                            <span className="sr-only">Visualizar Documento</span>
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Visualizar</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleDownload(doc)}
+                                          >
+                                            <Download className="h-4 w-4 text-gray-600" />
+                                            <span className="sr-only">Baixar arquivo</span>
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Baixar formato original</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                              setEmailTarget(doc)
+                                              setIsEmailOpen(true)
+                                            }}
+                                          >
+                                            <Mail className="h-4 w-4 text-blue-600" />
+                                            <span className="sr-only">Enviar por E-mail</span>
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Enviar por E-mail</p>
+                                        </TooltipContent>
+                                      </Tooltip>
                                       {hasSig ? (
                                         <Badge
                                           variant="outline"
@@ -649,7 +719,7 @@ export function LibraryTab() {
             {previewDoc?.content || (
               <span className="text-gray-400 italic">
                 Este documento não possui texto detalhado armazenado no acervo. Apenas metadados
-                disponíveis.
+                disponíveis ou o arquivo foi anexado em outro formato.
               </span>
             )}
           </div>
@@ -669,12 +739,21 @@ export function LibraryTab() {
           </DialogHeader>
           <form onSubmit={handleUpload} className="space-y-4 pt-4">
             <div className="space-y-2">
+              <Label>Arquivo (PDF, Word, Imagens - Máx 2MB)</Label>
+              <Input
+                type="file"
+                ref={fileRef}
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+              />
+            </div>
+            <div className="space-y-2">
               <Label>Nome do Arquivo / Documento</Label>
               <Input
                 required
                 value={newDoc.name}
                 onChange={(e) => setNewDoc({ ...newDoc, name: e.target.value })}
-                placeholder="Ex: Planta Baixa - Térreo"
+                placeholder="Ex: Planta Baixa - Térreo.pdf"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">

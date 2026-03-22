@@ -362,7 +362,7 @@ export const DEFAULT_PGR_TEMPLATE: Omit<PGRDocument, 'id'> = {
   introducao:
     'Este Programa de Gerenciamento de Riscos (PGR) foi elaborado em conformidade com as diretrizes da Norma Regulamentadora nº 01 (NR-01) do Ministério do Trabalho e Previdência. Seu objetivo principal é estabelecer as medidas de prevenção necessárias para garantir a integridade física e a saúde dos trabalhadores envolvidos nas atividades executadas pela JT Obras e Manutenções Ltda.',
   escopo:
-    'Este PGR aplica-se a todas as frentes de trabalho sob responsabilidade da JT Obras e Manutenções Ltda, englobando as atividades operacionais, de manutenção e serviços em geral realizados em instalações de clientes, bem como em suas próprias dependências.',
+    'Este PGR aplica-se a todas as frentes de trabalho sob responsabilidade da JT Obras e Manutenções Ltda, englobando as atividades operacionais, de manutenção e serviços em geral realizados em instalações de clientes, bem কাশী em suas próprias dependências.',
   gestaoTerceiros:
     'A JT Obras exige que todas as empresas contratadas e subcontratadas atuem em estrita conformidade com este PGR. Todos os terceiros devem apresentar seus respectivos PGRs e PCMSOs antes do início de qualquer atividade.',
   monitoramento:
@@ -472,14 +472,17 @@ const EXAMPLE_OS: ServiceOrder = {
   status: 'Rascunho',
 }
 
+const dummyPdf =
+  'data:application/pdf;base64,JVBERi0xLjQKJcOkw7zDtsOUCjEgMCBvYmoKPDwvVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwvVHlwZSAvUGFnZXMKL0tpZHMgWzMgMCBSXQovQ291bnQgMQovTWVkaWFCb3ggWzAgMCA1OTUuMjggODQxLjg5XQo+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlIC9QYWdlCi9QYXJlbnQgMiAwIFIKL1Jlc291cmNlcyA8PC9Gb250IDw8L0YxIDQgMCBSPj4+PgovQ29udGVudHMgNSAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwvVHlwZSAvRm9udAovU3VidHlwZSAvVHlwZTEKL0Jhc2VGb250IC9IZWx2ZXRpY2EKPj4KZW5kb2JqCjUgMCBvYmoKPDwvTGVuZ3RoIDQ4Pj4Kc3RyZWFtCkJUCi9GMSAyNCBUZgo1MCA3NTAgVGQKKEV4ZW1wbG8gZGUgRG9jdW1lbnRvIFBERikgVGoKRVQKZW5kc3RyZWFtCmVuZG9iago2IDAgb2JqCjw8L1R5cGUgL091dGxpbmVzCi9Db3VudCAwCj4+CmVuZG9iagp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYKMDAwMDAwMDAxNSAwMDAwMCBuCjAwMDAwMDAwNjIgMDAwMDAgbgowMDAwMDAwMTU3IDAwMDAwIG4KMDAwMDAwMDI2NSAwMDAwMCBuCjAwMDAwMDAzNTMgMDAwMDAgbgowMDAwMDAwNDUyIDAwMDAwIG4KdHJhaWxlcgo8PC9TaXplIDcKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjQ5NwolJUVPRg=='
+
 const EXAMPLE_DOC_NR35: TechnicalDocument = {
   id: 'example_doc_nr35',
-  name: 'Treinamento NR-35 - Exemplo',
+  name: 'Treinamento NR-35 - Exemplo.pdf',
   category: 'nr35',
   uploadDate: new Date().toISOString(),
   projectId: 'global',
   isRestricted: false,
-  url: '#',
+  url: dummyPdf,
   docNumber: 'DOC-2026-001',
   attendanceList: [
     { id: 'att_1', name: 'João Silva', cpf: '123.456.789-00' },
