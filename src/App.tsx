@@ -19,6 +19,7 @@ import ClientDashboard from './pages/client/Dashboard'
 import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
 import FieldApp from './pages/FieldApp'
 import { SyncManager } from './components/SyncManager'
+import PublicDocument from './pages/PublicDocument'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
@@ -44,6 +45,7 @@ const App = () => (
         <Route path="/projeto/:id/galeria" element={<PublicGallery />} />
         <Route path="/admin/print/:type/:id" element={<PrintReport />} />
         <Route path="/assinatura/:id" element={<PublicSignature />} />
+        <Route path="/publico/documento/:token" element={<PublicDocument />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>

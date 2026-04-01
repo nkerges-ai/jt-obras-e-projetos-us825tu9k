@@ -20,6 +20,8 @@ import { RegistrationsTab } from './components/RegistrationsTab'
 import { TrainingExpirationsTab } from './components/TrainingExpirationsTab'
 import { CompanyAssetsTab } from './components/CompanyAssetsTab'
 import { AdminChatTab } from './components/AdminChatTab'
+import { LixeiraTab } from './components/LixeiraTab'
+import { AuditoriaTab } from './components/AuditoriaTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { getChatMessages } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
@@ -251,6 +253,18 @@ export default function AdminDashboard() {
           >
             Suporte
           </TabsTrigger>
+          <TabsTrigger
+            value="auditoria"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Auditoria
+          </TabsTrigger>
+          <TabsTrigger
+            value="lixeira"
+            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
+          >
+            Lixeira
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="visao-geral">
@@ -288,6 +302,12 @@ export default function AdminDashboard() {
         </TabsContent>
         <TabsContent value="chamados">
           <TicketsTab key={`tck-${syncKey}`} />
+        </TabsContent>
+        <TabsContent value="auditoria">
+          <AuditoriaTab />
+        </TabsContent>
+        <TabsContent value="lixeira">
+          <LixeiraTab />
         </TabsContent>
       </Tabs>
     </div>

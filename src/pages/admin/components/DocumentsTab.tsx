@@ -16,9 +16,14 @@ import {
   PenTool,
   CheckCircle,
   Download,
+  Trash2,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
+import { getTechnicalDocuments, saveTechnicalDocuments, softDelete, addAuditLog, TechnicalDocument } from '@/lib/storage'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 type DocFile = {
   id: number
@@ -32,29 +37,54 @@ export function DocumentsTab() {
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [files, setFiles] = useState<DocFile[]>([])
+  const [files, setFiles] = useState<TechnicalDocument[]>([])
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  const [shareToken, setShareToken] = useState('')
+
+  useEffect(() => {
+    setFiles(getTechnicalDocuments())
+  }, [])
 
   const handleUploadClick = () => fileInputRef.current?.click()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFile = e.target.files[0]
-      setFiles([
-        {
-          id: Date.now(),
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const doc: TechnicalDocument = {
+          id: `doc_${Date.now()}`,
           name: newFile.name,
-          type: newFile.type,
-          date: new Date().toISOString().split('T')[0],
-          status: 'Rascunho',
-        },
-        ...files,
-      ])
-      toast({
-        title: 'Arquivo salvo com sucesso',
-        description: `${newFile.name} foi adicionado ao repositório.`,
-      })
+          category: 'Geral',
+          uploadDate: new Date().toISOString(),
+          projectId: 'global',
+          isRestricted: false,
+          url: event.target?.result as string,
+        }
+        const updated = [doc, ...files]
+        setFiles(updated)
+        saveTechnicalDocuments(updated)
+        addAuditLog({ userId: 'Admin', action: 'Upload', table: 'Document', newData: JSON.stringify(doc) })
+        toast({ title: 'Arquivo salvo', description: `${newFile.name} adicionado.` })
+      }
+      reader.readAsDataURL(newFile)
       e.target.value = ''
     }
+  }
+
+  const handleDelete = (doc: TechnicalDocument) => {
+    softDelete('Document', doc)
+    const updated = files.filter(f => f.id !== doc.id)
+    setFiles(updated)
+    saveTechnicalDocuments(updated)
+    addAuditLog({ userId: 'Admin', action: 'Delete', table: 'Document', previousData: JSON.stringify(doc) })
+    toast({ title: 'Movido para Lixeira' })
+  }
+
+  const handleShare = (docId: string) => {
+    const token = btoa(docId).replace(/=/g, '')
+    setShareToken(`${window.location.origin}/publico/documento/${token}`)
+    setIsShareOpen(true)
   }
 
   const handleSendWhatsApp = (fileName: string) => {
@@ -116,55 +146,27 @@ export function DocumentsTab() {
             {files.map((file) => (
               <TableRow key={file.id}>
                 <TableCell className="font-medium flex items-center gap-3">
-                  {file.name.includes('.pdf') ? (
-                    <FileIcon className="h-5 w-5 text-red-500 shrink-0" />
-                  ) : (
-                    <FileText className="h-5 w-5 text-blue-500 shrink-0" />
-                  )}
+                  <FileIcon className="h-5 w-5 text-blue-500 shrink-0" />
                   <span className="truncate max-w-[180px] md:max-w-md block">{file.name}</span>
                 </TableCell>
                 <TableCell>
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
-                      file.status === 'Assinado'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-orange-100 text-orange-700',
-                    )}
-                  >
-                    {file.status === 'Assinado' ? (
-                      <CheckCircle className="h-3 w-3" />
-                    ) : (
-                      <PenTool className="h-3 w-3" />
-                    )}
-                    {file.status}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                    Disponível
                   </span>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">
-                  {new Date(file.date).toLocaleDateString('pt-BR')}
+                  {new Date(file.uploadDate).toLocaleDateString('pt-BR')}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center gap-2">
-                    {file.status !== 'Assinado' && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleSignFile(file.id)}
-                        title="Assinar Digitalmente"
-                      >
-                        <PenTool className="h-4 w-4 text-blue-600" />
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleSendWhatsApp(file.name)}
-                      title="Enviar por WhatsApp"
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => handleShare(file.id)} title="Link Público">
+                      <Upload className="h-4 w-4 text-brand-orange" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleSendWhatsApp(file.name)} title="Enviar por WhatsApp">
                       <MessageCircle className="h-4 w-4 text-green-600" />
                     </Button>
-                    <Button variant="ghost" size="icon" title="Baixar">
-                      <Download className="h-4 w-4 text-gray-600" />
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(file)} title="Excluir">
+                      <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>
                 </TableCell>
@@ -173,6 +175,24 @@ export function DocumentsTab() {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Compartilhamento Público</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <Label>Link de Acesso (Token Único)</Label>
+            <div className="flex gap-2">
+              <Input readOnly value={shareToken} />
+              <Button onClick={() => {
+                navigator.clipboard.writeText(shareToken)
+                toast({ title: 'Link copiado' })
+              }}>Copiar</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -10,7 +10,7 @@ const clients = [
 
 export function Clients() {
   return (
-    <section className="bg-secondary/40 py-16 md:py-24">
+    <section id="clientes" className="bg-secondary/40 py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
         <FadeIn>
           <div className="text-center mb-12">

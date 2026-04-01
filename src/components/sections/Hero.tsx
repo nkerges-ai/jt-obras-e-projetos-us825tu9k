@@ -6,7 +6,7 @@ import heroImage from '@/assets/whatsapp-image-2026-03-17-at-19.27.50-91cc3.jpeg
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-20 pb-16 overflow-hidden bg-brand-navy">
+    <section className="relative h-screen lg:h-[70vh] w-full flex items-center pt-20 pb-16 overflow-hidden bg-brand-navy">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-brand-navy/90 z-10 mix-blend-multiply" />
         <img
@@ -49,10 +49,12 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                asChild
+                onClick={() => {
+                  document.getElementById('clientes')?.scrollIntoView({ behavior: 'smooth' })
+                }}
                 className="h-14 px-8 text-base font-bold rounded-full text-white border-white/20 hover:bg-white/10 hover:text-white"
               >
-                <a href="#servicos">Conhecer Serviços</a>
+                Veja Nossos Clientes de Confiança
               </Button>
             </div>
           </FadeIn>

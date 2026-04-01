@@ -2,7 +2,7 @@ import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 export function WhatsAppFAB() {
   const message = encodeURIComponent(
-    'Olá, gostaria de saber mais sobre os serviços da JT Obras e solicitar um orçamento.',
+    'Olá, gostaria de saber mais sobre os serviços da JT Obras e solicitar um orçamento. Meu nome é: [SEU NOME], Telefone: [SEU TELEFONE], Tipo de Obra: [TIPO].',
   )
 
   return (

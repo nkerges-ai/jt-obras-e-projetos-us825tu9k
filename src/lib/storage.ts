@@ -160,6 +160,33 @@ export interface PGRDocument {
   }
 }
 
+export interface AuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  table: string;
+  previousData?: string;
+  newData?: string;
+  timestamp: string;
+}
+
+export interface DeletedItem {
+  id: string;
+  type: string;
+  data: any;
+  deletedAt: string;
+}
+
+export interface VisitorLog {
+  id: string;
+  link: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  timestamp: string;
+  status: 'Visit' | 'Registered';
+}
+
 export interface ServiceOrder {
   id: string
   osNumber: string
@@ -663,6 +690,64 @@ export const saveCompanyAssets = (items: CompanyAsset[]) => {
   localStorage.setItem('jt_assets_v2', JSON.stringify(items))
 }
 
+export const getAuditLogs = (): AuditLog[] => {
+  const data = localStorage.getItem('jt_audit_logs_v1');
+  return data ? JSON.parse(data) : [];
+};
+export const saveAuditLogs = (logs: AuditLog[]) => {
+  localStorage.setItem('jt_audit_logs_v1', JSON.stringify(logs));
+};
+export const addAuditLog = (log: Omit<AuditLog, 'id' | 'timestamp'>) => {
+  const logs = getAuditLogs();
+  logs.unshift({
+    ...log,
+    id: `audit_${Date.now()}`,
+    timestamp: new Date().toISOString()
+  });
+  saveAuditLogs(logs);
+};
+
+export const getDeletedItems = (): DeletedItem[] => {
+  const data = localStorage.getItem('jt_deleted_items_v1');
+  return data ? JSON.parse(data) : [];
+};
+export const saveDeletedItems = (items: DeletedItem[]) => {
+  localStorage.setItem('jt_deleted_items_v1', JSON.stringify(items));
+};
+export const softDelete = (type: string, item: any) => {
+  const items = getDeletedItems();
+  items.unshift({
+    id: `del_${Date.now()}`,
+    type,
+    data: item,
+    deletedAt: new Date().toISOString()
+  });
+  saveDeletedItems(items);
+};
+
+export const getVisitorLogs = (): VisitorLog[] => {
+  const data = localStorage.getItem('jt_visitor_logs_v1');
+  return data ? JSON.parse(data) : [];
+};
+export const addVisitorLog = (log: Omit<VisitorLog, 'id' | 'timestamp'>) => {
+  const logs = getVisitorLogs();
+  logs.unshift({
+    ...log,
+    id: `vis_${Date.now()}`,
+    timestamp: new Date().toISOString()
+  });
+  localStorage.setItem('jt_visitor_logs_v1', JSON.stringify(logs));
+  
+  if (log.status === 'Registered' && log.email) {
+    addLog({
+      type: 'Email',
+      recipient: log.email,
+      message: 'Confirmação de Registro. Acessar Meu Projeto: https://jt-obras.com/cliente/login',
+      status: 'Enviado'
+    })
+  }
+};
+
 export const getChatMessages = (): ChatMessage[] => {
   const data = localStorage.getItem('jt_chats_v1')
   return data ? JSON.parse(data) : []
@@ -682,6 +767,16 @@ export const addChatMessage = (msg: Omit<ChatMessage, 'id' | 'timestamp' | 'read
     read: false,
   }
   saveChatMessages([...messages, newMsg])
+  
+  if (msg.sender === 'client') {
+    addLog({
+      type: 'Email',
+      recipient: 'jt.obrasemanutencao@gmail.com',
+      message: `Nova mensagem no chat do cliente: ${msg.text.substring(0, 50)}...`,
+      status: 'Enviado'
+    })
+  }
+  
   return newMsg
 }
 
