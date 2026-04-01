@@ -1,11 +1,26 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ArrowLeft, Printer, Save, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { addDocumentoArmazenado, getProjects, Project } from '@/lib/storage'
 
 export default function TemplateEditor() {
   const { type } = useParams()
   const { toast } = useToast()
+
+  const [projects, setProjects] = useState<Project[]>([])
+  const [selectedProject, setSelectedProject] = useState('global')
+  const [fileName, setFileName] = useState('')
 
   const getTitle = () => {
     switch (type) {
@@ -14,7 +29,7 @@ export default function TemplateEditor() {
       case 'nr10':
         return 'Trabalhos com Eletricidade (NR-10)'
       case 'nr18':
-        return 'Segurança na Indústria da Construção (NR-18)'
+        return 'Condições e Meio Ambiente de Trabalho na Indústria da Construção (NR-18)'
       case 'nr35':
         return 'Permissão de Trabalho em Altura (NR-35)'
       default:
@@ -22,10 +37,35 @@ export default function TemplateEditor() {
     }
   }
 
+  useEffect(() => {
+    setProjects(getProjects())
+    setFileName(`${getTitle()} - ${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}`)
+  }, [type])
+
   const handleSave = () => {
+    let tipo: 'certificado' | 'contrato' | 'orçamento' | 'lista_presenca' | 'evidencia' | 'acervo' =
+      'acervo'
+    let folder: 'certificados' | 'contratos' | 'orcamentos' | 'evidencias' | 'acervo' = 'acervo'
+
+    if (type === 'nr06' || type === 'nr10' || type === 'nr18' || type === 'nr35') {
+      tipo = 'certificado'
+      folder = 'certificados'
+    }
+
+    addDocumentoArmazenado({
+      projeto_id: selectedProject,
+      tipo_documento: tipo,
+      nome_arquivo: fileName + '.pdf',
+      descricao: `Documento legal gerado: ${getTitle()}`,
+      url_storage: `/projetos/${selectedProject}/${folder}/${fileName.replace(/\s+/g, '_')}.pdf`,
+      tamanho_arquivo: 1024 * Math.floor(Math.random() * 5000 + 100), // Mock size 100KB-5MB
+      usuario_id: 'admin_user',
+      status: 'ativo',
+    })
+
     toast({
-      title: 'Salvo com sucesso',
-      description: 'O formulário foi arquivado na base de dados.',
+      title: 'Documento Salvo',
+      description: 'O formulário foi salvo e versionado na arquitetura ilimitada.',
     })
   }
 
@@ -44,10 +84,19 @@ export default function TemplateEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> Salvar
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              className="gap-2 border-brand-navy text-brand-navy"
+            >
+              <Save className="h-4 w-4" /> Salvar no Repositório
             </Button>
-            <Button onClick={() => window.print()} size="sm" className="gap-2">
+            <Button
+              onClick={() => window.print()}
+              size="sm"
+              className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
+            >
               <Printer className="h-4 w-4" /> Imprimir / PDF
             </Button>
           </div>
@@ -70,6 +119,33 @@ export default function TemplateEditor() {
                 Este modelo está pré-configurado com os requisitos legais da norma. Preencha os
                 campos em branco antes de gerar a versão final para assinatura.
               </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 print:hidden mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+              <div className="space-y-2">
+                <Label>Vincular ao Projeto (Classificação Automática)</Label>
+                <Select value={selectedProject} onValueChange={setSelectedProject}>
+                  <SelectTrigger className="bg-white">
+                    <SelectValue placeholder="Selecione..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="global">Documento Geral da Empresa</SelectItem>
+                    {projects.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Nome do Arquivo Final</Label>
+                <Input
+                  value={fileName}
+                  onChange={(e) => setFileName(e.target.value)}
+                  className="bg-white"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

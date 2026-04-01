@@ -277,6 +277,44 @@ export interface ValidityDocument {
   clientEmail?: string
 }
 
+export interface DocumentoArmazenado {
+  id: string
+  projeto_id: string
+  tipo_documento:
+    | 'certificado'
+    | 'contrato'
+    | 'orçamento'
+    | 'lista_presenca'
+    | 'evidencia'
+    | 'acervo'
+  nome_arquivo: string
+  descricao: string
+  url_storage: string
+  tamanho_arquivo: number
+  data_upload: string
+  data_atualizacao: string
+  usuario_id: string
+  status: 'ativo' | 'arquivado' | 'deletado'
+}
+
+export interface PastaDocumento {
+  id: string
+  projeto_id: string
+  nome_pasta: 'certificados' | 'contratos' | 'orcamentos' | 'evidencias' | 'acervo'
+  caminho_storage: string
+  data_criacao: string
+}
+
+export interface HistoricoDocumento {
+  id: string
+  documento_id: string
+  acao: 'criado' | 'editado' | 'deletado' | 'restaurado'
+  usuario_id: string
+  data_acao: string
+  dados_anteriores: any
+  dados_novos: any
+}
+
 export interface Ppe {
   id: string
   name: string
@@ -746,6 +784,121 @@ export const addVisitorLog = (log: Omit<VisitorLog, 'id' | 'timestamp'>) => {
       status: 'Enviado',
     })
   }
+}
+
+export const getDocumentosArmazenados = (): DocumentoArmazenado[] => {
+  const data = localStorage.getItem('jt_docs_armazenados_v1')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveDocumentosArmazenados = (docs: DocumentoArmazenado[]) => {
+  localStorage.setItem('jt_docs_armazenados_v1', JSON.stringify(docs))
+}
+
+export const getPastasDocumentos = (): PastaDocumento[] => {
+  const data = localStorage.getItem('jt_pastas_documentos_v1')
+  return data ? JSON.parse(data) : []
+}
+
+export const savePastasDocumentos = (pastas: PastaDocumento[]) => {
+  localStorage.setItem('jt_pastas_documentos_v1', JSON.stringify(pastas))
+}
+
+export const getHistoricoDocumentos = (): HistoricoDocumento[] => {
+  const data = localStorage.getItem('jt_historico_documentos_v1')
+  return data ? JSON.parse(data) : []
+}
+
+export const saveHistoricoDocumentos = (historico: HistoricoDocumento[]) => {
+  localStorage.setItem('jt_historico_documentos_v1', JSON.stringify(historico))
+}
+
+export const getOrCreatePasta = (
+  projeto_id: string,
+  nome_pasta: PastaDocumento['nome_pasta'],
+): PastaDocumento => {
+  const pastas = getPastasDocumentos()
+  let pasta = pastas.find((p) => p.projeto_id === projeto_id && p.nome_pasta === nome_pasta)
+  if (!pasta) {
+    pasta = {
+      id: `pasta_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      projeto_id,
+      nome_pasta,
+      caminho_storage: `/projetos/${projeto_id}/${nome_pasta}/`,
+      data_criacao: new Date().toISOString(),
+    }
+    savePastasDocumentos([...pastas, pasta])
+  }
+  return pasta
+}
+
+export const addDocumentoArmazenado = (
+  doc: Omit<DocumentoArmazenado, 'id' | 'data_upload' | 'data_atualizacao'>,
+) => {
+  const docs = getDocumentosArmazenados()
+  const now = new Date().toISOString()
+
+  let folderName: PastaDocumento['nome_pasta'] = 'acervo'
+  if (doc.tipo_documento === 'certificado') folderName = 'certificados'
+  else if (doc.tipo_documento === 'contrato') folderName = 'contratos'
+  else if (doc.tipo_documento === 'orçamento') folderName = 'orcamentos'
+  else if (doc.tipo_documento === 'evidencia') folderName = 'evidencias'
+
+  getOrCreatePasta(doc.projeto_id, folderName)
+
+  const newDoc: DocumentoArmazenado = {
+    ...doc,
+    id: `doc_arm_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    data_upload: now,
+    data_atualizacao: now,
+  }
+
+  saveDocumentosArmazenados([newDoc, ...docs])
+
+  const history: HistoricoDocumento = {
+    id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    documento_id: newDoc.id,
+    acao: 'criado',
+    usuario_id: doc.usuario_id,
+    data_acao: now,
+    dados_anteriores: null,
+    dados_novos: newDoc,
+  }
+  saveHistoricoDocumentos([history, ...getHistoricoDocumentos()])
+
+  return newDoc
+}
+
+export const updateDocumentoArmazenado = (
+  id: string,
+  updates: Partial<DocumentoArmazenado>,
+  usuario_id: string,
+) => {
+  const docs = getDocumentosArmazenados()
+  const index = docs.findIndex((d) => d.id === id)
+  if (index === -1) return null
+
+  const oldDoc = docs[index]
+  const newDoc = { ...oldDoc, ...updates, data_atualizacao: new Date().toISOString() }
+  docs[index] = newDoc
+  saveDocumentosArmazenados(docs)
+
+  const history: HistoricoDocumento = {
+    id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    documento_id: id,
+    acao:
+      newDoc.status === 'deletado' && oldDoc.status !== 'deletado'
+        ? 'deletado'
+        : newDoc.status === 'ativo' && oldDoc.status === 'deletado'
+          ? 'restaurado'
+          : 'editado',
+    usuario_id,
+    data_acao: newDoc.data_atualizacao,
+    dados_anteriores: oldDoc,
+    dados_novos: newDoc,
+  }
+  saveHistoricoDocumentos([history, ...getHistoricoDocumentos()])
+  return newDoc
 }
 
 export const getChatMessages = (): ChatMessage[] => {

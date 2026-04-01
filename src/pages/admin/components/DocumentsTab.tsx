@@ -8,48 +8,42 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import {
-  FileText,
-  Upload,
-  File as FileIcon,
-  MessageCircle,
-  PenTool,
-  CheckCircle,
-  Download,
-  Trash2,
-} from 'lucide-react'
+import { Upload, File as FileIcon, Trash2, FolderOpen, History } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
 import {
-  getTechnicalDocuments,
-  saveTechnicalDocuments,
-  softDelete,
+  DocumentoArmazenado,
+  getDocumentosArmazenados,
+  addDocumentoArmazenado,
+  updateDocumentoArmazenado,
+  getHistoricoDocumentos,
+  HistoricoDocumento,
   addAuditLog,
-  TechnicalDocument,
 } from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-type DocFile = {
-  id: number
-  name: string
-  type: string
-  date: string
-  status: string
-}
+import { Badge } from '@/components/ui/badge'
 
 export function DocumentsTab() {
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [files, setFiles] = useState<TechnicalDocument[]>([])
+  const [files, setFiles] = useState<DocumentoArmazenado[]>([])
   const [isShareOpen, setIsShareOpen] = useState(false)
   const [shareToken, setShareToken] = useState('')
 
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+  const [currentHistory, setCurrentHistory] = useState<HistoricoDocumento[]>([])
+  const [selectedDocName, setSelectedDocName] = useState('')
+
   useEffect(() => {
-    setFiles(getTechnicalDocuments())
+    loadFiles()
   }, [])
+
+  const loadFiles = () => {
+    const docs = getDocumentosArmazenados().filter((d) => d.status !== 'deletado')
+    setFiles(docs)
+  }
 
   const handleUploadClick = () => fileInputRef.current?.click()
 
@@ -57,41 +51,42 @@ export function DocumentsTab() {
     if (e.target.files && e.target.files.length > 0) {
       const newFile = e.target.files[0]
       const reader = new FileReader()
-      reader.onload = (event) => {
-        const doc: TechnicalDocument = {
-          id: `doc_${Date.now()}`,
-          name: newFile.name,
-          category: 'Geral',
-          uploadDate: new Date().toISOString(),
-          projectId: 'global',
-          isRestricted: false,
-          url: event.target?.result as string,
-        }
-        const updated = [doc, ...files]
-        setFiles(updated)
-        saveTechnicalDocuments(updated)
+      reader.onload = () => {
+        const doc = addDocumentoArmazenado({
+          projeto_id: 'global',
+          tipo_documento: 'acervo',
+          nome_arquivo: newFile.name,
+          descricao: 'Arquivo enviado manualmente',
+          url_storage: `/projetos/global/acervo/${newFile.name.replace(/\s+/g, '_')}`,
+          tamanho_arquivo: newFile.size,
+          usuario_id: 'admin_user',
+          status: 'ativo',
+        })
+
+        loadFiles()
         addAuditLog({
-          userId: 'Admin',
+          userId: 'admin_user',
           action: 'Upload',
-          table: 'Document',
+          table: 'documentos_armazenados',
           newData: JSON.stringify(doc),
         })
-        toast({ title: 'Arquivo salvo', description: `${newFile.name} adicionado.` })
+        toast({
+          title: 'Arquivo salvo',
+          description: `${newFile.name} adicionado à arquitetura ilimitada.`,
+        })
       }
       reader.readAsDataURL(newFile)
       e.target.value = ''
     }
   }
 
-  const handleDelete = (doc: TechnicalDocument) => {
-    softDelete('Document', doc)
-    const updated = files.filter((f) => f.id !== doc.id)
-    setFiles(updated)
-    saveTechnicalDocuments(updated)
+  const handleDelete = (doc: DocumentoArmazenado) => {
+    updateDocumentoArmazenado(doc.id, { status: 'deletado' }, 'admin_user')
+    loadFiles()
     addAuditLog({
-      userId: 'Admin',
+      userId: 'admin_user',
       action: 'Delete',
-      table: 'Document',
+      table: 'documentos_armazenados',
       previousData: JSON.stringify(doc),
     })
     toast({ title: 'Movido para Lixeira' })
@@ -103,19 +98,22 @@ export function DocumentsTab() {
     setIsShareOpen(true)
   }
 
-  const handleSendWhatsApp = (fileName: string) => {
-    const text = encodeURIComponent(
-      `Olá! Segue o documento ${fileName} da JT Obras e Manutenções: [LINK DO DOCUMENTO]`,
-    )
-    window.open(`https://wa.me/?text=${text}`, '_blank')
+  const viewHistory = (doc: DocumentoArmazenado) => {
+    const allHistory = getHistoricoDocumentos()
+    const docHistory = allHistory
+      .filter((h) => h.documento_id === doc.id)
+      .sort((a, b) => new Date(b.data_acao).getTime() - new Date(a.data_acao).getTime())
+    setCurrentHistory(docHistory)
+    setSelectedDocName(doc.nome_arquivo)
+    setIsHistoryOpen(true)
   }
 
-  const handleSignFile = (id: number) => {
-    setFiles(files.map((f) => (f.id === id ? { ...f, status: 'Assinado' } : f)))
-    toast({
-      title: 'Documento assinado',
-      description: 'A assinatura digital foi vinculada ao documento.',
-    })
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
   return (
@@ -123,10 +121,10 @@ export function DocumentsTab() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" /> Repositório de Arquivos
+            <FolderOpen className="h-5 w-5 text-primary" /> Arquitetura de Armazenamento Ilimitado
           </h3>
           <p className="text-muted-foreground text-sm">
-            Armazene PDFs e arquivos Word com segurança na nuvem.
+            Gestão hierárquica e versionamento de arquivos por projeto.
           </p>
         </div>
         <input
@@ -145,33 +143,47 @@ export function DocumentsTab() {
         <Table>
           <TableHeader className="bg-secondary/50">
             <TableRow>
-              <TableHead>Nome do Arquivo</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Data</TableHead>
+              <TableHead>Documento</TableHead>
+              <TableHead>Tamanho</TableHead>
+              <TableHead>Caminho Storage</TableHead>
+              <TableHead>Atualizado em</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {files.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  Nenhum arquivo adicionado.
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  Nenhum arquivo no repositório.
                 </TableCell>
               </TableRow>
             )}
             {files.map((file) => (
               <TableRow key={file.id}>
-                <TableCell className="font-medium flex items-center gap-3">
-                  <FileIcon className="h-5 w-5 text-blue-500 shrink-0" />
-                  <span className="truncate max-w-[180px] md:max-w-md block">{file.name}</span>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-3">
+                    <FileIcon className="h-5 w-5 text-blue-500 shrink-0" />
+                    <div>
+                      <span className="truncate max-w-[180px] md:max-w-[250px] block">
+                        {file.nome_arquivo}
+                      </span>
+                      <Badge variant="outline" className="text-[10px] h-4 mt-1 bg-gray-50">
+                        {file.tipo_documento.toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
                 </TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                    Disponível
-                  </span>
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                  {formatBytes(file.tamanho_arquivo)}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  {new Date(file.uploadDate).toLocaleDateString('pt-BR')}
+                <TableCell
+                  className="text-xs font-mono text-gray-500 max-w-[150px] truncate"
+                  title={file.url_storage}
+                >
+                  {file.url_storage}
+                </TableCell>
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                  {new Date(file.data_atualizacao).toLocaleDateString('pt-BR')}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center gap-2">
@@ -186,10 +198,10 @@ export function DocumentsTab() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleSendWhatsApp(file.name)}
-                      title="Enviar por WhatsApp"
+                      onClick={() => viewHistory(file)}
+                      title="Histórico de Versões"
                     >
-                      <MessageCircle className="h-4 w-4 text-green-600" />
+                      <History className="h-4 w-4 text-blue-600" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -225,6 +237,53 @@ export function DocumentsTab() {
                 Copiar
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" /> Histórico: {selectedDocName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4 max-h-[60vh] overflow-y-auto">
+            {currentHistory.map((h) => (
+              <div key={h.id} className="flex gap-4 p-4 border rounded-lg bg-gray-50 relative">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge
+                      variant={
+                        h.acao === 'deletado'
+                          ? 'destructive'
+                          : h.acao === 'criado'
+                            ? 'default'
+                            : 'secondary'
+                      }
+                      className="capitalize"
+                    >
+                      {h.acao}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(h.data_acao).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium">Usuário: {h.usuario_id}</p>
+
+                  {h.acao === 'editado' && (
+                    <div className="mt-2 text-xs font-mono bg-white p-2 rounded border">
+                      <span className="text-red-500">- Antigo: {h.dados_anteriores?.status}</span>
+                      <br />
+                      <span className="text-green-500">+ Novo: {h.dados_novos?.status}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            {currentHistory.length === 0 && (
+              <p className="text-center text-muted-foreground py-4">Nenhum histórico encontrado.</p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
