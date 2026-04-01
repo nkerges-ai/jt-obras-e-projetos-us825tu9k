@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { RichTextEditor } from '@/components/RichTextEditor'
 
 export function OSForm({ data, setData, currentStep }: any) {
   if (currentStep === 1) {
@@ -57,36 +57,35 @@ export function OSForm({ data, setData, currentStep }: any) {
         <div className="border-b pb-2 mb-4">
           <h2 className="text-xl font-bold text-brand-navy">2. Instruções de Segurança</h2>
           <p className="text-sm text-muted-foreground">
-            Obrigações e proibições de acordo com a NR-01.
+            Obrigações e proibições de acordo com a NR-01 utilizando o editor de texto rico.
           </p>
         </div>
         <div className="space-y-3 flex-1 flex flex-col">
-          <Label className="font-bold">Cabe ao Empregado (Responsabilidades)</Label>
-          <Textarea
-            className="flex-1 min-h-[150px] resize-none text-sm leading-relaxed"
+          <Label className="font-bold text-brand-navy">Cabe ao Empregado (Responsabilidades)</Label>
+          <RichTextEditor
+            className="flex-1"
             value={data.safetyInstructions?.responsibilities || ''}
-            onChange={(e) =>
+            onChange={(val) =>
               setData({
                 ...data,
-                safetyInstructions: {
-                  ...data.safetyInstructions,
-                  responsibilities: e.target.value,
-                },
+                safetyInstructions: { ...data.safetyInstructions, responsibilities: val },
               })
             }
+            placeholder="Digite as obrigações de segurança..."
           />
         </div>
-        <div className="space-y-3 flex-1 flex flex-col mt-4">
-          <Label className="font-bold text-red-600">Proibições</Label>
-          <Textarea
-            className="flex-1 min-h-[100px] resize-none text-sm leading-relaxed border-red-200 focus-visible:ring-red-500"
+        <div className="space-y-3 flex-1 flex flex-col mt-6">
+          <Label className="font-bold text-red-600">Proibições na Execução</Label>
+          <RichTextEditor
+            className="flex-1 border-red-200 focus-within:ring-red-500/50"
             value={data.safetyInstructions?.prohibitions || ''}
-            onChange={(e) =>
+            onChange={(val) =>
               setData({
                 ...data,
-                safetyInstructions: { ...data.safetyInstructions, prohibitions: e.target.value },
+                safetyInstructions: { ...data.safetyInstructions, prohibitions: val },
               })
             }
+            placeholder="Digite as proibições expressas..."
           />
         </div>
       </div>
@@ -95,7 +94,7 @@ export function OSForm({ data, setData, currentStep }: any) {
 
   return (
     <div className="text-center py-16 flex flex-col items-center justify-center animate-in fade-in">
-      <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+      <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 shadow-sm border border-green-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="32"
@@ -112,9 +111,10 @@ export function OSForm({ data, setData, currentStep }: any) {
         </svg>
       </div>
       <h2 className="text-2xl font-bold text-brand-navy mb-2">Dados Preenchidos</h2>
-      <p className="text-muted-foreground max-w-md">
-        A Ordem de Serviço foi configurada. Revise o documento na visualização ao lado e utilize os
-        botões superiores para assinar, salvar no acervo ou imprimir.
+      <p className="text-muted-foreground max-w-md text-sm">
+        A Ordem de Serviço foi configurada. Revise o documento com a formatação aplicada na
+        visualização ao lado e utilize os botões superiores para assinar, salvar no repositório ou
+        imprimir o PDF.
       </p>
     </div>
   )

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { addAuditLog, addDocumentoArmazenado } from '@/lib/storage'
 import { exportHtmlToWord } from '@/lib/export-utils'
+import { RichTextEditor } from '@/components/RichTextEditor'
 
 export default function CertificateEditor() {
   const { toast } = useToast()
@@ -16,7 +17,7 @@ export default function CertificateEditor() {
     companyCnpj: '00.729.193/0001-16',
     employeeName: '',
     courseName: 'NR-35 SEGURANÇA E SAÚDE NOS TRABALHOS EM ALTURA',
-    courseDesc: 'CURSO DE CAPACITAÇÃO PARA TRABALHOS EM ALTURA',
+    courseDesc: '<p>CURSO DE CAPACITAÇÃO PARA TRABALHOS EM ALTURA</p>',
     workload: '08 (Oito)',
     location: 'São Paulo',
     date: '21 de Julho de 2023',
@@ -38,7 +39,12 @@ export default function CertificateEditor() {
       usuario_id: 'Admin',
       status: 'ativo',
     })
-    addAuditLog({ userId: 'Admin', action: 'Gerar Certificado', table: 'Documentos' })
+    addAuditLog({
+      userId: 'Admin',
+      action: 'Gerar Certificado',
+      table: 'Documentos',
+      newData: JSON.stringify(data),
+    })
     toast({ title: 'Salvo no Acervo', description: 'Certificado salvo na pasta Certificados.' })
   }
 
@@ -130,6 +136,15 @@ export default function CertificateEditor() {
               <Input
                 value={data.companyCnpj}
                 onChange={(e) => setData({ ...data, companyCnpj: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label>Descrição do Curso</Label>
+              <RichTextEditor
+                value={data.courseDesc}
+                onChange={(val) => setData({ ...data, courseDesc: val })}
+                className="min-h-[100px]"
               />
             </div>
 
@@ -244,18 +259,29 @@ export default function CertificateEditor() {
               <h1 className="text-4xl font-black mb-4 tracking-[0.2em] text-gray-900 uppercase">
                 CERTIFICADO
               </h1>
-              <h2 className="text-2xl font-bold italic mb-12 text-gray-800">"{data.courseName}"</h2>
+              <h2 className="text-2xl font-bold italic mb-8 text-gray-800">"{data.courseName}"</h2>
 
-              <p className="text-lg leading-[2.2] text-justify mb-16 text-gray-800">
-                Certificamos que o colaborador{' '}
-                <span className="font-bold uppercase border-b border-black">
+              <div className="text-lg leading-[2.2] text-justify mb-12 text-gray-800 w-full px-12">
+                <span className="inline">Certificamos que o colaborador </span>
+                <span className="font-bold uppercase border-b border-black inline">
                   {data.employeeName || '______________________________________'}
-                </span>{' '}
-                da <span className="font-bold uppercase">{data.companyName}</span>, CNPJ{' '}
-                {data.companyCnpj} participou do "{data.courseDesc}", conforme estabelecido na Norma
-                Regulamentadora nº 35, Item 35.3, da Portaria 915/2019 do Ministério da economia,
-                com carga horária de <span className="font-bold">{data.workload}</span> horas.
-              </p>
+                </span>
+                <span className="inline"> da </span>
+                <span className="font-bold uppercase inline">{data.companyName}</span>
+                <span className="inline">
+                  , CNPJ {data.companyCnpj} participou do seguinte programa:
+                </span>
+
+                <div
+                  className="prose prose-sm mx-auto my-4 text-center font-semibold italic text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: data.courseDesc }}
+                />
+
+                <span className="inline block text-center mt-4">
+                  conforme estabelecido nas Normas Regulamentadoras do Ministério da economia, com
+                  carga horária de <span className="font-bold">{data.workload}</span> horas.
+                </span>
+              </div>
 
               <p className="text-lg font-bold mb-16 text-gray-800">
                 {data.location}, {data.date}.

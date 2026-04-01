@@ -8,8 +8,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Upload, File as FileIcon, Trash2, FolderOpen, History, Eye, RotateCcw } from 'lucide-react'
+import {
+  Upload,
+  FileText,
+  File as FileIcon,
+  Trash2,
+  FolderOpen,
+  History,
+  Eye,
+  RotateCcw,
+} from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import {
   DocumentoArmazenado,
@@ -25,6 +33,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 export function DocumentsTab() {
   const { toast } = useToast()
@@ -64,12 +80,11 @@ export function DocumentsTab() {
           tipo_documento: currentFolder === 'todos' ? 'acervo' : (currentFolder as any),
           nome_arquivo: newFile.name,
           descricao: 'Arquivo enviado manualmente',
-          url_storage: reader.result as string, // Using Base64 to enable PDF viewing
+          url_storage: reader.result as string,
           tamanho_arquivo: newFile.size,
           usuario_id: 'admin_user',
           status: 'ativo',
         })
-
         loadFiles()
         addAuditLog({
           userId: 'admin_user',
@@ -79,7 +94,7 @@ export function DocumentsTab() {
         })
         toast({
           title: 'Arquivo salvo',
-          description: `${newFile.name} salvo no repositório unificado.`,
+          description: `${newFile.name} salvo na pasta /${currentFolder === 'todos' ? 'acervo' : currentFolder}.`,
         })
       }
       reader.readAsDataURL(newFile)
@@ -142,15 +157,25 @@ export function DocumentsTab() {
     (f) => currentFolder === 'todos' || f.tipo_documento === currentFolder,
   )
 
+  const getFileIcon = (filename: string) => {
+    if (filename.toLowerCase().endsWith('.pdf'))
+      return <FileIcon className="h-6 w-6 text-red-500 shrink-0" />
+    if (filename.toLowerCase().endsWith('.docx') || filename.toLowerCase().endsWith('.doc'))
+      return <FileText className="h-6 w-6 text-blue-600 shrink-0" />
+    return <FileText className="h-6 w-6 text-gray-500 shrink-0" />
+  }
+
+  const folders = ['todos', 'acervo', 'certificado', 'contrato', 'orçamento', 'evidencia']
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 text-primary" /> Repositório Unificado de Documentos
+            <FolderOpen className="h-5 w-5 text-primary" /> Central de Arquivos
           </h3>
           <p className="text-muted-foreground text-sm">
-            Navegação baseada em pastas, visualizador de PDF e recuperação de versões.
+            Navegue pela estrutura de pastas e acesse todos os documentos gerados e PDFs.
           </p>
         </div>
         <input
@@ -158,116 +183,164 @@ export function DocumentsTab() {
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
-          accept=".pdf"
+          accept=".pdf,.doc,.docx"
         />
         <Button onClick={handleUploadClick} className="gap-2 font-bold w-full sm:w-auto">
-          <Upload className="h-4 w-4" /> Enviar PDF
+          <Upload className="h-4 w-4" /> Enviar Arquivo
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm p-4">
-        <Tabs value={currentFolder} onValueChange={setCurrentFolder} className="w-full">
-          <TabsList className="bg-transparent border-b rounded-none w-full justify-start h-auto p-0 mb-4 overflow-x-auto">
-            {['todos', 'acervo', 'certificado', 'contrato', 'orçamento', 'evidencia'].map(
-              (folder) => (
-                <TabsTrigger
-                  key={folder}
-                  value={folder}
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none px-4 py-2 capitalize font-medium text-muted-foreground"
-                >
-                  {folder === 'todos' ? 'Todas as Pastas' : folder + 's'}
-                </TabsTrigger>
-              ),
-            )}
-          </TabsList>
-        </Tabs>
+      <div className="bg-white rounded-xl border shadow-sm p-0 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+        {/* Sidebar Folder Navigation */}
+        <div className="w-full md:w-64 border-r bg-gray-50 p-4 shrink-0 flex flex-col">
+          <h4 className="font-bold text-xs text-brand-navy uppercase tracking-wider mb-4 px-2">
+            Repositório
+          </h4>
+          <nav className="space-y-1">
+            {folders.map((folder) => (
+              <button
+                key={folder}
+                onClick={() => setCurrentFolder(folder)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentFolder === folder ? 'bg-primary/10 text-primary border-r-2 border-primary rounded-r-none' : 'text-gray-600 hover:bg-gray-200'}`}
+              >
+                <FolderOpen
+                  className={`h-4 w-4 ${currentFolder === folder ? 'fill-primary/20 text-primary' : 'text-gray-400'}`}
+                />
+                <span className="capitalize">
+                  {folder === 'todos' ? 'Raiz (Todos)' : folder + 's'}
+                </span>
+              </button>
+            ))}
+          </nav>
+        </div>
 
-        <div className="overflow-hidden border rounded-lg">
-          <Table>
-            <TableHeader className="bg-secondary/50">
-              <TableRow>
-                <TableHead>Documento</TableHead>
-                <TableHead>Tamanho</TableHead>
-                <TableHead>Pasta / Categoria</TableHead>
-                <TableHead>Atualizado em</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredFiles.length === 0 && (
+        {/* Main Content Area */}
+        <div className="flex-1 p-4 md:p-6 flex flex-col">
+          <div className="mb-6 flex items-center bg-gray-100/50 p-3 rounded-lg border border-gray-200">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    onClick={() => setCurrentFolder('todos')}
+                    className="cursor-pointer font-medium text-brand-navy"
+                  >
+                    Supabase Storage
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink className="cursor-pointer text-gray-500">projetos</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink className="cursor-pointer text-gray-500">global</BreadcrumbLink>
+                </BreadcrumbItem>
+                {currentFolder !== 'todos' && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage className="capitalize font-bold text-brand-navy">
+                        {currentFolder}s
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+
+          <div className="overflow-x-auto border rounded-lg flex-1 bg-white shadow-sm">
+            <Table>
+              <TableHeader className="bg-secondary/30 sticky top-0 backdrop-blur-sm">
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                    <FolderOpen className="h-10 w-10 mx-auto text-gray-300 mb-3" />
-                    Nenhum documento encontrado nesta pasta.
-                  </TableCell>
+                  <TableHead className="w-[40%]">Nome do Arquivo</TableHead>
+                  <TableHead>Tamanho</TableHead>
+                  <TableHead>Atualizado em</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
-              )}
-              {filteredFiles.map((file) => (
-                <TableRow key={file.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <FileIcon className="h-5 w-5 text-red-500 shrink-0" />
-                      <span className="truncate max-w-[180px] md:max-w-[250px] block font-semibold text-brand-navy">
-                        {file.nome_arquivo}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {formatBytes(file.tamanho_arquivo)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="capitalize">
-                      /projetos/global/{file.tipo_documento}s/
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {new Date(file.data_atualizacao).toLocaleDateString('pt-BR')}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end items-center gap-1">
-                      {file.nome_arquivo.endsWith('.pdf') && (
+              </TableHeader>
+              <TableBody>
+                {filteredFiles.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-20 text-muted-foreground">
+                      <FolderOpen className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                      Esta pasta está vazia.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {filteredFiles.map((file) => (
+                  <TableRow key={file.id} className="group hover:bg-gray-50/70 transition-colors">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-3">
+                        {getFileIcon(file.nome_arquivo)}
+                        <div>
+                          <span className="truncate max-w-[200px] md:max-w-[300px] block font-semibold text-gray-900 group-hover:text-brand-navy">
+                            {file.nome_arquivo}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground capitalize">
+                            /projetos/global/{file.tipo_documento}s/
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {formatBytes(file.tamanho_arquivo)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {new Date(file.data_atualizacao).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        {file.nome_arquivo.toLowerCase().endsWith('.pdf') && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setPdfUrl(file.url_storage)
+                              setIsPdfOpen(true)
+                            }}
+                            title="Visualizar PDF"
+                          >
+                            <Eye className="h-4 w-4 text-brand-light" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            setPdfUrl(file.url_storage)
-                            setIsPdfOpen(true)
-                          }}
-                          title="Visualizar PDF"
+                          onClick={() => handleShare(file.id)}
+                          title="Link Público"
                         >
-                          <Eye className="h-4 w-4 text-brand-light" />
+                          <Upload className="h-4 w-4 text-brand-orange" />
                         </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleShare(file.id)}
-                        title="Link Público"
-                      >
-                        <Upload className="h-4 w-4 text-brand-orange" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => viewHistory(file)}
-                        title="Recuperação e Histórico"
-                      >
-                        <History className="h-4 w-4 text-blue-600" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(file)}
-                        title="Excluir"
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => viewHistory(file)}
+                          title="Histórico e Restauração"
+                        >
+                          <History className="h-4 w-4 text-blue-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(file)}
+                          title="Mover para Lixeira"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
 
@@ -275,7 +348,8 @@ export function DocumentsTab() {
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <RotateCcw className="h-5 w-5" /> Recuperação de Versão: {selectedDocName}
+              <RotateCcw className="h-5 w-5 text-brand-navy" /> Histórico de Versões:{' '}
+              {selectedDocName}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4 max-h-[60vh] overflow-y-auto">
@@ -299,7 +373,10 @@ export function DocumentsTab() {
                       {h.acao}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(h.data_acao).toLocaleString('pt-BR')}
+                      {new Date(h.data_acao).toLocaleString('pt-BR', {
+                        dateStyle: 'short',
+                        timeStyle: 'short',
+                      })}
                     </span>
                   </div>
                   <p className="text-sm font-medium">Responsável: {h.usuario_id}</p>
@@ -308,14 +385,14 @@ export function DocumentsTab() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="gap-2 text-brand-navy border-brand-navy/30"
+                    className="gap-2 text-brand-navy border-brand-navy/30 hover:bg-brand-navy/5"
                     onClick={() => handleRestore(h.id)}
                   >
                     <RotateCcw className="h-4 w-4" /> Restaurar
                   </Button>
                 )}
                 {i === 0 && (
-                  <Badge className="bg-green-100 text-green-800 border-none hover:bg-green-100">
+                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-none">
                     Versão Atual
                   </Badge>
                 )}
@@ -326,14 +403,17 @@ export function DocumentsTab() {
       </Dialog>
 
       <Dialog open={isPdfOpen} onOpenChange={setIsPdfOpen}>
-        <DialogContent className="max-w-4xl h-[85vh] p-0 overflow-hidden flex flex-col">
-          <DialogHeader className="px-6 py-4 border-b bg-gray-50 shrink-0">
-            <DialogTitle>Visualizador Integrado de PDF</DialogTitle>
+        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col rounded-xl bg-gray-900 border-gray-800">
+          <DialogHeader className="px-4 py-3 border-b border-gray-800 bg-gray-950 shrink-0 flex flex-row items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-gray-200 text-sm font-normal">
+              <FileIcon className="h-4 w-4 text-red-500" /> Visualizador PDF:{' '}
+              <span className="font-bold text-white">{selectedDocName || 'Documento'}</span>
+            </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 bg-gray-900 w-full h-full relative">
+          <div className="flex-1 w-full h-full relative flex items-center justify-center p-0 md:p-4">
             <iframe
               src={pdfUrl}
-              className="w-full h-full border-none absolute inset-0"
+              className="w-full h-full max-w-4xl bg-white shadow-2xl md:rounded border-none"
               title="PDF Preview"
             />
           </div>
@@ -343,12 +423,16 @@ export function DocumentsTab() {
       <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Compartilhamento Público</DialogTitle>
+            <DialogTitle>Compartilhamento Público de Arquivo</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
-            <Label>Link de Acesso (Token Único)</Label>
+            <Label>Link de Acesso (Token Único Criptografado)</Label>
             <div className="flex gap-2">
-              <Input readOnly value={shareToken} />
+              <Input
+                readOnly
+                value={shareToken}
+                className="font-mono text-xs text-gray-600 bg-gray-50"
+              />
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(shareToken)
@@ -358,6 +442,9 @@ export function DocumentsTab() {
                 Copiar
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Quem possuir este link poderá visualizar e baixar o documento sem precisar de senha.
+            </p>
           </div>
         </DialogContent>
       </Dialog>

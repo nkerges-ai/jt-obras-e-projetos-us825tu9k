@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { LogOut, Cloud, RefreshCw, Smartphone, Info, Wifi, WifiOff } from 'lucide-react'
+import {
+  LogOut,
+  Cloud,
+  RefreshCw,
+  Smartphone,
+  Info,
+  Wifi,
+  WifiOff,
+  FileText,
+  HardHat,
+  LifeBuoy,
+  Settings,
+} from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { useNetwork } from '@/hooks/use-network'
-import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
 
 import { OverviewTab } from './components/OverviewTab'
 import { ProjectsTab } from './components/ProjectsTab'
@@ -22,9 +32,23 @@ import { CompanyAssetsTab } from './components/CompanyAssetsTab'
 import { AdminChatTab } from './components/AdminChatTab'
 import { LixeiraTab } from './components/LixeiraTab'
 import { AuditoriaTab } from './components/AuditoriaTab'
+import { DocumentsTab } from './components/DocumentsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { getChatMessages } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarHeader,
+} from '@/components/ui/sidebar'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -34,6 +58,7 @@ export default function AdminDashboard() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [syncKey, setSyncKey] = useState(0)
   const [unreadAdmin, setUnreadAdmin] = useState(0)
+  const [activeView, setActiveView] = useState('visao-geral')
 
   const isAuth = sessionStorage.getItem('admin_auth') === 'true'
 
@@ -97,219 +122,292 @@ export default function AdminDashboard() {
     }
   }
 
-  return (
-    <div className="container mx-auto px-4 py-8 md:py-12 min-h-screen max-w-[1400px]">
-      <Alert className="mb-8 bg-blue-50 text-blue-900 border-blue-200">
-        <Info className="h-4 w-4 text-blue-600" />
-        <AlertTitle>Ambiente de Desenvolvimento</AlertTitle>
-        <AlertDescription>
-          Dados são salvos no cache local do navegador, garantindo pleno funcionamento offline em
-          campo.
-        </AlertDescription>
-      </Alert>
+  const renderContent = () => {
+    switch (activeView) {
+      case 'visao-geral':
+        return <OverviewTab key={`ov-${syncKey}`} />
+      case 'projetos':
+        return <ProjectsTab key={`proj-${syncKey}`} />
+      case 'cadastros':
+        return <RegistrationsTab key={`cad-${syncKey}`} />
+      case 'estoque':
+        return <InventoryTab key={`inv-${syncKey}`} />
+      case 'b2b':
+        return <B2BTab key={`b2b-${syncKey}`} />
 
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-brand-navy">
-            Portal Administrativo
-          </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
-            Gestão integrada de obras, cadastros, NRs e estoque.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <Button asChild variant="outline" className="gap-2 border-brand-navy text-brand-navy">
-            <Link to="/campo">App de Campo (Mobile)</Link>
-          </Button>
-          <Button
-            asChild
-            variant="default"
-            className="gap-2 bg-[#25D366] hover:bg-[#20b858] text-white"
-          >
-            <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
-              <WhatsAppIcon className="h-4 w-4" /> Fale com um especialista
-            </a>
-          </Button>
-          <div
-            className={cn(
-              'flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border shadow-sm',
-              isOnline
-                ? 'bg-green-50 text-green-700 border-green-200'
-                : 'bg-red-50 text-red-700 border-red-200',
-            )}
-          >
-            {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
-            <span className="font-medium hidden sm:inline">{isOnline ? 'Online' : 'Offline'}</span>
-          </div>
-          <Button
-            variant="outline"
-            onClick={handleInstallPWA}
-            className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20"
-          >
-            <Smartphone className="h-4 w-4" /> Instalar App
-          </Button>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 px-4 py-2 rounded-full border">
-            <Cloud
-              className={cn(
-                'h-4 w-4',
-                isSyncing ? 'text-blue-500 animate-pulse' : 'text-green-500',
-              )}
-            />
-            <span className="font-medium hidden sm:inline">
-              {isSyncing ? 'Sincronizando...' : 'Backup'}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 ml-1 rounded-full"
-              onClick={handleSync}
-              disabled={isSyncing}
-            >
-              <RefreshCw className={cn('h-3 w-3', isSyncing && 'animate-spin')} />
-            </Button>
-          </div>
-          <Button variant="destructive" onClick={handleLogout} className="gap-2">
-            <LogOut className="h-4 w-4" /> Sair
-          </Button>
+      case 'documentos':
+        return <DocumentsTab key={`docs-${syncKey}`} />
+      case 'modelos':
+        return <TemplatesTab />
+      case 'acervo':
+        return <LibraryTab key={`lib-${syncKey}`} />
+      case 'ativos':
+        return <CompanyAssetsTab key={`ast-${syncKey}`} />
+      case 'validade':
+        return <ValidityAlertsTab key={`val-${syncKey}`} />
+      case 'vencimentos':
+        return <TrainingExpirationsTab key={`ven-${syncKey}`} />
+
+      case 'mensagens':
+        return <AdminChatTab />
+      case 'chamados':
+        return <TicketsTab key={`tck-${syncKey}`} />
+      case 'auditoria':
+        return <AuditoriaTab />
+      case 'lixeira':
+        return <LixeiraTab />
+
+      default:
+        return <OverviewTab />
+    }
+  }
+
+  return (
+    <SidebarProvider>
+      <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden bg-gray-50 border-t">
+        <Sidebar className="border-r border-gray-200 bg-white">
+          <SidebarHeader className="p-4 border-b">
+            <h2 className="font-bold text-brand-navy flex items-center gap-2">
+              <Settings className="h-5 w-5" /> Portal Admin
+            </h2>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm">
+                <HardHat className="h-4 w-4" /> Gestão de Obras
+              </SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'visao-geral'}
+                    onClick={() => setActiveView('visao-geral')}
+                  >
+                    Visão Geral
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'projetos'}
+                    onClick={() => setActiveView('projetos')}
+                  >
+                    Obras e Custos
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'cadastros'}
+                    onClick={() => setActiveView('cadastros')}
+                  >
+                    Cadastros
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'estoque'}
+                    onClick={() => setActiveView('estoque')}
+                  >
+                    Estoque
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'b2b'}
+                    onClick={() => setActiveView('b2b')}
+                  >
+                    Locação (B2B)
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm mt-2">
+                <FileText className="h-4 w-4" /> Central de Documentos
+              </SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'documentos'}
+                    onClick={() => setActiveView('documentos')}
+                  >
+                    Central de Arquivos
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'modelos'}
+                    onClick={() => setActiveView('modelos')}
+                  >
+                    Gerar Documentações
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'acervo'}
+                    onClick={() => setActiveView('acervo')}
+                  >
+                    Acervo Técnico
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'ativos'}
+                    onClick={() => setActiveView('ativos')}
+                  >
+                    Galeria de Assinaturas
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'validade'}
+                    onClick={() => setActiveView('validade')}
+                  >
+                    Alertas de Validade
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'vencimentos'}
+                    onClick={() => setActiveView('vencimentos')}
+                  >
+                    Vencimentos NRs
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm mt-2">
+                <LifeBuoy className="h-4 w-4" /> Suporte & Sistema
+              </SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'mensagens'}
+                    onClick={() => setActiveView('mensagens')}
+                    className="justify-between"
+                  >
+                    Atendimento (Chat)
+                    {unreadAdmin > 0 && (
+                      <Badge className="bg-red-500 hover:bg-red-600 px-1.5 min-w-[20px] justify-center">
+                        {unreadAdmin}
+                      </Badge>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'chamados'}
+                    onClick={() => setActiveView('chamados')}
+                  >
+                    Chamados (Tickets)
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'auditoria'}
+                    onClick={() => setActiveView('auditoria')}
+                  >
+                    Auditoria
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'lixeira'}
+                    onClick={() => setActiveView('lixeira')}
+                  >
+                    Lixeira
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          <header className="h-14 border-b bg-white flex items-center justify-between px-4 shrink-0 shadow-sm z-10">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger />
+              <div className="h-4 w-px bg-gray-300 hidden sm:block"></div>
+              <h1 className="text-lg font-bold text-brand-navy hidden sm:block">Dashboard</h1>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="hidden lg:flex gap-2 text-xs h-8 border-brand-navy/30"
+              >
+                <Link to="/campo">App de Campo</Link>
+              </Button>
+              <div
+                className={cn(
+                  'flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border shadow-sm',
+                  isOnline
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'bg-red-50 text-red-700 border-red-200',
+                )}
+              >
+                {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+                <span className="hidden sm:inline font-medium">
+                  {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded-full border shadow-sm">
+                <Cloud
+                  className={cn(
+                    'h-3.5 w-3.5 ml-1',
+                    isSyncing ? 'text-blue-500 animate-pulse' : 'text-green-500',
+                  )}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 rounded-full"
+                  onClick={handleSync}
+                  disabled={isSyncing}
+                >
+                  <RefreshCw className={cn('h-3 w-3', isSyncing && 'animate-spin')} />
+                </Button>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleInstallPWA}
+                className="hidden md:flex gap-1.5 h-8 text-xs border-brand-navy/30"
+              >
+                <Smartphone className="h-3.5 w-3.5" /> App
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-1.5 ml-2 h-8 text-xs"
+              >
+                <LogOut className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Sair</span>
+              </Button>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-gray-50/50 relative">
+            <Alert className="mb-6 bg-blue-50 text-blue-900 border-blue-200 shadow-sm hidden md:flex items-start">
+              <Info className="h-4 w-4 text-blue-600 mt-0.5" />
+              <div>
+                <AlertTitle className="font-bold text-sm">
+                  Ambiente PWA de Alta Performance
+                </AlertTitle>
+                <AlertDescription className="text-xs mt-1 text-blue-800">
+                  Os dados funcionam localmente (offline first). Para compartilhar ou sincronizar,
+                  clique no ícone de nuvem superior.
+                </AlertDescription>
+              </div>
+            </Alert>
+
+            <div className="mx-auto w-full max-w-[1400px]">{renderContent()}</div>
+          </main>
         </div>
       </div>
-
-      <Tabs defaultValue="visao-geral" className="w-full">
-        <TabsList className="flex flex-wrap h-auto gap-2 bg-transparent justify-start mb-8 pb-2 overflow-x-auto w-full">
-          <TabsTrigger
-            value="visao-geral"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Visão Geral
-          </TabsTrigger>
-          <TabsTrigger
-            value="projetos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Obras e Custos
-          </TabsTrigger>
-          <TabsTrigger
-            value="mensagens"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Atendimento (Chat)
-            {unreadAdmin > 0 && (
-              <Badge className="ml-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] px-1.5 py-0 border-none shadow-none">
-                {unreadAdmin}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger
-            value="cadastros"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Cadastros
-          </TabsTrigger>
-          <TabsTrigger
-            value="modelos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Gerar Documentações
-          </TabsTrigger>
-          <TabsTrigger
-            value="acervo"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Acervo Técnico
-          </TabsTrigger>
-          <TabsTrigger
-            value="ativos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Galeria de Assinaturas
-          </TabsTrigger>
-          <TabsTrigger
-            value="validade"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Alertas de Validade
-          </TabsTrigger>
-          <TabsTrigger
-            value="vencimentos"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Vencimentos NRs
-          </TabsTrigger>
-          <TabsTrigger
-            value="estoque"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Estoque
-          </TabsTrigger>
-          <TabsTrigger
-            value="b2b"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Locação (B2B)
-          </TabsTrigger>
-          <TabsTrigger
-            value="chamados"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Suporte
-          </TabsTrigger>
-          <TabsTrigger
-            value="auditoria"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Auditoria
-          </TabsTrigger>
-          <TabsTrigger
-            value="lixeira"
-            className="text-sm h-10 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border shadow-sm"
-          >
-            Lixeira
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="visao-geral">
-          <OverviewTab key={`ov-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="projetos">
-          <ProjectsTab key={`proj-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="mensagens">
-          <AdminChatTab />
-        </TabsContent>
-        <TabsContent value="cadastros">
-          <RegistrationsTab key={`cad-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="modelos">
-          <TemplatesTab />
-        </TabsContent>
-        <TabsContent value="acervo">
-          <LibraryTab key={`lib-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="ativos">
-          <CompanyAssetsTab key={`ast-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="validade">
-          <ValidityAlertsTab key={`val-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="vencimentos">
-          <TrainingExpirationsTab key={`ven-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="estoque">
-          <InventoryTab key={`inv-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="b2b">
-          <B2BTab key={`b2b-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="chamados">
-          <TicketsTab key={`tck-${syncKey}`} />
-        </TabsContent>
-        <TabsContent value="auditoria">
-          <AuditoriaTab />
-        </TabsContent>
-        <TabsContent value="lixeira">
-          <LixeiraTab />
-        </TabsContent>
-      </Tabs>
-    </div>
+    </SidebarProvider>
   )
 }

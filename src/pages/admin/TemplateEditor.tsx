@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/select'
 import { ArrowLeft, Printer, Save, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { addDocumentoArmazenado, getProjects, Project } from '@/lib/storage'
+import { addDocumentoArmazenado, getProjects, Project, addAuditLog } from '@/lib/storage'
+import { RichTextEditor } from '@/components/RichTextEditor'
 
 export default function TemplateEditor() {
   const { type } = useParams()
@@ -21,6 +22,9 @@ export default function TemplateEditor() {
   const [projects, setProjects] = useState<Project[]>([])
   const [selectedProject, setSelectedProject] = useState('global')
   const [fileName, setFileName] = useState('')
+  const [content, setContent] = useState(
+    `<ul><li>Avaliação prévia do local de trabalho.</li><li>Isolamento e sinalização da área.</li><li>Verificação das condições dos EPIs.</li><li>Autorização expressa do supervisor.</li></ul>`,
+  )
 
   const getTitle = () => {
     switch (type) {
@@ -52,7 +56,7 @@ export default function TemplateEditor() {
       folder = 'certificados'
     }
 
-    addDocumentoArmazenado({
+    const novoDoc = addDocumentoArmazenado({
       projeto_id: selectedProject,
       tipo_documento: tipo,
       nome_arquivo: fileName + '.pdf',
@@ -61,6 +65,13 @@ export default function TemplateEditor() {
       tamanho_arquivo: 1024 * Math.floor(Math.random() * 5000 + 100), // Mock size 100KB-5MB
       usuario_id: 'admin_user',
       status: 'ativo',
+    })
+
+    addAuditLog({
+      userId: 'admin_user',
+      action: 'Gerar Documento Rico',
+      table: 'documentos_armazenados',
+      newData: JSON.stringify({ ...novoDoc, contentHtml: content }),
     })
 
     toast({
@@ -173,12 +184,9 @@ export default function TemplateEditor() {
 
             <div className="space-y-2">
               <label className="text-sm font-bold">
-                Checklist de Medidas de Segurança ({type?.toUpperCase()})
+                Checklist de Medidas de Segurança e Condições ({type?.toUpperCase()})
               </label>
-              <textarea
-                className="w-full border rounded-md p-3 min-h-[200px]"
-                defaultValue={`1. Avaliação prévia do local de trabalho.\n2. Isolamento e sinalização da área.\n3. Verificação das condições dos EPIs.\n4. Autorização expressa do supervisor.`}
-              ></textarea>
+              <RichTextEditor value={content} onChange={setContent} className="min-h-[300px]" />
             </div>
 
             <div className="pt-16 mt-16 border-t flex justify-between px-12">

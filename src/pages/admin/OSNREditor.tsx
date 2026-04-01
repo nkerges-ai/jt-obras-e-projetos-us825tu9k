@@ -21,9 +21,9 @@ export default function OSNREditor() {
     employee: { name: '', role: '', date: new Date().toISOString().split('T')[0] },
     safetyInstructions: {
       responsibilities:
-        'a) Cumprir as disposições legais e regulamentares sobre segurança e medicina do trabalho, inclusive as ordens de serviço expedidas pelo empregador;\nb) Usar o EPI fornecido pelo empregador;\nc) Submeter-se aos exames médicos previstos nas Normas Regulamentadoras – NR;\nd) Colaborar com a empresa na aplicação das Normas Regulamentadoras – NR.\n\nObs: Constitui ato faltoso a recusa injustificada do empregado ao cumprimento do disposto no item anterior, podendo acarretar demissão por justa causa.\n\nEm caso de Acidentes, Incidentes ou Condições Inseguras, comunicar imediatamente, Departamento de Segurança, Engenheiro, Administrativo, Mestre de obra e Encarregado.',
+        '<ul><li>Cumprir as disposições legais e regulamentares sobre segurança e medicina do trabalho, inclusive as ordens de serviço expedidas pelo empregador;</li><li>Usar o EPI fornecido pelo empregador;</li><li>Submeter-se aos exames médicos previstos nas Normas Regulamentadoras – NR;</li><li>Colaborar com a empresa na aplicação das Normas Regulamentadoras – NR.</li></ul><p><br></p><p><strong>Obs:</strong> Constitui ato faltoso a recusa injustificada do empregado ao cumprimento do disposto no item anterior, podendo acarretar demissão por justa causa.</p><p><br></p><p>Em caso de Acidentes, Incidentes ou Condições Inseguras, comunicar imediatamente, Departamento de Segurança, Engenheiro, Administrativo, Mestre de obra e Encarregado.</p>',
       prohibitions:
-        'Deixar de usar EPI;\nApresentar-se ao trabalho embriagado;\nOperar máquinas ou equipamentos sem treinamento/autorização.',
+        '<ul><li>Deixar de usar EPI;</li><li>Apresentar-se ao trabalho embriagado;</li><li>Operar máquinas ou equipamentos sem treinamento/autorização.</li></ul>',
     },
   })
 
