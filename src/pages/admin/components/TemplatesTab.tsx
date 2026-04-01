@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus, FileSignature, Receipt } from 'lucide-react'
+import { FileText, Plus, FileSignature, Receipt, Award } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -41,67 +41,68 @@ export function TemplatesTab() {
           <FileSignature className="h-5 w-5 text-primary" /> Geradores de Documentos e NRs
         </h3>
         <p className="text-muted-foreground text-sm">
-          Gere contratos, orçamentos e formulários de Normas Regulamentadoras automaticamente.
+          Gere certificados profissionais, ordens de serviço (NR-01) e contratos usando templates
+          padronizados.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card
+          className="hover:shadow-md transition-shadow cursor-pointer border-brand-light/30"
+          onClick={() => navigate('/admin/template/certificado')}
+        >
+          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+            <div className="h-16 w-16 bg-blue-50 text-brand-light rounded-full flex items-center justify-center">
+              <Award className="h-8 w-8" />
+            </div>
+            <div>
+              <h4 className="font-bold text-lg text-brand-navy">Gerador de Certificado</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                Template dinâmico para certificados de treinamentos (NR-35, etc).
+              </p>
+            </div>
+            <Button variant="default" className="w-full mt-2 bg-brand-light text-white">
+              Criar Certificado
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer border-brand-navy/30"
+          onClick={() => navigate('/admin/template/os-nr01')}
+        >
+          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+            <div className="h-16 w-16 bg-blue-50 text-brand-navy rounded-full flex items-center justify-center">
+              <FileText className="h-8 w-8" />
+            </div>
+            <div>
+              <h4 className="font-bold text-lg text-brand-navy">OS NR-01 (Padrão)</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                Ordem de Serviço de Segurança e Medicina do Trabalho.
+              </p>
+            </div>
+            <Button variant="default" className="w-full mt-2 bg-brand-navy text-white">
+              Emitir OS
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card
           className="hover:shadow-md transition-shadow cursor-pointer"
           onClick={() => setIsContractOpen(true)}
         >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+            <div className="h-16 w-16 bg-gray-50 text-gray-600 rounded-full flex items-center justify-center">
               <FileSignature className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">Gerador de Contrato</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Crie contratos de prestação de serviços com cláusulas padrão.
+                Crie contratos de prestação de serviços rapidamente.
               </p>
             </div>
             <Button variant="outline" className="w-full mt-2">
               Criar Contrato
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => setIsBudgetOpen(true)}
-        >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
-              <Receipt className="h-8 w-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg text-brand-navy">Gerador de Orçamento</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                Crie propostas comerciais detalhadas com itens e valores.
-              </p>
-            </div>
-            <Button variant="outline" className="w-full mt-2">
-              Criar Orçamento
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => navigate('/admin/template/os-nr01')}
-        >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
-              <FileText className="h-8 w-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg text-brand-navy">OS NR-01</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                Ordem de Serviço baseada na NR-01.
-              </p>
-            </div>
-            <Button variant="outline" className="w-full mt-2">
-              Emitir OS
             </Button>
           </CardContent>
         </Card>
@@ -125,62 +126,6 @@ export function TemplatesTab() {
             </Button>
           </CardContent>
         </Card>
-
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => navigate('/admin/template/nr35')}
-        >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
-              <FileText className="h-8 w-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg text-brand-navy">NR-35</h4>
-              <p className="text-sm text-muted-foreground mt-1">Permissão de Trabalho em Altura.</p>
-            </div>
-            <Button variant="outline" className="w-full mt-2">
-              Emitir NR-35
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => navigate('/admin/template/nr10')}
-        >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
-              <FileText className="h-8 w-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg text-brand-navy">NR-10</h4>
-              <p className="text-sm text-muted-foreground mt-1">Trabalhos com Eletricidade.</p>
-            </div>
-            <Button variant="outline" className="w-full mt-2">
-              Emitir NR-10
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => navigate('/admin/template/nr06')}
-        >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
-              <FileText className="h-8 w-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg text-brand-navy">NR-06</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                Controle de Equipamentos de Proteção.
-              </p>
-            </div>
-            <Button variant="outline" className="w-full mt-2">
-              Emitir NR-06
-            </Button>
-          </CardContent>
-        </Card>
       </div>
 
       <Dialog open={isContractOpen} onOpenChange={setIsContractOpen}>
@@ -201,55 +146,10 @@ export function TemplatesTab() {
             </div>
             <div className="space-y-2">
               <Label>Objeto do Contrato</Label>
-              <Textarea required placeholder="Descreva os serviços a serem prestados..." />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Valor Total (R$)</Label>
-                <Input required type="number" step="0.01" />
-              </div>
-              <div className="space-y-2">
-                <Label>Prazo de Execução (Dias)</Label>
-                <Input required type="number" />
-              </div>
+              <Textarea required placeholder="Descreva os serviços..." />
             </div>
             <Button type="submit" className="w-full">
               Gerar PDF
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isBudgetOpen} onOpenChange={setIsBudgetOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Gerar Orçamento (Proposta Comercial)</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateBudget} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>Cliente</Label>
-              <Input required placeholder="Nome do cliente" />
-            </div>
-            <div className="border p-4 rounded bg-gray-50 space-y-4">
-              <Label className="font-bold">Itens do Orçamento</Label>
-              <div className="grid grid-cols-12 gap-2 text-xs font-bold text-gray-500">
-                <div className="col-span-6">Descrição</div>
-                <div className="col-span-2">Qtd</div>
-                <div className="col-span-2">Valor Unit.</div>
-                <div className="col-span-2">Subtotal</div>
-              </div>
-              <div className="grid grid-cols-12 gap-2 items-center">
-                <Input className="col-span-6 h-8 text-sm" placeholder="Item 1" />
-                <Input className="col-span-2 h-8 text-sm" type="number" defaultValue="1" />
-                <Input className="col-span-2 h-8 text-sm" type="number" placeholder="R$" />
-                <Input className="col-span-2 h-8 text-sm bg-gray-100" readOnly placeholder="R$" />
-              </div>
-              <Button type="button" variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-2" /> Add Item
-              </Button>
-            </div>
-            <Button type="submit" className="w-full">
-              Gerar Orçamento em PDF
             </Button>
           </form>
         </DialogContent>

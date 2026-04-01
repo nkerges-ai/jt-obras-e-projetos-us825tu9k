@@ -205,6 +205,8 @@ export interface ServiceOrder {
   epis: string[]
   epcs: string[]
   status: 'Rascunho' | 'Finalizado'
+  employee?: { name: string; role: string; date: string }
+  safetyInstructions?: { responsibilities: string; prohibitions: string }
   biometricValidation?: BiometricValidation
   compliance?: {
     esocial?: string
@@ -867,6 +869,37 @@ export const addDocumentoArmazenado = (
   saveHistoricoDocumentos([history, ...getHistoricoDocumentos()])
 
   return newDoc
+}
+
+export const restoreDocumentoArmazenado = (historicoId: string, usuario_id: string) => {
+  const historicos = getHistoricoDocumentos()
+  const historico = historicos.find((h) => h.id === historicoId)
+  if (!historico || !historico.dados_anteriores) return null
+
+  const docs = getDocumentosArmazenados()
+  const index = docs.findIndex((d) => d.id === historico.documento_id)
+  if (index === -1) return null
+
+  const oldDoc = docs[index]
+  const restoredDoc = {
+    ...oldDoc,
+    ...historico.dados_anteriores,
+    data_atualizacao: new Date().toISOString(),
+  }
+  docs[index] = restoredDoc
+  saveDocumentosArmazenados(docs)
+
+  const newHistory: HistoricoDocumento = {
+    id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    documento_id: restoredDoc.id,
+    acao: 'restaurado',
+    usuario_id,
+    data_acao: restoredDoc.data_atualizacao,
+    dados_anteriores: oldDoc,
+    dados_novos: restoredDoc,
+  }
+  saveHistoricoDocumentos([newHistory, ...historicos])
+  return restoredDoc
 }
 
 export const updateDocumentoArmazenado = (

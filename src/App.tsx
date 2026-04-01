@@ -17,6 +17,7 @@ import PublicSignature from './pages/PublicSignature'
 import ClientLogin from './pages/client/Login'
 import ClientDashboard from './pages/client/Dashboard'
 import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
+import CertificateEditor from './pages/admin/CertificateEditor'
 import FieldApp from './pages/FieldApp'
 import { SyncManager } from './components/SyncManager'
 import PublicDocument from './pages/PublicDocument'
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/template/os-nr01" element={<OSNREditor />} />
+          <Route path="/admin/template/certificado" element={<CertificateEditor />} />
           <Route path="/admin/template/:type" element={<TemplateEditor />} />
           <Route path="/admin/acervo/template/:type" element={<EngineeringTemplateEditor />} />
           <Route path="/admin/acervo/pgr" element={<PGREditor />} />

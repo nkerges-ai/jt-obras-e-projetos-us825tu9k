@@ -1,211 +1,49 @@
-import { useEffect, useState } from 'react'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  getProjects,
-  getContractors,
-  Project,
-  Contractor,
-  ServiceOrder,
-  getPGRs,
-} from '@/lib/storage'
-import { EPI_LIST, EPC_LIST } from '@/lib/os-text'
-import { RefreshCw, Building2 } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
 
-interface OSFormProps {
-  data: Partial<ServiceOrder>
-  setData: (data: Partial<ServiceOrder>) => void
-  currentStep?: number
-}
-
-export function OSForm({ data, setData, currentStep = 1 }: OSFormProps) {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [contractors, setContractors] = useState<Contractor[]>([])
-  const { toast } = useToast()
-
-  useEffect(() => {
-    setProjects(getProjects())
-    setContractors(getContractors())
-  }, [])
-
-  const updateP = (f: string, v: string) =>
-    setData({ ...data, prestadora: { ...data.prestadora!, [f]: v } })
-  const updateE = (f: string, v: string) =>
-    setData({ ...data, execucao: { ...data.execucao!, [f]: v } })
-  const updateA = (f: string, v: string) =>
-    setData({ ...data, atividade: { ...data.atividade!, [f]: v } })
-
-  const toggleArr = (key: 'epis' | 'epcs', item: string) => {
-    const arr = data[key] || []
-    setData({ ...data, [key]: arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item] })
-  }
-
-  const handleSyncPGR = () => {
-    const pgrs = getPGRs()
-    const pgr = pgrs.find((p) => p.projectId === data.projectId) || pgrs[0]
-    if (pgr && pgr.riscos && pgr.riscos.length > 0) {
-      const riscosText = pgr.riscos
-        .map(
-          (r) =>
-            `> RISCO AVALIADO: ${r.perigo} (Nível: ${r.nivelRisco || 'Não definido'})\n  MEDIDA PREVENTIVA: ${r.medidas}`,
-        )
-        .join('\n\n')
-      setData({
-        ...data,
-        atividade: {
-          ...data.atividade!,
-          descricao:
-            (data.atividade?.descricao ? data.atividade.descricao + '\n\n' : '') +
-            '=== RISCOS E MEDIDAS IMPORTADOS DO PGR ===\n' +
-            riscosText,
-        },
-      })
-      toast({ title: 'Sincronização Concluída', description: 'Dados do PGR (NR-01) importados.' })
-    } else {
-      toast({
-        title: 'PGR Incompatível',
-        description: 'Nenhum risco encontrado para sincronizar.',
-        variant: 'destructive',
-      })
-    }
-  }
-
-  const handleSelectContractor = (id: string) => {
-    const c = contractors.find((c) => c.id === id)
-    if (c) {
-      setData({
-        ...data,
-        prestadora: {
-          ...data.prestadora,
-          nome: c.name,
-          cnpj: c.cnpj,
-          endereco: c.address,
-          responsavel: c.contact,
-        },
-      })
-      toast({ title: 'Autopreenchimento', description: 'Dados do contratante inseridos.' })
-    }
-  }
-
-  const handleProjectChange = (v: string) => {
-    const proj = projects.find((p) => p.id === v)
-    if (proj) {
-      let combined = data.atividade?.descricao || ''
-      if (proj.description && !combined.includes(proj.description)) {
-        combined += (combined ? '\n\n' : '') + proj.description
-      }
-      if (proj.detailedDescription && !combined.includes(proj.detailedDescription)) {
-        combined += (combined ? '\n\n' : '') + proj.detailedDescription
-      }
-
-      setData({
-        ...data,
-        projectId: v,
-        atividade: { ...data.atividade!, descricao: combined.trim() },
-      })
-
-      if (proj.description || proj.detailedDescription) {
-        toast({ title: 'Autopreenchimento', description: 'Dados da obra sincronizados com a OS.' })
-      }
-    } else {
-      setData({ ...data, projectId: v })
-    }
-  }
-
-  const isFinalizado = data.status === 'Finalizado'
-
+export function OSForm({ data, setData, currentStep }: any) {
   if (currentStep === 1) {
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">Identificação Principal</h3>
-        <div className="space-y-2">
-          <Label>Obra / Projeto Vinculado</Label>
-          <Select
-            disabled={isFinalizado}
-            value={data.projectId}
-            onValueChange={handleProjectChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione um contrato..." />
-            </SelectTrigger>
-            <SelectContent>
-              {projects.map((p) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+        <div className="border-b pb-2 mb-4">
+          <h2 className="text-xl font-bold text-brand-navy">1. Identificação do Empregado</h2>
+          <p className="text-sm text-muted-foreground">
+            Dados básicos para a Ordem de Serviço (NR-01).
+          </p>
         </div>
-        <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-          <div className="space-y-2 pb-3 border-b border-gray-200">
-            <Label className="text-xs text-brand-navy font-bold flex items-center gap-1">
-              <Building2 className="h-4 w-4" /> Autopreencher com Banco de Dados
-            </Label>
-            <Select disabled={isFinalizado} onValueChange={handleSelectContractor}>
-              <SelectTrigger className="h-10 bg-white">
-                <SelectValue placeholder="Selecionar Contratante..." />
-              </SelectTrigger>
-              <SelectContent>
-                {contractors.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Nome do Estabelecimento / Prestadora</Label>
+        <div className="space-y-3">
+          <Label className="font-bold">Nome do Colaborador</Label>
+          <Input
+            value={data.employee?.name || ''}
+            onChange={(e) =>
+              setData({ ...data, employee: { ...data.employee, name: e.target.value } })
+            }
+            placeholder="Ex: João da Silva"
+            className="h-12"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <Label className="font-bold">Função</Label>
             <Input
-              disabled={isFinalizado}
-              value={data.prestadora?.nome}
-              onChange={(e) => updateP('nome', e.target.value)}
+              value={data.employee?.role || ''}
+              onChange={(e) =>
+                setData({ ...data, employee: { ...data.employee, role: e.target.value } })
+              }
+              placeholder="Ex: Técnico de Segurança do Trabalho"
+              className="h-12"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>CNPJ</Label>
-              <Input
-                disabled={isFinalizado}
-                value={data.prestadora?.cnpj}
-                onChange={(e) => updateP('cnpj', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Telefone</Label>
-              <Input
-                disabled={isFinalizado}
-                value={data.prestadora?.telefone}
-                onChange={(e) => updateP('telefone', e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Endereço Completo</Label>
+          <div className="space-y-3">
+            <Label className="font-bold">Data de Emissão</Label>
             <Input
-              disabled={isFinalizado}
-              value={data.prestadora?.endereco}
-              onChange={(e) => updateP('endereco', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Responsável Local</Label>
-            <Input
-              disabled={isFinalizado}
-              value={data.prestadora?.responsavel}
-              onChange={(e) => updateP('responsavel', e.target.value)}
+              type="date"
+              value={data.employee?.date || ''}
+              onChange={(e) =>
+                setData({ ...data, employee: { ...data.employee, date: e.target.value } })
+              }
+              className="h-12"
             />
           </div>
         </div>
@@ -215,118 +53,69 @@ export function OSForm({ data, setData, currentStep = 1 }: OSFormProps) {
 
   if (currentStep === 2) {
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-        <div className="flex items-center justify-between border-b pb-2">
-          <h3 className="font-bold text-lg text-brand-navy">Execução e Atividade</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSyncPGR}
-            className="gap-1 h-8 text-xs bg-brand-light/10 text-brand-navy border-brand-light/20 hover:bg-brand-light/20"
-          >
-            <RefreshCw className="h-3 w-3" /> Importar PGR
-          </Button>
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 flex-1 flex flex-col">
+        <div className="border-b pb-2 mb-4">
+          <h2 className="text-xl font-bold text-brand-navy">2. Instruções de Segurança</h2>
+          <p className="text-sm text-muted-foreground">
+            Obrigações e proibições de acordo com a NR-01.
+          </p>
         </div>
-        <div className="space-y-2">
-          <Label>Local Exato de Execução</Label>
-          <Input
-            disabled={isFinalizado}
-            value={data.execucao?.local}
-            onChange={(e) => updateE('local', e.target.value)}
-            placeholder="Ex: Fachada Sul, Casa de Máquinas..."
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Data de Início Prevista</Label>
-            <Input
-              disabled={isFinalizado}
-              type="date"
-              value={data.execucao?.dataInicio}
-              onChange={(e) => updateE('dataInicio', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Data de Fim Prevista</Label>
-            <Input
-              disabled={isFinalizado}
-              type="date"
-              value={data.execucao?.dataFim}
-              onChange={(e) => updateE('dataFim', e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label>Setor de Atuação</Label>
-          <Input
-            disabled={isFinalizado}
-            value={data.atividade?.setor}
-            onChange={(e) => updateA('setor', e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Descrição Detalhada e Riscos Inerentes</Label>
+        <div className="space-y-3 flex-1 flex flex-col">
+          <Label className="font-bold">Cabe ao Empregado (Responsabilidades)</Label>
           <Textarea
-            disabled={isFinalizado}
-            className="min-h-[180px]"
-            value={data.atividade?.descricao}
-            onChange={(e) => updateA('descricao', e.target.value)}
-            placeholder="Descreva a atividade, equipamentos utilizados e os riscos identificados no PGR..."
+            className="flex-1 min-h-[150px] resize-none text-sm leading-relaxed"
+            value={data.safetyInstructions?.responsibilities || ''}
+            onChange={(e) =>
+              setData({
+                ...data,
+                safetyInstructions: {
+                  ...data.safetyInstructions,
+                  responsibilities: e.target.value,
+                },
+              })
+            }
+          />
+        </div>
+        <div className="space-y-3 flex-1 flex flex-col mt-4">
+          <Label className="font-bold text-red-600">Proibições</Label>
+          <Textarea
+            className="flex-1 min-h-[100px] resize-none text-sm leading-relaxed border-red-200 focus-visible:ring-red-500"
+            value={data.safetyInstructions?.prohibitions || ''}
+            onChange={(e) =>
+              setData({
+                ...data,
+                safetyInstructions: { ...data.safetyInstructions, prohibitions: e.target.value },
+              })
+            }
           />
         </div>
       </div>
     )
   }
 
-  if (currentStep === 3) {
-    return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-        <h3 className="font-bold text-lg text-brand-navy border-b pb-2">
-          Definição de EPIs e EPCs
-        </h3>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-            <Label className="font-bold text-brand-navy text-base">EPIs Obrigatórios</Label>
-            <div className="space-y-3 mt-2">
-              {EPI_LIST.map((epi) => (
-                <div key={epi} className="flex items-center space-x-3">
-                  <Checkbox
-                    disabled={isFinalizado}
-                    id={epi}
-                    checked={data.epis?.includes(epi)}
-                    onCheckedChange={() => toggleArr('epis', epi)}
-                    className="w-5 h-5 rounded border-gray-400"
-                  />
-                  <Label htmlFor={epi} className="text-sm font-medium cursor-pointer leading-tight">
-                    {epi}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-            <Label className="font-bold text-brand-navy text-base">EPCs Obrigatórios</Label>
-            <div className="space-y-3 mt-2">
-              {EPC_LIST.map((epc) => (
-                <div key={epc} className="flex items-center space-x-3">
-                  <Checkbox
-                    disabled={isFinalizado}
-                    id={epc}
-                    checked={data.epcs?.includes(epc)}
-                    onCheckedChange={() => toggleArr('epcs', epc)}
-                    className="w-5 h-5 rounded border-gray-400"
-                  />
-                  <Label htmlFor={epc} className="text-sm font-medium cursor-pointer leading-tight">
-                    {epc}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+  return (
+    <div className="text-center py-16 flex flex-col items-center justify-center animate-in fade-in">
+      <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
       </div>
-    )
-  }
-
-  return null
+      <h2 className="text-2xl font-bold text-brand-navy mb-2">Dados Preenchidos</h2>
+      <p className="text-muted-foreground max-w-md">
+        A Ordem de Serviço foi configurada. Revise o documento na visualização ao lado e utilize os
+        botões superiores para assinar, salvar no acervo ou imprimir.
+      </p>
+    </div>
+  )
 }

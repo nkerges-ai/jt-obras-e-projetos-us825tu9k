@@ -1,174 +1,63 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import {
-  ArrowLeft,
-  Printer,
-  Save,
-  ScanFace,
-  CheckCircle,
-  PenTool,
-  Upload,
-  Fingerprint,
-  Stamp,
-  ChevronRight,
-  ChevronLeft,
-  Mail,
-} from 'lucide-react'
+import { ArrowLeft, Printer, Save, Fingerprint, PenTool } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import {
-  ServiceOrder,
-  getServiceOrders,
-  saveServiceOrders,
-  BiometricValidation,
-  getCompanyAssets,
-  CompanyAsset,
-} from '@/lib/storage'
+import { saveServiceOrders, getServiceOrders, addAuditLog } from '@/lib/storage'
 import { OSForm } from './components/OSForm'
 import { OSPreview } from './components/OSPreview'
-import { BiometricCapture } from '@/components/BiometricCapture'
 import { WizardStepper } from '@/components/WizardStepper'
-import { EmailSenderDialog } from '@/components/EmailSenderDialog'
 
 export default function OSNREditor() {
   const { toast } = useToast()
   const [step, setStep] = useState(1)
-  const wizardSteps = ['Identificação', 'Atividade', 'EPIs e EPCs', 'Revisão e Assinatura']
+  const wizardSteps = ['Identificação', 'Instruções e Proibições', 'Revisão e Assinatura']
 
-  const [data, setData] = useState<Partial<ServiceOrder>>({
-    osNumber: '',
+  const [data, setData] = useState<any>({
+    id: `os_${Date.now()}`,
+    osNumber: '001',
     revision: '00',
     status: 'Rascunho',
-    prestadora: { nome: '', cnpj: '', endereco: '', responsavel: '', telefone: '' },
-    execucao: { local: '', dataInicio: '', dataFim: '' },
-    atividade: { descricao: '', setor: '' },
-    epis: [],
-    epcs: [],
-    compliance: { esocial: '', receita: '' },
+    employee: { name: '', role: '', date: new Date().toISOString().split('T')[0] },
+    safetyInstructions: {
+      responsibilities:
+        'a) Cumprir as disposições legais e regulamentares sobre segurança e medicina do trabalho, inclusive as ordens de serviço expedidas pelo empregador;\nb) Usar o EPI fornecido pelo empregador;\nc) Submeter-se aos exames médicos previstos nas Normas Regulamentadoras – NR;\nd) Colaborar com a empresa na aplicação das Normas Regulamentadoras – NR.\n\nObs: Constitui ato faltoso a recusa injustificada do empregado ao cumprimento do disposto no item anterior, podendo acarretar demissão por justa causa.\n\nEm caso de Acidentes, Incidentes ou Condições Inseguras, comunicar imediatamente, Departamento de Segurança, Engenheiro, Administrativo, Mestre de obra e Encarregado.',
+      prohibitions:
+        'Deixar de usar EPI;\nApresentar-se ao trabalho embriagado;\nOperar máquinas ou equipamentos sem treinamento/autorização.',
+    },
   })
-
-  const [assets, setAssets] = useState<CompanyAsset[]>([])
-  const [isBiometricOpen, setIsBiometricOpen] = useState(false)
-  const [isAdminSignOpen, setIsAdminSignOpen] = useState(false)
-  const [isEmailOpen, setIsEmailOpen] = useState(false)
-
-  const [signType, setSignType] = useState<'draw' | 'upload' | 'govbr'>('draw')
-  const [uploadedSign, setUploadedSign] = useState<string | null>(null)
-  const [govbrLink, setGovbrLink] = useState('')
-  const [tempSignature, setTempSignature] = useState<string | null>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isDrawing, setIsDrawing] = useState(false)
-  const [isAdminBiometricOpen, setIsAdminBiometricOpen] = useState(false)
-
-  useEffect(() => {
-    const orders = getServiceOrders()
-    const nextId = String(orders.length + 1).padStart(4, '0')
-    setData((prev) => ({ ...prev, osNumber: nextId }))
-    setAssets(getCompanyAssets())
-  }, [])
 
   const handleSave = () => {
     const orders = getServiceOrders()
-    const newOrder = { ...data, id: data.id || `os_${Date.now()}` } as ServiceOrder
-    setData(newOrder)
-    if (data.id) saveServiceOrders(orders.map((o) => (o.id === data.id ? newOrder : o)))
-    else saveServiceOrders([newOrder, ...orders])
-    toast({ title: 'Rascunho Salvo', description: 'Ordem de Serviço salva com sucesso.' })
+    saveServiceOrders([data, ...orders])
+    addAuditLog({
+      userId: 'Admin',
+      action: 'Criar OS NR01',
+      table: 'Ordem de Serviço',
+      newData: JSON.stringify(data),
+    })
+    toast({ title: 'Salvo no Acervo', description: 'Ordem de Serviço salva com sucesso.' })
   }
 
-  const applyCompanyAsset = () => {
-    const asset =
-      assets.find((a) => a.type === 'signature') || assets.find((a) => a.type === 'stamp')
-    if (asset) {
-      setData({
-        ...data,
-        adminSignature: {
-          type: 'upload',
-          data: asset.dataUrl,
-          date: new Date().toLocaleString('pt-BR'),
-        },
-      })
-      toast({ title: 'Validação Aplicada', description: 'Ativo oficial da empresa inserido.' })
-    } else {
-      toast({
-        title: 'Não Encontrado',
-        description: 'Nenhum ativo configurado na Biblioteca.',
-        variant: 'destructive',
-      })
-    }
-  }
-
-  // Draw Logic
-  const startDrawing = (e: any) => {
-    const ctx = canvasRef.current?.getContext('2d')
-    if (!ctx) return
-    const rect = canvasRef.current!.getBoundingClientRect()
-    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
-    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    setIsDrawing(true)
-  }
-  const draw = (e: any) => {
-    if (!isDrawing) return
-    const ctx = canvasRef.current?.getContext('2d')
-    if (!ctx) return
-    const rect = canvasRef.current!.getBoundingClientRect()
-    const x = (e.touches ? e.touches[0].clientX : e.nativeEvent.clientX) - rect.left
-    const y = (e.touches ? e.touches[0].clientY : e.nativeEvent.clientY) - rect.top
-    ctx.lineTo(x, y)
-    ctx.stroke()
-  }
-  const stopDrawing = () => setIsDrawing(false)
-
-  const handleSaveAdminSignature = () => {
-    if (signType === 'draw' && canvasRef.current)
-      setTempSignature(canvasRef.current.toDataURL('image/png'))
-    else if (signType === 'upload') setTempSignature(uploadedSign)
-    else if (signType === 'govbr') setTempSignature('govbr')
-    setIsAdminSignOpen(false)
-    setTimeout(() => setIsAdminBiometricOpen(true), 300)
-  }
-
-  const finalizeAdminSignature = (bioData: BiometricValidation) => {
+  const signEletronic = () => {
     setData({
       ...data,
       adminSignature: {
-        type: signType,
-        data: signType !== 'govbr' ? tempSignature! : undefined,
-        link: signType === 'govbr' ? govbrLink : undefined,
-        date: new Date().toLocaleString('pt-BR'),
-        biometric: bioData,
+        type: 'draw',
+        data: 'https://img.usecurling.com/i?q=signature&color=blue&shape=hand-drawn',
+        date: new Date().toLocaleString(),
       },
     })
-    setIsAdminBiometricOpen(false)
-    toast({ title: 'Assinatura Registrada' })
+    toast({ title: 'Assinado', description: 'Assinatura eletrônica aplicada.' })
+  }
+
+  const signGovbr = () => {
+    setData({ ...data, adminSignature: { type: 'govbr', date: new Date().toLocaleString() } })
+    toast({ title: 'Validado Gov.br', description: 'Assinatura digital Gov.br aplicada.' })
   }
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
-      <BiometricCapture
-        open={isBiometricOpen}
-        onCapture={(b) => {
-          setData({ ...data, biometricValidation: b, status: 'Finalizado' })
-          setIsBiometricOpen(false)
-        }}
-        onCancel={() => setIsBiometricOpen(false)}
-      />
-      <BiometricCapture
-        open={isAdminBiometricOpen}
-        onCapture={finalizeAdminSignature}
-        onCancel={() => setIsAdminBiometricOpen(false)}
-      />
-      <EmailSenderDialog
-        open={isEmailOpen}
-        onOpenChange={setIsEmailOpen}
-        documentName={`OS NR01 - ${data.prestadora?.nome || 'Prestadora'}`}
-      />
-
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -178,63 +67,26 @@ export default function OSNREditor() {
               </Link>
             </Button>
             <h1 className="font-bold text-lg text-brand-navy truncate hidden sm:block">
-              Ordem de Serviço (NR01)
+              Gerador OS (NR-01 Padrão)
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
             {step === wizardSteps.length && (
               <>
-                {!data.adminSignature ? (
-                  <>
-                    <Button
-                      size="sm"
-                      onClick={applyCompanyAsset}
-                      variant="outline"
-                      className="gap-2 border-brand-navy text-brand-navy hidden lg:flex"
-                    >
-                      <Stamp className="h-4 w-4" /> Validar Oficial
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => setIsAdminSignOpen(true)}
-                      className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white hidden sm:flex"
-                    >
-                      <PenTool className="h-4 w-4" /> Assinar (JT)
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="gap-2 bg-green-100 text-green-700 pointer-events-none hidden sm:flex"
-                  >
-                    <CheckCircle className="h-4 w-4" /> JT Assinado
-                  </Button>
-                )}
-                {!data.biometricValidation ? (
-                  <Button
-                    onClick={() => setIsBiometricOpen(true)}
-                    size="sm"
-                    className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
-                  >
-                    <ScanFace className="h-4 w-4" /> Assinar (Pres.)
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="gap-2 bg-green-100 text-green-700 pointer-events-none"
-                  >
-                    <CheckCircle className="h-4 w-4" /> Pres. Assinado
-                  </Button>
-                )}
                 <Button
-                  onClick={() => setIsEmailOpen(true)}
                   size="sm"
+                  onClick={signEletronic}
                   variant="outline"
-                  className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 hidden md:flex"
+                  className="gap-2 text-brand-navy"
                 >
-                  <Mail className="h-4 w-4" /> Enviar por E-mail
+                  <PenTool className="h-4 w-4" /> Assinatura Eletrônica
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={signGovbr}
+                  className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
+                >
+                  <Fingerprint className="h-4 w-4" /> Assinatura Gov.br
                 </Button>
                 <Button
                   variant="outline"
@@ -242,7 +94,7 @@ export default function OSNREditor() {
                   onClick={handleSave}
                   className="gap-2 hidden sm:flex"
                 >
-                  <Save className="h-4 w-4" /> Salvar
+                  <Save className="h-4 w-4" /> Salvar Acervo
                 </Button>
                 <Button onClick={() => window.print()} size="sm" className="gap-2">
                   <Printer className="h-4 w-4" /> Imprimir
@@ -255,136 +107,29 @@ export default function OSNREditor() {
 
       <WizardStepper steps={wizardSteps} currentStep={step} setStep={setStep} />
 
-      <div className="container mx-auto px-4 print:p-0 flex flex-col items-center">
+      <div className="container mx-auto px-4 print:p-0 flex flex-col lg:flex-row items-start gap-8 mt-6">
         {step < wizardSteps.length && (
-          <div className="w-full max-w-2xl bg-white p-6 md:p-8 rounded-xl border shadow-sm print:hidden min-h-[450px] flex flex-col">
+          <div className="w-full lg:w-[450px] shrink-0 bg-white p-6 md:p-8 rounded-xl border shadow-sm print:hidden flex flex-col sticky top-[180px]">
             <OSForm data={data} setData={setData} currentStep={step} />
             <div className="flex justify-between mt-auto pt-8 border-t mt-8">
-              <Button
-                variant="outline"
-                onClick={() => setStep(step - 1)}
-                disabled={step === 1}
-                className="gap-2"
-              >
-                <ChevronLeft className="w-4 h-4" /> Voltar
+              <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 1}>
+                Voltar
               </Button>
               <Button
                 onClick={() => setStep(step + 1)}
-                className="gap-2 bg-brand-light hover:bg-brand-light/90 text-white"
+                className="bg-brand-light hover:bg-brand-light/90 text-white"
               >
-                Avançar <ChevronRight className="w-4 h-4" />
+                Avançar
               </Button>
             </div>
           </div>
         )}
         <div
-          className={`w-full flex-col justify-start print:block print:w-full ${step < wizardSteps.length ? 'hidden print:flex' : 'flex'}`}
+          className={`w-full bg-white shadow-xl border print:shadow-none print:border-none ${step === wizardSteps.length ? 'mx-auto max-w-4xl' : ''}`}
         >
           <OSPreview data={data} />
         </div>
       </div>
-
-      <Dialog open={isAdminSignOpen} onOpenChange={setIsAdminSignOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Assinatura Emissora (JT Obras)</DialogTitle>
-          </DialogHeader>
-          <Tabs
-            value={signType}
-            onValueChange={(v) => setSignType(v as any)}
-            className="w-full pt-4"
-          >
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="draw" className="gap-1 text-xs">
-                <PenTool className="h-3 w-3" /> Desenho
-              </TabsTrigger>
-              <TabsTrigger value="upload" className="gap-1 text-xs">
-                <Upload className="h-3 w-3" /> Imagem
-              </TabsTrigger>
-              <TabsTrigger value="govbr" className="gap-1 text-xs">
-                <Fingerprint className="h-3 w-3" /> Gov.br
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="gap-1 text-xs">
-                <Stamp className="h-3 w-3" /> Galeria
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="draw" className="space-y-4 mt-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-50 touch-none">
-                <canvas
-                  ref={canvasRef}
-                  width={400}
-                  height={200}
-                  className="w-full h-[200px] cursor-crosshair"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="upload" className="space-y-4 mt-4">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const f = e.target.files?.[0]
-                  if (f) {
-                    const r = new FileReader()
-                    r.onload = (ev) => setUploadedSign(ev.target?.result as string)
-                    r.readAsDataURL(f)
-                  }
-                }}
-              />
-            </TabsContent>
-            <TabsContent value="govbr" className="space-y-4 mt-4">
-              <Input placeholder="Código Gov.br" />
-            </TabsContent>
-            <TabsContent value="gallery" className="space-y-4 mt-4">
-              {assets.filter((a) => a.type === 'signature').length === 0 ? (
-                <div className="text-center text-sm text-gray-500 py-4 border rounded bg-gray-50">
-                  Nenhuma assinatura na galeria.
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 max-h-[200px] overflow-y-auto p-1">
-                  {assets
-                    .filter((a) => a.type === 'signature')
-                    .map((a) => (
-                      <div
-                        key={a.id}
-                        className="border-2 rounded-lg p-2 cursor-pointer hover:border-brand-light hover:bg-blue-50 flex flex-col items-center justify-center h-24"
-                        onClick={() => {
-                          setUploadedSign(a.dataUrl)
-                          setSignType('upload')
-                          toast({
-                            title: 'Assinatura Selecionada',
-                            description: 'Clique em Avançar para concluir.',
-                          })
-                        }}
-                      >
-                        <img
-                          src={a.dataUrl}
-                          className="max-h-12 object-contain mix-blend-multiply"
-                        />
-                        <span className="text-[10px] mt-2 font-bold truncate w-full text-center text-brand-navy">
-                          {a.name}
-                        </span>
-                      </div>
-                    ))}
-                </div>
-              )}
-            </TabsContent>
-            <Button
-              onClick={handleSaveAdminSignature}
-              className="w-full mt-4 bg-brand-navy text-white hover:bg-brand-navy/90"
-            >
-              Avançar para Validação
-            </Button>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
