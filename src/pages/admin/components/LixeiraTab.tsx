@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react'
-import { getDeletedItems, saveDeletedItems, DeletedItem, addAuditLog, saveTechnicalDocuments, getTechnicalDocuments } from '@/lib/storage'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  getDeletedItems,
+  saveDeletedItems,
+  DeletedItem,
+  addAuditLog,
+  saveTechnicalDocuments,
+  getTechnicalDocuments,
+} from '@/lib/storage'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Trash2, RotateCcw } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
@@ -18,17 +32,25 @@ export function LixeiraTab() {
       const docs = getTechnicalDocuments()
       saveTechnicalDocuments([item.data, ...docs])
     }
-    
-    const newItems = items.filter(i => i.id !== item.id)
+
+    const newItems = items.filter((i) => i.id !== item.id)
     setItems(newItems)
     saveDeletedItems(newItems)
-    addAuditLog({ userId: 'Admin', action: 'Restaurar', table: item.type, newData: JSON.stringify(item.data) })
-    
-    toast({ title: 'Item Restaurado', description: 'O item foi movido de volta para a base ativa.' })
+    addAuditLog({
+      userId: 'Admin',
+      action: 'Restaurar',
+      table: item.type,
+      newData: JSON.stringify(item.data),
+    })
+
+    toast({
+      title: 'Item Restaurado',
+      description: 'O item foi movido de volta para a base ativa.',
+    })
   }
 
   const handlePurge = (id: string) => {
-    const newItems = items.filter(i => i.id !== id)
+    const newItems = items.filter((i) => i.id !== id)
     setItems(newItems)
     saveDeletedItems(newItems)
     addAuditLog({ userId: 'Admin', action: 'Exclusão Permanente', table: 'Lixeira' })
@@ -70,10 +92,22 @@ export function LixeiraTab() {
                 <TableCell>{item.data?.name || item.data?.title || 'Sem Nome'}</TableCell>
                 <TableCell>{new Date(item.deletedAt).toLocaleString('pt-BR')}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" onClick={() => handleRestore(item)} className="text-blue-600 hover:text-blue-800 hover:bg-blue-50" title="Restaurar">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRestore(item)}
+                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                    title="Restaurar"
+                  >
                     <RotateCcw className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handlePurge(item.id)} className="text-red-600 hover:text-red-800 hover:bg-red-50" title="Excluir Permanentemente">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handlePurge(item.id)}
+                    className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                    title="Excluir Permanentemente"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>

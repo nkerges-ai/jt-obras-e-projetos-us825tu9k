@@ -13,7 +13,7 @@ import { addAuditLog } from '@/lib/storage'
 export function TemplatesTab() {
   const navigate = useNavigate()
   const { toast } = useToast()
-  
+
   const [isContractOpen, setIsContractOpen] = useState(false)
   const [isBudgetOpen, setIsBudgetOpen] = useState(false)
 
@@ -28,7 +28,10 @@ export function TemplatesTab() {
     e.preventDefault()
     setIsBudgetOpen(false)
     addAuditLog({ userId: 'Admin', action: 'Gerar Orçamento', table: 'Documentos' })
-    toast({ title: 'Orçamento Gerado', description: 'O modelo de orçamento foi criado e arquivado.' })
+    toast({
+      title: 'Orçamento Gerado',
+      description: 'O modelo de orçamento foi criado e arquivado.',
+    })
   }
 
   return (
@@ -43,59 +46,90 @@ export function TemplatesTab() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setIsContractOpen(true)}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => setIsContractOpen(true)}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
               <FileSignature className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">Gerador de Contrato</h4>
-              <p className="text-sm text-muted-foreground mt-1">Crie contratos de prestação de serviços com cláusulas padrão.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Crie contratos de prestação de serviços com cláusulas padrão.
+              </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Criar Contrato</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Criar Contrato
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setIsBudgetOpen(true)}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => setIsBudgetOpen(true)}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
               <Receipt className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">Gerador de Orçamento</h4>
-              <p className="text-sm text-muted-foreground mt-1">Crie propostas comerciais detalhadas com itens e valores.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Crie propostas comerciais detalhadas com itens e valores.
+              </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Criar Orçamento</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Criar Orçamento
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/template/os-nr01')}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/os-nr01')}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">OS NR-01</h4>
-              <p className="text-sm text-muted-foreground mt-1">Ordem de Serviço baseada na NR-01.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Ordem de Serviço baseada na NR-01.
+              </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Emitir OS</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Emitir OS
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/template/nr18')}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/nr18')}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">PGR (NR-18)</h4>
-              <p className="text-sm text-muted-foreground mt-1">Programa de Gerenciamento de Riscos.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Programa de Gerenciamento de Riscos.
+              </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Emitir NR-18</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Emitir NR-18
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/template/nr35')}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/nr35')}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8" />
@@ -104,11 +138,16 @@ export function TemplatesTab() {
               <h4 className="font-bold text-lg text-brand-navy">NR-35</h4>
               <p className="text-sm text-muted-foreground mt-1">Permissão de Trabalho em Altura.</p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Emitir NR-35</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Emitir NR-35
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/template/nr10')}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/nr10')}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8" />
@@ -117,20 +156,29 @@ export function TemplatesTab() {
               <h4 className="font-bold text-lg text-brand-navy">NR-10</h4>
               <p className="text-sm text-muted-foreground mt-1">Trabalhos com Eletricidade.</p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Emitir NR-10</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Emitir NR-10
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin/template/nr06')}>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/nr06')}
+        >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8" />
             </div>
             <div>
               <h4 className="font-bold text-lg text-brand-navy">NR-06</h4>
-              <p className="text-sm text-muted-foreground mt-1">Controle de Equipamentos de Proteção.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Controle de Equipamentos de Proteção.
+              </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">Emitir NR-06</Button>
+            <Button variant="outline" className="w-full mt-2">
+              Emitir NR-06
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -165,7 +213,9 @@ export function TemplatesTab() {
                 <Input required type="number" />
               </div>
             </div>
-            <Button type="submit" className="w-full">Gerar PDF</Button>
+            <Button type="submit" className="w-full">
+              Gerar PDF
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -194,9 +244,13 @@ export function TemplatesTab() {
                 <Input className="col-span-2 h-8 text-sm" type="number" placeholder="R$" />
                 <Input className="col-span-2 h-8 text-sm bg-gray-100" readOnly placeholder="R$" />
               </div>
-              <Button type="button" variant="outline" size="sm"><Plus className="h-4 w-4 mr-2"/> Add Item</Button>
+              <Button type="button" variant="outline" size="sm">
+                <Plus className="h-4 w-4 mr-2" /> Add Item
+              </Button>
             </div>
-            <Button type="submit" className="w-full">Gerar Orçamento em PDF</Button>
+            <Button type="submit" className="w-full">
+              Gerar Orçamento em PDF
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

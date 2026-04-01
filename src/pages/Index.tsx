@@ -13,7 +13,7 @@ export default function Index() {
   useEffect(() => {
     addVisitorLog({
       link: window.location.pathname,
-      status: 'Visit'
+      status: 'Visit',
     })
   }, [])
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -20,7 +20,13 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
-import { getTechnicalDocuments, saveTechnicalDocuments, softDelete, addAuditLog, TechnicalDocument } from '@/lib/storage'
+import {
+  getTechnicalDocuments,
+  saveTechnicalDocuments,
+  softDelete,
+  addAuditLog,
+  TechnicalDocument,
+} from '@/lib/storage'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -64,7 +70,12 @@ export function DocumentsTab() {
         const updated = [doc, ...files]
         setFiles(updated)
         saveTechnicalDocuments(updated)
-        addAuditLog({ userId: 'Admin', action: 'Upload', table: 'Document', newData: JSON.stringify(doc) })
+        addAuditLog({
+          userId: 'Admin',
+          action: 'Upload',
+          table: 'Document',
+          newData: JSON.stringify(doc),
+        })
         toast({ title: 'Arquivo salvo', description: `${newFile.name} adicionado.` })
       }
       reader.readAsDataURL(newFile)
@@ -74,10 +85,15 @@ export function DocumentsTab() {
 
   const handleDelete = (doc: TechnicalDocument) => {
     softDelete('Document', doc)
-    const updated = files.filter(f => f.id !== doc.id)
+    const updated = files.filter((f) => f.id !== doc.id)
     setFiles(updated)
     saveTechnicalDocuments(updated)
-    addAuditLog({ userId: 'Admin', action: 'Delete', table: 'Document', previousData: JSON.stringify(doc) })
+    addAuditLog({
+      userId: 'Admin',
+      action: 'Delete',
+      table: 'Document',
+      previousData: JSON.stringify(doc),
+    })
     toast({ title: 'Movido para Lixeira' })
   }
 
@@ -159,13 +175,28 @@ export function DocumentsTab() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleShare(file.id)} title="Link Público">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleShare(file.id)}
+                      title="Link Público"
+                    >
                       <Upload className="h-4 w-4 text-brand-orange" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleSendWhatsApp(file.name)} title="Enviar por WhatsApp">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleSendWhatsApp(file.name)}
+                      title="Enviar por WhatsApp"
+                    >
                       <MessageCircle className="h-4 w-4 text-green-600" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(file)} title="Excluir">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(file)}
+                      title="Excluir"
+                    >
                       <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>
@@ -185,10 +216,14 @@ export function DocumentsTab() {
             <Label>Link de Acesso (Token Único)</Label>
             <div className="flex gap-2">
               <Input readOnly value={shareToken} />
-              <Button onClick={() => {
-                navigator.clipboard.writeText(shareToken)
-                toast({ title: 'Link copiado' })
-              }}>Copiar</Button>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(shareToken)
+                  toast({ title: 'Link copiado' })
+                }}
+              >
+                Copiar
+              </Button>
             </div>
           </div>
         </DialogContent>

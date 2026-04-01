@@ -29,8 +29,28 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { BarChart, Bar, PieChart, Pie, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export function OverviewTab() {
   const [chartType, setChartType] = useState<'bar' | 'pie' | 'line' | 'area'>('bar')
@@ -61,22 +81,23 @@ export function OverviewTab() {
     const counts = {
       'Em orçamento': 0,
       'Em andamento': 0,
-      'Concluído': 0
+      Concluído: 0,
     }
-    projects.forEach(p => {
-      if (counts[p.status as keyof typeof counts] !== undefined) counts[p.status as keyof typeof counts]++
+    projects.forEach((p) => {
+      if (counts[p.status as keyof typeof counts] !== undefined)
+        counts[p.status as keyof typeof counts]++
     })
     setChartData([
       { name: 'Em orçamento', value: counts['Em orçamento'], fill: 'hsl(var(--primary))' },
       { name: 'Em andamento', value: counts['Em andamento'], fill: '#3498db' },
-      { name: 'Concluído', value: counts['Concluído'], fill: '#25D366' }
+      { name: 'Concluído', value: counts['Concluído'], fill: '#25D366' },
     ])
 
     // Validity alerts
     const today = new Date()
     const docs = JSON.parse(localStorage.getItem('jt_validities_v4') || '[]')
     const employees = JSON.parse(localStorage.getItem('jt_employees_v1') || '[]')
-    
+
     const alerts: any[] = []
     docs.forEach((d: any) => {
       const exp = new Date(d.expirationDate)
@@ -183,7 +204,10 @@ export function OverviewTab() {
           </Select>
         </CardHeader>
         <CardContent className="pt-6">
-          <ChartContainer config={{ value: { label: "Projetos", color: "hsl(var(--primary))" } }} className="h-[300px] w-full">
+          <ChartContainer
+            config={{ value: { label: 'Projetos', color: 'hsl(var(--primary))' } }}
+            className="h-[300px] w-full"
+          >
             <ResponsiveContainer width="100%" height="100%">
               {chartType === 'bar' ? (
                 <BarChart data={chartData}>
@@ -199,7 +223,15 @@ export function OverviewTab() {
                 </BarChart>
               ) : chartType === 'pie' ? (
                 <PieChart>
-                  <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label
+                  >
                     {chartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
@@ -212,7 +244,12 @@ export function OverviewTab() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               ) : (
                 <AreaChart data={chartData}>
@@ -220,7 +257,13 @@ export function OverviewTab() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="hsl(var(--primary))"
+                    fill="hsl(var(--primary))"
+                    fillOpacity={0.3}
+                  />
                 </AreaChart>
               )}
             </ResponsiveContainer>
@@ -232,16 +275,25 @@ export function OverviewTab() {
         <Card className="bg-orange-50 border-orange-200 shadow-sm mb-6">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg text-orange-800 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5" /> Alertas de Validade (Menos de 30 dias ou Expirados)
+              <AlertTriangle className="h-5 w-5" /> Alertas de Validade (Menos de 30 dias ou
+              Expirados)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {validityAlerts.map((alert, idx) => (
-                <div key={idx} className="bg-white p-3 rounded border border-orange-100 flex justify-between items-center">
+                <div
+                  key={idx}
+                  className="bg-white p-3 rounded border border-orange-100 flex justify-between items-center"
+                >
                   <div className="text-sm font-bold text-gray-800">{alert.name}</div>
-                  <Badge variant="destructive" className={alert.diff < 0 ? 'bg-red-600' : 'bg-orange-500'}>
-                    {alert.diff < 0 ? `Vencido há ${Math.abs(alert.diff)} dias` : `${alert.diff} dias`}
+                  <Badge
+                    variant="destructive"
+                    className={alert.diff < 0 ? 'bg-red-600' : 'bg-orange-500'}
+                  >
+                    {alert.diff < 0
+                      ? `Vencido há ${Math.abs(alert.diff)} dias`
+                      : `${alert.diff} dias`}
                   </Badge>
                 </div>
               ))}

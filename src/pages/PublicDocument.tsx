@@ -12,13 +12,17 @@ export default function PublicDocument() {
     if (token) {
       const docId = atob(token)
       const docs = getTechnicalDocuments()
-      const found = docs.find(d => d.id === docId)
+      const found = docs.find((d) => d.id === docId)
       if (found) setDoc(found)
     }
   }, [token])
 
   if (!doc) {
-    return <div className="min-h-screen flex items-center justify-center p-8 text-center text-muted-foreground bg-gray-50">Documento não encontrado ou token inválido.</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 text-center text-muted-foreground bg-gray-50">
+        Documento não encontrado ou token inválido.
+      </div>
+    )
   }
 
   return (
