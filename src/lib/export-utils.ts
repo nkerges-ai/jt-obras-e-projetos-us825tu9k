@@ -1,4 +1,8 @@
-export function exportHtmlToWord(htmlContent: string, fileName: string) {
+export function exportHtmlToWord(
+  htmlContent: string,
+  fileName: string,
+  orientation: 'portrait' | 'landscape' = 'portrait',
+) {
   // Create a temporary element to parse and clean the HTML
   const tempDiv = document.createElement('div')
   tempDiv.innerHTML = htmlContent
@@ -39,6 +43,7 @@ export function exportHtmlToWord(htmlContent: string, fileName: string) {
   applyInline('.font-bold', 'font-weight: bold;')
   applyInline('.uppercase', 'text-transform: uppercase;')
   applyInline('.tracking-widest', 'letter-spacing: 0.1em;')
+  applyInline('.print-page-break', 'page-break-after: always;')
 
   const cleanHtml = tempDiv.innerHTML
   const safeName = fileName.replace(/[^a-zA-Z0-9_\-\s]/g, '_').trim()
@@ -51,7 +56,7 @@ export function exportHtmlToWord(htmlContent: string, fileName: string) {
       <style>
         @page {
           margin: 1.5cm;
-          mso-page-orientation: portrait;
+          mso-page-orientation: ${orientation};
         }
         body { 
           font-family: Arial, sans-serif; 
