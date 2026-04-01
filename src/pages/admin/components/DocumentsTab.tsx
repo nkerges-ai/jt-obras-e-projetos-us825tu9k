@@ -165,7 +165,7 @@ export function DocumentsTab() {
     return <FileText className="h-6 w-6 text-gray-500 shrink-0" />
   }
 
-  const folders = ['todos', 'acervo', 'certificado', 'contrato', 'orçamento', 'evidencia']
+  const folders = ['todos', 'acervo', 'certificado', 'os', 'contrato', 'orçamento', 'evidencia']
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -207,7 +207,11 @@ export function DocumentsTab() {
                   className={`h-4 w-4 ${currentFolder === folder ? 'fill-primary/20 text-primary' : 'text-gray-400'}`}
                 />
                 <span className="capitalize">
-                  {folder === 'todos' ? 'Raiz (Todos)' : folder + 's'}
+                  {folder === 'todos'
+                    ? 'Raiz (Todos)'
+                    : folder === 'os'
+                      ? 'Ordens de Serviço (OS)'
+                      : folder + 's'}
                 </span>
               </button>
             ))}

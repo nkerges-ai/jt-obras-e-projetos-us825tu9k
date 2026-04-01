@@ -8,25 +8,73 @@ import { Label } from '@/components/ui/label'
 import { addAuditLog, addDocumentoArmazenado } from '@/lib/storage'
 import { exportHtmlToWord } from '@/lib/export-utils'
 import { RichTextEditor } from '@/components/RichTextEditor'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import logo from '@/assets/logotipo-c129e.jpg'
+
+const CERTIFICATE_TEMPLATES: Record<
+  string,
+  { courseName: string; courseDesc: string; workload: string }
+> = {
+  'NR-06': {
+    courseName: 'NR-06 EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL - EPI',
+    courseDesc:
+      '<p>Treinamento sobre o uso adequado, guarda e conservação de Equipamentos de Proteção Individual (EPI), conforme as diretrizes da Norma Regulamentadora NR-06.</p>',
+    workload: '04 (Quatro)',
+  },
+  'NR-10': {
+    courseName: 'NR-10 SEGURANÇA EM INSTALAÇÕES E SERVIÇOS EM ELETRICIDADE',
+    courseDesc:
+      '<p>Treinamento Básico de Segurança em Instalações e Serviços com Eletricidade, abordando os riscos elétricos, medidas de controle e primeiros socorros, em conformidade com a Norma Regulamentadora NR-10.</p>',
+    workload: '40 (Quarenta)',
+  },
+  'NR-18': {
+    courseName: 'NR-18 CONDIÇÕES DE SEGURANÇA E SAÚDE NO TRABALHO NA INDÚSTRIA DA CONSTRUÇÃO',
+    courseDesc:
+      '<p>Treinamento admissional/periódico abordando os riscos inerentes à função, condições do ambiente de trabalho, uso de EPI e EPC, de acordo com a Norma Regulamentadora NR-18.</p>',
+    workload: '06 (Seis)',
+  },
+  'NR-35': {
+    courseName: 'NR-35 SEGURANÇA E SAÚDE NOS TRABALHOS EM ALTURA',
+    courseDesc:
+      '<p>Curso de capacitação para trabalhos em altura, englobando normas, análise de risco, sistemas de proteção contra quedas e condutas em situações de emergência, conforme estabelecido pela Norma Regulamentadora NR-35.</p>',
+    workload: '08 (Oito)',
+  },
+}
 
 export default function CertificateEditor() {
   const { toast } = useToast()
 
   const [data, setData] = useState({
-    companyName: 'GOMAP ENGENHARIA E CONSTRUÇÕES EIRELLI',
-    companyCnpj: '00.729.193/0001-16',
+    companyName: 'JT OBRAS E MANUTENÇÕES LTDA',
+    companyCnpj: '63.243.791/0001-09',
     employeeName: '',
-    courseName: 'NR-35 SEGURANÇA E SAÚDE NOS TRABALHOS EM ALTURA',
-    courseDesc: '<p>CURSO DE CAPACITAÇÃO PARA TRABALHOS EM ALTURA</p>',
-    workload: '08 (Oito)',
+    courseName: CERTIFICATE_TEMPLATES['NR-35'].courseName,
+    courseDesc: CERTIFICATE_TEMPLATES['NR-35'].courseDesc,
+    workload: CERTIFICATE_TEMPLATES['NR-35'].workload,
     location: 'São Paulo',
-    date: '21 de Julho de 2023',
+    date: new Date().toLocaleDateString('pt-BR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
     signerName: 'João Vitor Araujo Pessoa',
     signerRole: 'Téc. Seg. do Trabalho',
     signerMte: '0106195',
     signerCrea: '5070806995',
     signature: '',
   })
+
+  const handleTemplateChange = (val: string) => {
+    if (CERTIFICATE_TEMPLATES[val]) {
+      setData({ ...data, ...CERTIFICATE_TEMPLATES[val] })
+    }
+  }
 
   const handleSave = () => {
     addDocumentoArmazenado({
@@ -106,7 +154,7 @@ export default function CertificateEditor() {
               <Download className="h-4 w-4" /> Word
             </Button>
             <Button onClick={() => window.print()} size="sm" className="gap-2">
-              <Printer className="h-4 w-4" /> Imprimir
+              <Printer className="h-4 w-4" /> Imprimir (PDF)
             </Button>
           </div>
         </div>
@@ -117,11 +165,25 @@ export default function CertificateEditor() {
           <h2 className="font-bold mb-4 text-brand-navy border-b pb-2">Dados do Certificado</h2>
           <div className="space-y-4">
             <div className="space-y-1">
+              <Label>Modelo de Certificado (NR)</Label>
+              <Select onValueChange={handleTemplateChange} defaultValue="NR-35">
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um template..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NR-06">NR-06 (EPIs)</SelectItem>
+                  <SelectItem value="NR-10">NR-10 (Eletricidade)</SelectItem>
+                  <SelectItem value="NR-18">NR-18 (Construção Civil)</SelectItem>
+                  <SelectItem value="NR-35">NR-35 (Trabalho em Altura)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
               <Label>Nome do Colaborador</Label>
               <Input
                 value={data.employeeName}
                 onChange={(e) => setData({ ...data, employeeName: e.target.value })}
-                placeholder="Nome completo"
+                placeholder="Nome completo do participante"
               />
             </div>
             <div className="space-y-1">
@@ -140,17 +202,17 @@ export default function CertificateEditor() {
             </div>
 
             <div className="space-y-1">
-              <Label>Descrição do Curso</Label>
+              <Label>Descrição do Curso / Conteúdo</Label>
               <RichTextEditor
                 value={data.courseDesc}
                 onChange={(val) => setData({ ...data, courseDesc: val })}
-                className="min-h-[100px]"
+                className="min-h-[120px]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-2 border-t">
               <div className="space-y-1">
-                <Label>Título (ex: NR-35)</Label>
+                <Label>Título do Curso</Label>
                 <Input
                   value={data.courseName}
                   onChange={(e) => setData({ ...data, courseName: e.target.value })}
@@ -183,7 +245,7 @@ export default function CertificateEditor() {
             </div>
 
             <div className="pt-2 border-t space-y-4">
-              <Label className="font-bold text-gray-500">Dados do Assinante (Técnico)</Label>
+              <Label className="font-bold text-gray-500">Dados do Instrutor / Responsável</Label>
               <div className="space-y-1">
                 <Label>Nome</Label>
                 <Input
@@ -224,62 +286,55 @@ export default function CertificateEditor() {
             className="relative bg-white w-[1000px] h-[700px] shrink-0 shadow-2xl print:shadow-none print:w-full print:h-auto p-4 select-none"
           >
             {/* Certificate Outer Border */}
-            <div className="absolute inset-4 border-[14px] border-gray-300 pointer-events-none z-10"></div>
+            <div className="absolute inset-4 border-[14px] border-[#005A9C] pointer-events-none z-10 opacity-90"></div>
             {/* Certificate Inner Border */}
-            <div className="absolute inset-[24px] border-[2px] border-gray-400 pointer-events-none z-10"></div>
+            <div className="absolute inset-[24px] border-[2px] border-[#009FE3] pointer-events-none z-10 opacity-70"></div>
 
             {/* Screws */}
-            <div className="absolute top-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-500 border border-gray-600 shadow-sm z-20 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gray-700/50"></div>
+            <div className="absolute top-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
             </div>
-            <div className="absolute top-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-500 border border-gray-600 shadow-sm z-20 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gray-700/50"></div>
+            <div className="absolute top-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
             </div>
-            <div className="absolute bottom-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-500 border border-gray-600 shadow-sm z-20 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gray-700/50"></div>
+            <div className="absolute bottom-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
             </div>
-            <div className="absolute bottom-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-500 border border-gray-600 shadow-sm z-20 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gray-700/50"></div>
+            <div className="absolute bottom-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
             </div>
 
             {/* Content Area */}
             <div className="w-full h-full pt-16 pb-12 px-24 flex flex-col items-center text-center relative z-0">
-              {/* Logo Simulation */}
-              <div className="flex items-center justify-center mb-10 mt-6">
-                <div className="bg-blue-900 text-white font-black italic text-4xl px-4 py-2 mr-4 tracking-tighter">
-                  {data.companyName.split(' ')[0]}
-                </div>
-                <div className="text-left flex flex-col text-blue-900">
-                  <span className="font-black text-xl leading-none tracking-tight">
-                    {data.companyName.replace(data.companyName.split(' ')[0], '').trim()}
-                  </span>
-                </div>
+              {/* JT Branding Integration */}
+              <div className="flex items-center justify-center mb-8 mt-2 h-[80px]">
+                <img src={logo} alt="JT Obras e Manutenções" className="h-full object-contain" />
               </div>
 
-              <h1 className="text-4xl font-black mb-4 tracking-[0.2em] text-gray-900 uppercase">
+              <h1 className="text-4xl font-black mb-4 tracking-[0.2em] text-[#005A9C] uppercase">
                 CERTIFICADO
               </h1>
               <h2 className="text-2xl font-bold italic mb-8 text-gray-800">"{data.courseName}"</h2>
 
-              <div className="text-lg leading-[2.2] text-justify mb-12 text-gray-800 w-full px-12">
+              <div className="text-lg leading-[2.2] text-justify mb-10 text-gray-800 w-full px-12">
                 <span className="inline">Certificamos que o colaborador </span>
                 <span className="font-bold uppercase border-b border-black inline">
                   {data.employeeName || '______________________________________'}
                 </span>
-                <span className="inline"> da </span>
+                <span className="inline"> da empresa </span>
                 <span className="font-bold uppercase inline">{data.companyName}</span>
                 <span className="inline">
                   , CNPJ {data.companyCnpj} participou do seguinte programa:
                 </span>
 
                 <div
-                  className="prose prose-sm mx-auto my-4 text-center font-semibold italic text-gray-700"
+                  className="prose prose-sm mx-auto my-6 text-center text-gray-800 leading-relaxed font-medium"
                   dangerouslySetInnerHTML={{ __html: data.courseDesc }}
                 />
 
-                <span className="inline block text-center mt-4">
-                  conforme estabelecido nas Normas Regulamentadoras do Ministério da economia, com
-                  carga horária de <span className="font-bold">{data.workload}</span> horas.
+                <span className="inline block text-center mt-6">
+                  conforme estabelecido nas Normas Regulamentadoras, com carga horária de{' '}
+                  <span className="font-bold">{data.workload}</span> horas.
                 </span>
               </div>
 

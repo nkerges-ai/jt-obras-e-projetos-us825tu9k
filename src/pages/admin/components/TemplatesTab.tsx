@@ -78,11 +78,11 @@ export function TemplatesTab() {
             <div>
               <h4 className="font-bold text-lg text-brand-navy">OS NR-01 (Padrão)</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Ordem de Serviço de Segurança e Medicina do Trabalho.
+                Ordem de Serviço de Segurança e Medicina do Trabalho (Documento).
               </p>
             </div>
             <Button variant="default" className="w-full mt-2 bg-brand-navy text-white">
-              Emitir OS
+              Emitir OS (Documento)
             </Button>
           </CardContent>
         </Card>

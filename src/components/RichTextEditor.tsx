@@ -1,6 +1,18 @@
 import React, { useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, List, ListOrdered, Heading1, Heading2, Underline } from 'lucide-react'
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Heading1,
+  Heading2,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface RichTextEditorProps {
@@ -72,6 +84,47 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           title="Sublinhado"
         >
           <Underline className="h-4 w-4 text-gray-700" />
+        </Button>
+        <div className="w-px h-5 bg-gray-300 mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-gray-200"
+          onClick={() => execCommand('justifyLeft')}
+          title="Alinhar à Esquerda"
+        >
+          <AlignLeft className="h-4 w-4 text-gray-700" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-gray-200"
+          onClick={() => execCommand('justifyCenter')}
+          title="Centralizar"
+        >
+          <AlignCenter className="h-4 w-4 text-gray-700" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-gray-200"
+          onClick={() => execCommand('justifyRight')}
+          title="Alinhar à Direita"
+        >
+          <AlignRight className="h-4 w-4 text-gray-700" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-gray-200"
+          onClick={() => execCommand('justifyFull')}
+          title="Justificar"
+        >
+          <AlignJustify className="h-4 w-4 text-gray-700" />
         </Button>
         <div className="w-px h-5 bg-gray-300 mx-1" />
         <Button
