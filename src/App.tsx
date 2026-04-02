@@ -17,6 +17,9 @@ import PublicSignature from './pages/PublicSignature'
 import ClientLogin from './pages/client/Login'
 import ClientDashboard from './pages/client/Dashboard'
 import EngineeringTemplateEditor from './pages/admin/EngineeringTemplateEditor'
+import ContractEditor from './pages/admin/ContractEditor'
+import BudgetEditor from './pages/admin/BudgetEditor'
+import LetterheadEditor from './pages/admin/LetterheadEditor'
 import CertificateEditor from './pages/admin/CertificateEditor'
 import FieldApp from './pages/FieldApp'
 import { SyncManager } from './components/SyncManager'
@@ -34,9 +37,12 @@ const App = () => (
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/template/os-nr01" element={<OSNREditor />} />
-          <Route path="/admin/template/certificado" element={<CertificateEditor />} />
-          <Route path="/admin/template/:type" element={<TemplateEditor />} />
+          <Route path="/admin/template/os-nr01/:id?" element={<OSNREditor />} />
+          <Route path="/admin/template/certificado/:id?" element={<CertificateEditor />} />
+          <Route path="/admin/template/contrato/:id?" element={<ContractEditor />} />
+          <Route path="/admin/template/orcamento/:id?" element={<BudgetEditor />} />
+          <Route path="/admin/template/timbrado/:id?" element={<LetterheadEditor />} />
+          <Route path="/admin/template/nr18/:id?" element={<CertificateEditor />} />
           <Route path="/admin/acervo/template/:type" element={<EngineeringTemplateEditor />} />
           <Route path="/admin/acervo/pgr" element={<PGREditor />} />
           <Route path="/cliente/login" element={<ClientLogin />} />

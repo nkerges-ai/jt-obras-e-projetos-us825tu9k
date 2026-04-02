@@ -1,9 +1,15 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Printer, Save, Fingerprint, PenTool } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { saveServiceOrders, getServiceOrders, addAuditLog } from '@/lib/storage'
+import {
+  saveServiceOrders,
+  getServiceOrders,
+  addAuditLog,
+  getTechnicalDocuments,
+  saveTechnicalDocuments,
+} from '@/lib/storage'
 import { OSForm } from './components/OSForm'
 import { OSPreview } from './components/OSPreview'
 import { WizardStepper } from '@/components/WizardStepper'
@@ -27,13 +33,42 @@ export default function OSNREditor() {
     },
   })
 
+  const { id } = useParams<{ id: string }>()
+
+  useEffect(() => {
+    if (id) {
+      const docs = getTechnicalDocuments()
+      const doc = docs.find((d) => d.id === id)
+      if (doc && doc.data) {
+        setData(doc.data)
+      }
+    }
+  }, [id])
+
   const handleSave = () => {
-    const orders = getServiceOrders()
-    saveServiceOrders([data, ...orders])
+    const docs = getTechnicalDocuments()
+    const newDoc = {
+      id: id || `os_${Date.now()}`,
+      name: `OS_NR01_${data.employee?.name || 'Colaborador'}.pdf`,
+      category: 'Ordem de Serviço',
+      uploadDate: new Date().toISOString(),
+      projectId: 'global',
+      isRestricted: false,
+      url: 'data:application/pdf;base64,dummy',
+      type: 'os' as const,
+      data: data,
+    }
+
+    if (id) {
+      saveTechnicalDocuments(docs.map((d) => (d.id === id ? newDoc : d)))
+    } else {
+      saveTechnicalDocuments([newDoc, ...docs])
+    }
+
     addAuditLog({
       userId: 'Admin',
-      action: 'Criar OS NR01',
-      table: 'Ordem de Serviço',
+      action: id ? 'Editar OS NR01' : 'Criar OS NR01',
+      table: 'Documentos',
       newData: JSON.stringify(data),
     })
     toast({ title: 'Salvo no Acervo', description: 'Ordem de Serviço salva com sucesso.' })

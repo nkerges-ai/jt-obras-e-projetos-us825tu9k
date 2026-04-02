@@ -222,23 +222,15 @@ export default function AdminDashboard() {
 
             <SidebarGroup>
               <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm mt-2">
-                <FileText className="h-4 w-4" /> Central de Documentos
+                <FileText className="h-4 w-4" /> Gestão Documental
               </SidebarGroupLabel>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={activeView === 'documentos'}
-                    onClick={() => setActiveView('documentos')}
-                  >
-                    Central de Arquivos
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     isActive={activeView === 'modelos'}
                     onClick={() => setActiveView('modelos')}
                   >
-                    Gerar Documentações
+                    Gerador de Documento
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
@@ -255,6 +247,14 @@ export default function AdminDashboard() {
                     onClick={() => setActiveView('ativos')}
                   >
                     Galeria de Assinaturas
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'documentos'}
+                    onClick={() => setActiveView('documentos')}
+                  >
+                    Repositório de Arquivos
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>

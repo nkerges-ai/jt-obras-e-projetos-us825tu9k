@@ -232,6 +232,8 @@ export interface TechnicalDocument {
   docNumber?: string
   validade?: string
   content?: string
+  data?: any
+  type?: 'upload' | 'certificado' | 'contrato' | 'orcamento' | 'timbrado' | 'os' | 'nr18'
   attendanceList?: { id: string; name: string; cpf: string; signature?: string }[]
   evidencePhotos?: string[]
   compliance?: {

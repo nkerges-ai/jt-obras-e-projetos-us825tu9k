@@ -64,6 +64,8 @@ export function OverviewTab() {
     unreadMessages: 0,
   })
 
+  const [sigChartData, setSigChartData] = useState<any[]>([])
+
   const [logs, setLogs] = useState<NotificationLog[]>([])
 
   useEffect(() => {
@@ -87,10 +89,24 @@ export function OverviewTab() {
       if (counts[p.status as keyof typeof counts] !== undefined)
         counts[p.status as keyof typeof counts]++
     })
+    const docCounts = {
+      OS: getServiceOrders().length,
+      PGR: getPGRs().length,
+      Acervo: getTechnicalDocuments().length,
+    }
+
     setChartData([
-      { name: 'Em orçamento', value: counts['Em orçamento'], fill: 'hsl(var(--primary))' },
-      { name: 'Em andamento', value: counts['Em andamento'], fill: '#3498db' },
-      { name: 'Concluído', value: counts['Concluído'], fill: '#25D366' },
+      { name: 'Obras Abertas', value: counts['Em andamento'], fill: '#3498db' },
+      { name: 'OS Geradas', value: docCounts['OS'], fill: '#8e44ad' },
+      { name: 'Docs Acervo', value: docCounts['Acervo'], fill: '#f39c12' },
+    ])
+
+    const sigs = getSignatures()
+    const pendentes = sigs.filter((s) => s.status === 'Pendente').length
+    const assinados = sigs.filter((s) => s.status === 'Assinado').length
+    setSigChartData([
+      { name: 'Assinados', value: assinados, fill: '#22c55e' },
+      { name: 'Pendentes', value: pendentes, fill: '#f59e0b' },
     ])
 
     // Validity alerts
@@ -188,88 +204,124 @@ export function OverviewTab() {
         </Card>
       </div>
 
-      <Card className="bg-white border-none shadow-sm mb-6">
-        <CardHeader className="border-b pb-4 flex flex-row items-center justify-between">
-          <CardTitle className="text-lg text-brand-navy">Projetos por Status</CardTitle>
-          <Select value={chartType} onValueChange={(v: any) => setChartType(v)}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="bar">Gráfico de Barras</SelectItem>
-              <SelectItem value="pie">Gráfico de Pizza</SelectItem>
-              <SelectItem value="line">Gráfico de Linha</SelectItem>
-              <SelectItem value="area">Gráfico de Área</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <ChartContainer
-            config={{ value: { label: 'Projetos', color: 'hsl(var(--primary))' } }}
-            className="h-[300px] w-full"
-          >
-            <ResponsiveContainer width="100%" height="100%">
-              {chartType === 'bar' ? (
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              ) : chartType === 'pie' ? (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <Card className="bg-white border-none shadow-sm">
+          <CardHeader className="border-b pb-4 flex flex-row items-center justify-between">
+            <CardTitle className="text-lg text-brand-navy">Desempenho Operacional</CardTitle>
+            <Select value={chartType} onValueChange={(v: any) => setChartType(v)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bar">Gráfico de Barras</SelectItem>
+                <SelectItem value="pie">Gráfico de Pizza</SelectItem>
+                <SelectItem value="line">Gráfico de Linha</SelectItem>
+                <SelectItem value="area">Gráfico de Área</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <ChartContainer
+              config={{ value: { label: 'Projetos', color: 'hsl(var(--primary))' } }}
+              className="h-[300px] w-full"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                {chartType === 'bar' ? (
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                ) : chartType === 'pie' ? (
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </PieChart>
+                ) : chartType === 'line' ? (
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                ) : (
+                  <AreaChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      fill="hsl(var(--primary))"
+                      fillOpacity={0.3}
+                    />
+                  </AreaChart>
+                )}
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-none shadow-sm">
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="text-lg text-brand-navy">
+              Taxa de Assinaturas (Conclusão)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6 flex justify-center">
+            <ChartContainer
+              config={{ value: { label: 'Qtd', color: '#22c55e' } }}
+              className="h-[300px] w-full"
+            >
+              <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={chartData}
+                    data={sigChartData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
+                    innerRadius={60}
                     outerRadius={100}
                     label
                   >
-                    {chartData.map((entry, index) => (
+                    {sigChartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
-              ) : chartType === 'line' ? (
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              ) : (
-                <AreaChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.3}
-                  />
-                </AreaChart>
-              )}
-            </ResponsiveContainer>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
       {validityAlerts.length > 0 && (
         <Card className="bg-orange-50 border-orange-200 shadow-sm mb-6">

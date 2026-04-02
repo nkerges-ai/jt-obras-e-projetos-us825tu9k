@@ -1,38 +1,10 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus, FileSignature, Receipt, Award } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/hooks/use-toast'
-import { addAuditLog } from '@/lib/storage'
+import { FileText, FileSignature, Receipt, Award, FileStack } from 'lucide-react'
 
 export function TemplatesTab() {
   const navigate = useNavigate()
-  const { toast } = useToast()
-
-  const [isContractOpen, setIsContractOpen] = useState(false)
-  const [isBudgetOpen, setIsBudgetOpen] = useState(false)
-
-  const handleCreateContract = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsContractOpen(false)
-    addAuditLog({ userId: 'Admin', action: 'Gerar Contrato', table: 'Documentos' })
-    toast({ title: 'Contrato Gerado', description: 'O modelo de contrato foi criado e arquivado.' })
-  }
-
-  const handleCreateBudget = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsBudgetOpen(false)
-    addAuditLog({ userId: 'Admin', action: 'Gerar Orçamento', table: 'Documentos' })
-    toast({
-      title: 'Orçamento Gerado',
-      description: 'O modelo de orçamento foi criado e arquivado.',
-    })
-  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -41,8 +13,8 @@ export function TemplatesTab() {
           <FileSignature className="h-5 w-5 text-primary" /> Geradores de Documentos e NRs
         </h3>
         <p className="text-muted-foreground text-sm">
-          Gere certificados profissionais, ordens de serviço (NR-01) e contratos usando templates
-          padronizados.
+          Gere certificados profissionais, ordens de serviço (NR-01), contratos, orçamentos e papéis
+          timbrados com persistência de dados.
         </p>
       </div>
 
@@ -76,29 +48,29 @@ export function TemplatesTab() {
               <FileText className="h-8 w-8" />
             </div>
             <div>
-              <h4 className="font-bold text-lg text-brand-navy">OS NR-01 (Padrão)</h4>
+              <h4 className="font-bold text-lg text-brand-navy">Ordem de Serviço (NR-01)</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Ordem de Serviço de Segurança e Medicina do Trabalho (Documento).
+                Ordem de Serviço de Segurança e Medicina do Trabalho.
               </p>
             </div>
             <Button variant="default" className="w-full mt-2 bg-brand-navy text-white">
-              Emitir OS (Documento)
+              Emitir OS
             </Button>
           </CardContent>
         </Card>
 
         <Card
           className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => setIsContractOpen(true)}
+          onClick={() => navigate('/admin/template/contrato')}
         >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-gray-50 text-gray-600 rounded-full flex items-center justify-center">
               <FileSignature className="h-8 w-8" />
             </div>
             <div>
-              <h4 className="font-bold text-lg text-brand-navy">Gerador de Contrato</h4>
+              <h4 className="font-bold text-lg text-brand-navy">Contrato de Serviço</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Crie contratos de prestação de serviços rapidamente.
+                Crie contratos de prestação de serviços com persistência.
               </p>
             </div>
             <Button variant="outline" className="w-full mt-2">
@@ -109,51 +81,73 @@ export function TemplatesTab() {
 
         <Card
           className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/orcamento')}
+        >
+          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+            <div className="h-16 w-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
+              <Receipt className="h-8 w-8" />
+            </div>
+            <div>
+              <h4 className="font-bold text-lg text-brand-navy">Orçamentos</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                Gere propostas financeiras detalhadas para clientes.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mt-2 text-green-700 border-green-200 hover:bg-green-50"
+            >
+              Criar Orçamento
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
           onClick={() => navigate('/admin/template/nr18')}
         >
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
             <div className="h-16 w-16 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center">
-              <FileText className="h-8 w-8" />
+              <Award className="h-8 w-8" />
             </div>
             <div>
-              <h4 className="font-bold text-lg text-brand-navy">PGR (NR-18)</h4>
+              <h4 className="font-bold text-lg text-brand-navy">Certificado da Construção Civil</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Programa de Gerenciamento de Riscos.
+                Certificação baseada na NR-18 para a Construção Civil.
               </p>
             </div>
-            <Button variant="outline" className="w-full mt-2">
+            <Button
+              variant="outline"
+              className="w-full mt-2 text-orange-700 border-orange-200 hover:bg-orange-50"
+            >
               Emitir NR-18
             </Button>
           </CardContent>
         </Card>
-      </div>
 
-      <Dialog open={isContractOpen} onOpenChange={setIsContractOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Gerar Novo Contrato</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleCreateContract} className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Cliente / Contratante</Label>
-                <Input required placeholder="Razão Social" />
-              </div>
-              <div className="space-y-2">
-                <Label>CNPJ / CPF</Label>
-                <Input required placeholder="00.000.000/0000-00" />
-              </div>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate('/admin/template/timbrado')}
+        >
+          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+            <div className="h-16 w-16 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center">
+              <FileStack className="h-8 w-8" />
             </div>
-            <div className="space-y-2">
-              <Label>Objeto do Contrato</Label>
-              <Textarea required placeholder="Descreva os serviços..." />
+            <div>
+              <h4 className="font-bold text-lg text-brand-navy">Papel Timbrado em Branco</h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                Documento livre com o cabeçalho oficial da empresa.
+              </p>
             </div>
-            <Button type="submit" className="w-full">
-              Gerar PDF
+            <Button
+              variant="outline"
+              className="w-full mt-2 text-purple-700 border-purple-200 hover:bg-purple-50"
+            >
+              Gerar Timbrado
             </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

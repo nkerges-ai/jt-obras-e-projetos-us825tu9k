@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Printer, Save, Fingerprint, PenTool, Download } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { addAuditLog, addDocumentoArmazenado } from '@/lib/storage'
+import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { exportHtmlToWord } from '@/lib/export-utils'
 import { RichTextEditor } from '@/components/RichTextEditor'
 import {
@@ -57,6 +57,7 @@ const CERTIFICATE_TEMPLATES: Record<
 
 export default function CertificateEditor() {
   const { toast } = useToast()
+  const { id } = useParams<{ id: string }>()
 
   const [data, setData] = useState({
     companyName: 'JT OBRAS E MANUTENÇÕES LTDA',
@@ -82,28 +83,53 @@ export default function CertificateEditor() {
 
   const handleTemplateChange = (val: string) => {
     if (CERTIFICATE_TEMPLATES[val]) {
-      setData({ ...data, ...CERTIFICATE_TEMPLATES[val] })
+      setData((prev) => ({ ...prev, ...CERTIFICATE_TEMPLATES[val] }))
     }
   }
 
+  useEffect(() => {
+    if (window.location.pathname.includes('/nr18')) {
+      handleTemplateChange('NR-18')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (id) {
+      const docs = getTechnicalDocuments()
+      const doc = docs.find((d) => d.id === id)
+      if (doc && doc.data) {
+        setData(doc.data)
+      }
+    }
+  }, [id])
+
   const handleSave = () => {
-    addDocumentoArmazenado({
-      projeto_id: 'global',
-      tipo_documento: 'certificado',
-      nome_arquivo: `Certificado_${data.employeeName || 'Colaborador'}_${data.courseName.split(' ')[0]}.pdf`,
-      descricao: 'Certificado gerado pelo sistema',
-      url_storage: 'data:application/pdf;base64,dummy',
-      tamanho_arquivo: 1024,
-      usuario_id: 'Admin',
-      status: 'ativo',
-    })
+    const docs = getTechnicalDocuments()
+    const newDoc = {
+      id: id || `cert_${Date.now()}`,
+      name: `Certificado_${data.employeeName || 'Colaborador'}_${data.courseName.split(' ')[0]}.pdf`,
+      category: 'Certificado',
+      uploadDate: new Date().toISOString(),
+      projectId: 'global',
+      isRestricted: false,
+      url: 'data:application/pdf;base64,dummy',
+      type: 'certificado' as const,
+      data: data,
+    }
+
+    if (id) {
+      saveTechnicalDocuments(docs.map((d) => (d.id === id ? newDoc : d)))
+    } else {
+      saveTechnicalDocuments([newDoc, ...docs])
+    }
+
     addAuditLog({
       userId: 'Admin',
-      action: 'Gerar Certificado',
+      action: id ? 'Editar Certificado' : 'Gerar Certificado',
       table: 'Documentos',
       newData: JSON.stringify(data),
     })
-    toast({ title: 'Salvo no Acervo', description: 'Certificado salvo na pasta Certificados.' })
+    toast({ title: 'Salvo no Acervo', description: 'Certificado salvo com sucesso.' })
   }
 
   const signEletronic = () => {

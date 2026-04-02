@@ -16,13 +16,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Upload, FileText, Mail, Trash2, ShieldCheck } from 'lucide-react'
+import { Upload, FileText, Mail, Trash2, ShieldCheck, Edit, MessageCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
+import { getSignatures, saveSignatures, DocumentSignature } from '@/lib/storage'
 
 export function LibraryTab() {
   const [docs, setDocs] = useState<TechnicalDocument[]>([])
   const { toast } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     setDocs(getTechnicalDocuments())
@@ -73,6 +76,45 @@ export function LibraryTab() {
       title: 'Enviado por E-mail',
       description: 'O link seguro foi encaminhado para o cliente.',
     })
+  }
+
+  const handleWhatsAppSignature = (doc: TechnicalDocument) => {
+    const sigs = getSignatures()
+    const newSig: DocumentSignature = {
+      id: `sig_${Date.now()}`,
+      documentId: doc.id,
+      documentName: doc.name,
+      clientName: 'Colaborador / Cliente',
+      clientPhone: '',
+      status: 'Pendente',
+      sentDate: new Date().toISOString(),
+    }
+    saveSignatures([...sigs, newSig])
+
+    const link = `${window.location.origin}/assinatura/${newSig.id}`
+    const msg = `Olá! Por favor, assine o documento ${doc.name} acessando este link seguro: ${link}`
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+
+    toast({
+      title: 'Link Gerado',
+      description: 'O link de assinatura foi gerado e o WhatsApp foi aberto.',
+    })
+  }
+
+  const handleEdit = (doc: TechnicalDocument) => {
+    if (!doc.type || doc.type === 'upload') {
+      toast({
+        title: 'Atenção',
+        description: 'Documentos anexados manualmente não podem ser editados.',
+        variant: 'destructive',
+      })
+      return
+    }
+    if (doc.type === 'os') {
+      navigate(`/admin/template/os-nr01/${doc.id}`)
+    } else {
+      navigate(`/admin/template/${doc.type}/${doc.id}`)
+    }
   }
 
   const handleDelete = (doc: TechnicalDocument) => {
@@ -128,11 +170,34 @@ export function LibraryTab() {
             )}
             {docs.map((doc) => (
               <TableRow key={doc.id}>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-blue-500" /> {doc.name}
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-blue-500" />
+                    <span className="truncate max-w-[200px] sm:max-w-xs">{doc.name}</span>
+                  </div>
                 </TableCell>
                 <TableCell>{new Date(doc.uploadDate).toLocaleDateString('pt-BR')}</TableCell>
                 <TableCell className="text-right">
+                  {doc.type && doc.type !== 'upload' && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(doc)}
+                      title="Editar Documento"
+                      className="text-orange-500"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleWhatsAppSignature(doc)}
+                    title="Solicitar Assinatura via WhatsApp"
+                    className="text-green-600"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
