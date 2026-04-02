@@ -34,8 +34,12 @@ import { LixeiraTab } from './components/LixeiraTab'
 import { AuditoriaTab } from './components/AuditoriaTab'
 import { DocumentsTab } from './components/DocumentsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { getChatMessages } from '@/lib/storage'
+import { getChatMessages, getServiceOrders } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
+
+if (typeof window !== 'undefined') {
+  ;(window as any).getServiceOrders = getServiceOrders
+}
 
 import {
   Sidebar,
