@@ -2,7 +2,7 @@ import { Building2, User, AlertTriangle } from 'lucide-react'
 
 export function OSPreview({ data }: { data: any }) {
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white p-8 md:p-12 min-h-[1056px] shadow-sm text-gray-900 border border-gray-200">
+    <div className="w-full max-w-4xl mx-auto bg-white p-8 md:p-12 print:p-0 min-h-[1056px] print:min-h-0 shadow-sm print:shadow-none text-gray-900 border border-gray-200 print:border-none print:w-full">
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-black pb-6 mb-8">
         <div className="flex items-center gap-4">
@@ -90,21 +90,23 @@ export function OSPreview({ data }: { data: any }) {
       </div>
 
       {/* Signatures */}
-      <div className="mt-20 pt-10 border-t-2 border-dashed border-gray-300 grid grid-cols-2 gap-12 text-center relative">
+      <div className="mt-20 pt-10 border-t-2 border-dashed border-gray-300 grid grid-cols-2 gap-12 text-center relative print:break-inside-avoid">
         {data.adminSignature && (
           <div className="absolute top-[-50px] left-[25%] transform -translate-x-1/2 flex flex-col items-center">
             {data.adminSignature.type === 'govbr' ? (
-              <div className="border-2 border-blue-800 px-4 py-1.5 bg-white rounded shadow-md transform -rotate-3 z-10">
-                <span className="text-[10px] font-black tracking-widest text-blue-800 block">
+              <div className="border-2 border-blue-800 px-4 py-1.5 bg-white print:bg-white rounded shadow-md transform -rotate-3 z-10 print:shadow-none print:border-blue-800">
+                <span className="text-[10px] font-black tracking-widest text-blue-800 print:text-blue-800 block">
                   ASSINADO DIGITALMENTE
                 </span>
-                <span className="text-[10px] font-bold text-blue-600 block">VIA PORTAL GOV.BR</span>
+                <span className="text-[10px] font-bold text-blue-600 print:text-blue-600 block">
+                  VIA PORTAL GOV.BR
+                </span>
               </div>
             ) : (
               <img
                 src={data.adminSignature.data}
                 alt="Assinatura Admin"
-                className="h-20 mix-blend-multiply opacity-90 z-10"
+                className="h-20 mix-blend-multiply print:mix-blend-normal opacity-90 z-10"
               />
             )}
           </div>

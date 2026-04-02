@@ -72,7 +72,7 @@ export default function PrintReport() {
           : 'Resumo e Evolução da Obra'
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+    <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0 print:w-full">
       <div className="bg-white border-b sticky top-0 z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild className="gap-2 text-brand-navy">
@@ -84,7 +84,7 @@ export default function PrintReport() {
         </div>
       </div>
 
-      <div className="flex justify-center mt-8 print:mt-0">
+      <div className="flex justify-center mt-8 print:mt-0 print:block">
         <DocumentLetterhead title={documentTitle}>
           <div className="bg-gray-50 border border-brand-navy/20 p-5 rounded-lg mb-8 text-sm shadow-sm text-gray-800">
             <div className="grid grid-cols-2 gap-6">

@@ -57,7 +57,7 @@ export default function OSNREditor() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+    <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0 print:w-full">
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -105,9 +105,11 @@ export default function OSNREditor() {
         </div>
       </div>
 
-      <WizardStepper steps={wizardSteps} currentStep={step} setStep={setStep} />
+      <div className="print:hidden">
+        <WizardStepper steps={wizardSteps} currentStep={step} setStep={setStep} />
+      </div>
 
-      <div className="container mx-auto px-4 print:p-0 flex flex-col lg:flex-row items-start gap-8 mt-6">
+      <div className="container mx-auto px-4 print:p-0 print:m-0 print:max-w-none print:w-full flex flex-col lg:flex-row items-start gap-8 mt-6 print:mt-0 print:gap-0">
         {step < wizardSteps.length && (
           <div className="w-full lg:w-[450px] shrink-0 bg-white p-6 md:p-8 rounded-xl border shadow-sm print:hidden flex flex-col sticky top-[180px]">
             <OSForm data={data} setData={setData} currentStep={step} />
@@ -125,7 +127,7 @@ export default function OSNREditor() {
           </div>
         )}
         <div
-          className={`w-full bg-white shadow-xl border print:shadow-none print:border-none ${step === wizardSteps.length ? 'mx-auto max-w-4xl' : ''}`}
+          className={`w-full bg-white shadow-xl border print:shadow-none print:border-none print:m-0 print:p-0 ${step === wizardSteps.length ? 'mx-auto max-w-4xl' : ''}`}
         >
           <OSPreview data={data} />
         </div>

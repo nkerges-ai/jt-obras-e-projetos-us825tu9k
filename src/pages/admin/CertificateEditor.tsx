@@ -129,9 +129,26 @@ export default function CertificateEditor() {
     <div className="bg-gray-50 min-h-screen pb-20 print:bg-gray-100 print:pb-0">
       <style>{`
         @media print {
-          @page { size: A4 landscape; margin: 0; }
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .print-page-break { page-break-after: always; }
+          @page { size: A4 landscape !important; margin: 0 !important; }
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact;
+          }
+          /* Hide main layout elements when printing certificate */
+          header, footer, nav, .print\\:hidden { display: none !important; }
+          .print-page-break { 
+            page-break-after: always !important; 
+            break-after: page !important; 
+          }
+          #certificate-preview {
+            width: 297mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 0 !important;
+          }
         }
       `}</style>
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
@@ -330,7 +347,7 @@ export default function CertificateEditor() {
             className="flex flex-col gap-12 items-center w-full max-w-[1040px] print:w-full print:max-w-none print:gap-0 print:block"
           >
             {/* Front Page */}
-            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[210mm] p-4 select-none print-page-break">
+            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break">
               {/* Certificate Outer Border */}
               <div className="absolute inset-4 border-[14px] border-[#005A9C] pointer-events-none z-10 opacity-90"></div>
               {/* Certificate Inner Border */}
@@ -398,15 +415,18 @@ export default function CertificateEditor() {
 
                 <div className="mt-auto flex flex-col items-center w-full max-w-xs md:max-w-sm relative">
                   {data.signature === 'govbr' ? (
-                    <div className="absolute -top-12 border border-blue-900 px-4 py-1 rounded bg-white">
-                      <span className="text-[11px] font-bold text-blue-900">
-                        ASSINADO VIA GOV.BR
+                    <div className="absolute -top-12 border-2 border-[#005A9C] px-4 py-1 rounded bg-white print:border-[#005A9C] print:bg-white print:shadow-none z-10">
+                      <span className="text-[11px] font-black text-[#005A9C] print:text-[#005A9C] tracking-widest block">
+                        ASSINADO DIGITALMENTE
+                      </span>
+                      <span className="text-[9px] font-bold text-[#009FE3] print:text-[#009FE3] block">
+                        VIA PORTAL GOV.BR
                       </span>
                     </div>
                   ) : data.signature ? (
                     <img
                       src={data.signature}
-                      className="absolute -top-12 h-16 mix-blend-multiply"
+                      className="absolute -top-12 h-16 mix-blend-multiply print:mix-blend-normal z-10"
                       alt="Assinatura"
                     />
                   ) : null}
@@ -427,7 +447,7 @@ export default function CertificateEditor() {
             </div>
 
             {/* Back Page (Syllabus) */}
-            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[210mm] p-12 md:p-20 select-none flex flex-col print:pt-16">
+            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-12 md:p-20 select-none flex flex-col print:pt-16">
               <div className="flex items-center justify-between mb-8 border-b-2 border-[#005A9C] pb-4">
                 <div>
                   <h2 className="text-2xl font-black text-[#005A9C] tracking-wide">
@@ -438,7 +458,7 @@ export default function CertificateEditor() {
                 <img src={logo} alt="JT Obras" className="h-12 object-contain" />
               </div>
 
-              <div className="flex-1 w-full text-gray-800 overflow-hidden">
+              <div className="flex-1 w-full text-gray-800 overflow-hidden print:overflow-visible">
                 <div
                   className="prose prose-blue max-w-none text-justify prose-headings:text-[#005A9C] prose-li:my-1 prose-ul:my-2 prose-p:my-2"
                   dangerouslySetInnerHTML={{ __html: data.syllabus }}
