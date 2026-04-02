@@ -512,4 +512,6 @@ export default function CertificateEditor() {
           </div>
         </div>
       </div>
-    </
+    </div>
+  )
+}
