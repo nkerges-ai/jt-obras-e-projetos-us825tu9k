@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useNavigate, Link } from 'react-router-dom'
+import { Navigate, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   LogOut,
@@ -33,6 +33,9 @@ import { AdminChatTab } from './components/AdminChatTab'
 import { LixeiraTab } from './components/LixeiraTab'
 import { AuditoriaTab } from './components/AuditoriaTab'
 import { DocumentsTab } from './components/DocumentsTab'
+import { ExecutiveDashboardTab } from './components/ExecutiveDashboardTab'
+import { CustomersTab } from './components/CustomersTab'
+import { CloudProjectsTab } from './components/CloudProjectsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { getChatMessages, getServiceOrders } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
@@ -62,7 +65,10 @@ export default function AdminDashboard() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [syncKey, setSyncKey] = useState(0)
   const [unreadAdmin, setUnreadAdmin] = useState(0)
-  const [activeView, setActiveView] = useState('visao-geral')
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeView = searchParams.get('tab') || 'exec-dashboard'
+  const setActiveView = (tab: string) => setSearchParams({ tab })
 
   const isAuth = sessionStorage.getItem('admin_auth') === 'true'
 
@@ -128,6 +134,12 @@ export default function AdminDashboard() {
 
   const renderContent = () => {
     switch (activeView) {
+      case 'exec-dashboard':
+        return <ExecutiveDashboardTab key={`exec-${syncKey}`} />
+      case 'clientes':
+        return <CustomersTab key={`cli-${syncKey}`} />
+      case 'obras-cloud':
+        return <CloudProjectsTab key={`obras-${syncKey}`} />
       case 'visao-geral':
         return <OverviewTab key={`ov-${syncKey}`} />
       case 'projetos':
@@ -178,7 +190,39 @@ export default function AdminDashboard() {
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm">
-                <HardHat className="h-4 w-4" /> Gestão de Obras
+                <Cloud className="h-4 w-4" /> CRM & Projetos (Cloud)
+              </SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'exec-dashboard'}
+                    onClick={() => setActiveView('exec-dashboard')}
+                  >
+                    Dashboard Executivo
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'clientes'}
+                    onClick={() => setActiveView('clientes')}
+                  >
+                    Clientes (CRM)
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'obras-cloud'}
+                    onClick={() => setActiveView('obras-cloud')}
+                  >
+                    Obras e Contratos
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="flex items-center gap-2 text-brand-navy font-semibold text-sm mt-2">
+                <HardHat className="h-4 w-4" /> Gestão de Obras (Local)
               </SidebarGroupLabel>
               <SidebarMenu>
                 <SidebarMenuItem>
