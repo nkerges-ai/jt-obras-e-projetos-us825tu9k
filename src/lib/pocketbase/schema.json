@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T21:23:43.622Z",
+  "generatedAt": "2026-04-03T21:30:49.254Z",
   "collections": [
     {
       "name": "users",
@@ -164,12 +164,6 @@
           "system": false
         },
         {
-          "name": "address",
-          "type": "text",
-          "required": true,
-          "system": false
-        },
-        {
           "name": "start_date",
           "type": "date",
           "required": true,
@@ -213,6 +207,42 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "address_street",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "address_number",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "address_complement",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "address_city",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "address_state",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "address_zip",
+          "type": "text",
+          "required": true,
+          "system": false
         }
       ],
       "indexes": []

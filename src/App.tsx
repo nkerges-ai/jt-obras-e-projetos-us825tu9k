@@ -9,6 +9,7 @@ import { Layout } from './components/Layout'
 import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import CustomersPage from './pages/admin/CustomersPage'
+import ProjectsPage from './pages/admin/ProjectsPage'
 import TemplateEditor from './pages/admin/TemplateEditor'
 import OSNREditor from './pages/admin/OSNREditor'
 import PGREditor from './pages/admin/PGREditor'
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/clientes" element={<CustomersPage />} />
+          <Route path="/admin/projetos" element={<ProjectsPage />} />
           <Route path="/admin/template/os-nr01/:id?" element={<OSNREditor />} />
           <Route path="/admin/template/certificado/:id?" element={<CertificateEditor />} />
           <Route path="/admin/template/contrato/:id?" element={<ContractEditor />} />

@@ -5,7 +5,12 @@ export interface CloudProject {
   id: string
   client_id: string
   name: string
-  address: string
+  address_street: string
+  address_number: string
+  address_complement?: string
+  address_city: string
+  address_state: string
+  address_zip: string
   start_date: string
   deadline_days: number
   total_value: number
