@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { Users, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Users, Plus, Pencil, Trash2, Mail, Phone, MapPin, Search } from 'lucide-react'
 
 const maskPhone = (v: string) =>
   v
@@ -64,6 +64,7 @@ export function CustomersTab() {
   const [formData, setFormData] = useState<Partial<Customer>>({ type: 'PJ' })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isEditing, setIsEditing] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const loadData = async () => setCustomers(await getCustomers())
   useEffect(() => {
@@ -107,71 +108,123 @@ export function CustomersTab() {
     setIsOpen(true)
   }
 
+  const filteredCustomers = customers.filter((c) =>
+    c.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
+
+  const isFormValid =
+    formData.name &&
+    formData.email &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
+    formData.phone &&
+    formData.tax_id &&
+    formData.address_zip &&
+    formData.address_street &&
+    formData.address_number &&
+    formData.address_city &&
+    formData.address_state
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm gap-4">
         <div>
-          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" /> Clientes (CRM)
+          <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Users className="h-5 w-5 text-blue-600" /> Clientes
           </h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-gray-500 text-sm">
             Gerencie o cadastro centralizado de seus clientes.
           </p>
         </div>
-        <Button onClick={openNew} className="gap-2 font-bold w-full sm:w-auto">
+        <Button
+          onClick={openNew}
+          className="gap-2 font-bold w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
+        >
           <Plus className="h-4 w-4" /> Novo Cliente
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-secondary/50">
-            <TableRow>
-              <TableHead>Nome / Razão Social</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Documento (CPF/CNPJ)</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {customers.map((c) => (
-              <TableRow key={c.id}>
-                <TableCell className="font-medium">{c.name}</TableCell>
-                <TableCell>{c.email}</TableCell>
-                <TableCell>{c.tax_id}</TableCell>
-                <TableCell>{c.type}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => openEdit(c)}
-                      className="h-8 w-8 text-blue-600"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(c.id)}
-                      className="h-8 w-8 text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {customers.length === 0 && (
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          <Input
+            placeholder="Buscar cliente por nome..."
+            className="pl-9 border-gray-300 focus-visible:ring-blue-600"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <Table>
+            <TableHeader className="bg-gray-50">
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  Nenhum cliente cadastrado.
-                </TableCell>
+                <TableHead className="text-gray-600 font-semibold">Nome</TableHead>
+                <TableHead className="text-gray-600 font-semibold">Email</TableHead>
+                <TableHead className="text-gray-600 font-semibold">Telefone</TableHead>
+                <TableHead className="text-gray-600 font-semibold">Tipo</TableHead>
+                <TableHead className="text-right text-gray-600 font-semibold">Ações</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredCustomers.map((c) => (
+                <TableRow key={c.id} className="hover:bg-gray-50/50 transition-colors">
+                  <TableCell className="font-medium text-gray-900">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-gray-400" />
+                      {c.name}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      {c.email}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      {c.phone}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {c.type}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(c)}
+                        className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        title="Editar"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(c.id)}
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title="Deletar"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredCustomers.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                    Nenhum cliente encontrado.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -253,7 +306,9 @@ export function CustomersTab() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>CEP</Label>
+                <Label className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 text-gray-500" /> CEP
+                </Label>
                 <Input
                   value={formData.address_zip || ''}
                   onChange={(e) =>
@@ -266,7 +321,9 @@ export function CustomersTab() {
                 )}
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label>Rua / Logradouro</Label>
+                <Label className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 text-gray-500" /> Rua / Logradouro
+                </Label>
                 <Input
                   value={formData.address_street || ''}
                   onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
@@ -320,7 +377,11 @@ export function CustomersTab() {
                 )}
               </div>
             </div>
-            <Button type="submit" className="w-full mt-4">
+            <Button
+              type="submit"
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={!isFormValid}
+            >
               Salvar Cliente
             </Button>
           </form>

@@ -60,12 +60,12 @@ export function Header() {
           >
             Portfólio
           </Link>
-          <button
-            onClick={() => scrollToSection('clientes')}
+          <Link
+            to="/admin/clientes"
             className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
           >
             Clientes
-          </button>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-2 lg:gap-3">
@@ -126,12 +126,12 @@ export function Header() {
             >
               Portfólio
             </Link>
-            <button
-              onClick={() => scrollToSection('clientes')}
+            <Link
+              to="/admin/clientes"
               className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
             >
               Clientes
-            </button>
+            </Link>
             <Link
               to="/cliente/login"
               className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded flex items-center gap-2"
