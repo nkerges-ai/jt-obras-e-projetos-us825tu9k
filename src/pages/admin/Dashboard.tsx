@@ -37,12 +37,7 @@ import { ExecutiveDashboardTab } from './components/ExecutiveDashboardTab'
 import { CustomersTab } from './components/CustomersTab'
 import { CloudProjectsTab } from './components/CloudProjectsTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { getChatMessages, getServiceOrders } from '@/lib/storage'
 import { Badge } from '@/components/ui/badge'
-
-if (typeof window !== 'undefined') {
-  ;(window as any).getServiceOrders = getServiceOrders
-}
 
 import {
   Sidebar,
@@ -64,7 +59,6 @@ export default function AdminDashboard() {
   const [isSyncing, setIsSyncing] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [syncKey, setSyncKey] = useState(0)
-  const [unreadAdmin, setUnreadAdmin] = useState(0)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const activeView = searchParams.get('tab') || 'exec-dashboard'
@@ -79,16 +73,8 @@ export default function AdminDashboard() {
     }
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
-    const updateAdminUnread = () => {
-      const msgs = getChatMessages()
-      setUnreadAdmin(msgs.filter((m) => m.sender === 'client' && !m.read).length)
-    }
-    updateAdminUnread()
-    window.addEventListener('jt_chats_updated', updateAdminUnread)
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      window.removeEventListener('jt_chats_updated', updateAdminUnread)
     }
   }, [])
 
@@ -336,11 +322,6 @@ export default function AdminDashboard() {
                     className="justify-between"
                   >
                     Atendimento (Chat)
-                    {unreadAdmin > 0 && (
-                      <Badge className="bg-red-500 hover:bg-red-600 px-1.5 min-w-[20px] justify-center">
-                        {unreadAdmin}
-                      </Badge>
-                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
