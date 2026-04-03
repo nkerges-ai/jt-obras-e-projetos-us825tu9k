@@ -27,8 +27,7 @@ export function Hero() {
               Especialistas em Manutenção Predial e Industrial
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
-              A base sólida para o <span className="text-brand-orange">sucesso</span> da sua
-              empresa.
+              A base sólida para o <span className="text-brand-orange">sucesso</span> da sua obra.
             </h1>
             <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl leading-relaxed font-light">
               Transformamos desafios complexos de engenharia em soluções seguras e eficientes para o
