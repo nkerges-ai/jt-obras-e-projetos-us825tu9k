@@ -63,7 +63,9 @@ export default function AttendanceLists() {
     try {
       const updated = await pb.collection('attendance_lists').update(id, { presence: !currentVal })
       setAttendees(attendees.map((a) => (a.id === id ? updated : a)))
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const handleDelete = async (id: string) => {

@@ -39,7 +39,9 @@ export default function Certificates() {
     try {
       const records = await pb.collection('certificates').getFullList({ sort: '-created' })
       setCertificates(records)
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   useEffect(() => {

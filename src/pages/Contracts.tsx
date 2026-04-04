@@ -27,7 +27,9 @@ export default function Contracts() {
     try {
       const records = await pb.collection('contracts').getFullList({ sort: '-created' })
       setContracts(records)
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
   useEffect(() => {
     fetchContracts()
