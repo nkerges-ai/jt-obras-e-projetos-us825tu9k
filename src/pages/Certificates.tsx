@@ -86,11 +86,17 @@ export default function Certificates() {
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-slate-200">
-          <TabsTrigger value="list" className="data-[state=active]:bg-white text-xs sm:text-sm">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-200 p-1">
+          <TabsTrigger
+            value="list"
+            className="data-[state=active]:bg-white text-slate-600 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm text-xs sm:text-sm font-medium"
+          >
             Lista de Certificados
           </TabsTrigger>
-          <TabsTrigger value="new" className="data-[state=active]:bg-white text-xs sm:text-sm">
+          <TabsTrigger
+            value="new"
+            className="data-[state=active]:bg-white text-slate-600 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm text-xs sm:text-sm font-medium"
+          >
             Novo Certificado
           </TabsTrigger>
         </TabsList>
@@ -124,24 +130,40 @@ export default function Certificates() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 items-center">
+                          {cert.pdf_url && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              asChild
+                              className="h-9 gap-1 border-blue-200 text-blue-700 hover:bg-blue-50"
+                            >
+                              <a
+                                href={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/${cert.collectionId}/${cert.id}/${cert.pdf_url}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Download className="h-4 w-4" /> PDF
+                              </a>
+                            </Button>
+                          )}
                           {cert.status === 'completed' && (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-11 w-11 sm:h-10 sm:w-10"
+                              className="h-11 w-11 sm:h-9 sm:w-9 text-slate-700 hover:text-[#3498db] hover:bg-blue-50"
                               onClick={() => setPrintDoc(cert)}
                             >
-                              <Printer className="h-4 w-4 text-[#3498db]" />
+                              <Printer className="h-4 w-4" />
                             </Button>
                           )}
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-11 w-11 sm:h-10 sm:w-10"
+                            className="h-11 w-11 sm:h-9 sm:w-9 text-slate-400 hover:text-red-500 hover:bg-red-50"
                             onClick={() => handleDelete(cert.id)}
                           >
-                            <Trash className="h-4 w-4 text-red-500" />
+                            <Trash className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>

@@ -133,11 +133,17 @@ export default function Contracts() {
       <h1 className="text-3xl font-bold text-slate-900">Editor de Contratos</h1>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-slate-200">
-          <TabsTrigger value="list" className="data-[state=active]:bg-white text-xs sm:text-sm">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-200 p-1">
+          <TabsTrigger
+            value="list"
+            className="data-[state=active]:bg-white text-slate-600 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm text-xs sm:text-sm font-medium"
+          >
             Contratos Salvos
           </TabsTrigger>
-          <TabsTrigger value="editor" className="data-[state=active]:bg-white text-xs sm:text-sm">
+          <TabsTrigger
+            value="editor"
+            className="data-[state=active]:bg-white text-slate-600 data-[state=active]:text-slate-900 data-[state=active]:shadow-sm text-xs sm:text-sm font-medium"
+          >
             Novo Contrato
           </TabsTrigger>
         </TabsList>
@@ -166,8 +172,56 @@ export default function Contracts() {
                       <TableCell>{new Date(c.created).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => setPrintDoc(c)}>
-                            <Printer className="h-4 w-4 text-[#3498db]" />
+                          {c.pdf_url ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              asChild
+                              className="h-8 gap-1 border-blue-200 text-blue-700 hover:bg-blue-50"
+                            >
+                              <a
+                                href={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/${c.collectionId}/${c.id}/${c.pdf_url}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Download className="h-3.5 w-3.5" /> PDF
+                              </a>
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 gap-1 border-green-200 text-green-700 hover:bg-green-50"
+                              onClick={async () => {
+                                try {
+                                  await pb
+                                    .collection('contracts')
+                                    .update(c.id, { status: 'active' })
+                                  fetchContracts()
+                                  toast({
+                                    title: 'Contrato Ativado',
+                                    description:
+                                      'O contrato foi finalizado e aguarda geração do PDF.',
+                                  })
+                                } catch (e) {
+                                  toast({
+                                    title: 'Erro',
+                                    description: 'Falha ao ativar contrato.',
+                                    variant: 'destructive',
+                                  })
+                                }
+                              }}
+                            >
+                              Finalizar
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-700 hover:text-[#3498db] hover:bg-blue-50"
+                            onClick={() => setPrintDoc(c)}
+                          >
+                            <Printer className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>

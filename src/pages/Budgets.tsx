@@ -181,16 +181,32 @@ export default function Budgets() {
                     R$ {b.total_value.toFixed(2)}
                   </p>
                   <div className="flex items-center gap-2">
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-400 mr-2">
                       {new Date(b.created).toLocaleDateString()}
                     </p>
+                    {b.pdf_url && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                      >
+                        <a
+                          href={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/${b.collectionId}/${b.id}/${b.pdf_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </a>
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-8 w-8 text-slate-600 hover:text-[#3498db] hover:bg-blue-50"
                       onClick={() => setPrintDoc(b)}
                     >
-                      <Printer className="h-4 w-4 text-[#3498db]" />
+                      <Printer className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

@@ -25,9 +25,14 @@ export default function Login() {
   }, [])
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout
     if (isMounted.current && !authLoading && user?.id) {
-      navigate('/dashboard', { replace: true })
+      // Use timeout to prevent "Maximum update depth exceeded" during hydration/auth state changes
+      timeoutId = setTimeout(() => {
+        navigate('/dashboard', { replace: true })
+      }, 10)
     }
+    return () => clearTimeout(timeoutId)
   }, [authLoading, user?.id, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {

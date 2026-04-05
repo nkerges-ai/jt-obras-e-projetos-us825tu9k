@@ -104,21 +104,28 @@ export function DashboardLayout() {
       </div>
 
       <div className="flex-1 flex flex-col md:pl-64">
-        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-40">
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-40 shadow-sm">
           <img src={logoUrl} alt="JT Obras" className="max-h-10 w-auto object-contain" />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-11 w-11 shrink-0 relative z-50">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 shrink-0 relative z-50 text-slate-900 hover:bg-slate-100 focus:bg-slate-100"
+              >
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 border-none pt-10">
+            <SheetContent
+              side="left"
+              className="p-0 w-64 border-none bg-[#0f172a] text-white [&>button]:text-white"
+            >
               <SidebarContent />
             </SheetContent>
           </Sheet>
         </header>
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 w-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 w-full pb-28">
           <Outlet />
         </main>
       </div>
