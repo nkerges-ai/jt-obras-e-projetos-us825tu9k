@@ -56,37 +56,38 @@ export function EmailSenderDialog({ open, onOpenChange, documentName }: EmailSen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[#1e293b] border-slate-800 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-brand-navy">
-            <Mail className="w-5 h-5 text-brand-light" /> Enviar por E-mail
+          <DialogTitle className="flex items-center gap-2 text-white">
+            <Mail className="w-5 h-5 text-[#3498db]" /> Enviar por E-mail
           </DialogTitle>
-          <DialogDescription>
-            O documento <strong>{documentName}</strong> será anexado automaticamente em formato PDF
-            nesta mensagem.
+          <DialogDescription className="text-slate-400">
+            O documento <strong className="text-slate-200">{documentName}</strong> será anexado
+            automaticamente em formato PDF nesta mensagem.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSend} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label>E-mail do Destinatário</Label>
+            <Label className="text-slate-300">E-mail do Destinatário</Label>
             <Input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="cliente@empresa.com.br"
+              className="bg-slate-800 border-slate-700 text-white"
             />
           </div>
           <div className="space-y-2">
-            <Label>Mensagem</Label>
+            <Label className="text-slate-300">Mensagem</Label>
             <Textarea
-              className="min-h-[120px]"
+              className="min-h-[120px] bg-slate-800 border-slate-700 text-white"
               required
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full gap-2 bg-brand-light hover:bg-brand-light/90">
+          <Button type="submit" className="w-full gap-2 bg-[#3498db] hover:bg-[#2980b9] text-white">
             <Send className="w-4 h-4" /> Disparar E-mail
           </Button>
         </form>
