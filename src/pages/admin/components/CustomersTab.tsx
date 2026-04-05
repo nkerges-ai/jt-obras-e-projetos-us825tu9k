@@ -28,7 +28,23 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { Users, Plus, Pencil, Trash2, Mail, Phone, MapPin, Search } from 'lucide-react'
+import {
+  Users,
+  Plus,
+  Pencil,
+  Trash2,
+  Mail,
+  Phone,
+  MapPin,
+  Search,
+  MoreVertical,
+} from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const maskPhone = (v: string) =>
   v
@@ -192,26 +208,42 @@ export function CustomersTab() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEdit(c)}
-                        className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        title="Editar"
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-gray-500 hover:text-gray-900 focus-visible:ring-0"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="bg-[#0f172a] text-slate-200 border-slate-800 w-48 shadow-xl"
                       >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(c.id)}
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        title="Deletar"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                        <DropdownMenuItem
+                          onClick={() => openEdit(c)}
+                          className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" /> Editar Cliente
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            window.location.href = `mailto:${c.email}`
+                          }}
+                          className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                        >
+                          <Mail className="h-4 w-4 mr-2" /> Enviar E-mail
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(c.id)}
+                          className="text-red-400 hover:bg-red-950/50 hover:text-red-300 cursor-pointer focus:bg-red-950/50 focus:text-red-300"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" /> Deletar Cliente
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

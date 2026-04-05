@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Printer, Save, Fingerprint, PenTool, Download } from 'lucide-react'
+import { ArrowLeft, Printer, Save, Fingerprint, Download } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { exportHtmlToWord } from '@/lib/export-utils'
 import { RichTextEditor } from '@/components/RichTextEditor'
+import { SignatureInput } from '@/components/SignatureInput'
 import {
   Select,
   SelectContent,
@@ -132,14 +133,6 @@ export default function CertificateEditor() {
     toast({ title: 'Salvo no Acervo', description: 'Certificado salvo com sucesso.' })
   }
 
-  const signEletronic = () => {
-    setData({
-      ...data,
-      signature: 'https://img.usecurling.com/i?q=signature&color=blue&shape=hand-drawn',
-    })
-    toast({ title: 'Assinado', description: 'Assinatura eletrônica aplicada.' })
-  }
-
   const signGovbr = () => {
     setData({ ...data, signature: 'govbr' })
     toast({ title: 'Validado Gov.br', description: 'Assinatura digital Gov.br aplicada.' })
@@ -190,14 +183,6 @@ export default function CertificateEditor() {
           <div className="flex items-center gap-2 overflow-x-auto">
             <Button
               size="sm"
-              onClick={signEletronic}
-              variant="outline"
-              className="gap-2 text-brand-navy hidden sm:flex"
-            >
-              <PenTool className="h-4 w-4" /> Assinatura Eletrônica
-            </Button>
-            <Button
-              size="sm"
               onClick={signGovbr}
               className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
             >
@@ -222,10 +207,12 @@ export default function CertificateEditor() {
       </div>
 
       <div className="container mx-auto px-4 print:p-0 flex flex-col xl:flex-row items-start gap-8 mt-6">
-        <div className="w-full xl:w-[400px] shrink-0 bg-white p-6 rounded-xl border shadow-sm print:hidden">
-          <h2 className="font-bold mb-4 text-brand-navy border-b pb-2">Dados do Certificado</h2>
-          <div className="space-y-4">
-            <div className="space-y-1">
+        <div className="w-full xl:w-[480px] shrink-0 bg-white p-6 rounded-xl border shadow-sm print:hidden h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+          <h2 className="font-bold mb-4 text-brand-navy border-b pb-2 sticky top-0 bg-white z-10">
+            Dados do Certificado
+          </h2>
+          <div className="space-y-5">
+            <div className="space-y-1.5">
               <Label>Modelo de Certificado (NR)</Label>
               <Select onValueChange={handleTemplateChange} defaultValue="NR-35">
                 <SelectTrigger>
@@ -240,15 +227,15 @@ export default function CertificateEditor() {
               </Select>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Nome do Colaborador</Label>
                 <Input
                   value={data.employeeName}
                   onChange={(e) => setData({ ...data, employeeName: e.target.value })}
-                  placeholder="Nome completo do participante"
+                  placeholder="Nome completo"
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>CPF</Label>
                 <Input
                   value={data.employeeCpf}
@@ -264,14 +251,14 @@ export default function CertificateEditor() {
                 />
               </div>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Empresa (Empregadora)</Label>
               <Input
                 value={data.companyName}
                 onChange={(e) => setData({ ...data, companyName: e.target.value })}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>CNPJ</Label>
               <Input
                 value={data.companyCnpj}
@@ -279,7 +266,7 @@ export default function CertificateEditor() {
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Descrição Frontal do Curso</Label>
               <RichTextEditor
                 value={data.courseDesc}
@@ -288,7 +275,7 @@ export default function CertificateEditor() {
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Conteúdo Programático (Verso)</Label>
               <RichTextEditor
                 value={data.syllabus}
@@ -297,15 +284,15 @@ export default function CertificateEditor() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-              <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="space-y-1.5">
                 <Label>Título do Curso</Label>
                 <Input
                   value={data.courseName}
                   onChange={(e) => setData({ ...data, courseName: e.target.value })}
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Carga Horária</Label>
                 <Input
                   value={data.workload}
@@ -315,14 +302,14 @@ export default function CertificateEditor() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Local</Label>
                 <Input
                   value={data.location}
                   onChange={(e) => setData({ ...data, location: e.target.value })}
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Data</Label>
                 <Input
                   value={data.date}
@@ -331,16 +318,16 @@ export default function CertificateEditor() {
               </div>
             </div>
 
-            <div className="pt-2 border-t space-y-4">
-              <Label className="font-bold text-gray-500">Dados do Instrutor / Responsável</Label>
-              <div className="space-y-1">
+            <div className="pt-4 border-t space-y-5">
+              <Label className="font-bold text-gray-800 text-lg">Responsável Técnico</Label>
+              <div className="space-y-1.5">
                 <Label>Nome</Label>
                 <Input
                   value={data.signerName}
                   onChange={(e) => setData({ ...data, signerName: e.target.value })}
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Cargo/Função</Label>
                 <Input
                   value={data.signerRole}
@@ -348,20 +335,28 @@ export default function CertificateEditor() {
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <Label>MTE/SP</Label>
                   <Input
                     value={data.signerMte}
                     onChange={(e) => setData({ ...data, signerMte: e.target.value })}
                   />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <Label>CREA</Label>
                   <Input
                     value={data.signerCrea}
                     onChange={(e) => setData({ ...data, signerCrea: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <Label className="font-bold text-gray-800">Assinatura</Label>
+                <SignatureInput
+                  value={data.signature}
+                  onChange={(val) => setData({ ...data, signature: val })}
+                />
               </div>
             </div>
           </div>

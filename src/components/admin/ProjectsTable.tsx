@@ -1,5 +1,11 @@
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Trash2, MoreVertical, Eye, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -74,24 +80,40 @@ export function ProjectsTable({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(p)}
-                      className="h-8 w-8 hover:bg-blue-50"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-gray-500 hover:text-gray-900 focus-visible:ring-0"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="bg-[#0f172a] text-slate-200 border-slate-800 w-48 shadow-xl"
                     >
-                      <Edit className="h-4 w-4 text-blue-600" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onDelete(p.id)}
-                      className="h-8 w-8 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4 text-red-600" />
-                    </Button>
-                  </div>
+                      <DropdownMenuItem
+                        onClick={() => onEdit(p)}
+                        className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                      >
+                        <Edit className="h-4 w-4 mr-2" /> Editar Obra
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {}}
+                        className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                      >
+                        <Eye className="h-4 w-4 mr-2" /> Ver Detalhes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onDelete(p.id)}
+                        className="text-red-400 hover:bg-red-950/50 hover:text-red-300 cursor-pointer focus:bg-red-950/50 focus:text-red-300"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" /> Deletar Obra
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

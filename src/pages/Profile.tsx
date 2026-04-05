@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/use-auth'
 import pb from '@/lib/pocketbase/client'
 import { ShieldCheck, UploadCloud } from 'lucide-react'
+import { SignatureInput } from '@/components/SignatureInput'
 
 export default function Profile() {
   const { user } = useAuth()
@@ -16,7 +17,7 @@ export default function Profile() {
     company: user?.company || '',
   })
   const [avatar, setAvatar] = useState<File | null>(null)
-  const [signature, setSignature] = useState<File | null>(null)
+  const [signatureBase64, setSignatureBase64] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
   const handleSave = async () => {
@@ -26,8 +27,14 @@ export default function Profile() {
       data.append('name', formData.name)
       data.append('phone', formData.phone)
       data.append('company', formData.company)
+
       if (avatar) data.append('avatar', avatar)
-      if (signature) data.append('signature', signature)
+
+      if (signatureBase64) {
+        const res = await fetch(signatureBase64)
+        const blob = await res.blob()
+        data.append('signature', blob, 'assinatura.png')
+      }
 
       await pb.collection('users').update(user.id, data)
       toast({ title: 'Sucesso', description: 'Seu perfil e configurações foram atualizados.' })
@@ -42,7 +49,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8 max-w-4xl">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Configurações de Conta</h1>
         <p className="text-slate-500 mt-1">
@@ -55,11 +62,16 @@ export default function Profile() {
           <div className="relative">
             <div className="w-28 h-28 bg-slate-100 rounded-full border-4 border-white shadow-md overflow-hidden flex items-center justify-center relative group">
               {avatar ? (
-                <img src={URL.createObjectURL(avatar)} className="w-full h-full object-cover" />
+                <img
+                  src={URL.createObjectURL(avatar)}
+                  className="w-full h-full object-cover"
+                  alt="Avatar"
+                />
               ) : user?.avatar ? (
                 <img
                   src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.avatar}`}
                   className="w-full h-full object-cover"
+                  alt="Avatar"
                 />
               ) : (
                 <span className="text-slate-300 font-bold text-xl">
@@ -134,63 +146,57 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="pt-6 border-t">
-          <Label className="text-slate-800 font-bold text-base mb-4 block">
-            Assinatura Digital de Documentos
-          </Label>
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 p-6 flex flex-col items-center justify-center text-center">
-              <p className="text-sm font-medium text-slate-600 mb-4">
-                Faça o upload do seu carimbo de assinatura (Fundo transparente recomendado)
+        <div className="pt-6 border-t flex flex-col xl:flex-row gap-8">
+          <div className="flex-1 space-y-4">
+            <div>
+              <Label className="text-slate-800 font-bold text-lg block">
+                Assinatura Digital de Documentos
+              </Label>
+              <p className="text-sm text-slate-500 mt-1">
+                Configure sua assinatura utilizando nosso componente unificado. Ela será aplicada
+                automaticamente na emissão de certificados e ordens de serviço.
               </p>
-              <input
-                id="sig-upload"
-                type="file"
-                className="hidden"
-                onChange={(e) => setSignature(e.target.files?.[0] || null)}
-                accept="image/png, image/jpeg"
-              />
-              <Button
-                asChild
-                variant="outline"
-                className="border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-white"
-              >
-                <label htmlFor="sig-upload" className="cursor-pointer">
-                  Procurar Arquivo PNG
-                </label>
-              </Button>
-              {signature && (
-                <p className="text-xs font-bold text-green-600 mt-3">
-                  Arquivo selecionado: {signature.name}
-                </p>
-              )}
             </div>
 
-            <div className="w-full md:w-64 h-32 border bg-white rounded-lg flex items-center justify-center p-2 shadow-inner">
-              {signature ? (
+            <SignatureInput value={signatureBase64} onChange={setSignatureBase64} />
+          </div>
+
+          <div className="w-full xl:w-72 shrink-0 space-y-4">
+            <Label className="text-slate-800 font-bold text-sm block">
+              Prévia da Assinatura Atual
+            </Label>
+            <div className="w-full h-40 border-2 border-dashed bg-slate-50 rounded-xl flex items-center justify-center p-4 shadow-inner relative overflow-hidden">
+              {signatureBase64 ? (
                 <img
-                  src={URL.createObjectURL(signature)}
-                  className="max-w-full max-h-full object-contain mix-blend-multiply"
+                  src={signatureBase64}
+                  className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-sm"
+                  alt="Prévia Nova"
                 />
               ) : user?.signature ? (
                 <img
                   src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
-                  className="max-w-full max-h-full object-contain mix-blend-multiply"
+                  className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-sm"
+                  alt="Prévia Salva"
                 />
               ) : (
-                <span className="text-slate-300 text-sm italic">Prévia da assinatura</span>
+                <span className="text-slate-400 text-sm italic font-medium">
+                  Nenhuma assinatura cadastrada
+                </span>
               )}
             </div>
+            <p className="text-xs text-slate-400 text-center">
+              * O fundo branco será removido automaticamente nos PDFs
+            </p>
           </div>
         </div>
 
-        <div className="pt-8 flex justify-end">
+        <div className="pt-8 flex justify-end border-t">
           <Button
             onClick={handleSave}
             disabled={loading}
-            className="bg-[#3498db] hover:bg-[#2980b9] text-white h-12 px-8 text-lg font-bold"
+            className="bg-[#3498db] hover:bg-[#2980b9] text-white h-12 px-10 text-lg font-bold rounded-full shadow-md"
           >
-            {loading ? 'Salvando...' : 'Salvar Alterações'}
+            {loading ? 'Salvando Configurações...' : 'Salvar Alterações'}
           </Button>
         </div>
       </div>

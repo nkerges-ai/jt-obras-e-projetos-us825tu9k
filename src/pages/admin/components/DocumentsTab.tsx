@@ -17,7 +17,15 @@ import {
   History,
   Eye,
   RotateCcw,
+  MoreVertical,
+  Mail,
 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
 import {
   DocumentoArmazenado,
@@ -300,45 +308,51 @@ export function DocumentsTab() {
                       })}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                        {file.nome_arquivo.toLowerCase().endsWith('.pdf') && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => {
-                              setPdfUrl(file.url_storage)
-                              setIsPdfOpen(true)
-                            }}
-                            title="Visualizar PDF"
+                            className="h-8 w-8 text-gray-500 hover:text-gray-900 focus-visible:ring-0 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"
                           >
-                            <Eye className="h-4 w-4 text-brand-light" />
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleShare(file.id)}
-                          title="Link Público"
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-[#0f172a] text-slate-200 border-slate-800 w-56 shadow-xl"
                         >
-                          <Upload className="h-4 w-4 text-brand-orange" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => viewHistory(file)}
-                          title="Histórico e Restauração"
-                        >
-                          <History className="h-4 w-4 text-blue-600" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(file)}
-                          title="Mover para Lixeira"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      </div>
+                          {file.nome_arquivo.toLowerCase().endsWith('.pdf') && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setPdfUrl(file.url_storage)
+                                setIsPdfOpen(true)
+                              }}
+                              className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                            >
+                              <Eye className="h-4 w-4 mr-2" /> Visualizar PDF
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem
+                            onClick={() => handleShare(file.id)}
+                            className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                          >
+                            <Upload className="h-4 w-4 mr-2" /> Compartilhar Link
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => viewHistory(file)}
+                            className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
+                          >
+                            <History className="h-4 w-4 mr-2" /> Histórico de Versões
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(file)}
+                            className="text-red-400 hover:bg-red-950/50 hover:text-red-300 cursor-pointer focus:bg-red-950/50 focus:text-red-300"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" /> Mover para Lixeira
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

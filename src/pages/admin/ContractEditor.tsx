@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
+import { SignatureInput } from '@/components/SignatureInput'
 
 export default function ContractEditor() {
   const { toast } = useToast()
@@ -22,6 +23,7 @@ export default function ContractEditor() {
     contractConditions:
       'O pagamento será realizado em 2 parcelas, sendo 50% no início e 50% na entrega.',
     date: new Date().toLocaleDateString('pt-BR'),
+    clientSignature: '',
   })
 
   useEffect(() => {
@@ -89,31 +91,33 @@ export default function ContractEditor() {
       </div>
 
       <div className="container mx-auto px-4 print:p-0 flex flex-col xl:flex-row items-start gap-8 mt-6 print:m-0">
-        <div className="w-full xl:w-[450px] shrink-0 bg-white p-6 rounded-xl border shadow-sm print:hidden">
-          <h2 className="font-bold mb-4 text-brand-navy border-b pb-2">Dados do Contrato</h2>
-          <div className="space-y-4">
-            <div className="space-y-1">
+        <div className="w-full xl:w-[480px] shrink-0 bg-white p-6 rounded-xl border shadow-sm print:hidden h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+          <h2 className="font-bold mb-4 text-brand-navy border-b pb-2 sticky top-0 bg-white z-10">
+            Dados do Contrato
+          </h2>
+          <div className="space-y-5">
+            <div className="space-y-1.5">
               <Label>Nome do Cliente / Contratante</Label>
               <Input
                 value={data.clientName}
                 onChange={(e) => setData({ ...data, clientName: e.target.value })}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>CNPJ / CPF</Label>
               <Input
                 value={data.clientDocument}
                 onChange={(e) => setData({ ...data, clientDocument: e.target.value })}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Endereço Completo</Label>
               <Input
                 value={data.clientAddress}
                 onChange={(e) => setData({ ...data, clientAddress: e.target.value })}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Objeto do Contrato</Label>
               <Textarea
                 value={data.contractObject}
@@ -121,14 +125,14 @@ export default function ContractEditor() {
                 className="min-h-[100px]"
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Valor Acordado (R$)</Label>
               <Input
                 value={data.contractValue}
                 onChange={(e) => setData({ ...data, contractValue: e.target.value })}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Condições de Pagamento</Label>
               <Textarea
                 value={data.contractConditions}
@@ -136,11 +140,22 @@ export default function ContractEditor() {
                 className="min-h-[80px]"
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label>Data do Contrato</Label>
               <Input
                 value={data.date}
                 onChange={(e) => setData({ ...data, date: e.target.value })}
+              />
+            </div>
+
+            <div className="pt-4 border-t space-y-3">
+              <Label className="font-bold text-gray-800 text-lg">Assinatura do Cliente</Label>
+              <p className="text-sm text-gray-500 mb-2">
+                Colete a assinatura do cliente pelo dispositivo para emitir o contrato já assinado.
+              </p>
+              <SignatureInput
+                value={data.clientSignature}
+                onChange={(val) => setData({ ...data, clientSignature: val })}
               />
             </div>
           </div>
@@ -161,42 +176,57 @@ export default function ContractEditor() {
                 doravante denominado <strong>CONTRATANTE</strong>.
               </p>
 
-              <h4 className="font-bold uppercase pt-4">Cláusula 1ª - Do Objeto</h4>
-              <p>
+              <h4 className="font-bold uppercase pt-4 text-brand-navy">Cláusula 1ª - Do Objeto</h4>
+              <p className="pl-4">
                 O presente contrato tem por objeto a prestação de serviços de: <br />
-                {data.contractObject ||
-                  '__________________________________________________________________________________'}
+                <span className="font-medium text-gray-800 mt-2 block whitespace-pre-wrap">
+                  {data.contractObject ||
+                    '__________________________________________________________________________________'}
+                </span>
               </p>
 
-              <h4 className="font-bold uppercase pt-4">
+              <h4 className="font-bold uppercase pt-4 text-brand-navy">
                 Cláusula 2ª - Do Valor e Forma de Pagamento
               </h4>
-              <p>
+              <p className="pl-4">
                 Pelos serviços prestados, a CONTRATANTE pagará à CONTRATADA o valor total de{' '}
                 <strong>R$ {data.contractValue || '________'}</strong>.
                 <br />
-                Condições: {data.contractConditions}
+                <br />
+                <strong>Condições:</strong> <br />
+                <span className="text-gray-800">{data.contractConditions}</span>
               </p>
 
-              <h4 className="font-bold uppercase pt-4">Cláusula 3ª - Das Obrigações</h4>
-              <p>
+              <h4 className="font-bold uppercase pt-4 text-brand-navy">
+                Cláusula 3ª - Das Obrigações
+              </h4>
+              <p className="pl-4">
                 A CONTRATADA obriga-se a fornecer os serviços com qualidade e cumprir com as Normas
                 Regulamentadoras vigentes (NR-01, NR-18, NR-35).
               </p>
 
-              <div className="pt-12 text-center">
+              <div className="pt-24 text-center">
                 <p>São Paulo, {data.date}.</p>
 
-                <div className="flex justify-between mt-16 px-10">
-                  <div className="flex flex-col items-center w-64">
+                <div className="flex flex-col sm:flex-row justify-center gap-16 mt-20 px-10">
+                  <div className="flex flex-col items-center w-64 relative">
                     <div className="w-full border-t border-black mb-2"></div>
-                    <p className="font-bold">JT OBRAS E MANUTENÇÕES LTDA</p>
-                    <p className="text-xs">Contratada</p>
+                    <p className="font-bold uppercase text-sm">JT OBRAS E MANUTENÇÕES LTDA</p>
+                    <p className="text-xs text-gray-600">Contratada</p>
                   </div>
-                  <div className="flex flex-col items-center w-64">
-                    <div className="w-full border-t border-black mb-2"></div>
-                    <p className="font-bold">{data.clientName || 'CONTRATANTE'}</p>
-                    <p className="text-xs">Contratante</p>
+                  <div className="flex flex-col items-center w-64 relative">
+                    {data.clientSignature && (
+                      <img
+                        src={data.clientSignature}
+                        className="absolute -top-14 h-16 max-w-[240px] mix-blend-multiply print:mix-blend-normal z-10"
+                        alt="Assinatura"
+                      />
+                    )}
+                    <div className="w-full border-t border-black mb-2 relative z-0"></div>
+                    <p className="font-bold uppercase text-sm">
+                      {data.clientName || 'CONTRATANTE'}
+                    </p>
+                    <p className="text-xs text-gray-600">Contratante</p>
                   </div>
                 </div>
               </div>
