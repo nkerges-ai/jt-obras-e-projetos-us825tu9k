@@ -27,29 +27,44 @@ export function ProjectsTable({ projects, onEdit, onDelete }: ProjectsTableProps
   return (
     <div className="bg-[#1e293b] rounded-xl shadow-sm border border-slate-800 overflow-hidden">
       <div className="overflow-x-auto">
-        <Table className="min-w-[800px]">
+        <Table className="w-full min-w-max md:min-w-0">
           <TableHeader className="bg-slate-800/50">
             <TableRow className="border-slate-800">
-              <TableHead className="text-slate-300">Nome da Obra</TableHead>
-              <TableHead className="text-slate-300">Status</TableHead>
-              <TableHead className="text-slate-300">Início</TableHead>
-              <TableHead className="text-slate-300">Valor Total</TableHead>
+              <TableHead className="text-slate-300">Obra</TableHead>
+              <TableHead className="text-slate-300 hidden md:table-cell">Status</TableHead>
+              <TableHead className="text-slate-300 hidden md:table-cell">Início</TableHead>
+              <TableHead className="text-slate-300 hidden sm:table-cell">Valor Total</TableHead>
               <TableHead className="text-right text-slate-300">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {projects.map((p) => (
               <TableRow key={p.id} className="border-slate-800 hover:bg-slate-800/50">
-                <TableCell className="font-medium text-white">{p.name}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium text-white max-w-[200px] sm:max-w-none truncate sm:whitespace-normal">
+                  <div className="flex flex-col gap-1">
+                    <span className="truncate">{p.name}</span>
+                    <div className="md:hidden flex flex-wrap gap-2 mt-1">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#3498db]/20 text-[#3498db] whitespace-nowrap">
+                        {p.status}
+                      </span>
+                      <span className="text-xs text-slate-400 flex items-center">
+                        {new Date(p.start_date).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                    <span className="sm:hidden text-xs text-slate-300 font-medium mt-0.5">
+                      R$ {p.total_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
                   <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#3498db]/20 text-[#3498db]">
                     {p.status}
                   </span>
                 </TableCell>
-                <TableCell className="text-slate-400">
+                <TableCell className="text-slate-400 hidden md:table-cell">
                   {new Date(p.start_date).toLocaleDateString('pt-BR')}
                 </TableCell>
-                <TableCell className="text-slate-200 font-medium">
+                <TableCell className="text-slate-200 font-medium hidden sm:table-cell">
                   R$ {p.total_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell className="text-right">

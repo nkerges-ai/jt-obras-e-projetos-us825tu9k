@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   FileText,
@@ -19,6 +20,11 @@ export function DashboardLayout() {
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
 
   const handleSignOut = () => {
     signOut()
@@ -99,7 +105,7 @@ export function DashboardLayout() {
       <div className="flex-1 flex flex-col md:pl-64">
         <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden">
           <img src={logoUrl} alt="JT Obras" className="max-h-10 w-auto object-contain" />
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-11 w-11">
                 <Menu className="h-6 w-6" />

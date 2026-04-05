@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,9 +11,11 @@ export default function ClientLogin() {
   const [error, setError] = useState(false)
   const navigate = useNavigate()
 
-  if (sessionStorage.getItem('client_project_id')) {
-    return <Navigate to="/cliente/dashboard" replace />
-  }
+  useEffect(() => {
+    if (sessionStorage.getItem('client_project_id')) {
+      navigate('/cliente/dashboard', { replace: true })
+    }
+  }, [navigate])
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()

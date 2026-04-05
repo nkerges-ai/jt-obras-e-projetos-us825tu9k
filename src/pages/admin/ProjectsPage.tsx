@@ -104,7 +104,7 @@ export default function ProjectsPage() {
             className="pl-9 bg-slate-800 border-slate-700 text-white"
           />
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full md:w-[200px] bg-slate-800 border-slate-700 text-white">
               <SelectValue placeholder="Status" />

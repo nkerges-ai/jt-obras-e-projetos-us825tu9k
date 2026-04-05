@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,9 +15,11 @@ export default function Login() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  if (!authLoading && user?.id) {
-    return <Navigate to="/dashboard" replace />
-  }
+  useEffect(() => {
+    if (!authLoading && user?.id) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [authLoading, user, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
