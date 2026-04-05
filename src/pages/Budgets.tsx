@@ -29,6 +29,8 @@ export default function Budgets() {
   const { toast } = useToast()
   const [budgets, setBudgets] = useState<any[]>([])
   const [clientName, setClientName] = useState('')
+  const [collaboratorCpf, setCollaboratorCpf] = useState('')
+  const [technicianCpf, setTechnicianCpf] = useState('')
   const [items, setItems] = useState<{ desc: string; qty: number; price: number }[]>([
     { desc: '', qty: 1, price: 0 },
   ])
@@ -48,19 +50,37 @@ export default function Budgets() {
 
   useEffect(() => {
     fetchBudgets()
-  }, [])
+    if (user?.cpf) {
+      setTechnicianCpf(user.cpf)
+    }
+  }, [user])
+
+  const formatCpf = (v: string) => {
+    let val = v.replace(/\D/g, '')
+    if (val.length > 11) val = val.slice(0, 11)
+    val = val.replace(/(\d{3})(\d)/, '$1.$2')
+    val = val.replace(/(\d{3})(\d)/, '$1.$2')
+    val = val.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    return val
+  }
 
   const resetForm = () => {
     setClientName('')
+    setCollaboratorCpf('')
+    setTechnicianCpf(user?.cpf || '')
     setItems([{ desc: '', qty: 1, price: 0 }])
     setEditingId(null)
+    setFieldErrors({})
   }
 
   const handleEdit = (b: any) => {
     setClientName(b.client_name)
+    setCollaboratorCpf(b.collaborator_cpf || '')
+    setTechnicianCpf(b.technician_cpf || user?.cpf || '')
     setItems(b.content_json || [{ desc: '', qty: 1, price: 0 }])
     setEditingId(b.id)
     setActiveTab('editor')
+    setFieldErrors({})
   }
 
   const total = items.reduce((acc, curr) => acc + curr.qty * curr.price, 0)
@@ -71,16 +91,23 @@ export default function Budgets() {
     status: 'draft' | 'approved' = 'draft',
     shouldSend: boolean = false,
   ) => {
-    setFieldErrors({})
-    if (!clientName) {
-      setFieldErrors({ client_name: 'Campo obrigatório.' })
+    const errs: Record<string, string> = {}
+    if (!clientName) errs.client_name = 'Campo obrigatório.'
+    if (!technicianCpf || technicianCpf.length < 14)
+      errs.technician_cpf = 'CPF do responsável inválido.'
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
       return
     }
+    setFieldErrors({})
 
     try {
       const payload = {
         user_id: user.id,
         client_name: clientName,
+        collaborator_cpf: collaboratorCpf,
+        technician_cpf: technicianCpf,
         content_json: items,
         total_value: total,
         status: status,
@@ -328,17 +355,48 @@ export default function Budgets() {
               <h2 className="text-xl font-bold text-white">Planilha do Orçamento</h2>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-slate-300 font-medium">Cliente / Obra Referência</Label>
-              <Input
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                placeholder="Ex: Reforma Condomínio Y"
-                className="h-12 bg-slate-800 border-slate-700 text-white"
-              />
-              {fieldErrors.client_name && (
-                <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
-              )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/50">
+              <div className="space-y-2 md:col-span-2">
+                <Label className="text-slate-300 font-medium">
+                  Cliente / Obra Referência <span className="text-red-400">*</span>
+                </Label>
+                <Input
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="Ex: Reforma Condomínio Y"
+                  className="h-12 bg-slate-800 border-slate-700 text-white"
+                />
+                {fieldErrors.client_name && (
+                  <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-300">CPF do Cliente (Opcional)</Label>
+                <Input
+                  value={collaboratorCpf}
+                  onChange={(e) => setCollaboratorCpf(formatCpf(e.target.value))}
+                  placeholder="000.000.000-00"
+                  maxLength={14}
+                  className="h-12 bg-slate-800 border-slate-700 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-300">
+                  CPF do Responsável Técnico <span className="text-red-400">*</span>
+                </Label>
+                <Input
+                  value={technicianCpf}
+                  onChange={(e) => setTechnicianCpf(formatCpf(e.target.value))}
+                  placeholder="000.000.000-00"
+                  maxLength={14}
+                  className="h-12 bg-slate-800 border-slate-700 text-white"
+                />
+                {fieldErrors.technician_cpf && (
+                  <p className="text-xs text-red-400">{fieldErrors.technician_cpf}</p>
+                )}
+              </div>
             </div>
 
             <div className="pt-4">

@@ -30,6 +30,8 @@ export default function Contracts() {
   const { toast } = useToast()
   const [contracts, setContracts] = useState<any[]>([])
   const [clientName, setClientName] = useState('')
+  const [collaboratorCpf, setCollaboratorCpf] = useState('')
+  const [technicianCpf, setTechnicianCpf] = useState('')
   const [contentHtml, setContentHtml] = useState('')
   const [activeTab, setActiveTab] = useState('list')
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -48,7 +50,19 @@ export default function Contracts() {
 
   useEffect(() => {
     fetchContracts()
-  }, [])
+    if (user?.cpf) {
+      setTechnicianCpf(user.cpf)
+    }
+  }, [user])
+
+  const formatCpf = (v: string) => {
+    let val = v.replace(/\D/g, '')
+    if (val.length > 11) val = val.slice(0, 11)
+    val = val.replace(/(\d{3})(\d)/, '$1.$2')
+    val = val.replace(/(\d{3})(\d)/, '$1.$2')
+    val = val.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    return val
+  }
 
   const loadTemplate = () => {
     setContentHtml(`<h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS TÉCNICOS</h1>
@@ -70,30 +84,43 @@ export default function Contracts() {
 
   const resetForm = () => {
     setClientName('')
+    setCollaboratorCpf('')
+    setTechnicianCpf(user?.cpf || '')
     setContentHtml('')
     setEditingId(null)
+    setFieldErrors({})
   }
 
   const handleEdit = (c: any) => {
     setClientName(c.client_name)
+    setCollaboratorCpf(c.collaborator_cpf || '')
+    setTechnicianCpf(c.technician_cpf || user?.cpf || '')
     setContentHtml(c.content_html)
     setEditingId(c.id)
     setActiveTab('editor')
+    setFieldErrors({})
   }
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const handleSave = async (shouldSend: boolean = false) => {
-    setFieldErrors({})
-    if (!clientName) {
-      setFieldErrors({ client_name: 'Campo obrigatório.' })
+    const errs: Record<string, string> = {}
+    if (!clientName) errs.client_name = 'Campo obrigatório.'
+    if (!technicianCpf || technicianCpf.length < 14)
+      errs.technician_cpf = 'CPF do responsável inválido.'
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
       return
     }
+    setFieldErrors({})
 
     try {
       const payload = {
         user_id: user.id,
         client_name: clientName,
+        collaborator_cpf: collaboratorCpf,
+        technician_cpf: technicianCpf,
         content_html: contentHtml,
         status: 'active',
       }
@@ -322,25 +349,60 @@ export default function Contracts() {
 
         <TabsContent value="editor" className="mt-6">
           <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 space-y-6">
-            <div className="flex flex-col md:flex-row gap-4 items-end bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-              <div className="flex-1 w-full space-y-2">
-                <Label className="text-slate-300">Nome do Cliente ou Empresa Contratante</Label>
-                <Input
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                />
-                {fieldErrors.client_name && (
-                  <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
-                )}
+            <div className="bg-slate-800/50 p-4 sm:p-6 rounded-lg border border-slate-700 space-y-6">
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-end justify-between">
+                <h3 className="text-lg font-semibold text-white">Dados do Contrato</h3>
+                <Button
+                  onClick={loadTemplate}
+                  variant="outline"
+                  className="w-full md:w-auto min-h-[44px] border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-white bg-transparent"
+                >
+                  Preencher Padrão (Template)
+                </Button>
               </div>
-              <Button
-                onClick={loadTemplate}
-                variant="outline"
-                className="w-full md:w-auto min-h-[44px] border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-white bg-transparent"
-              >
-                Preencher Padrão
-              </Button>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-slate-300">
+                    Nome do Cliente ou Empresa Contratante <span className="text-red-400">*</span>
+                  </Label>
+                  <Input
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
+                  />
+                  {fieldErrors.client_name && (
+                    <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-300">CPF do Contratante (Opcional)</Label>
+                  <Input
+                    value={collaboratorCpf}
+                    onChange={(e) => setCollaboratorCpf(formatCpf(e.target.value))}
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-300">
+                    CPF do Responsável Técnico <span className="text-red-400">*</span>
+                  </Label>
+                  <Input
+                    value={technicianCpf}
+                    onChange={(e) => setTechnicianCpf(formatCpf(e.target.value))}
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
+                  />
+                  {fieldErrors.technician_cpf && (
+                    <p className="text-xs text-red-400">{fieldErrors.technician_cpf}</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">

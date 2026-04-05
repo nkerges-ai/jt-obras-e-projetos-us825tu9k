@@ -32,82 +32,80 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#0f172a] text-white">
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-96">
-          <div className="bg-white p-4 rounded-xl mb-8 inline-block">
-            <img src={logo} alt="JT Obras" className="h-12 object-contain" />
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-white">Acesse sua conta</h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Ou{' '}
-            <Link to="/signup" className="font-medium text-[#3498db] hover:text-[#2980b9]">
-              crie uma nova conta
-            </Link>
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white relative p-4">
+      {/* Background styling for impeccable look */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-[#3498db]/10 blur-[120px]" />
+        <div className="absolute top-[60%] -right-[10%] w-[40%] h-[60%] rounded-full bg-[#e67e22]/10 blur-[120px]" />
+      </div>
 
-          <div className="mt-8">
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div>
-                <Label htmlFor="email" className="text-slate-300">
-                  E-mail
-                </Label>
-                <div className="mt-1">
-                  <Input
-                    id="email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="password" className="text-slate-300">
-                  Senha
-                </Label>
-                <div className="mt-1">
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-[#3498db] hover:text-[#2980b9]">
-                    Esqueceu a senha?
-                  </a>
-                </div>
-              </div>
-
-              <div>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#3498db] hover:bg-[#2980b9] text-white h-12 text-lg"
-                >
-                  {loading ? 'Entrando...' : 'Entrar'}
-                </Button>
-              </div>
-            </form>
+      <div className="w-full max-w-md bg-[#1e293b]/80 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl relative z-10">
+        <div className="flex justify-center mb-8">
+          <div className="bg-white p-3 rounded-xl inline-block shadow-lg">
+            <img src={logo} alt="JT Obras" className="h-10 object-contain" />
           </div>
         </div>
-      </div>
-      <div className="hidden lg:block relative w-0 flex-1">
-        <img
-          className="absolute inset-0 h-full w-full object-cover"
-          src="https://img.usecurling.com/p/1000/1000?q=construction%20engineering&color=blue"
-          alt="Construção"
-        />
-        <div className="absolute inset-0 bg-[#0f172a]/60 mix-blend-multiply" />
+
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Acesso ao Portal</h2>
+          <p className="mt-2 text-sm text-slate-400">
+            Não tem uma conta?{' '}
+            <Link
+              to="/signup"
+              className="font-medium text-[#3498db] hover:text-[#2980b9] transition-colors"
+            >
+              Cadastre-se
+            </Link>
+          </p>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-slate-300 font-medium">
+              E-mail
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              className="bg-slate-900/50 border-slate-700 text-white min-h-[48px] focus-visible:ring-[#3498db]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-slate-300 font-medium">
+                Senha
+              </Label>
+              <a
+                href="#"
+                className="text-xs font-medium text-[#3498db] hover:text-[#2980b9] transition-colors"
+              >
+                Esqueceu a senha?
+              </a>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="bg-slate-900/50 border-slate-700 text-white min-h-[48px] focus-visible:ring-[#3498db]"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#3498db] hover:bg-[#2980b9] text-white h-12 text-base font-semibold shadow-lg shadow-[#3498db]/20 transition-all active:scale-[0.98] mt-4"
+          >
+            {loading ? 'Autenticando...' : 'Entrar no Sistema'}
+          </Button>
+        </form>
       </div>
     </div>
   )
