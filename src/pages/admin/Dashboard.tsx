@@ -39,6 +39,7 @@ import { CloudProjectsTab } from './components/CloudProjectsTab'
 import { CertificatesTab } from './components/CertificatesTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import logo from '@/assets/logotipo-c129e.jpg'
 
 import {
   Sidebar,
@@ -366,18 +367,35 @@ export default function AdminDashboard() {
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
           <header className="h-14 border-b bg-white flex items-center justify-between px-4 shrink-0 shadow-sm z-10">
-            <div className="flex items-center gap-3">
-              <SidebarTrigger />
-              <div className="h-4 w-px bg-gray-300 hidden sm:block"></div>
-              <h1 className="text-lg font-bold text-brand-navy hidden sm:block">Dashboard</h1>
+            {/* Mobile Header */}
+            <div className="flex md:hidden items-center justify-between w-full">
+              <img src={logo} alt="JT Obras" className="h-8 object-contain" />
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="text-slate-600"
+                >
+                  <Lock className="h-5 w-5" />
+                </Button>
+                <SidebarTrigger className="text-brand-navy ml-1" />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {/* Desktop Header */}
+            <div className="hidden md:flex items-center gap-3">
+              <SidebarTrigger />
+              <div className="h-4 w-px bg-gray-300"></div>
+              <h1 className="text-lg font-bold text-brand-navy">Dashboard</h1>
+            </div>
+
+            <div className="hidden md:flex items-center gap-2 overflow-x-auto no-scrollbar">
               <Button
                 asChild
                 variant="outline"
                 size="sm"
-                className="hidden lg:flex gap-2 text-xs h-8 border-brand-navy/30"
+                className="flex gap-2 text-xs h-8 border-brand-navy/30"
               >
                 <Link to="/campo">App de Campo</Link>
               </Button>
@@ -430,7 +448,7 @@ export default function AdminDashboard() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-gray-50/50 relative">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-gray-50/50 relative pb-28">
             <Alert className="mb-6 bg-blue-50 text-blue-900 border-blue-200 shadow-sm hidden md:flex items-start">
               <Info className="h-4 w-4 text-blue-600 mt-0.5" />
               <div>

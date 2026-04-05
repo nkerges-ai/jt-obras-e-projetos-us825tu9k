@@ -36,6 +36,7 @@ export default function Certificates() {
     hours: 8,
   })
   const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState('list')
 
   const fetchCertificates = async () => {
     try {
@@ -67,6 +68,7 @@ export default function Certificates() {
       })
       fetchCertificates()
       setFormData({ nr_type: 'NR-35', collaborator_name: '', training_date: '', hours: 8 })
+      setActiveTab('list')
     } catch (e) {
       toast({ title: 'Erro', description: 'Falha ao salvar certificado.', variant: 'destructive' })
     }
@@ -85,7 +87,17 @@ export default function Certificates() {
         <h1 className="text-3xl font-bold text-slate-900">Certificados NR</h1>
       </div>
 
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => {
+          if (v !== activeTab) {
+            setActiveTab(v)
+            if (v === 'new')
+              setFormData({ nr_type: 'NR-35', collaborator_name: '', training_date: '', hours: 8 })
+          }
+        }}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2 bg-slate-200 p-1">
           <TabsTrigger
             value="list"

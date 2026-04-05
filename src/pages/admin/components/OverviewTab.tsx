@@ -164,73 +164,57 @@ export function OverviewTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Total de Clientes <Users className="h-4 w-4 text-blue-500" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">{stats.totalClientes}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Total de Obras <HardHat className="h-4 w-4 text-orange-500" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">{stats.totalObras}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Em Execução <Activity className="h-4 w-4 text-blue-600" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">{stats.obrasExecucao}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Concluídas <CheckCircle className="h-4 w-4 text-green-500" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">{stats.obrasConcluidas}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Receita Total <DollarSign className="h-4 w-4 text-emerald-600" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">
-              {formatCurrency(stats.receitaTotal)}
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Total de Clientes</p>
+                <p className="text-3xl font-bold text-brand-navy">{stats.totalClientes}</p>
+              </div>
+              <div className="p-2">
+                <Users className="h-5 w-5 text-blue-500" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-white border-none shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
-              Receita do Mês <TrendingUp className="h-4 w-4 text-emerald-500" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-brand-navy">
-              {formatCurrency(stats.receitaMes)}
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Obras (Total / Em Execução)
+                </p>
+                <p className="text-3xl font-bold text-brand-navy">
+                  {stats.totalObras}{' '}
+                  <span className="text-lg text-muted-foreground font-medium">
+                    / {stats.obrasExecucao}
+                  </span>
+                </p>
+              </div>
+              <div className="p-2">
+                <HardHat className="h-5 w-5 text-orange-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-none shadow-sm">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Receita Total</p>
+                <p className="text-3xl font-bold text-brand-navy">
+                  {formatCurrency(stats.receitaTotal)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Este mês: {formatCurrency(stats.receitaMes)}
+                </p>
+              </div>
+              <div className="p-2">
+                <DollarSign className="h-5 w-5 text-emerald-500" />
+              </div>
             </div>
           </CardContent>
         </Card>

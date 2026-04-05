@@ -238,8 +238,10 @@ export function CertificatesTab() {
       <Tabs
         value={activeTab}
         onValueChange={(v) => {
-          setActiveTab(v)
-          if (v === 'new' && !editingId) resetForm()
+          if (v !== activeTab) {
+            setActiveTab(v)
+            if (v === 'new' && !editingId) resetForm()
+          }
         }}
         className="w-full"
       >
