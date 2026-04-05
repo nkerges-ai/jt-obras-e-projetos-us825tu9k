@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +12,6 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const { signIn, user, loading: authLoading } = useAuth()
-  const navigate = useNavigate()
   const { toast } = useToast()
 
   const isMounted = useRef(true)
@@ -23,17 +22,6 @@ export default function Login() {
       isMounted.current = false
     }
   }, [])
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-    if (isMounted.current && !authLoading && user?.id) {
-      // Use timeout to prevent "Maximum update depth exceeded" during hydration/auth state changes
-      timeoutId = setTimeout(() => {
-        navigate('/dashboard', { replace: true })
-      }, 10)
-    }
-    return () => clearTimeout(timeoutId)
-  }, [authLoading, user?.id, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,14 +37,22 @@ export default function Login() {
           variant: 'destructive',
         })
         if (isMounted.current) setLoading(false)
-      } else {
-        if (isMounted.current) {
-          navigate('/dashboard', { replace: true })
-        }
       }
     } catch (err) {
       if (isMounted.current) setLoading(false)
     }
+  }
+
+  if (authLoading) {
+    return (
+      <div className="min-h-[100svh] flex items-center justify-center bg-[#0f172a] text-white">
+        Verificando sessão...
+      </div>
+    )
+  }
+
+  if (user?.id) {
+    return <Navigate to="/dashboard" replace />
   }
 
   return (

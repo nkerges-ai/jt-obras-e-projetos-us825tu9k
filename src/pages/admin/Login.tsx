@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,15 +14,9 @@ export default function AdminLogin() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  useEffect(() => {
-    let mounted = true
-    if ((pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true') && mounted) {
-      navigate('/admin', { replace: true })
-    }
-    return () => {
-      mounted = false
-    }
-  }, [navigate])
+  if (pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true') {
+    return <Navigate to="/admin" replace />
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
