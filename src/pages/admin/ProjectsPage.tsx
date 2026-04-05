@@ -70,14 +70,14 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8 animate-fade-in-up">
+    <div className="container mx-auto p-6 space-y-8 animate-fade-in-up bg-[#0f172a] min-h-screen text-slate-200">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <HardHat className="h-8 w-8 text-blue-600" />
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <HardHat className="h-8 w-8 text-[#3498db]" />
             Obras e Projetos
           </h1>
-          <p className="text-gray-500 mt-2">
+          <p className="text-slate-400 mt-2">
             Gerencie todas as obras ativas e concluídas de seus clientes.
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function ProjectsPage() {
             setEditingProject(null)
             setIsFormOpen(true)
           }}
-          className="bg-blue-600 hover:bg-blue-700 shadow-md h-10 px-5"
+          className="bg-[#3498db] hover:bg-[#2980b9] text-white shadow-md h-10 px-5"
         >
           <Plus className="mr-2 h-4 w-4" /> Nova Obra
         </Button>
@@ -94,22 +94,22 @@ export default function ProjectsPage() {
 
       <ProgressCards projects={projects} />
 
-      <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center">
+      <div className="bg-[#1e293b] p-5 rounded-xl shadow-sm border border-slate-800 flex flex-col md:flex-row gap-4 items-center">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Buscar por nome da obra..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-gray-50 border-gray-200"
+            className="pl-9 bg-slate-800 border-slate-700 text-white"
           />
         </div>
         <div className="flex gap-4 w-full md:w-auto">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-[200px] bg-gray-50 border-gray-200">
+            <SelectTrigger className="w-full md:w-[200px] bg-slate-800 border-slate-700 text-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-800 border-slate-700 text-white">
               <SelectItem value="all">Todos os Status</SelectItem>
               <SelectItem value="Planning">Planejamento</SelectItem>
               <SelectItem value="In Execution">Em Execução</SelectItem>
@@ -118,10 +118,10 @@ export default function ProjectsPage() {
             </SelectContent>
           </Select>
           <Select value={clientFilter} onValueChange={setClientFilter}>
-            <SelectTrigger className="w-full md:w-[250px] bg-gray-50 border-gray-200">
+            <SelectTrigger className="w-full md:w-[250px] bg-slate-800 border-slate-700 text-white">
               <SelectValue placeholder="Cliente" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-800 border-slate-700 text-white">
               <SelectItem value="all">Todos os Clientes</SelectItem>
               {customers.map((c) => (
                 <SelectItem key={c.id} value={c.id}>

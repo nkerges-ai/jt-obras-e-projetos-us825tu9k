@@ -65,7 +65,15 @@ export default function Budgets() {
 
   const total = items.reduce((acc, curr) => acc + curr.qty * curr.price, 0)
 
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
   const handleSave = async (status: 'draft' | 'approved' = 'draft') => {
+    setFieldErrors({})
+    if (!clientName) {
+      setFieldErrors({ client_name: 'Campo obrigatório.' })
+      return
+    }
+
     try {
       const payload = {
         user_id: user.id,
@@ -88,8 +96,16 @@ export default function Budgets() {
       fetchBudgets()
       resetForm()
       setActiveTab('list')
-    } catch (e) {
-      toast({ title: 'Erro', description: 'Erro ao salvar o orçamento.', variant: 'destructive' })
+    } catch (e: any) {
+      const errors = e.response?.data || {}
+      const extracted: Record<string, string> = {}
+      for (const key in errors) extracted[key] = errors[key].message
+      setFieldErrors(extracted)
+      toast({
+        title: 'Erro',
+        description: 'Verifique os campos obrigatórios.',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -240,6 +256,9 @@ export default function Budgets() {
                 placeholder="Ex: Reforma Condomínio Y"
                 className="h-12 bg-slate-800 border-slate-700 text-white"
               />
+              {fieldErrors.client_name && (
+                <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
+              )}
             </div>
 
             <div className="pt-4">

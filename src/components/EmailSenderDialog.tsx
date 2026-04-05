@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
-import { Mail, Send } from 'lucide-react'
-import { addLog } from '@/lib/storage'
+import { Mail, Send, Loader2 } from 'lucide-react'
+import pb from '@/lib/pocketbase/client'
 
 interface EmailSenderDialogProps {
   open: boolean
@@ -23,6 +23,7 @@ interface EmailSenderDialogProps {
 export function EmailSenderDialog({ open, onOpenChange, documentName }: EmailSenderDialogProps) {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -33,25 +34,36 @@ export function EmailSenderDialog({ open, onOpenChange, documentName }: EmailSen
     }
   }, [open, documentName])
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
+    setLoading(true)
 
-    // Simulate sending email and log it
-    addLog({
-      type: 'Email',
-      recipient: email,
-      message: `Documento Enviado: ${documentName}`,
-      status: 'Enviado',
-    })
+    try {
+      await pb.send('/backend/v1/send-email', {
+        method: 'POST',
+        body: {
+          to: email,
+          subject: `Documento: ${documentName}`,
+          html: `<p>${message.replace(/\n/g, '<br/>')}</p>`,
+        },
+      })
 
-    toast({
-      title: 'E-mail Enviado',
-      description: `O documento foi enviado com sucesso para ${email}.`,
-    })
-
-    onOpenChange(false)
-    setEmail('')
+      toast({
+        title: 'E-mail Enviado',
+        description: `O documento foi enviado com sucesso para ${email}.`,
+      })
+      onOpenChange(false)
+      setEmail('')
+    } catch (error) {
+      toast({
+        title: 'Erro ao enviar',
+        description: 'Não foi possível enviar o e-mail no momento.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -87,8 +99,13 @@ export function EmailSenderDialog({ open, onOpenChange, documentName }: EmailSen
               onChange={(e) => setMessage(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full gap-2 bg-[#3498db] hover:bg-[#2980b9] text-white">
-            <Send className="w-4 h-4" /> Disparar E-mail
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full gap-2 bg-[#3498db] hover:bg-[#2980b9] text-white"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {loading ? 'Enviando...' : 'Disparar E-mail'}
           </Button>
         </form>
       </DialogContent>

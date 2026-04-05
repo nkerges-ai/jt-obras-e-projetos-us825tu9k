@@ -77,8 +77,18 @@ export default function Certificates() {
     return val
   }
 
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
   const handleSave = async (status: 'draft' | 'completed') => {
     setLoading(true)
+    setFieldErrors({})
+
+    if (!formData.collaborator_cpf || formData.collaborator_cpf.length < 14) {
+      setFieldErrors((prev) => ({ ...prev, collaborator_cpf: 'CPF inválido.' }))
+      setLoading(false)
+      return
+    }
+
     try {
       const payload = {
         ...formData,
@@ -106,8 +116,16 @@ export default function Certificates() {
       fetchCertificates()
       resetForm()
       setActiveTab('list')
-    } catch (e) {
-      toast({ title: 'Erro', description: 'Falha ao salvar certificado.', variant: 'destructive' })
+    } catch (e: any) {
+      const errors = e.response?.data || {}
+      const extracted: Record<string, string> = {}
+      for (const key in errors) extracted[key] = errors[key].message
+      setFieldErrors(extracted)
+      toast({
+        title: 'Erro',
+        description: 'Verifique os campos obrigatórios.',
+        variant: 'destructive',
+      })
     }
     setLoading(false)
   }
@@ -315,6 +333,9 @@ export default function Certificates() {
                     placeholder="Nome completo"
                     className="bg-slate-800 border-slate-700 text-white"
                   />
+                  {fieldErrors.collaborator_name && (
+                    <p className="text-xs text-red-400">{fieldErrors.collaborator_name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-slate-300">CPF do Colaborador</Label>
@@ -326,6 +347,9 @@ export default function Certificates() {
                     placeholder="000.000.000-00"
                     className="bg-slate-800 border-slate-700 text-white"
                   />
+                  {fieldErrors.collaborator_cpf && (
+                    <p className="text-xs text-red-400">{fieldErrors.collaborator_cpf}</p>
+                  )}
                 </div>
               </div>
 

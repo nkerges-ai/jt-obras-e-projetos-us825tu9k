@@ -6,21 +6,31 @@ export interface Customer {
   email: string
   phone: string
   tax_id: string
-  type: 'PF' | 'PJ'
+  type: string
   address_street: string
   address_number: string
-  address_complement: string
+  address_complement?: string
   address_city: string
   address_state: string
   address_zip: string
-  created: string
-  updated: string
 }
 
-export const getCustomers = () =>
-  pb.collection('customers').getFullList<Customer>({ sort: '-created' })
-export const createCustomer = (data: Partial<Customer>) =>
-  pb.collection('customers').create<Customer>(data)
-export const updateCustomer = (id: string, data: Partial<Customer>) =>
-  pb.collection('customers').update<Customer>(id, data)
-export const deleteCustomer = (id: string) => pb.collection('customers').delete(id)
+export const getCustomers = async () => {
+  return pb.collection('customers').getFullList<Customer>({ sort: '-created' })
+}
+
+export const getCustomer = async (id: string) => {
+  return pb.collection('customers').getOne<Customer>(id)
+}
+
+export const createCustomer = async (data: Partial<Customer>) => {
+  return pb.collection('customers').create<Customer>(data)
+}
+
+export const updateCustomer = async (id: string, data: Partial<Customer>) => {
+  return pb.collection('customers').update<Customer>(id, data)
+}
+
+export const deleteCustomer = async (id: string) => {
+  return pb.collection('customers').delete(id)
+}
