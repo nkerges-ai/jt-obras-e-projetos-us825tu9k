@@ -145,7 +145,8 @@ export default function AdminDashboard() {
       case 'modelos':
         return <TemplatesTab />
       case 'acervo':
-        return <LibraryTab key={`lib-${syncKey}`} />      case 'ativos':
+        return <LibraryTab key={`lib-${syncKey}`} />
+      case 'ativos':
         return <CompanyAssetsTab key={`ast-${syncKey}`} />
       case 'validade':
         return <ValidityAlertsTab key={`val-${syncKey}`} />
