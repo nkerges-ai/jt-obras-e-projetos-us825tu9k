@@ -35,10 +35,14 @@ export function DashboardLayout() {
     { to: '/perfil', icon: UserIcon, label: 'Meu Perfil' },
   ]
 
+  const logoUrl = user?.company_logo
+    ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.company_logo}`
+    : logo
+
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-[#1e293b] text-white">
-      <div className="p-6 flex items-center justify-center border-b border-slate-800 bg-[#0f172a]">
-        <img src={logo} alt="JT Obras" className="h-10 object-contain brightness-0 invert" />
+    <div className="flex flex-col h-full bg-[#0f172a] text-white">
+      <div className="p-4 flex items-center justify-center border-b border-slate-800 bg-white h-20 shrink-0">
+        <img src={logoUrl} alt="JT Obras" className="max-h-[56px] w-auto object-contain" />
       </div>
       <div className="p-4 flex items-center gap-3 border-b border-slate-800">
         <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
@@ -65,7 +69,7 @@ export function DashboardLayout() {
               'flex items-center gap-3 px-3 py-3 md:py-2 rounded-md transition-colors text-sm font-medium min-h-[44px]',
               location.pathname === link.to
                 ? 'bg-[#3498db] text-white'
-                : 'text-slate-300 hover:bg-slate-700 hover:text-white',
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white',
             )}
           >
             <link.icon className="h-4 w-4" />
@@ -76,7 +80,7 @@ export function DashboardLayout() {
       <div className="p-4 border-t border-slate-800">
         <Button
           variant="ghost"
-          className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-700 gap-3 min-h-[44px]"
+          className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800 gap-3 min-h-[44px]"
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4" />
@@ -87,30 +91,26 @@ export function DashboardLayout() {
   )
 
   return (
-    <div className="flex h-screen bg-[#0f172a] text-slate-200">
-      <div className="hidden md:flex w-64 flex-col fixed inset-y-0 z-50 border-r border-slate-800">
+    <div className="flex h-screen bg-slate-50">
+      <div className="hidden md:flex w-64 flex-col fixed inset-y-0 z-50">
         <SidebarContent />
       </div>
 
       <div className="flex-1 flex flex-col md:pl-64">
-        <header className="h-16 bg-[#1e293b] border-b border-slate-800 flex items-center justify-between px-4 md:hidden">
-          <img src={logo} alt="JT Obras" className="h-8 object-contain brightness-0 invert" />
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden">
+          <img src={logoUrl} alt="JT Obras" className="max-h-10 w-auto object-contain" />
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-11 w-11 text-slate-300 hover:text-white hover:bg-slate-800"
-              >
+              <Button variant="ghost" size="icon" className="h-11 w-11">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 border-none bg-[#1e293b]">
+            <SheetContent side="left" className="p-0 w-64 border-none">
               <SidebarContent />
             </SheetContent>
           </Sheet>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <Outlet />
         </main>
       </div>

@@ -21,36 +21,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
-import { Download, Trash, MoreVertical, Edit, Mail, Eye } from 'lucide-react'
-import { EmailSenderDialog } from '@/components/EmailSenderDialog'
-
-const initialForm = {
-  nr_type: 'NR-35',
-  collaborator_name: '',
-  collaborator_cpf: '',
-  technician_cpf: '',
-  training_date: '',
-  hours: 8,
-}
+import { Download, Trash, Printer } from 'lucide-react'
+import logo from '@/assets/logotipo-c129e.jpg'
 
 export default function Certificates() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [certificates, setCertificates] = useState<any[]>([])
-  const [formData, setFormData] = useState(initialForm)
+  const [printDoc, setPrintDoc] = useState<any>(null)
+  const [formData, setFormData] = useState({
+    nr_type: 'NR-35',
+    collaborator_name: '',
+    training_date: '',
+    hours: 8,
+  })
   const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('list')
-  const [editingId, setEditingId] = useState<string | null>(null)
-
-  const [emailOpen, setEmailOpen] = useState(false)
-  const [selectedDoc, setSelectedDoc] = useState<any>(null)
 
   const fetchCertificates = async () => {
     try {
@@ -63,249 +48,107 @@ export default function Certificates() {
 
   useEffect(() => {
     fetchCertificates()
-    if (user?.cpf) {
-      setFormData((prev) => ({ ...prev, technician_cpf: user.cpf }))
-    }
-  }, [user])
+  }, [])
 
-  const formatCpf = (v: string) => {
-    let val = v.replace(/\D/g, '')
-    if (val.length > 11) val = val.slice(0, 11)
-    val = val.replace(/(\d{3})(\d)/, '$1.$2')
-    val = val.replace(/(\d{3})(\d)/, '$1.$2')
-    val = val.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-    return val
-  }
-
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
-
-  const handleSave = async (status: 'draft' | 'completed', shouldSend: boolean = false) => {
+  const handleSave = async (status: 'draft' | 'completed') => {
     setLoading(true)
-    const errs: Record<string, string> = {}
-
-    if (!formData.collaborator_cpf || formData.collaborator_cpf.length < 14) {
-      errs.collaborator_cpf = 'CPF inválido ou não informado.'
-    }
-    if (!formData.technician_cpf || formData.technician_cpf.length < 14) {
-      errs.technician_cpf = 'CPF do responsável técnico é obrigatório.'
-    }
-    if (!formData.collaborator_name) {
-      errs.collaborator_name = 'Nome do colaborador é obrigatório.'
-    }
-
-    if (Object.keys(errs).length > 0) {
-      setFieldErrors(errs)
-      setLoading(false)
-      toast({
-        title: 'Atenção',
-        description: 'Preencha todos os campos obrigatórios corretamente.',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    setFieldErrors({})
-
     try {
-      const payload = {
+      const record = await pb.collection('certificates').create({
         ...formData,
         user_id: user.id,
         status,
+      })
+      if (status === 'completed') {
+        await pb.send(`/backend/v1/certificates/${record.id}/generate-pdf`, { method: 'POST' })
       }
-
-      let record
-      if (editingId) {
-        record = await pb.collection('certificates').update(editingId, payload)
-      } else {
-        record = await pb.collection('certificates').create(payload)
-      }
-
-      if (status === 'completed' || shouldSend) {
-        await pb.send(`/backend/v1/documents/certificates/${record.id}/generate-pdf`, {
-          method: 'POST',
-        })
-      }
-
       toast({
         title: 'Sucesso',
         description: `Certificado salvo como ${status === 'draft' ? 'rascunho' : 'concluído'}.`,
       })
-
-      if (shouldSend) {
-        setSelectedDoc(record)
-        setEmailOpen(true)
-      }
-
       fetchCertificates()
-      resetForm()
-      setActiveTab('list')
-    } catch (e: any) {
-      const errors = e.response?.data || {}
-      const extracted: Record<string, string> = {}
-      for (const key in errors) extracted[key] = errors[key].message
-      setFieldErrors(extracted)
-      toast({
-        title: 'Erro',
-        description: 'Falha ao salvar certificado.',
-        variant: 'destructive',
-      })
+      setFormData({ nr_type: 'NR-35', collaborator_name: '', training_date: '', hours: 8 })
+    } catch (e) {
+      toast({ title: 'Erro', description: 'Falha ao salvar certificado.', variant: 'destructive' })
     }
     setLoading(false)
   }
 
-  const resetForm = () => {
-    setFormData({ ...initialForm, technician_cpf: user?.cpf || '' })
-    setEditingId(null)
-    setFieldErrors({})
-  }
-
-  const handleEdit = (cert: any) => {
-    setFormData({
-      nr_type: cert.nr_type,
-      collaborator_name: cert.collaborator_name,
-      collaborator_cpf: cert.collaborator_cpf || '',
-      technician_cpf: cert.technician_cpf || user?.cpf || '',
-      training_date: cert.training_date.split(' ')[0],
-      hours: cert.hours,
-    })
-    setEditingId(cert.id)
-    setActiveTab('new')
-  }
-
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este certificado?')) return
-    try {
-      await pb.collection('certificates').delete(id)
-      fetchCertificates()
-      toast({ title: 'Excluído', description: 'Certificado removido.' })
-    } catch {
-      toast({ title: 'Erro', description: 'Falha ao excluir.', variant: 'destructive' })
-    }
-  }
-
-  const handleGeneratePdf = async (id: string) => {
-    toast({ title: 'Gerando PDF', description: 'Aguarde um momento...' })
-    try {
-      await pb.send(`/backend/v1/documents/certificates/${id}/generate-pdf`, { method: 'POST' })
-      toast({ title: 'Sucesso', description: 'PDF gerado.' })
-      fetchCertificates()
-    } catch {
-      toast({ title: 'Erro', description: 'Falha ao gerar PDF.', variant: 'destructive' })
-    }
-  }
-
-  const handleSendEmail = (doc: any) => {
-    setSelectedDoc(doc)
-    setEmailOpen(true)
+    if (!confirm('Deseja excluir este certificado?')) return
+    await pb.collection('certificates').delete(id)
+    fetchCertificates()
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">Certificados NR</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Certificados NR</h1>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-slate-800 w-full sm:w-auto grid grid-cols-2 sm:block h-auto">
-          <TabsTrigger
-            value="list"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
-          >
+      <Tabs defaultValue="list" className="w-full">
+        <TabsList className="bg-slate-200">
+          <TabsTrigger value="list" className="data-[state=active]:bg-white">
             Lista de Certificados
           </TabsTrigger>
-          <TabsTrigger
-            value="new"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
-            onClick={resetForm}
-          >
-            {editingId ? 'Editar Certificado' : 'Novo Certificado'}
+          <TabsTrigger value="new" className="data-[state=active]:bg-white">
+            Novo Certificado
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          {/* Desktop Table View */}
-          <div className="hidden md:block bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
-            <Table className="min-w-[700px]">
-              <TableHeader className="bg-slate-800/50">
-                <TableRow className="border-slate-800">
-                  <TableHead className="text-slate-300">Colaborador</TableHead>
-                  <TableHead className="text-slate-300">CPF</TableHead>
-                  <TableHead className="text-slate-300">Tipo (NR)</TableHead>
-                  <TableHead className="text-slate-300">Data</TableHead>
-                  <TableHead className="text-slate-300">Status</TableHead>
-                  <TableHead className="text-right text-slate-300">Ações</TableHead>
+          <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
+            <Table className="min-w-[600px]">
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead>Colaborador</TableHead>
+                  <TableHead>Tipo (NR)</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {certificates.map((cert) => (
-                  <TableRow key={cert.id} className="border-slate-800 hover:bg-slate-800/50">
-                    <TableCell className="font-medium text-white">
-                      {cert.collaborator_name}
-                    </TableCell>
-                    <TableCell className="text-slate-400">{cert.collaborator_cpf || '-'}</TableCell>
-                    <TableCell className="text-slate-300">{cert.nr_type}</TableCell>
-                    <TableCell className="text-slate-400">
-                      {new Date(cert.training_date).toLocaleDateString('pt-BR', {
-                        timeZone: 'UTC',
-                      })}
+                  <TableRow key={cert.id}>
+                    <TableCell className="font-medium">{cert.collaborator_name}</TableCell>
+                    <TableCell>{cert.nr_type}</TableCell>
+                    <TableCell>
+                      {new Date(cert.training_date).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${cert.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${cert.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
                       >
                         {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                      <div className="flex justify-end gap-2">
+                        {cert.status === 'completed' && (
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-slate-400 hover:text-white"
+                            className="h-11 w-11 sm:h-10 sm:w-10"
+                            onClick={() => setPrintDoc(cert)}
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <Printer className="h-4 w-4 text-[#3498db]" />
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-[#0f172a] border-slate-800 text-slate-200 w-48"
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-11 w-11 sm:h-10 sm:w-10"
+                          onClick={() => handleDelete(cert.id)}
                         >
-                          <DropdownMenuItem
-                            onClick={() => handleEdit(cert)}
-                            className="cursor-pointer hover:bg-slate-800 focus:bg-slate-800 focus:text-white"
-                          >
-                            <Edit className="h-4 w-4 mr-2" /> Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleGeneratePdf(cert.id)}
-                            className="cursor-pointer hover:bg-slate-800 focus:bg-slate-800 focus:text-white"
-                          >
-                            <Eye className="h-4 w-4 mr-2" /> Gerar PDF
-                          </DropdownMenuItem>
-                          {cert.status === 'completed' && (
-                            <DropdownMenuItem
-                              onClick={() => handleSendEmail(cert)}
-                              className="cursor-pointer hover:bg-slate-800 focus:bg-slate-800 focus:text-white"
-                            >
-                              <Mail className="h-4 w-4 mr-2" /> Enviar Email
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator className="bg-slate-800" />
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(cert.id)}
-                            className="cursor-pointer text-red-400 hover:bg-red-950 hover:text-red-300 focus:bg-red-950 focus:text-red-300"
-                          >
-                            <Trash className="h-4 w-4 mr-2" /> Deletar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                          <Trash className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
                 {certificates.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                    <TableCell colSpan={5} className="text-center py-8 text-slate-500">
                       Nenhum certificado registrado no momento.
                     </TableCell>
                   </TableRow>
@@ -313,100 +156,22 @@ export default function Certificates() {
               </TableBody>
             </Table>
           </div>
-
-          {/* Mobile Card View */}
-          <div className="md:hidden space-y-4">
-            {certificates.map((cert) => (
-              <div
-                key={cert.id}
-                className="bg-[#1e293b] p-5 rounded-xl border border-slate-800 flex flex-col gap-4 shadow-sm"
-              >
-                <div className="flex justify-between items-start gap-4">
-                  <div>
-                    <h3 className="font-semibold text-white text-base mb-1">
-                      {cert.collaborator_name}
-                    </h3>
-                    <p className="text-sm text-slate-400 mb-1">
-                      CPF: {cert.collaborator_cpf || 'Não informado'}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                      <span className="bg-slate-800 px-2 py-0.5 rounded text-slate-300">
-                        {cert.nr_type}
-                      </span>
-                      <span>
-                        {new Date(cert.training_date).toLocaleDateString('pt-BR', {
-                          timeZone: 'UTC',
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase whitespace-nowrap ${cert.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}
-                  >
-                    {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800/50">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleEdit(cert)}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleGeneratePdf(cert.id)}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  {cert.status === 'completed' && (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleSendEmail(cert)}
-                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
-                    >
-                      <Mail className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(cert.id)}
-                    className="flex-none text-red-400 hover:text-red-300 hover:bg-red-950/50 px-3 min-h-[40px]"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-            {certificates.length === 0 && (
-              <div className="text-center py-10 bg-[#1e293b] rounded-xl border border-slate-800 text-slate-500">
-                Nenhum certificado registrado no momento.
-              </div>
-            )}
-          </div>
         </TabsContent>
 
         <TabsContent value="new" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 max-w-2xl">
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Tipo de Norma Regulamentadora</Label>
+                  <Label>Tipo de Norma Regulamentadora</Label>
                   <Select
                     value={formData.nr_type}
                     onValueChange={(v) => setFormData({ ...formData, nr_type: v })}
                   >
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white min-h-[44px]">
+                    <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                    <SelectContent>
                       <SelectItem value="NR-06">NR-06 (EPIs)</SelectItem>
                       <SelectItem value="NR-10">NR-10 (Eletricidade)</SelectItem>
                       <SelectItem value="NR-18">NR-18 (Construção Civil)</SelectItem>
@@ -415,104 +180,50 @@ export default function Certificates() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">Carga Horária (horas)</Label>
+                  <Label>Carga Horária (horas)</Label>
                   <Input
                     type="number"
                     value={formData.hours}
                     onChange={(e) => setFormData({ ...formData, hours: Number(e.target.value) })}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Nome do Colaborador</Label>
-                  <Input
-                    value={formData.collaborator_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, collaborator_name: e.target.value })
-                    }
-                    placeholder="Nome completo"
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                  />
-                  {fieldErrors.collaborator_name && (
-                    <p className="text-xs text-red-400">{fieldErrors.collaborator_name}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-slate-300">
-                    CPF do Colaborador <span className="text-red-400">*</span>
-                  </Label>
-                  <Input
-                    value={formData.collaborator_cpf}
-                    onChange={(e) =>
-                      setFormData({ ...formData, collaborator_cpf: formatCpf(e.target.value) })
-                    }
-                    placeholder="000.000.000-00"
-                    maxLength={14}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                  />
-                  {fieldErrors.collaborator_cpf && (
-                    <p className="text-xs text-red-400">{fieldErrors.collaborator_cpf}</p>
-                  )}
-                </div>
+              <div className="space-y-2">
+                <Label>Nome do Colaborador</Label>
+                <Input
+                  value={formData.collaborator_name}
+                  onChange={(e) => setFormData({ ...formData, collaborator_name: e.target.value })}
+                  placeholder="Nome completo"
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-slate-300">Data de Conclusão do Treinamento</Label>
-                  <Input
-                    type="date"
-                    value={formData.training_date}
-                    onChange={(e) => setFormData({ ...formData, training_date: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px] appearance-none"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-slate-300">
-                    CPF do Responsável Técnico <span className="text-red-400">*</span>
-                  </Label>
-                  <Input
-                    value={formData.technician_cpf}
-                    onChange={(e) =>
-                      setFormData({ ...formData, technician_cpf: formatCpf(e.target.value) })
-                    }
-                    placeholder="000.000.000-00"
-                    maxLength={14}
-                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
-                  />
-                  {fieldErrors.technician_cpf && (
-                    <p className="text-xs text-red-400">{fieldErrors.technician_cpf}</p>
-                  )}
-                </div>
+              <div className="space-y-2">
+                <Label>Data de Conclusão do Treinamento</Label>
+                <Input
+                  type="date"
+                  value={formData.training_date}
+                  onChange={(e) => setFormData({ ...formData, training_date: e.target.value })}
+                />
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-800 mt-4">
+              <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 border-t mt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-[48px] w-full sm:w-auto bg-transparent border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800"
-                  onClick={() => handleSave('draft', false)}
+                  className="min-h-[44px]"
+                  onClick={() => handleSave('draft')}
                   disabled={loading}
                 >
                   Salvar Rascunho
                 </Button>
                 <Button
                   type="button"
-                  className="bg-slate-700 hover:bg-slate-600 text-white min-h-[48px] w-full sm:w-auto"
-                  onClick={() => handleSave('completed', false)}
+                  className="bg-[#3498db] hover:bg-[#2980b9] text-white flex-1 min-h-[44px]"
+                  onClick={() => handleSave('completed')}
                   disabled={loading}
                 >
-                  Salvar e Gerar PDF
-                </Button>
-                <Button
-                  type="button"
-                  className="bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[48px] w-full sm:w-auto sm:ml-auto"
-                  onClick={() => handleSave('completed', true)}
-                  disabled={loading}
-                >
-                  Salvar e Enviar Email
+                  Gerar PDF do Certificado
                 </Button>
               </div>
             </form>
@@ -520,12 +231,73 @@ export default function Certificates() {
         </TabsContent>
       </Tabs>
 
-      {selectedDoc && (
-        <EmailSenderDialog
-          open={emailOpen}
-          onOpenChange={setEmailOpen}
-          documentName={`Certificado ${selectedDoc.nr_type} - ${selectedDoc.collaborator_name}`}
-        />
+      {printDoc && (
+        <div className="fixed inset-0 bg-black/60 z-[100] overflow-y-auto print:bg-white print:overflow-visible">
+          <style>{`
+            @media print {
+              @page { size: A4 landscape !important; margin: 0 !important; }
+              html, body { margin: 0 !important; padding: 0 !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              header, footer, nav, .print\\:hidden { display: none !important; }
+              #certificate-print-area { width: 297mm !important; margin: 0 !important; padding: 0 !important; }
+            }
+          `}</style>
+          <div className="min-h-screen py-8 px-4 print:p-0 print:m-0 flex flex-col items-center">
+            <div className="bg-white p-4 w-full max-w-[1040px] flex justify-between items-center rounded-t-lg print:hidden shrink-0 shadow-lg">
+              <h2 className="font-bold text-lg">Visualização do Certificado</h2>
+              <div className="flex gap-2">
+                <Button onClick={() => window.print()}>
+                  <Printer className="h-4 w-4 mr-2" /> Imprimir PDF
+                </Button>
+                <Button variant="ghost" onClick={() => setPrintDoc(null)}>
+                  Fechar
+                </Button>
+              </div>
+            </div>
+            
+            <div id="certificate-print-area" className="w-full max-w-[1040px] flex justify-center bg-white relative aspect-[1.414/1] md:h-[735px] shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] overflow-hidden p-4">
+              <div className="absolute inset-4 border-[14px] border-[#005A9C] z-10 opacity-90 pointer-events-none"></div>
+              <div className="absolute inset-[24px] border-[2px] border-[#009FE3] z-10 opacity-70 pointer-events-none"></div>
+
+              <div className="w-full h-full pt-12 pb-10 px-16 md:px-24 flex flex-col items-center text-center relative z-0">
+                <div className="flex items-center justify-center mb-6 h-[70px]">
+                  <img src={user?.company_logo ? \`\${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/\${user.id}/\${user.company_logo}\` : logo} alt="Company Logo" className="h-full object-contain max-w-[200px]" />
+                </div>
+
+                <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-[0.2em] text-[#005A9C] uppercase">
+                  CERTIFICADO
+                </h1>
+                <h2 className="text-xl md:text-2xl font-bold italic mb-6 text-gray-800">
+                  Treinamento {printDoc.nr_type}
+                </h2>
+
+                <div className="text-base md:text-lg leading-[2] text-justify mb-8 text-gray-800 w-full px-12">
+                  <span className="inline">Certificamos que </span>
+                  <span className="font-bold uppercase border-b border-black inline px-2">
+                    {printDoc.collaborator_name}
+                  </span>
+                  <span className="inline"> participou do treinamento de </span>
+                  <span className="font-bold inline">{printDoc.nr_type}</span>
+                  <span className="inline">, com carga horária de </span>
+                  <span className="font-bold">{printDoc.hours}</span>
+                  <span className="inline"> horas, realizado em {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.</span>
+                </div>
+
+                <p className="text-base font-bold mt-auto mb-10 text-gray-800">
+                  São Paulo, {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.
+                </p>
+
+                <div className="mt-8 flex flex-col items-center w-full max-w-sm relative">
+                  {user?.signature && (
+                    <img src={\`\${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/\${user.id}/\${user.signature}\`} className="absolute -top-12 h-16 mix-blend-multiply z-10" alt="Assinatura" />
+                  )}
+                  <div className="w-full border-t border-black mb-2"></div>
+                  <p className="font-bold text-base text-gray-900">{user?.name || 'Responsável Técnico'}</p>
+                  <p className="text-sm font-semibold text-gray-700">{user?.company || 'JT OBRAS E MANUTENÇÕES LTDA'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

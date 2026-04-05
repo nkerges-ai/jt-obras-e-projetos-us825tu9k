@@ -1,7 +1,8 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import logo from '@/assets/logotipo-c129e.jpg'
+import defaultLogo from '@/assets/logotipo-c129e.jpg'
 import { ExportDocumentDialog } from './ExportDocumentDialog'
+import { useAuth } from '@/hooks/use-auth'
 
 interface DocumentLetterheadProps {
   children: React.ReactNode
@@ -9,6 +10,13 @@ interface DocumentLetterheadProps {
   subtitle?: string
   docNumber?: string
   className?: string
+  companyOverride?: {
+    name?: string
+    cnpj?: string
+    phone?: string
+    address?: string
+    logoUrl?: string
+  }
 }
 
 export function DocumentLetterhead({
@@ -17,7 +25,24 @@ export function DocumentLetterhead({
   subtitle,
   docNumber,
   className,
+  companyOverride,
 }: DocumentLetterheadProps) {
+  const { user } = useAuth()
+
+  const name = companyOverride?.name || user?.company || 'JT OBRAS E MANUTENÇÕES LTDA'
+  const cnpj = companyOverride?.cnpj || user?.cnpj || '63.243.791/0001-09'
+  const phone = companyOverride?.phone || user?.phone || '(11) 94003-7545'
+  const address =
+    companyOverride?.address ||
+    user?.address ||
+    'Rua Tommaso Giordani, 371 vila Guacuri – São Paulo - SP | CEP 04475-210'
+
+  const logoUrl =
+    companyOverride?.logoUrl ||
+    (user?.company_logo
+      ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.company_logo}`
+      : defaultLogo)
+
   return (
     <div
       id="document-letterhead-root"
@@ -26,7 +51,6 @@ export function DocumentLetterhead({
         className,
       )}
     >
-      {/* Export Action Bar (Hidden on Print) */}
       <div className="print:hidden bg-gray-50 border-b border-gray-200 px-8 py-3 flex justify-between items-center shrink-0 rounded-t-lg">
         <span className="text-[11px] text-gray-500 font-bold uppercase tracking-wider">
           Visualização de Documento
@@ -34,18 +58,15 @@ export function DocumentLetterhead({
         <ExportDocumentDialog title={title || 'Documento Oficial'} />
       </div>
 
-      {/* Visual Header Identity - Restored to Previous Version with Blue Tones */}
       <div className="border-b-[6px] border-[#005A9C] shrink-0 print-header-group flex flex-row items-center justify-between px-8 py-6 print:px-0 print:py-4 bg-white">
         <div className="flex items-center gap-4">
-          <img src={logo} alt="JT Obras" className="h-16 object-contain" />
+          <img src={logoUrl} alt={name} className="max-h-16 w-auto object-contain max-w-[220px]" />
         </div>
         <div className="text-[10px] text-right text-brand-navy space-y-0.5 font-medium border-l-2 border-[#009FE3] pl-4">
-          <p className="font-bold text-[11px] uppercase tracking-wider">
-            JT OBRAS E MANUTENÇÕES LTDA
-          </p>
-          <p>CNPJ 63.243.791/0001-09</p>
-          <p>(11) 94003-7545</p>
-          <p>São Paulo - SP</p>
+          <p className="font-bold text-[11px] uppercase tracking-wider">{name}</p>
+          <p>CNPJ {cnpj}</p>
+          <p>{phone}</p>
+          <p>{address.split(' - ')[0]}</p>
           {docNumber && (
             <p className="pt-1 mt-1 font-bold text-[#005A9C] border-t border-gray-200">
               Nº: {docNumber}
@@ -54,7 +75,6 @@ export function DocumentLetterhead({
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 px-10 py-8 print:px-0 print:py-4 z-10 bg-white text-gray-800 text-[13px] leading-relaxed relative">
         {(title || subtitle) && (
           <div className="mb-6 text-center border-b-2 border-gray-100 pb-4">
@@ -73,14 +93,15 @@ export function DocumentLetterhead({
         {children}
       </div>
 
-      {/* Standardized Print Footer */}
       <div className="shrink-0 px-10 py-4 print:px-0 text-[9px] text-gray-500 flex justify-between items-end print-footer mt-auto bg-gray-50 print:bg-white border-t border-gray-200">
         <div className="flex flex-col space-y-0.5">
           <span className="font-bold text-brand-navy uppercase tracking-wider">
             Dados Cadastrais Oficiais:
           </span>
-          <span>JT Obras e manutenções ltda - CNPJ 63.243.791/0001-09</span>
-          <span>Rua Tommaso Giordani, 371 vila Guacuri – São Paulo - SP | CEP 04475-210</span>
+          <span>
+            {name} - CNPJ {cnpj}
+          </span>
+          <span>{address}</span>
         </div>
         <span className="print:block hidden page-number font-medium text-brand-navy/60 uppercase tracking-widest">
           Documento Oficial
