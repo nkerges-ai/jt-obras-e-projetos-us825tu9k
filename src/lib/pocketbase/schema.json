@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-05T18:09:28.840Z",
+  "generatedAt": "2026-04-05T18:18:53.371Z",
   "collections": [
     {
       "name": "users",
@@ -58,6 +58,24 @@
         },
         {
           "name": "cpf",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "rg",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cnpj",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "address",
           "type": "text",
           "required": false,
           "system": false
