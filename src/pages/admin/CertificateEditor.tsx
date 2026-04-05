@@ -190,7 +190,9 @@ export default function CertificateEditor() {
             presence: true,
             observations: 'Gerado via sistema de certificados.',
           })
-        } catch (_) {}
+        } catch (_) {
+          // ignore
+        }
       }
 
       toast({ title: 'Salvo no Acervo', description: 'Certificado salvo com sucesso.' })

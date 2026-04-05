@@ -45,7 +45,9 @@ export default function BudgetEditor() {
             date: new Date(doc.created).toLocaleDateString('pt-BR'),
           }))
         })
-        .catch(() => {})
+        .catch(() => {
+          // ignore
+        })
     }
   }, [id])
 

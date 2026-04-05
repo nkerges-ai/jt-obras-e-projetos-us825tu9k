@@ -43,7 +43,9 @@ export default function ContractEditor() {
             date: new Date(doc.created).toLocaleDateString('pt-BR'),
           }))
         })
-        .catch(() => {})
+        .catch(() => {
+          // ignore
+        })
     }
   }, [id])
 
