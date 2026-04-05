@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import pb from '@/lib/pocketbase/client'
+import type { RecordModel } from 'pocketbase'
 
 interface AuthContextType {
-  user: any
-  signUp: (data: any) => Promise<{ error: any }>
+  user: RecordModel | null
+  signUp: (email: string, password: string) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => void
   loading: boolean
@@ -13,34 +14,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within an AuthProvider')
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
   return context
 }
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<any>(pb.authStore.record)
+  const [user, setUser] = useState<RecordModel | null>(pb.authStore.record)
+  // Defaulting to true protects against flashing the login page while restoring session
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Proper handling of effects ensures we don't trigger synchronous renders
     const unsubscribe = pb.authStore.onChange((_token, record) => {
       setUser(record)
     })
+
     setLoading(false)
+
     return () => {
       unsubscribe()
     }
   }, [])
 
-  const signUp = async (data: any) => {
+  const signUp = async (email: string, password: string) => {
     try {
-      const formData = new FormData()
-      Object.keys(data).forEach((key) => {
-        if (data[key] !== undefined && data[key] !== null) formData.append(key, data[key])
-      })
-      formData.append('passwordConfirm', data.password)
-
-      await pb.collection('users').create(formData)
-      await pb.collection('users').authWithPassword(data.email, data.password)
+      await pb.collection('users').create({ email, password, passwordConfirm: password })
+      await pb.collection('users').authWithPassword(email, password)
       return { error: null }
     } catch (error) {
       return { error }
@@ -58,6 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = () => {
     pb.authStore.clear()
+    setUser(null)
   }
 
   return (

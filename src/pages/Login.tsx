@@ -16,10 +16,11 @@ export default function Login() {
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!authLoading && user) {
+    // Use user?.id instead of whole user object to prevent infinite re-renders on reference changes
+    if (!authLoading && user?.id) {
       navigate('/dashboard', { replace: true })
     }
-  }, [user, authLoading, navigate])
+  }, [user?.id, authLoading, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
