@@ -59,7 +59,7 @@ export default function Login() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-slate-800 border-slate-700 text-white"
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                 </div>
               </div>
@@ -75,7 +75,7 @@ export default function Login() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-slate-800 border-slate-700 text-white"
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                 </div>
               </div>

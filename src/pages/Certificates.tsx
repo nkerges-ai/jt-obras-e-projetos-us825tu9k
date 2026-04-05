@@ -94,8 +94,8 @@ export default function Certificates() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <Table>
+          <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
+            <Table className="min-w-[600px]">
               <TableHeader className="bg-slate-50">
                 <TableRow>
                   <TableHead>Colaborador</TableHead>
@@ -126,12 +126,18 @@ export default function Certificates() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="h-11 w-11 sm:h-10 sm:w-10"
                             onClick={() => toast({ description: 'Download PDF em breve...' })}
                           >
                             <Download className="h-4 w-4 text-[#3498db]" />
                           </Button>
                         )}
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(cert.id)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-11 w-11 sm:h-10 sm:w-10"
+                          onClick={() => handleDelete(cert.id)}
+                        >
                           <Trash className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
@@ -151,9 +157,9 @@ export default function Certificates() {
         </TabsContent>
 
         <TabsContent value="new" className="mt-6">
-          <div className="bg-white rounded-lg shadow-sm border p-6 max-w-2xl">
+          <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 max-w-2xl">
             <form className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label>Tipo de Norma Regulamentadora</Label>
                   <Select
@@ -199,10 +205,11 @@ export default function Certificates() {
                 />
               </div>
 
-              <div className="flex gap-4 pt-6 border-t mt-4">
+              <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 border-t mt-4">
                 <Button
                   type="button"
                   variant="outline"
+                  className="min-h-[44px]"
                   onClick={() => handleSave('draft')}
                   disabled={loading}
                 >
@@ -210,9 +217,9 @@ export default function Certificates() {
                 </Button>
                 <Button
                   type="button"
+                  className="bg-[#3498db] hover:bg-[#2980b9] text-white flex-1 min-h-[44px]"
                   onClick={() => handleSave('completed')}
                   disabled={loading}
-                  className="bg-[#3498db] hover:bg-[#2980b9] text-white flex-1"
                 >
                   Gerar PDF do Certificado
                 </Button>

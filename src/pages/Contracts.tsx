@@ -85,8 +85,8 @@ export default function Contracts() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <Table>
+          <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
+            <Table className="min-w-[600px]">
               <TableHeader className="bg-slate-50">
                 <TableRow>
                   <TableHead>Cliente/Contratante</TableHead>
@@ -132,7 +132,7 @@ export default function Contracts() {
               <Button
                 onClick={loadTemplate}
                 variant="outline"
-                className="w-full md:w-auto h-10 border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-white"
+                className="w-full md:w-auto min-h-[44px] border-[#3498db] text-[#3498db] hover:bg-[#3498db] hover:text-white"
               >
                 Preencher Padrão
               </Button>
@@ -155,7 +155,7 @@ export default function Contracts() {
             <div className="pt-4 flex justify-end">
               <Button
                 onClick={handleSave}
-                className="bg-[#3498db] text-white hover:bg-[#2980b9] px-8 h-12 text-lg"
+                className="w-full sm:w-auto bg-[#3498db] text-white hover:bg-[#2980b9] px-8 min-h-[48px] text-lg"
               >
                 Salvar e Gerar PDF
               </Button>

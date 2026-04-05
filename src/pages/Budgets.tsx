@@ -80,71 +80,75 @@ export default function Budgets() {
               Itens de Serviço e Materiais
             </Label>
 
-            <div className="space-y-3">
-              <div className="flex gap-2 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                <div className="flex-1">Descrição</div>
-                <div className="w-20 text-center">Qtd</div>
-                <div className="w-32 text-center">Preço Unit.</div>
-                <div className="w-28 text-right">Subtotal</div>
-                <div className="w-10"></div>
-              </div>
-
-              {items.map((item, i) => (
-                <div key={i} className="flex gap-2 items-center group">
-                  <Input
-                    value={item.desc}
-                    onChange={(e) => updateItem(i, 'desc', e.target.value)}
-                    placeholder="Descreva o serviço/material"
-                    className="flex-1"
-                  />
-                  <Input
-                    type="number"
-                    min="1"
-                    value={item.qty || ''}
-                    onChange={(e) => updateItem(i, 'qty', Number(e.target.value))}
-                    placeholder="Qtd"
-                    className="w-20 text-center"
-                  />
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={item.price || ''}
-                    onChange={(e) => updateItem(i, 'price', Number(e.target.value))}
-                    placeholder="0.00"
-                    className="w-32 text-right"
-                  />
-                  <div className="w-28 text-right font-semibold text-slate-700 bg-slate-50 px-3 py-2 rounded border">
-                    R$ {(item.qty * item.price).toFixed(2)}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setItems(items.filter((_, idx) => idx !== i))}
-                    className="w-10 text-slate-300 hover:text-red-500 hover:bg-red-50"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+            <div className="overflow-x-auto pb-4">
+              <div className="min-w-[700px] space-y-3">
+                <div className="flex gap-2 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <div className="flex-1">Descrição</div>
+                  <div className="w-20 text-center">Qtd</div>
+                  <div className="w-32 text-center">Preço Unit.</div>
+                  <div className="w-28 text-right">Subtotal</div>
+                  <div className="w-10"></div>
                 </div>
-              ))}
+
+                {items.map((item, i) => (
+                  <div key={i} className="flex gap-2 items-center group">
+                    <Input
+                      value={item.desc}
+                      onChange={(e) => updateItem(i, 'desc', e.target.value)}
+                      placeholder="Descreva o serviço/material"
+                      className="flex-1"
+                    />
+                    <Input
+                      type="number"
+                      min="1"
+                      value={item.qty || ''}
+                      onChange={(e) => updateItem(i, 'qty', Number(e.target.value))}
+                      placeholder="Qtd"
+                      className="w-20 text-center"
+                    />
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={item.price || ''}
+                      onChange={(e) => updateItem(i, 'price', Number(e.target.value))}
+                      placeholder="0.00"
+                      className="w-32 text-right"
+                    />
+                    <div className="w-28 text-right font-semibold text-slate-700 bg-slate-50 px-3 py-2 rounded border">
+                      R$ {(item.qty * item.price).toFixed(2)}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setItems(items.filter((_, idx) => idx !== i))}
+                      className="w-11 h-11 sm:w-10 sm:h-10 text-slate-300 hover:text-red-500 hover:bg-red-50 shrink-0"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Button
               variant="outline"
-              className="mt-4 border-dashed border-2 hover:border-[#3498db] hover:text-[#3498db] w-full"
+              className="mt-4 border-dashed border-2 hover:border-[#3498db] hover:text-[#3498db] w-full min-h-[44px]"
               onClick={() => setItems([...items, { desc: '', qty: 1, price: 0 }])}
             >
               <Plus className="h-4 w-4 mr-2" /> Adicionar Nova Linha
             </Button>
           </div>
 
-          <div className="flex justify-between items-center pt-6 border-t mt-4">
-            <div className="text-sm text-slate-500">Total calculado automaticamente</div>
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t mt-4 gap-4">
+            <div className="text-sm text-slate-500 w-full sm:w-auto text-center sm:text-left">
+              Total calculado automaticamente
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
               <div className="text-2xl font-black text-[#3498db]">R$ {total.toFixed(2)}</div>
               <Button
                 onClick={handleSave}
-                className="bg-slate-900 text-white hover:bg-slate-800 h-12 px-8"
+                className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 min-h-[48px] px-8"
               >
                 Salvar e Exportar PDF
               </Button>

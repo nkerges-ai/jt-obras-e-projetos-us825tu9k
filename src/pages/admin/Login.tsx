@@ -59,8 +59,8 @@ export default function AdminLogin() {
                   setPassword(e.target.value)
                   setError(false)
                 }}
-                className={`h-14 text-center text-lg ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              />
+                className={`h-14 text-center text-lg min-h-[48px] ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+              />{' '}
               {error && (
                 <div className="flex items-center justify-center gap-2 text-red-500 text-sm mt-2 font-medium">
                   <ShieldAlert className="h-4 w-4" />
@@ -75,7 +75,7 @@ export default function AdminLogin() {
               <Button
                 type="button"
                 variant="link"
-                className="text-muted-foreground text-sm font-medium hover:text-primary"
+                className="text-muted-foreground text-sm font-medium hover:text-primary min-h-[44px]"
                 onClick={handleForgotPassword}
               >
                 Esqueci a senha

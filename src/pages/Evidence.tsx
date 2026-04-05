@@ -118,9 +118,9 @@ export default function Evidence() {
           />
           <Button
             asChild
-            className="bg-[#3498db] hover:bg-[#2980b9] text-white rounded-full px-8 mt-2 shadow-md"
+            className="bg-[#3498db] hover:bg-[#2980b9] text-white rounded-full px-8 mt-2 shadow-md min-h-[44px]"
           >
-            <label htmlFor="file" className="cursor-pointer">
+            <label htmlFor="file" className="cursor-pointer flex items-center justify-center">
               Procurar Arquivo
             </label>
           </Button>
@@ -137,7 +137,7 @@ export default function Evidence() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setFile(null)}
-                  className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                  className="h-11 w-11 sm:h-8 sm:w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -151,14 +151,14 @@ export default function Evidence() {
                   placeholder="Ex: Fotos detalhadas da instalação da infraestrutura externa do bloco B. Serviço executado conforme OS 104..."
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
-                  className="flex min-h-[100px] w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3498db]"
-                />
+                  className="flex min-h-[100px] w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3498db] min-h-[120px]"
+                />{' '}
               </div>
 
               <Button
                 onClick={handleUpload}
                 disabled={uploading}
-                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg shadow-md"
+                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg shadow-md min-h-[48px]"
               >
                 {uploading ? 'Processando Upload...' : 'Confirmar Envio para a Galeria'}
               </Button>

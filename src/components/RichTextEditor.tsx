@@ -54,12 +54,12 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
         className,
       )}
     >
-      <div className="flex flex-wrap items-center gap-1 p-1.5 border-b bg-gray-50/80">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-gray-50/80 overflow-x-auto">
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('bold')}
           title="Negrito"
         >
@@ -69,7 +69,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('italic')}
           title="Itálico"
         >
@@ -79,7 +79,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('underline')}
           title="Sublinhado"
         >
@@ -90,7 +90,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('justifyLeft')}
           title="Alinhar à Esquerda"
         >
@@ -100,7 +100,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('justifyCenter')}
           title="Centralizar"
         >
@@ -110,7 +110,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('justifyRight')}
           title="Alinhar à Direita"
         >
@@ -120,7 +120,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('justifyFull')}
           title="Justificar"
         >
@@ -131,7 +131,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('insertUnorderedList')}
           title="Lista com Marcadores"
         >
@@ -141,7 +141,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('insertOrderedList')}
           title="Lista Numerada"
         >
@@ -152,7 +152,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('formatBlock', 'H1')}
           title="Título 1"
         >
@@ -162,7 +162,7 @@ export function RichTextEditor({ value, onChange, className, placeholder }: Rich
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 hover:bg-gray-200"
+          className="h-10 w-10 sm:h-8 sm:w-8 hover:bg-gray-200 shrink-0"
           onClick={() => execCommand('formatBlock', 'H2')}
           title="Título 2"
         >

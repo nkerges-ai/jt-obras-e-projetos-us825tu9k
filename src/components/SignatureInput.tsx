@@ -60,13 +60,15 @@ export function SignatureInput({ value, onChange }: SignatureInputProps) {
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
     let x, y
     if ('touches' in e) {
-      x = e.touches[0].clientX - rect.left
-      y = e.touches[0].clientY - rect.top
+      x = (e.touches[0].clientX - rect.left) * scaleX
+      y = (e.touches[0].clientY - rect.top) * scaleY
     } else {
-      x = e.clientX - rect.left
-      y = e.clientY - rect.top
+      x = (e.clientX - rect.left) * scaleX
+      y = (e.clientY - rect.top) * scaleY
     }
 
     ctx.lineWidth = 4
@@ -114,15 +116,24 @@ export function SignatureInput({ value, onChange }: SignatureInputProps) {
   return (
     <div className="w-full border rounded-xl overflow-hidden bg-white shadow-sm">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 rounded-none border-b h-12 bg-slate-50">
-          <TabsTrigger value="type" className="gap-2 data-[state=active]:bg-white">
-            <Type className="h-4 w-4" /> Digitar
+        <TabsList className="w-full grid grid-cols-3 rounded-none border-b min-h-[48px] bg-slate-50">
+          <TabsTrigger
+            value="type"
+            className="gap-1 sm:gap-2 data-[state=active]:bg-white text-xs sm:text-sm py-3"
+          >
+            <Type className="h-4 w-4 hidden sm:block" /> Digitar
           </TabsTrigger>
-          <TabsTrigger value="draw" className="gap-2 data-[state=active]:bg-white">
-            <PenTool className="h-4 w-4" /> Desenhar
+          <TabsTrigger
+            value="draw"
+            className="gap-1 sm:gap-2 data-[state=active]:bg-white text-xs sm:text-sm py-3"
+          >
+            <PenTool className="h-4 w-4 hidden sm:block" /> Desenhar
           </TabsTrigger>
-          <TabsTrigger value="upload" className="gap-2 data-[state=active]:bg-white">
-            <UploadCloud className="h-4 w-4" /> Upload
+          <TabsTrigger
+            value="upload"
+            className="gap-1 sm:gap-2 data-[state=active]:bg-white text-xs sm:text-sm py-3"
+          >
+            <UploadCloud className="h-4 w-4 hidden sm:block" /> Upload
           </TabsTrigger>
         </TabsList>
         <div className="p-4">
@@ -133,7 +144,7 @@ export function SignatureInput({ value, onChange }: SignatureInputProps) {
                 value={typedName}
                 onChange={(e) => setTypedName(e.target.value)}
                 placeholder="Ex: João da Silva"
-                className="font-medium bg-slate-50"
+                className="font-medium bg-slate-50 min-h-[44px]"
               />
             </div>
             {typedName && (
@@ -193,7 +204,7 @@ export function SignatureInput({ value, onChange }: SignatureInputProps) {
               </div>
               <Label
                 htmlFor="sig-upload-file-comp"
-                className="cursor-pointer bg-[#3498db] text-white px-6 py-2.5 rounded-full hover:bg-[#2980b9] font-bold transition-colors"
+                className="cursor-pointer bg-[#3498db] text-white px-6 py-3 rounded-full hover:bg-[#2980b9] font-bold transition-colors flex items-center justify-center min-h-[44px]"
               >
                 Procurar no Computador
               </Label>

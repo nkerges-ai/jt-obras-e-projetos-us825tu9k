@@ -62,7 +62,7 @@ export function DashboardLayout() {
             key={link.to}
             to={link.to}
             className={cn(
-              'flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium',
+              'flex items-center gap-3 px-3 py-3 md:py-2 rounded-md transition-colors text-sm font-medium min-h-[44px]',
               location.pathname === link.to
                 ? 'bg-[#3498db] text-white'
                 : 'text-slate-300 hover:bg-slate-800 hover:text-white',
@@ -76,7 +76,7 @@ export function DashboardLayout() {
       <div className="p-4 border-t border-slate-800">
         <Button
           variant="ghost"
-          className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800 gap-3"
+          className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800 gap-3 min-h-[44px]"
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function DashboardLayout() {
           <img src={logo} alt="JT Obras" className="h-8 object-contain" />
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-11 w-11">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>

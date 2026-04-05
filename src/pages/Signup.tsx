@@ -68,7 +68,7 @@ export default function Signup() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-slate-800 border-slate-700 text-white mt-1"
+                  className="bg-slate-800 border-slate-700 text-white mt-1 min-h-[44px]"
                 />
               </div>
               <div>
@@ -81,10 +81,10 @@ export default function Signup() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-slate-800 border-slate-700 text-white mt-1"
+                  className="bg-slate-800 border-slate-700 text-white mt-1 min-h-[44px]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="phone" className="text-slate-300">
                     Telefone
@@ -93,7 +93,7 @@ export default function Signup() {
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white mt-1"
+                    className="bg-slate-800 border-slate-700 text-white mt-1 min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -104,7 +104,7 @@ export default function Signup() {
                     id="company"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white mt-1"
+                    className="bg-slate-800 border-slate-700 text-white mt-1 min-h-[44px]"
                   />
                 </div>
               </div>
@@ -119,7 +119,7 @@ export default function Signup() {
                   minLength={8}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="bg-slate-800 border-slate-700 text-white mt-1"
+                  className="bg-slate-800 border-slate-700 text-white mt-1 min-h-[44px]"
                 />
               </div>
 
@@ -144,7 +144,7 @@ export default function Signup() {
                     <div className="flex text-sm text-slate-400 justify-center mt-2">
                       <label
                         htmlFor="signature-upload"
-                        className="relative cursor-pointer bg-transparent rounded-md font-medium text-[#3498db] hover:text-[#2980b9] focus-within:outline-none"
+                        className="relative cursor-pointer bg-transparent rounded-md font-medium text-[#3498db] hover:text-[#2980b9] focus-within:outline-none min-h-[44px] flex items-center"
                       >
                         <span>Fazer upload de um arquivo</span>
                         <input
