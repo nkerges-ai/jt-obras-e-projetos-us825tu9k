@@ -253,14 +253,25 @@ export default function Certificates() {
                 </Button>
               </div>
             </div>
-            
-            <div id="certificate-print-area" className="w-full max-w-[1040px] flex justify-center bg-white relative aspect-[1.414/1] md:h-[735px] shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] overflow-hidden p-4">
+
+            <div
+              id="certificate-print-area"
+              className="w-full max-w-[1040px] flex justify-center bg-white relative aspect-[1.414/1] md:h-[735px] shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] overflow-hidden p-4"
+            >
               <div className="absolute inset-4 border-[14px] border-[#005A9C] z-10 opacity-90 pointer-events-none"></div>
               <div className="absolute inset-[24px] border-[2px] border-[#009FE3] z-10 opacity-70 pointer-events-none"></div>
 
               <div className="w-full h-full pt-12 pb-10 px-16 md:px-24 flex flex-col items-center text-center relative z-0">
                 <div className="flex items-center justify-center mb-6 h-[70px]">
-                  <img src={user?.company_logo ? \`\${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/\${user.id}/\${user.company_logo}\` : logo} alt="Company Logo" className="h-full object-contain max-w-[200px]" />
+                  <img
+                    src={
+                      user?.company_logo
+                        ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.company_logo}`
+                        : logo
+                    }
+                    alt="Company Logo"
+                    className="h-full object-contain max-w-[200px]"
+                  />
                 </div>
 
                 <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-[0.2em] text-[#005A9C] uppercase">
@@ -279,7 +290,11 @@ export default function Certificates() {
                   <span className="font-bold inline">{printDoc.nr_type}</span>
                   <span className="inline">, com carga horária de </span>
                   <span className="font-bold">{printDoc.hours}</span>
-                  <span className="inline"> horas, realizado em {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.</span>
+                  <span className="inline">
+                    {' '}
+                    horas, realizado em{' '}
+                    {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.
+                  </span>
                 </div>
 
                 <p className="text-base font-bold mt-auto mb-10 text-gray-800">
@@ -288,11 +303,19 @@ export default function Certificates() {
 
                 <div className="mt-8 flex flex-col items-center w-full max-w-sm relative">
                   {user?.signature && (
-                    <img src={\`\${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/\${user.id}/\${user.signature}\`} className="absolute -top-12 h-16 mix-blend-multiply z-10" alt="Assinatura" />
+                    <img
+                      src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
+                      className="absolute -top-12 h-16 mix-blend-multiply z-10"
+                      alt="Assinatura"
+                    />
                   )}
                   <div className="w-full border-t border-black mb-2"></div>
-                  <p className="font-bold text-base text-gray-900">{user?.name || 'Responsável Técnico'}</p>
-                  <p className="text-sm font-semibold text-gray-700">{user?.company || 'JT OBRAS E MANUTENÇÕES LTDA'}</p>
+                  <p className="font-bold text-base text-gray-900">
+                    {user?.name || 'Responsável Técnico'}
+                  </p>
+                  <p className="text-sm font-semibold text-gray-700">
+                    {user?.company || 'JT OBRAS E MANUTENÇÕES LTDA'}
+                  </p>
                 </div>
               </div>
             </div>

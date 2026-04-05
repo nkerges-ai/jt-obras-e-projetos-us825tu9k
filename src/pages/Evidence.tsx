@@ -10,7 +10,9 @@ export default function Evidence() {
       try {
         const records = await pb.collection('evidence').getFullList({ sort: '-created' })
         setEvidences(records)
-      } catch (e) {}
+      } catch (e) {
+        console.error(e)
+      }
     }
     fetchEvidences()
   }, [])

@@ -18,7 +18,9 @@ export default function AttendanceLists() {
       try {
         const records = await pb.collection('attendance_lists').getFullList({ sort: '-created' })
         setLists(records)
-      } catch (e) {}
+      } catch (e) {
+        console.error(e)
+      }
     }
     fetchLists()
   }, [])
