@@ -133,18 +133,18 @@ export default function Contracts() {
       <h1 className="text-3xl font-bold text-slate-900">Editor de Contratos</h1>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="bg-slate-200">
-          <TabsTrigger value="list" className="data-[state=active]:bg-white">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-200">
+          <TabsTrigger value="list" className="data-[state=active]:bg-white text-xs sm:text-sm">
             Contratos Salvos
           </TabsTrigger>
-          <TabsTrigger value="editor" className="data-[state=active]:bg-white">
+          <TabsTrigger value="editor" className="data-[state=active]:bg-white text-xs sm:text-sm">
             Novo Contrato
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
           <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
-            <Table className="min-w-[600px]">
+            <Table className="min-w-[800px]">
               <TableHeader className="bg-slate-50">
                 <TableRow>
                   <TableHead>Cliente/Contratante</TableHead>

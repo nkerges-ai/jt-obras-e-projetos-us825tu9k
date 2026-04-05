@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,12 +15,9 @@ export default function Login() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  useEffect(() => {
-    // Use user?.id instead of whole user object to prevent infinite re-renders on reference changes
-    if (!authLoading && user?.id) {
-      navigate('/dashboard', { replace: true })
-    }
-  }, [user?.id, authLoading, navigate])
+  if (!authLoading && user?.id) {
+    return <Navigate to="/dashboard" replace />
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

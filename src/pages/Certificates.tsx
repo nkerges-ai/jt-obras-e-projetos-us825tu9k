@@ -86,18 +86,18 @@ export default function Certificates() {
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="bg-slate-200">
-          <TabsTrigger value="list" className="data-[state=active]:bg-white">
+        <TabsList className="grid w-full grid-cols-2 bg-slate-200">
+          <TabsTrigger value="list" className="data-[state=active]:bg-white text-xs sm:text-sm">
             Lista de Certificados
           </TabsTrigger>
-          <TabsTrigger value="new" className="data-[state=active]:bg-white">
+          <TabsTrigger value="new" className="data-[state=active]:bg-white text-xs sm:text-sm">
             Novo Certificado
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
           <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
-            <Table className="min-w-[600px]">
+            <Table className="min-w-[800px]">
               <TableHeader className="bg-slate-50">
                 <TableRow>
                   <TableHead>Colaborador</TableHead>
@@ -211,7 +211,7 @@ export default function Certificates() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-[44px]"
+                  className="w-full sm:w-auto min-h-[44px]"
                   onClick={() => handleSave('draft')}
                   disabled={loading}
                 >
@@ -219,7 +219,7 @@ export default function Certificates() {
                 </Button>
                 <Button
                   type="button"
-                  className="bg-[#3498db] hover:bg-[#2980b9] text-white flex-1 min-h-[44px]"
+                  className="w-full sm:flex-1 bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[44px]"
                   onClick={() => handleSave('completed')}
                   disabled={loading}
                 >

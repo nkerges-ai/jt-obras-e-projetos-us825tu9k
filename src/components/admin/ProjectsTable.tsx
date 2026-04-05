@@ -27,7 +27,7 @@ export function ProjectsTable({ projects, onEdit, onDelete }: ProjectsTableProps
   return (
     <div className="bg-[#1e293b] rounded-xl shadow-sm border border-slate-800 overflow-hidden">
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="min-w-[800px]">
           <TableHeader className="bg-slate-800/50">
             <TableRow className="border-slate-800">
               <TableHead className="text-slate-300">Nome da Obra</TableHead>

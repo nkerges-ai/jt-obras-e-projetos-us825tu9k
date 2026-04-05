@@ -86,7 +86,7 @@ export default function ProjectsPage() {
             setEditingProject(null)
             setIsFormOpen(true)
           }}
-          className="bg-[#3498db] hover:bg-[#2980b9] text-white shadow-md h-10 px-5"
+          className="w-full sm:w-auto bg-[#3498db] hover:bg-[#2980b9] text-white shadow-md h-10 px-5"
         >
           <Plus className="mr-2 h-4 w-4" /> Nova Obra
         </Button>
