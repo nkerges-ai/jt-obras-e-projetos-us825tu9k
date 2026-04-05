@@ -36,6 +36,7 @@ import { DocumentsTab } from './components/DocumentsTab'
 import { ExecutiveDashboardTab } from './components/ExecutiveDashboardTab'
 import { CustomersTab } from './components/CustomersTab'
 import { CloudProjectsTab } from './components/CloudProjectsTab'
+import { CertificatesTab } from './components/CertificatesTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 
@@ -139,11 +140,12 @@ export default function AdminDashboard() {
 
       case 'documentos':
         return <DocumentsTab key={`docs-${syncKey}`} />
+      case 'certificados':
+        return <CertificatesTab key={`cert-${syncKey}`} />
       case 'modelos':
         return <TemplatesTab />
       case 'acervo':
-        return <LibraryTab key={`lib-${syncKey}`} />
-      case 'ativos':
+        return <LibraryTab key={`lib-${syncKey}`} />      case 'ativos':
         return <CompanyAssetsTab key={`ast-${syncKey}`} />
       case 'validade':
         return <ValidityAlertsTab key={`val-${syncKey}`} />
@@ -259,6 +261,14 @@ export default function AdminDashboard() {
                 <FileText className="h-4 w-4" /> Gestão Documental
               </SidebarGroupLabel>
               <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={activeView === 'certificados'}
+                    onClick={() => setActiveView('certificados')}
+                  >
+                    Certificados NR
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     isActive={activeView === 'modelos'}
