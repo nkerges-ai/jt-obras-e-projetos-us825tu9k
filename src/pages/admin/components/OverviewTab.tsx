@@ -170,7 +170,7 @@ export function OverviewTab() {
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Total de Clientes</p>
-                <p className="text-3xl font-bold text-brand-navy">{stats.totalClientes}</p>
+                <p className="text-3xl font-bold text-brand-navy truncate">{stats.totalClientes}</p>
               </div>
               <div className="p-2">
                 <Users className="h-5 w-5 text-blue-500" />
@@ -186,7 +186,7 @@ export function OverviewTab() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Obras (Total / Em Execução)
                 </p>
-                <p className="text-3xl font-bold text-brand-navy">
+                <p className="text-3xl font-bold text-brand-navy truncate">
                   {stats.totalObras}{' '}
                   <span className="text-lg text-muted-foreground font-medium">
                     / {stats.obrasExecucao}
@@ -205,7 +205,7 @@ export function OverviewTab() {
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Receita Total</p>
-                <p className="text-3xl font-bold text-brand-navy">
+                <p className="text-2xl sm:text-3xl font-bold text-brand-navy truncate">
                   {formatCurrency(stats.receitaTotal)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">

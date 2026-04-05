@@ -5,7 +5,6 @@ import { ArrowLeft, Printer, Save, Fingerprint, Download } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { exportHtmlToWord } from '@/lib/export-utils'
 import { RichTextEditor } from '@/components/RichTextEditor'
 import { SignatureInput } from '@/components/SignatureInput'
@@ -17,6 +16,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import logo from '@/assets/logotipo-c129e.jpg'
+import pb from '@/lib/pocketbase/client'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 const CERTIFICATE_TEMPLATES: Record<
   string,
@@ -26,7 +27,7 @@ const CERTIFICATE_TEMPLATES: Record<
     courseName: 'NR-06 EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL - EPI',
     courseDesc:
       '<p>Treinamento sobre o uso adequado, guarda e conservação de Equipamentos de Proteção Individual (EPI), conforme as diretrizes da Norma Regulamentadora NR-06.</p>',
-    workload: '04 (Quatro)',
+    workload: '04',
     syllabus:
       '<ul><li>Importância do EPI</li><li>Seleção do EPI adequado</li><li>Uso correto</li><li>Manutenção e conservação</li><li>Responsabilidades do empregador e do empregado</li></ul>',
   },
@@ -34,7 +35,7 @@ const CERTIFICATE_TEMPLATES: Record<
     courseName: 'NR-10 SEGURANÇA EM INSTALAÇÕES E SERVIÇOS EM ELETRICIDADE',
     courseDesc:
       '<p>Treinamento Básico de Segurança em Instalações e Serviços com Eletricidade, abordando os riscos elétricos, medidas de controle e primeiros socorros, em conformidade com a Norma Regulamentadora NR-10.</p>',
-    workload: '40 (Quarenta)',
+    workload: '40',
     syllabus:
       '<ul><li>Introdução à segurança com eletricidade</li><li>Riscos em instalações e serviços com eletricidade</li><li>Técnicas de análise de risco</li><li>Medidas de controle do risco elétrico</li><li>EPI/EPC (Equipamentos de Proteção Individual e Coletiva)</li><li>Procedimentos e rotinas de trabalho</li><li>Noções de combate a incêndio</li><li>Noções de primeiros socorros</li></ul>',
   },
@@ -42,7 +43,7 @@ const CERTIFICATE_TEMPLATES: Record<
     courseName: 'NR-18 CONDIÇÕES DE SEGURANÇA E SAÚDE NO TRABALHO NA INDÚSTRIA DA CONSTRUÇÃO',
     courseDesc:
       '<p>Treinamento admissional/periódico abordando os riscos inerentes à função, condições do ambiente de trabalho, uso de EPI e EPC, de acordo com a Norma Regulamentadora NR-18.</p>',
-    workload: '06 (Seis)',
+    workload: '06',
     syllabus:
       '<ul><li>Condições do ambiente de trabalho</li><li>Medidas de proteção coletiva</li><li>Equipamentos de proteção individual</li><li>Sinalização de segurança</li><li>Procedimentos operacionais para a fase específica da obra</li></ul>',
   },
@@ -50,7 +51,7 @@ const CERTIFICATE_TEMPLATES: Record<
     courseName: 'NR-35 SEGURANÇA E SAÚDE NOS TRABALHOS EM ALTURA',
     courseDesc:
       '<p>Curso de capacitação para trabalhos em altura, englobando normas, análise de risco, sistemas de proteção contra quedas e condutas em situações de emergência, conforme estabelecido pela Norma Regulamentadora NR-35.</p>',
-    workload: '08 (Oito)',
+    workload: '08',
     syllabus:
       '<ul><li>Normas e regulamentos aplicáveis</li><li>Análise de risco e condições impeditivas</li><li>Riscos potenciais inerentes ao trabalho em altura</li><li>Sistemas, equipamentos e procedimentos de proteção coletiva</li><li>Equipamentos de Proteção Individual para trabalho em altura</li><li>Condutas em situações de emergência e noções de resgate e primeiros socorros</li></ul>',
   },
@@ -82,6 +83,9 @@ export default function CertificateEditor() {
     signature: '',
   })
 
+  const [errors, setErrors] = useState<{ name?: string; cpf?: string; course?: string }>({})
+  const [isSaving, setIsSaving] = useState(false)
+
   const handleTemplateChange = (val: string) => {
     if (CERTIFICATE_TEMPLATES[val]) {
       setData((prev) => ({ ...prev, ...CERTIFICATE_TEMPLATES[val] }))
@@ -96,41 +100,105 @@ export default function CertificateEditor() {
 
   useEffect(() => {
     if (id) {
-      const docs = getTechnicalDocuments()
-      const doc = docs.find((d) => d.id === id)
-      if (doc && doc.data) {
-        setData(doc.data)
-      }
+      pb.collection('certificates')
+        .getOne(id)
+        .then((doc) => {
+          setData((prev) => ({
+            ...prev,
+            employeeName: doc.collaborator_name || '',
+            employeeCpf: doc.collaborator_cpf || '',
+            courseName:
+              CERTIFICATE_TEMPLATES[doc.nr_type]?.courseName ||
+              CERTIFICATE_TEMPLATES['NR-35'].courseName,
+            courseDesc:
+              CERTIFICATE_TEMPLATES[doc.nr_type]?.courseDesc ||
+              CERTIFICATE_TEMPLATES['NR-35'].courseDesc,
+            workload: String(doc.hours) || CERTIFICATE_TEMPLATES['NR-35'].workload,
+            syllabus:
+              CERTIFICATE_TEMPLATES[doc.nr_type]?.syllabus ||
+              CERTIFICATE_TEMPLATES['NR-35'].syllabus,
+            date: new Date(doc.training_date).toLocaleDateString('pt-BR', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }),
+            signerMte: doc.technician_cpf || prev.signerMte,
+            signature: doc.technician_signature
+              ? pb.files.getUrl(doc, doc.technician_signature)
+              : '',
+          }))
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
   }, [id])
 
-  const handleSave = () => {
-    const docs = getTechnicalDocuments()
-    const newDoc = {
-      id: id || `cert_${Date.now()}`,
-      name: `Certificado_${data.employeeName || 'Colaborador'}_${data.courseName.split(' ')[0]}.pdf`,
-      category: 'Certificado',
-      uploadDate: new Date().toISOString(),
-      projectId: 'global',
-      isRestricted: false,
-      url: 'data:application/pdf;base64,dummy',
-      type: 'certificado' as const,
-      data: data,
+  const handleSave = async () => {
+    const newErrors = {
+      name: !data.employeeName ? 'Campo obrigatório' : '',
+      cpf: !data.employeeCpf ? 'Campo obrigatório' : '',
+      course: !data.courseName ? 'Campo obrigatório' : '',
+    }
+    setErrors(newErrors)
+
+    if (newErrors.name || newErrors.cpf || newErrors.course) {
+      toast({
+        title: 'Erro de Validação',
+        description: 'Preencha os campos obrigatórios.',
+        variant: 'destructive',
+      })
+      return
     }
 
-    if (id) {
-      saveTechnicalDocuments(docs.map((d) => (d.id === id ? newDoc : d)))
-    } else {
-      saveTechnicalDocuments([newDoc, ...docs])
-    }
+    setIsSaving(true)
 
-    addAuditLog({
-      userId: 'Admin',
-      action: id ? 'Editar Certificado' : 'Gerar Certificado',
-      table: 'Documentos',
-      newData: JSON.stringify(data),
-    })
-    toast({ title: 'Salvo no Acervo', description: 'Certificado salvo com sucesso.' })
+    try {
+      if (!pb.authStore.record) {
+        await pb.collection('users').authWithPassword('admin@jtobras.com.br', 'JOELTATIANA')
+      }
+
+      let nrType = 'NR-35'
+      if (data.courseName.includes('06')) nrType = 'NR-06'
+      else if (data.courseName.includes('10')) nrType = 'NR-10'
+      else if (data.courseName.includes('18')) nrType = 'NR-18'
+
+      const payload = {
+        user_id: pb.authStore.record?.id,
+        nr_type: nrType,
+        collaborator_name: data.employeeName,
+        collaborator_cpf: data.employeeCpf,
+        training_date: new Date().toISOString().split('T')[0],
+        hours: parseInt(data.workload) || 8,
+        status: 'completed',
+        technician_cpf: data.signerMte,
+      }
+
+      let certId = id
+
+      if (id) {
+        await pb.collection('certificates').update(id, payload)
+      } else {
+        const created = await pb.collection('certificates').create(payload)
+        certId = created.id
+
+        try {
+          await pb.collection('attendance_lists').create({
+            certificate_id: certId,
+            name: data.employeeName,
+            cpf: data.employeeCpf,
+            presence: true,
+            observations: 'Gerado via sistema de certificados.',
+          })
+        } catch (_) {}
+      }
+
+      toast({ title: 'Salvo no Acervo', description: 'Certificado salvo com sucesso.' })
+    } catch (err) {
+      toast({ title: 'Erro ao salvar', description: getErrorMessage(err), variant: 'destructive' })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const signGovbr = () => {
@@ -156,7 +224,6 @@ export default function CertificateEditor() {
             -webkit-print-color-adjust: exact; 
             print-color-adjust: exact;
           }
-          /* Hide main layout elements when printing certificate */
           header, footer, nav, .print\\:hidden { display: none !important; }
           .print-page-break { 
             page-break-after: always !important; 
@@ -192,9 +259,10 @@ export default function CertificateEditor() {
               variant="outline"
               size="sm"
               onClick={handleSave}
+              disabled={isSaving}
               className="gap-2 hidden md:flex"
             >
-              <Save className="h-4 w-4" /> Salvar Acervo
+              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
             </Button>
             <Button variant="outline" size="sm" onClick={exportWord} className="gap-2">
               <Download className="h-4 w-4" /> Word
@@ -231,9 +299,14 @@ export default function CertificateEditor() {
                 <Label>Nome do Colaborador</Label>
                 <Input
                   value={data.employeeName}
-                  onChange={(e) => setData({ ...data, employeeName: e.target.value })}
+                  onChange={(e) => {
+                    setData({ ...data, employeeName: e.target.value })
+                    setErrors({ ...errors, name: '' })
+                  }}
                   placeholder="Nome completo"
+                  className={errors.name ? 'border-red-500' : ''}
                 />
+                {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label>CPF</Label>
@@ -246,9 +319,12 @@ export default function CertificateEditor() {
                     val = val.replace(/(\d{3})(\d)/, '$1.$2')
                     val = val.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
                     setData({ ...data, employeeCpf: val })
+                    setErrors({ ...errors, cpf: '' })
                   }}
                   placeholder="000.000.000-00"
+                  className={errors.cpf ? 'border-red-500' : ''}
                 />
+                {errors.cpf && <p className="text-xs text-red-500">{errors.cpf}</p>}
               </div>
             </div>
             <div className="space-y-1.5">
@@ -289,8 +365,13 @@ export default function CertificateEditor() {
                 <Label>Título do Curso</Label>
                 <Input
                   value={data.courseName}
-                  onChange={(e) => setData({ ...data, courseName: e.target.value })}
+                  onChange={(e) => {
+                    setData({ ...data, courseName: e.target.value })
+                    setErrors({ ...errors, course: '' })
+                  }}
+                  className={errors.course ? 'border-red-500' : ''}
                 />
+                {errors.course && <p className="text-xs text-red-500">{errors.course}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label>Carga Horária</Label>
@@ -369,12 +450,9 @@ export default function CertificateEditor() {
           >
             {/* Front Page */}
             <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break">
-              {/* Certificate Outer Border */}
               <div className="absolute inset-4 border-[14px] border-[#005A9C] pointer-events-none z-10 opacity-90"></div>
-              {/* Certificate Inner Border */}
               <div className="absolute inset-[24px] border-[2px] border-[#009FE3] pointer-events-none z-10 opacity-70"></div>
 
-              {/* Screws */}
               <div className="absolute top-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
                 <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
               </div>
@@ -388,9 +466,7 @@ export default function CertificateEditor() {
                 <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
               </div>
 
-              {/* Content Area */}
               <div className="w-full h-full pt-12 pb-10 px-16 md:px-24 flex flex-col items-center text-center relative z-0">
-                {/* JT Branding Integration */}
                 <div className="flex items-center justify-center mb-6 h-[70px]">
                   <img src={logo} alt="JT Obras e Manutenções" className="h-full object-contain" />
                 </div>
@@ -467,7 +543,7 @@ export default function CertificateEditor() {
               </div>
             </div>
 
-            {/* Back Page (Syllabus) */}
+            {/* Back Page */}
             <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-12 md:p-20 select-none flex flex-col print:pt-16">
               <div className="flex items-center justify-between mb-8 border-b-2 border-[#005A9C] pb-4">
                 <div>

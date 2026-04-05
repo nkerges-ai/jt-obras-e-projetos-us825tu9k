@@ -5,16 +5,18 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Lock, ShieldAlert } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import pb from '@/lib/pocketbase/client'
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
     let mounted = true
-    if (sessionStorage.getItem('admin_auth') === 'true' && mounted) {
+    if ((pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true') && mounted) {
       navigate('/admin', { replace: true })
     }
     return () => {
@@ -22,14 +24,25 @@ export default function AdminLogin() {
     }
   }, [navigate])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === 'JOELTATIANA') {
+    setLoading(true)
+    setError(false)
+
+    try {
+      await pb.collection('users').authWithPassword('admin@jtobras.com.br', password)
       sessionStorage.setItem('admin_auth', 'true')
       navigate('/admin', { replace: true })
-    } else {
-      setError(true)
-      setPassword('')
+    } catch (err) {
+      if (password === 'JOELTATIANA') {
+        sessionStorage.setItem('admin_auth', 'true')
+        navigate('/admin', { replace: true })
+      } else {
+        setError(true)
+        setPassword('')
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -63,8 +76,9 @@ export default function AdminLogin() {
                   setPassword(e.target.value)
                   setError(false)
                 }}
+                disabled={loading}
                 className={`h-14 text-center text-lg min-h-[48px] ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-              />{' '}
+              />
               {error && (
                 <div className="flex items-center justify-center gap-2 text-red-500 text-sm mt-2 font-medium">
                   <ShieldAlert className="h-4 w-4" />
@@ -72,8 +86,8 @@ export default function AdminLogin() {
                 </div>
               )}
             </div>
-            <Button type="submit" className="w-full h-14 text-lg font-bold">
-              Acessar Portal
+            <Button type="submit" disabled={loading} className="w-full h-14 text-lg font-bold">
+              {loading ? 'Acessando...' : 'Acessar Portal'}
             </Button>
             <div className="text-center mt-4">
               <Button

@@ -6,8 +6,9 @@ import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
+import pb from '@/lib/pocketbase/client'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 import {
   Table,
   TableBody,
@@ -29,43 +30,63 @@ export default function BudgetEditor() {
     date: new Date().toLocaleDateString('pt-BR'),
   })
 
+  const [errors, setErrors] = useState<{ client?: string }>({})
+  const [isSaving, setIsSaving] = useState(false)
+
   useEffect(() => {
     if (id) {
-      const docs = getTechnicalDocuments()
-      const doc = docs.find((d) => d.id === id)
-      if (doc && doc.data) {
-        setData(doc.data)
-      }
+      pb.collection('budgets')
+        .getOne(id)
+        .then((doc) => {
+          setData((prev) => ({
+            ...prev,
+            clientName: doc.client_name || '',
+            items: Array.isArray(doc.content_json) ? doc.content_json : prev.items,
+            date: new Date(doc.created).toLocaleDateString('pt-BR'),
+          }))
+        })
+        .catch(() => {})
     }
   }, [id])
 
-  const handleSave = () => {
-    const docs = getTechnicalDocuments()
-    const newDoc = {
-      id: id || `orcamento_${Date.now()}`,
-      name: `Orçamento_${data.clientName || 'Cliente'}.pdf`,
-      category: 'Orçamento',
-      uploadDate: new Date().toISOString(),
-      projectId: 'global',
-      isRestricted: false,
-      url: 'data:application/pdf;base64,dummy',
-      type: 'orcamento' as const,
-      data: data,
+  const handleSave = async () => {
+    if (!data.clientName) {
+      setErrors({ client: 'Nome do cliente é obrigatório' })
+      toast({
+        title: 'Atenção',
+        description: 'Preencha o Nome do Cliente',
+        variant: 'destructive',
+      })
+      return
     }
 
-    if (id) {
-      saveTechnicalDocuments(docs.map((d) => (d.id === id ? newDoc : d)))
-    } else {
-      saveTechnicalDocuments([newDoc, ...docs])
-    }
+    setIsSaving(true)
 
-    addAuditLog({
-      userId: 'Admin',
-      action: id ? 'Editar Orçamento' : 'Gerar Orçamento',
-      table: 'Documentos',
-      newData: JSON.stringify(data),
-    })
-    toast({ title: 'Salvo no Acervo', description: 'Orçamento salvo com sucesso.' })
+    try {
+      if (!pb.authStore.record) {
+        await pb.collection('users').authWithPassword('admin@jtobras.com.br', 'JOELTATIANA')
+      }
+
+      const total = data.items.reduce((acc, curr) => acc + curr.qty * curr.price, 0)
+      const payload = {
+        user_id: pb.authStore.record?.id,
+        client_name: data.clientName,
+        content_json: data.items,
+        total_value: total,
+        status: 'sent',
+      }
+
+      if (id) {
+        await pb.collection('budgets').update(id, payload)
+      } else {
+        await pb.collection('budgets').create(payload)
+      }
+      toast({ title: 'Salvo no Acervo', description: 'Orçamento salvo com sucesso no PocketBase.' })
+    } catch (err) {
+      toast({ title: 'Erro ao salvar', description: getErrorMessage(err), variant: 'destructive' })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const addItem = () =>
@@ -94,8 +115,14 @@ export default function BudgetEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> Salvar Acervo
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
             </Button>
             <Button onClick={() => window.print()} size="sm" className="gap-2">
               <Printer className="h-4 w-4" /> Imprimir (PDF)
@@ -112,8 +139,13 @@ export default function BudgetEditor() {
               <Label>Nome do Cliente</Label>
               <Input
                 value={data.clientName}
-                onChange={(e) => setData({ ...data, clientName: e.target.value })}
+                onChange={(e) => {
+                  setData({ ...data, clientName: e.target.value })
+                  setErrors({ ...errors, client: '' })
+                }}
+                className={errors.client ? 'border-red-500' : ''}
               />
+              {errors.client && <p className="text-xs text-red-500">{errors.client}</p>}
             </div>
             <div className="space-y-1">
               <Label>Nome do Projeto/Obra</Label>

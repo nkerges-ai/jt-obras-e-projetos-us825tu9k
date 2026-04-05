@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Navigate, useNavigate, Link, useSearchParams } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   LogOut,
@@ -13,10 +13,12 @@ import {
   HardHat,
   LifeBuoy,
   Settings,
+  Lock,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { useNetwork } from '@/hooks/use-network'
+import pb from '@/lib/pocketbase/client'
 
 import { OverviewTab } from './components/OverviewTab'
 import { ProjectsTab } from './components/ProjectsTab'
@@ -38,7 +40,6 @@ import { CustomersTab } from './components/CustomersTab'
 import { CloudProjectsTab } from './components/CloudProjectsTab'
 import { CertificatesTab } from './components/CertificatesTab'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import logo from '@/assets/logotipo-c129e.jpg'
 
 import {
@@ -66,7 +67,17 @@ export default function AdminDashboard() {
   const activeView = searchParams.get('tab') || 'exec-dashboard'
   const setActiveView = (tab: string) => setSearchParams({ tab })
 
-  const isAuth = sessionStorage.getItem('admin_auth') === 'true'
+  const isAuth = pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true'
+
+  useEffect(() => {
+    let mounted = true
+    if (!isAuth && mounted) {
+      navigate('/admin/login', { replace: true })
+    }
+    return () => {
+      mounted = false
+    }
+  }, [isAuth, navigate])
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -74,15 +85,15 @@ export default function AdminDashboard() {
       setDeferredPrompt(e)
     }
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     }
   }, [])
 
-  if (!isAuth) return <Navigate to="/admin/login" />
+  if (!isAuth) return null // Prevent rendering while redirecting
 
   const handleLogout = () => {
+    pb.authStore.clear()
     sessionStorage.removeItem('admin_auth')
     navigate('/')
   }
@@ -138,7 +149,6 @@ export default function AdminDashboard() {
         return <InventoryTab key={`inv-${syncKey}`} />
       case 'b2b':
         return <B2BTab key={`b2b-${syncKey}`} />
-
       case 'documentos':
         return <DocumentsTab key={`docs-${syncKey}`} />
       case 'certificados':
@@ -153,7 +163,6 @@ export default function AdminDashboard() {
         return <ValidityAlertsTab key={`val-${syncKey}`} />
       case 'vencimentos':
         return <TrainingExpirationsTab key={`ven-${syncKey}`} />
-
       case 'mensagens':
         return <AdminChatTab />
       case 'chamados':
@@ -162,7 +171,6 @@ export default function AdminDashboard() {
         return <AuditoriaTab />
       case 'lixeira':
         return <LixeiraTab />
-
       default:
         return <OverviewTab />
     }
@@ -366,10 +374,13 @@ export default function AdminDashboard() {
         </Sidebar>
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <header className="h-14 border-b bg-white flex items-center justify-between px-4 shrink-0 shadow-sm z-10">
+          <header className="h-14 border-b bg-white flex items-center justify-between px-4 shrink-0 shadow-sm z-40 relative">
             {/* Mobile Header */}
             <div className="flex md:hidden items-center justify-between w-full">
-              <img src={logo} alt="JT Obras" className="h-8 object-contain" />
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="text-brand-navy p-2" />
+                <img src={logo} alt="JT Obras" className="h-8 object-contain ml-2" />
+              </div>
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
@@ -377,9 +388,8 @@ export default function AdminDashboard() {
                   onClick={handleLogout}
                   className="text-slate-600"
                 >
-                  <Lock className="h-5 w-5" />
+                  <LogOut className="h-5 w-5" />
                 </Button>
-                <SidebarTrigger className="text-brand-navy ml-1" />
               </div>
             </div>
 

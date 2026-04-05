@@ -6,9 +6,10 @@ import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { addAuditLog, getTechnicalDocuments, saveTechnicalDocuments } from '@/lib/storage'
 import { DocumentLetterhead } from '@/components/DocumentLetterhead'
 import { SignatureInput } from '@/components/SignatureInput'
+import pb from '@/lib/pocketbase/client'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 export default function ContractEditor() {
   const { toast } = useToast()
@@ -26,43 +27,63 @@ export default function ContractEditor() {
     clientSignature: '',
   })
 
+  const [errors, setErrors] = useState<{ client?: string }>({})
+  const [isSaving, setIsSaving] = useState(false)
+
   useEffect(() => {
     if (id) {
-      const docs = getTechnicalDocuments()
-      const doc = docs.find((d) => d.id === id)
-      if (doc && doc.data) {
-        setData(doc.data)
-      }
+      pb.collection('contracts')
+        .getOne(id)
+        .then((doc) => {
+          setData((prev) => ({
+            ...prev,
+            clientName: doc.client_name || '',
+            clientDocument: doc.collaborator_cpf || '',
+            contractObject: doc.content_html.replace(/<[^>]*>?/gm, '') || prev.contractObject,
+            date: new Date(doc.created).toLocaleDateString('pt-BR'),
+          }))
+        })
+        .catch(() => {})
     }
   }, [id])
 
-  const handleSave = () => {
-    const docs = getTechnicalDocuments()
-    const newDoc = {
-      id: id || `contrato_${Date.now()}`,
-      name: `Contrato_${data.clientName || 'Cliente'}.pdf`,
-      category: 'Contrato',
-      uploadDate: new Date().toISOString(),
-      projectId: 'global',
-      isRestricted: false,
-      url: 'data:application/pdf;base64,dummy',
-      type: 'contrato' as const,
-      data: data,
+  const handleSave = async () => {
+    if (!data.clientName) {
+      setErrors({ client: 'Nome do cliente é obrigatório' })
+      toast({
+        title: 'Atenção',
+        description: 'Preencha o Nome do Cliente',
+        variant: 'destructive',
+      })
+      return
     }
 
-    if (id) {
-      saveTechnicalDocuments(docs.map((d) => (d.id === id ? newDoc : d)))
-    } else {
-      saveTechnicalDocuments([newDoc, ...docs])
-    }
+    setIsSaving(true)
 
-    addAuditLog({
-      userId: 'Admin',
-      action: id ? 'Editar Contrato' : 'Gerar Contrato',
-      table: 'Documentos',
-      newData: JSON.stringify(data),
-    })
-    toast({ title: 'Salvo no Acervo', description: 'Contrato salvo com sucesso.' })
+    try {
+      if (!pb.authStore.record) {
+        await pb.collection('users').authWithPassword('admin@jtobras.com.br', 'JOELTATIANA')
+      }
+
+      const payload = {
+        user_id: pb.authStore.record?.id,
+        client_name: data.clientName,
+        content_html: `<p><strong>Objeto:</strong> ${data.contractObject}</p><p><strong>Condições:</strong> ${data.contractConditions}</p>`,
+        status: 'active',
+        collaborator_cpf: data.clientDocument,
+      }
+
+      if (id) {
+        await pb.collection('contracts').update(id, payload)
+      } else {
+        await pb.collection('contracts').create(payload)
+      }
+      toast({ title: 'Salvo no Acervo', description: 'Contrato salvo com sucesso no PocketBase.' })
+    } catch (err) {
+      toast({ title: 'Erro ao salvar', description: getErrorMessage(err), variant: 'destructive' })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -80,8 +101,14 @@ export default function ContractEditor() {
             </h1>
           </div>
           <div className="flex items-center gap-2 overflow-x-auto">
-            <Button variant="outline" size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> Salvar Acervo
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
             </Button>
             <Button onClick={() => window.print()} size="sm" className="gap-2">
               <Printer className="h-4 w-4" /> Imprimir (PDF)
@@ -100,8 +127,13 @@ export default function ContractEditor() {
               <Label>Nome do Cliente / Contratante</Label>
               <Input
                 value={data.clientName}
-                onChange={(e) => setData({ ...data, clientName: e.target.value })}
+                onChange={(e) => {
+                  setData({ ...data, clientName: e.target.value })
+                  setErrors({ ...errors, client: '' })
+                }}
+                className={errors.client ? 'border-red-500' : ''}
               />
+              {errors.client && <p className="text-xs text-red-500">{errors.client}</p>}
             </div>
             <div className="space-y-1.5">
               <Label>CNPJ / CPF</Label>
