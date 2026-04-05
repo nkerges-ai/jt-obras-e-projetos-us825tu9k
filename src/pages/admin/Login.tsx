@@ -14,9 +14,11 @@ export default function AdminLogin() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  if (pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true') {
-    return <Navigate to="/admin" replace />
-  }
+  useEffect(() => {
+    if (pb.authStore.isValid || sessionStorage.getItem('admin_auth') === 'true') {
+      navigate('/admin', { replace: true })
+    }
+  }, [navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

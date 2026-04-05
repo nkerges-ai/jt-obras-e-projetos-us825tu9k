@@ -71,11 +71,7 @@ export default function CertificateEditor() {
     workload: CERTIFICATE_TEMPLATES['NR-35'].workload,
     syllabus: CERTIFICATE_TEMPLATES['NR-35'].syllabus,
     location: 'São Paulo',
-    date: new Date().toLocaleDateString('pt-BR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }),
+    date: new Date().toISOString().split('T')[0],
     signerName: 'João Vitor Araujo Pessoa',
     signerRole: 'Téc. Seg. do Trabalho',
     signerMte: '0106195',
@@ -83,7 +79,13 @@ export default function CertificateEditor() {
     signature: '',
   })
 
-  const [errors, setErrors] = useState<{ name?: string; cpf?: string; course?: string }>({})
+  const [errors, setErrors] = useState<{
+    name?: string
+    cpf?: string
+    course?: string
+    date?: string
+    workload?: string
+  }>({})
   const [isSaving, setIsSaving] = useState(false)
 
   const handleTemplateChange = (val: string) => {
@@ -117,11 +119,7 @@ export default function CertificateEditor() {
             syllabus:
               CERTIFICATE_TEMPLATES[doc.nr_type]?.syllabus ||
               CERTIFICATE_TEMPLATES['NR-35'].syllabus,
-            date: new Date(doc.training_date).toLocaleDateString('pt-BR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            }),
+            date: doc.training_date ? doc.training_date.split(' ')[0] : prev.date,
             signerMte: doc.technician_cpf || prev.signerMte,
             signature: doc.technician_signature
               ? pb.files.getUrl(doc, doc.technician_signature)
@@ -139,10 +137,18 @@ export default function CertificateEditor() {
       name: !data.employeeName ? 'Campo obrigatório' : '',
       cpf: !data.employeeCpf ? 'Campo obrigatório' : '',
       course: !data.courseName ? 'Campo obrigatório' : '',
+      date: !data.date ? 'Campo obrigatório' : '',
+      workload: !data.workload ? 'Campo obrigatório' : '',
     }
     setErrors(newErrors)
 
-    if (newErrors.name || newErrors.cpf || newErrors.course) {
+    if (
+      newErrors.name ||
+      newErrors.cpf ||
+      newErrors.course ||
+      newErrors.date ||
+      newErrors.workload
+    ) {
       toast({
         title: 'Erro de Validação',
         description: 'Preencha os campos obrigatórios.',
@@ -168,7 +174,7 @@ export default function CertificateEditor() {
         nr_type: nrType,
         collaborator_name: data.employeeName,
         collaborator_cpf: data.employeeCpf,
-        training_date: new Date().toISOString().split('T')[0],
+        training_date: data.date + ' 12:00:00.000Z',
         hours: parseInt(data.workload) || 8,
         status: 'completed',
         technician_cpf: data.signerMte,
@@ -210,9 +216,31 @@ export default function CertificateEditor() {
 
   const exportWord = () => {
     const el = document.getElementById('certificate-preview')
-    if (el)
+    if (el) {
       exportHtmlToWord(el.outerHTML, `Certificado_${data.employeeName || 'Modelo'}`, 'landscape')
+    }
   }
+
+  const formattedDate = (() => {
+    try {
+      if (!data.date) return ''
+      const parts = data.date.split('-')
+      if (parts.length === 3) {
+        return new Date(
+          parseInt(parts[0]),
+          parseInt(parts[1]) - 1,
+          parseInt(parts[2]),
+        ).toLocaleDateString('pt-BR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      }
+      return data.date
+    } catch (e) {
+      return data.date
+    }
+  })()
 
   return (
     <div className="bg-gray-50 min-h-screen pb-28 print:bg-gray-100 print:pb-0">
@@ -239,45 +267,57 @@ export default function CertificateEditor() {
           }
         }
       `}</style>
-      <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
+      <div className="bg-white border-b sticky top-0 md:top-[72px] z-40 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild className="h-10 w-10">
+            <Button variant="ghost" size="icon" asChild className="h-10 w-10 shrink-0">
               <Link to="/admin">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <h1 className="font-bold text-lg text-brand-navy truncate">Gerador de Certificados</h1>
+            <h1 className="font-bold text-lg text-brand-navy truncate hidden sm:block">
+              Gerador de Certificados
+            </h1>
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 max-w-full">
             <Button
               size="sm"
               onClick={signGovbr}
-              className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white"
+              className="gap-2 bg-brand-navy hover:bg-brand-navy/90 text-white whitespace-nowrap shrink-0"
             >
-              <Fingerprint className="h-4 w-4" /> Assinatura Gov.br
+              <Fingerprint className="h-4 w-4 hidden sm:block" /> Gov.br
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="gap-2 whitespace-nowrap shrink-0 bg-blue-600 hover:bg-blue-700"
+            >
+              <Save className="h-4 w-4 hidden sm:block" /> {isSaving ? '...' : 'Salvar'}
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="gap-2 hidden md:flex"
+              onClick={exportWord}
+              className="gap-2 whitespace-nowrap shrink-0"
             >
-              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
+              <Download className="h-4 w-4 hidden sm:block" /> Word
             </Button>
-            <Button variant="outline" size="sm" onClick={exportWord} className="gap-2">
-              <Download className="h-4 w-4" /> Word
-            </Button>
-            <Button onClick={() => window.print()} size="sm" className="gap-2">
-              <Printer className="h-4 w-4" /> Imprimir (PDF)
+            <Button
+              onClick={() => window.print()}
+              variant="outline"
+              size="sm"
+              className="gap-2 whitespace-nowrap shrink-0"
+            >
+              <Printer className="h-4 w-4 hidden sm:block" /> Imprimir
             </Button>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 print:p-0 flex flex-col xl:flex-row items-start gap-8 mt-6">
-        <div className="w-full xl:w-[480px] shrink-0 bg-white p-6 rounded-xl border shadow-sm print:hidden h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+        <div className="w-full xl:w-[480px] shrink-0 bg-white p-4 md:p-6 rounded-xl border shadow-sm print:hidden h-auto xl:h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
           <h2 className="font-bold mb-4 text-brand-navy border-b pb-2 sticky top-0 bg-white z-10">
             Dados do Certificado
           </h2>
@@ -362,7 +402,7 @@ export default function CertificateEditor() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
               <div className="space-y-1.5">
                 <Label>Título do Curso</Label>
                 <Input
@@ -379,12 +419,17 @@ export default function CertificateEditor() {
                 <Label>Carga Horária</Label>
                 <Input
                   value={data.workload}
-                  onChange={(e) => setData({ ...data, workload: e.target.value })}
+                  onChange={(e) => {
+                    setData({ ...data, workload: e.target.value })
+                    setErrors({ ...errors, workload: '' })
+                  }}
+                  className={errors.workload ? 'border-red-500' : ''}
                 />
+                {errors.workload && <p className="text-xs text-red-500">{errors.workload}</p>}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Local</Label>
                 <Input
@@ -395,9 +440,15 @@ export default function CertificateEditor() {
               <div className="space-y-1.5">
                 <Label>Data</Label>
                 <Input
+                  type="date"
                   value={data.date}
-                  onChange={(e) => setData({ ...data, date: e.target.value })}
+                  onChange={(e) => {
+                    setData({ ...data, date: e.target.value })
+                    setErrors({ ...errors, date: '' })
+                  }}
+                  className={errors.date ? 'border-red-500' : ''}
                 />
+                {errors.date && <p className="text-xs text-red-500">{errors.date}</p>}
               </div>
             </div>
 
@@ -448,10 +499,10 @@ export default function CertificateEditor() {
         <div className="w-full flex-1 flex flex-col items-center overflow-x-auto print:overflow-visible pb-12 gap-12">
           <div
             id="certificate-preview"
-            className="flex flex-col gap-12 items-center w-full max-w-[1040px] print:w-full print:max-w-none print:gap-0 print:block"
+            className="flex flex-col gap-12 items-center w-full min-w-[800px] max-w-[1040px] print:w-full print:max-w-none print:gap-0 print:block origin-top-left scale-[0.6] sm:scale-[0.8] xl:scale-100"
           >
             {/* Front Page */}
-            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break">
+            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break">
               <div className="absolute inset-4 border-[14px] border-[#005A9C] pointer-events-none z-10 opacity-90"></div>
               <div className="absolute inset-[24px] border-[2px] border-[#009FE3] pointer-events-none z-10 opacity-70"></div>
 
@@ -509,7 +560,7 @@ export default function CertificateEditor() {
                 </div>
 
                 <p className="text-base md:text-lg font-bold mb-10 text-gray-800">
-                  {data.location}, {data.date}.
+                  {data.location}, {formattedDate}.
                 </p>
 
                 <div className="mt-auto flex flex-col items-center w-full max-w-xs md:max-w-sm relative">
@@ -546,7 +597,7 @@ export default function CertificateEditor() {
             </div>
 
             {/* Back Page */}
-            <div className="relative bg-white w-full aspect-[1.414/1] md:w-[1040px] md:h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-12 md:p-20 select-none flex flex-col print:pt-16">
+            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-12 md:p-20 select-none flex flex-col print:pt-16">
               <div className="flex items-center justify-between mb-8 border-b-2 border-[#005A9C] pb-4">
                 <div>
                   <h2 className="text-2xl font-black text-[#005A9C] tracking-wide">

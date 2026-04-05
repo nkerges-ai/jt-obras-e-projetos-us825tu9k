@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -43,16 +43,20 @@ export default function Login() {
     }
   }
 
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!authLoading && user?.id) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [user, authLoading, navigate])
+
   if (authLoading) {
     return (
       <div className="min-h-[100svh] flex items-center justify-center bg-[#0f172a] text-white">
         Verificando sessão...
       </div>
     )
-  }
-
-  if (user?.id) {
-    return <Navigate to="/dashboard" replace />
   }
 
   return (
