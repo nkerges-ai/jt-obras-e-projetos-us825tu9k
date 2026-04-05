@@ -399,7 +399,7 @@ export default function Certificates() {
                     <span className="inline"> horas.</span>
                   </div>
 
-                  <p className="text-base font-bold mt-auto mb-12 text-gray-800">
+                  <p className="text-base font-bold mt-auto mb-10 text-gray-800">
                     São Paulo,{' '}
                     {new Date(printDoc.training_date).toLocaleDateString('pt-BR', {
                       day: 'numeric',
@@ -409,19 +409,50 @@ export default function Certificates() {
                     .
                   </p>
 
-                  <div className="flex flex-col items-center w-full max-w-[280px] relative">
-                    {user?.signature ? (
-                      <img
-                        src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
-                        className="absolute -top-16 h-20 mix-blend-multiply z-10"
-                        alt="Assinatura"
-                      />
-                    ) : null}
-                    <div className="w-full border-t border-black mb-2"></div>
-                    <p className="font-bold text-sm text-gray-900">João Vitor Araujo Pessoa</p>
-                    <p className="text-xs font-semibold text-gray-700">Téc. Seg. do Trabalho</p>
-                    <p className="text-[10px] font-bold text-gray-800 mt-1">MTE/SP: 0106195</p>
-                    <p className="text-[10px] font-bold text-gray-800">CREA: 5070806995</p>
+                  <div className="flex justify-around items-end w-full px-4 md:px-12 print:px-12 gap-8 mb-4">
+                    <div className="flex flex-col items-center w-full max-w-[260px] relative">
+                      {printDoc.collaborator_signature ? (
+                        <img
+                          src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/certificates/${printDoc.id}/${printDoc.collaborator_signature}`}
+                          className="absolute -top-16 h-20 mix-blend-multiply z-10"
+                          alt="Assinatura Colaborador"
+                        />
+                      ) : null}
+                      <div className="w-full border-t border-black mb-2"></div>
+                      <p className="font-bold text-sm text-gray-900 text-center truncate w-full">
+                        {printDoc.collaborator_name}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-800 mt-1">
+                        CPF: {printDoc.collaborator_cpf || '___.___.___-__'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center w-full max-w-[260px] relative">
+                      {printDoc.technician_signature ? (
+                        <img
+                          src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/certificates/${printDoc.id}/${printDoc.technician_signature}`}
+                          className="absolute -top-16 h-20 mix-blend-multiply z-10"
+                          alt="Assinatura Técnico"
+                        />
+                      ) : user?.signature ? (
+                        <img
+                          src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
+                          className="absolute -top-16 h-20 mix-blend-multiply z-10"
+                          alt="Assinatura Técnico"
+                        />
+                      ) : null}
+                      <div className="w-full border-t border-black mb-2"></div>
+                      <p className="font-bold text-sm text-gray-900 text-center truncate w-full">
+                        João Vitor Araujo Pessoa
+                      </p>
+                      <p className="text-xs font-semibold text-gray-700 text-center">
+                        Téc. Seg. do Trabalho
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-800 mt-1">
+                        MTE/SP: {printDoc.technician_cpf || '0106195'}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-800">CREA: 5070806995</p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-05T20:41:05.923Z",
+  "generatedAt": "2026-04-05T20:49:55.748Z",
   "collections": [
     {
       "name": "users",
@@ -380,6 +380,12 @@
         {
           "name": "technician_cpf",
           "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "collaborator_signature",
+          "type": "file",
           "required": false,
           "system": false
         }

@@ -77,6 +77,7 @@ export default function CertificateEditor() {
     signerMte: '0106195',
     signerCrea: '5070806995',
     signature: '',
+    collaboratorSignature: '',
   })
 
   const [errors, setErrors] = useState<{
@@ -124,6 +125,9 @@ export default function CertificateEditor() {
             signature: doc.technician_signature
               ? pb.files.getUrl(doc, doc.technician_signature)
               : '',
+            collaboratorSignature: doc.collaborator_signature
+              ? pb.files.getUrl(doc, doc.collaborator_signature)
+              : '',
           }))
         })
         .catch((err) => {
@@ -169,23 +173,44 @@ export default function CertificateEditor() {
       else if (data.courseName.includes('10')) nrType = 'NR-10'
       else if (data.courseName.includes('18')) nrType = 'NR-18'
 
-      const payload = {
-        user_id: pb.authStore.record?.id,
-        nr_type: nrType,
-        collaborator_name: data.employeeName,
-        collaborator_cpf: data.employeeCpf,
-        training_date: data.date + ' 12:00:00.000Z',
-        hours: parseInt(data.workload) || 8,
-        status: 'completed',
-        technician_cpf: data.signerMte,
+      const formData = new FormData()
+      formData.append('user_id', pb.authStore.record?.id || '')
+      formData.append('nr_type', nrType)
+      formData.append('collaborator_name', data.employeeName)
+      formData.append('collaborator_cpf', data.employeeCpf)
+      formData.append('training_date', data.date + ' 12:00:00.000Z')
+      formData.append('hours', String(parseInt(data.workload) || 8))
+      formData.append('status', 'completed')
+      formData.append('technician_cpf', data.signerMte)
+
+      const dataUrlToFile = (dataUrl: string, filename: string) => {
+        const arr = dataUrl.split(',')
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png'
+        const bstr = atob(arr[1])
+        let n = bstr.length
+        const u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        return new File([u8arr], filename, { type: mime })
+      }
+
+      if (data.signature && data.signature !== 'govbr' && data.signature.startsWith('data:')) {
+        formData.append('technician_signature', dataUrlToFile(data.signature, 'tech_sig.png'))
+      }
+      if (data.collaboratorSignature && data.collaboratorSignature.startsWith('data:')) {
+        formData.append(
+          'collaborator_signature',
+          dataUrlToFile(data.collaboratorSignature, 'collab_sig.png'),
+        )
       }
 
       let certId = id
 
       if (id) {
-        await pb.collection('certificates').update(id, payload)
+        await pb.collection('certificates').update(id, formData)
       } else {
-        const created = await pb.collection('certificates').create(payload)
+        const created = await pb.collection('certificates').create(formData)
         certId = created.id
 
         try {
@@ -486,10 +511,17 @@ export default function CertificateEditor() {
               </div>
 
               <div className="space-y-3 pt-2">
-                <Label className="font-bold text-gray-800">Assinatura</Label>
+                <Label className="font-bold text-gray-800">Assinatura do Técnico</Label>
                 <SignatureInput
                   value={data.signature}
                   onChange={(val) => setData({ ...data, signature: val })}
+                />
+              </div>
+              <div className="space-y-3 pt-4 border-t">
+                <Label className="font-bold text-gray-800">Assinatura do Colaborador</Label>
+                <SignatureInput
+                  value={data.collaboratorSignature}
+                  onChange={(val) => setData({ ...data, collaboratorSignature: val })}
                 />
               </div>
             </div>
@@ -560,35 +592,58 @@ export default function CertificateEditor() {
                   <span className="inline"> horas.</span>
                 </div>
 
-                <p className="text-base font-bold mt-auto mb-12 text-gray-800">
+                <p className="text-base font-bold mt-auto mb-10 text-gray-800">
                   {data.location}, {formattedDate}.
                 </p>
 
-                <div className="flex flex-col items-center w-full max-w-[280px] relative">
-                  {data.signature === 'govbr' ? (
-                    <div className="absolute -top-12 border-2 border-[#005A9C] px-4 py-1 rounded bg-white print:border-[#005A9C] print:bg-white print:shadow-none z-10">
-                      <span className="text-[11px] font-black text-[#005A9C] print:text-[#005A9C] tracking-widest block">
-                        ASSINADO DIGITALMENTE
-                      </span>
-                      <span className="text-[9px] font-bold text-[#009FE3] print:text-[#009FE3] block">
-                        VIA PORTAL GOV.BR
-                      </span>
-                    </div>
-                  ) : data.signature ? (
-                    <img
-                      src={data.signature}
-                      className="absolute -top-16 h-20 mix-blend-multiply print:mix-blend-normal z-10"
-                      alt="Assinatura"
-                    />
-                  ) : null}
+                <div className="flex justify-around items-end w-full px-4 md:px-12 print:px-12 gap-8 mb-4">
+                  <div className="flex flex-col items-center w-full max-w-[260px] relative">
+                    {data.collaboratorSignature ? (
+                      <img
+                        src={data.collaboratorSignature}
+                        className="absolute -top-16 h-20 mix-blend-multiply print:mix-blend-normal z-10"
+                        alt="Assinatura Colaborador"
+                      />
+                    ) : null}
+                    <div className="w-full border-t border-black mb-2"></div>
+                    <p className="font-bold text-sm text-gray-900 text-center truncate w-full">
+                      {data.employeeName || 'Colaborador'}
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-800 mt-1">
+                      CPF: {data.employeeCpf || '___.___.___-__'}
+                    </p>
+                  </div>
 
-                  <div className="w-full border-t border-black mb-2"></div>
-                  <p className="font-bold text-sm text-gray-900">{data.signerName}</p>
-                  <p className="text-xs font-semibold text-gray-700">{data.signerRole}</p>
-                  <p className="text-[10px] font-bold text-gray-800 mt-1">
-                    MTE/SP: {data.signerMte}
-                  </p>
-                  <p className="text-[10px] font-bold text-gray-800">CREA: {data.signerCrea}</p>
+                  <div className="flex flex-col items-center w-full max-w-[260px] relative">
+                    {data.signature === 'govbr' ? (
+                      <div className="absolute -top-12 border-2 border-[#005A9C] px-4 py-1 rounded bg-white print:border-[#005A9C] print:bg-white print:shadow-none z-10">
+                        <span className="text-[11px] font-black text-[#005A9C] print:text-[#005A9C] tracking-widest block">
+                          ASSINADO DIGITALMENTE
+                        </span>
+                        <span className="text-[9px] font-bold text-[#009FE3] print:text-[#009FE3] block">
+                          VIA PORTAL GOV.BR
+                        </span>
+                      </div>
+                    ) : data.signature ? (
+                      <img
+                        src={data.signature}
+                        className="absolute -top-16 h-20 mix-blend-multiply print:mix-blend-normal z-10"
+                        alt="Assinatura Técnico"
+                      />
+                    ) : null}
+
+                    <div className="w-full border-t border-black mb-2"></div>
+                    <p className="font-bold text-sm text-gray-900 text-center truncate w-full">
+                      {data.signerName}
+                    </p>
+                    <p className="text-xs font-semibold text-gray-700 text-center">
+                      {data.signerRole}
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-800 mt-1">
+                      MTE/SP: {data.signerMte}
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-800">CREA: {data.signerCrea}</p>
+                  </div>
                 </div>
               </div>
             </div>
