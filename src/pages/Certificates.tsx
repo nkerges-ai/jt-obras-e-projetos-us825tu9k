@@ -24,6 +24,44 @@ import {
 import { Download, Trash, Printer } from 'lucide-react'
 import logo from '@/assets/logotipo-c129e.jpg'
 
+const CERTIFICATE_TEMPLATES: Record<
+  string,
+  { courseName: string; courseDesc: string; workload: string; syllabus: string }
+> = {
+  'NR-06': {
+    courseName: 'NR-06 EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL - EPI',
+    courseDesc:
+      '<p>Treinamento sobre o uso adequado, guarda e conservação de Equipamentos de Proteção Individual (EPI), conforme as diretrizes da Norma Regulamentadora NR-06.</p>',
+    workload: '04',
+    syllabus:
+      '<ul><li>Importância do EPI</li><li>Seleção do EPI adequado</li><li>Uso correto</li><li>Manutenção e conservação</li><li>Responsabilidades do empregador e do empregado</li></ul>',
+  },
+  'NR-10': {
+    courseName: 'NR-10 SEGURANÇA EM INSTALAÇÕES E SERVIÇOS EM ELETRICIDADE',
+    courseDesc:
+      '<p>Treinamento Básico de Segurança em Instalações e Serviços com Eletricidade, abordando os riscos elétricos, medidas de controle e primeiros socorros, em conformidade com a Norma Regulamentadora NR-10.</p>',
+    workload: '40',
+    syllabus:
+      '<ul><li>Introdução à segurança com eletricidade</li><li>Riscos em instalações e serviços com eletricidade</li><li>Técnicas de análise de risco</li><li>Medidas de controle do risco elétrico</li><li>EPI/EPC (Equipamentos de Proteção Individual e Coletiva)</li><li>Procedimentos e rotinas de trabalho</li><li>Noções de combate a incêndio</li><li>Noções de primeiros socorros</li></ul>',
+  },
+  'NR-18': {
+    courseName: 'NR-18 CONDIÇÕES DE SEGURANÇA E SAÚDE NO TRABALHO NA INDÚSTRIA DA CONSTRUÇÃO',
+    courseDesc:
+      '<p>Treinamento admissional/periódico abordando os riscos inerentes à função, condições do ambiente de trabalho, uso de EPI e EPC, de acordo com a Norma Regulamentadora NR-18.</p>',
+    workload: '06',
+    syllabus:
+      '<ul><li>Condições do ambiente de trabalho</li><li>Medidas de proteção coletiva</li><li>Equipamentos de proteção individual</li><li>Sinalização de segurança</li><li>Procedimentos operacionais para a fase específica da obra</li></ul>',
+  },
+  'NR-35': {
+    courseName: 'NR-35 SEGURANÇA E SAÚDE NOS TRABALHOS EM ALTURA',
+    courseDesc:
+      '<p>Curso de capacitação para trabalhos em altura, englobando normas, análise de risco, sistemas de proteção contra quedas e condutas em situações de emergência, conforme estabelecido pela Norma Regulamentadora NR-35.</p>',
+    workload: '08',
+    syllabus:
+      '<ul><li>Normas e regulamentos aplicáveis</li><li>Análise de risco e condições impeditivas</li><li>Riscos potenciais inerentes ao trabalho em altura</li><li>Sistemas, equipamentos e procedimentos de proteção coletiva</li><li>Equipamentos de Proteção Individual para trabalho em altura</li><li>Condutas em situações de emergência e noções de resgate e primeiros socorros</li></ul>',
+  },
+}
+
 export default function Certificates() {
   const { user } = useAuth()
   const { toast } = useToast()
@@ -274,6 +312,7 @@ export default function Certificates() {
               @page { size: A4 landscape !important; margin: 0 !important; }
               html, body { margin: 0 !important; padding: 0 !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
               header, footer, nav, .print\\:hidden { display: none !important; }
+              .print-page-break { page-break-after: always !important; break-after: page !important; }
               #certificate-print-area { width: 297mm !important; margin: 0 !important; padding: 0 !important; }
             }
           `}</style>
@@ -292,66 +331,125 @@ export default function Certificates() {
 
             <div
               id="certificate-print-area"
-              className="w-full max-w-[1040px] flex justify-center bg-white relative aspect-[1.414/1] md:h-[735px] shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] overflow-hidden p-4"
+              className="w-full max-w-[1040px] flex flex-col items-center gap-12 print:gap-0 print:block"
             >
-              <div className="absolute inset-4 border-[14px] border-[#005A9C] z-10 opacity-90 pointer-events-none"></div>
-              <div className="absolute inset-[24px] border-[2px] border-[#009FE3] z-10 opacity-70 pointer-events-none"></div>
+              {/* Front Page */}
+              <div className="relative bg-white w-full md:w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break mb-8 print:mb-0">
+                <div className="absolute inset-6 border-[6px] border-[#005A9C] pointer-events-none z-10 opacity-100 rounded-sm print:inset-8"></div>
 
-              <div className="w-full h-full pt-12 pb-10 px-16 md:px-24 flex flex-col items-center text-center relative z-0">
-                <div className="flex items-center justify-center mb-6 h-[70px]">
-                  <img
-                    src={
-                      user?.company_logo
-                        ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.company_logo}`
-                        : logo
-                    }
-                    alt="Company Logo"
-                    className="h-full object-contain max-w-[200px]"
-                  />
+                {/* Rivets */}
+                <div className="absolute top-3 left-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:top-5 print:left-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
+                </div>
+                <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:top-5 print:right-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
+                </div>
+                <div className="absolute bottom-3 left-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:bottom-5 print:left-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
+                </div>
+                <div className="absolute bottom-3 right-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:bottom-5 print:right-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-[0.2em] text-[#005A9C] uppercase">
-                  CERTIFICADO
-                </h1>
-                <h2 className="text-xl md:text-2xl font-bold italic mb-6 text-gray-800">
-                  Treinamento {printDoc.nr_type}
-                </h2>
-
-                <div className="text-base md:text-lg leading-[2] text-justify mb-8 text-gray-800 w-full px-12">
-                  <span className="inline">Certificamos que </span>
-                  <span className="font-bold uppercase border-b border-black inline px-2">
-                    {printDoc.collaborator_name}
-                  </span>
-                  <span className="inline"> participou do treinamento de </span>
-                  <span className="font-bold inline">{printDoc.nr_type}</span>
-                  <span className="inline">, com carga horária de </span>
-                  <span className="font-bold">{printDoc.hours}</span>
-                  <span className="inline">
-                    {' '}
-                    horas, realizado em{' '}
-                    {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.
-                  </span>
-                </div>
-
-                <p className="text-base font-bold mt-auto mb-10 text-gray-800">
-                  São Paulo, {new Date(printDoc.training_date).toLocaleDateString('pt-BR')}.
-                </p>
-
-                <div className="mt-8 flex flex-col items-center w-full max-w-sm relative">
-                  {user?.signature && (
+                <div className="w-full h-full pt-16 pb-12 px-16 md:px-24 flex flex-col items-center text-center relative z-0 print:pt-20 print:pb-16 print:px-28">
+                  <div className="flex items-center justify-center mb-6 h-[80px]">
                     <img
-                      src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
-                      className="absolute -top-12 h-16 mix-blend-multiply z-10"
-                      alt="Assinatura"
+                      src={logo}
+                      alt="JT Obras e Manutenções"
+                      className="h-full object-contain max-w-[200px]"
                     />
-                  )}
-                  <div className="w-full border-t border-black mb-2"></div>
-                  <p className="font-bold text-base text-gray-900">
-                    {user?.name || 'Responsável Técnico'}
+                  </div>
+
+                  <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-[0.2em] text-[#005A9C] uppercase">
+                    CERTIFICADO
+                  </h1>
+                  <h2 className="text-xl md:text-xl font-bold italic mb-8 text-gray-800 uppercase">
+                    "
+                    {CERTIFICATE_TEMPLATES[printDoc.nr_type]?.courseName ||
+                      CERTIFICATE_TEMPLATES['NR-35'].courseName}
+                    "
+                  </h2>
+
+                  <div className="text-base leading-[2] text-justify mb-8 text-gray-800 w-full px-4 md:px-12 print:px-12">
+                    <span className="inline">Certificamos que o colaborador </span>
+                    <span className="font-bold uppercase border-b border-black inline-block min-w-[250px] text-center px-2">
+                      {printDoc.collaborator_name}
+                    </span>
+                    <span className="inline">, da empresa </span>
+                    <span className="font-bold uppercase inline">JT OBRAS E MANUTENÇÕES LTDA</span>
+                    <span className="inline">
+                      , CNPJ 63.243.791/0001-09 participou do seguinte programa:
+                    </span>
+                  </div>
+
+                  <div
+                    className="text-sm md:text-base leading-relaxed text-center mb-6 text-gray-800 w-full px-10 md:px-20 font-medium print:px-20"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        CERTIFICATE_TEMPLATES[printDoc.nr_type]?.courseDesc ||
+                        CERTIFICATE_TEMPLATES['NR-35'].courseDesc,
+                    }}
+                  />
+
+                  <div className="text-base text-center mb-10 text-gray-800 w-full">
+                    <span className="inline">
+                      conforme estabelecido nas Normas Regulamentadoras, com carga horária de{' '}
+                    </span>
+                    <span className="font-bold">{String(printDoc.hours).padStart(2, '0')}</span>
+                    <span className="inline"> horas.</span>
+                  </div>
+
+                  <p className="text-base font-bold mt-auto mb-12 text-gray-800">
+                    São Paulo,{' '}
+                    {new Date(printDoc.training_date).toLocaleDateString('pt-BR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                    .
                   </p>
-                  <p className="text-sm font-semibold text-gray-700">
-                    {user?.company || 'JT OBRAS E MANUTENÇÕES LTDA'}
-                  </p>
+
+                  <div className="flex flex-col items-center w-full max-w-[280px] relative">
+                    {user?.signature ? (
+                      <img
+                        src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.signature}`}
+                        className="absolute -top-16 h-20 mix-blend-multiply z-10"
+                        alt="Assinatura"
+                      />
+                    ) : null}
+                    <div className="w-full border-t border-black mb-2"></div>
+                    <p className="font-bold text-sm text-gray-900">João Vitor Araujo Pessoa</p>
+                    <p className="text-xs font-semibold text-gray-700">Téc. Seg. do Trabalho</p>
+                    <p className="text-[10px] font-bold text-gray-800 mt-1">MTE/SP: 0106195</p>
+                    <p className="text-[10px] font-bold text-gray-800">CREA: 5070806995</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Back Page */}
+              <div className="relative bg-white w-full md:w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-16 md:p-24 select-none flex flex-col print:p-24">
+                <div className="flex items-center justify-between mb-10 border-b-2 border-[#005A9C] pb-6">
+                  <div>
+                    <h2 className="text-2xl font-black text-[#005A9C] tracking-wide uppercase">
+                      CONTEÚDO PROGRAMÁTICO
+                    </h2>
+                    <p className="text-sm text-[#005A9C] font-bold mt-1 uppercase">
+                      {CERTIFICATE_TEMPLATES[printDoc.nr_type]?.courseName ||
+                        CERTIFICATE_TEMPLATES['NR-35'].courseName}
+                    </p>
+                  </div>
+                  <img src={logo} alt="JT Obras" className="h-16 object-contain" />
+                </div>
+
+                <div className="flex-1 w-full text-gray-800">
+                  <div
+                    className="prose prose-blue max-w-none text-sm md:text-base leading-relaxed prose-li:my-1.5 prose-ul:list-disc prose-ul:pl-5"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        CERTIFICATE_TEMPLATES[printDoc.nr_type]?.syllabus ||
+                        CERTIFICATE_TEMPLATES['NR-35'].syllabus,
+                    }}
+                  />
                 </div>
               </div>
             </div>

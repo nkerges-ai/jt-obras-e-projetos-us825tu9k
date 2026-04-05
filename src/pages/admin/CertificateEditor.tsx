@@ -502,68 +502,69 @@ export default function CertificateEditor() {
             className="flex flex-col gap-12 items-center w-full min-w-[800px] max-w-[1040px] print:w-full print:max-w-none print:gap-0 print:block origin-top-left scale-[0.6] sm:scale-[0.8] xl:scale-100"
           >
             {/* Front Page */}
-            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break">
-              <div className="absolute inset-4 border-[14px] border-[#005A9C] pointer-events-none z-10 opacity-90"></div>
-              <div className="absolute inset-[24px] border-[2px] border-[#009FE3] pointer-events-none z-10 opacity-70"></div>
+            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-4 select-none print-page-break mb-8 print:mb-0">
+              <div className="absolute inset-6 border-[6px] border-[#005A9C] pointer-events-none z-10 opacity-100 rounded-sm print:inset-8"></div>
 
-              <div className="absolute top-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
+              {/* Rivets */}
+              <div className="absolute top-3 left-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:top-5 print:left-5">
+                <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
               </div>
-              <div className="absolute top-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
+              <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:top-5 print:right-5">
+                <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
               </div>
-              <div className="absolute bottom-6 left-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
+              <div className="absolute bottom-3 left-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:bottom-5 print:left-5">
+                <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
               </div>
-              <div className="absolute bottom-6 right-6 w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-gray-600/50"></div>
+              <div className="absolute bottom-3 right-3 w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-gray-400 shadow-sm z-20 flex items-center justify-center print:bottom-5 print:right-5">
+                <div className="w-2.5 h-2.5 rounded-full bg-gray-600/50"></div>
               </div>
 
-              <div className="w-full h-full pt-12 pb-10 px-16 md:px-24 flex flex-col items-center text-center relative z-0">
-                <div className="flex items-center justify-center mb-6 h-[70px]">
-                  <img src={logo} alt="JT Obras e Manutenções" className="h-full object-contain" />
+              <div className="w-full h-full pt-16 pb-12 px-16 md:px-24 flex flex-col items-center text-center relative z-0 print:pt-20 print:pb-16 print:px-28">
+                <div className="flex items-center justify-center mb-6 h-[80px]">
+                  <img
+                    src={logo}
+                    alt="JT Obras e Manutenções"
+                    className="h-full object-contain max-w-[200px]"
+                  />
                 </div>
 
                 <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-[0.2em] text-[#005A9C] uppercase">
                   CERTIFICADO
                 </h1>
-                <h2 className="text-xl md:text-2xl font-bold italic mb-6 text-gray-800 px-4">
+                <h2 className="text-xl md:text-xl font-bold italic mb-8 text-gray-800 uppercase px-4">
                   "{data.courseName}"
                 </h2>
 
-                <div className="text-base md:text-lg leading-[2] md:leading-[2.2] text-justify mb-8 text-gray-800 w-full px-4 md:px-12">
+                <div className="text-base leading-[2] text-justify mb-8 text-gray-800 w-full px-4 md:px-12 print:px-12">
                   <span className="inline">Certificamos que o colaborador </span>
-                  <span className="font-bold uppercase border-b border-black inline px-2">
+                  <span className="font-bold uppercase border-b border-black inline-block min-w-[250px] text-center px-2">
                     {data.employeeName || '______________________________________'}
                   </span>
-                  {data.employeeCpf && (
-                    <>
-                      <span className="inline">, portador do CPF </span>
-                      <span className="font-bold uppercase inline">{data.employeeCpf}</span>
-                    </>
-                  )}
                   <span className="inline">, da empresa </span>
                   <span className="font-bold uppercase inline">{data.companyName}</span>
                   <span className="inline">
                     , CNPJ {data.companyCnpj} participou do seguinte programa:
                   </span>
-
-                  <div
-                    className="prose prose-sm md:prose-base mx-auto my-5 text-center text-gray-800 leading-relaxed font-medium"
-                    dangerouslySetInnerHTML={{ __html: data.courseDesc }}
-                  />
-
-                  <span className="inline block text-center mt-4 md:mt-6">
-                    conforme estabelecido nas Normas Regulamentadoras, com carga horária de{' '}
-                    <span className="font-bold">{data.workload}</span> horas.
-                  </span>
                 </div>
 
-                <p className="text-base md:text-lg font-bold mb-10 text-gray-800">
+                <div
+                  className="text-sm md:text-base leading-relaxed text-center mb-6 text-gray-800 w-full px-10 md:px-20 font-medium print:px-20"
+                  dangerouslySetInnerHTML={{ __html: data.courseDesc }}
+                />
+
+                <div className="text-base text-center mb-10 text-gray-800 w-full">
+                  <span className="inline">
+                    conforme estabelecido nas Normas Regulamentadoras, com carga horária de{' '}
+                  </span>
+                  <span className="font-bold">{String(data.workload).padStart(2, '0')}</span>
+                  <span className="inline"> horas.</span>
+                </div>
+
+                <p className="text-base font-bold mt-auto mb-12 text-gray-800">
                   {data.location}, {formattedDate}.
                 </p>
 
-                <div className="mt-auto flex flex-col items-center w-full max-w-xs md:max-w-sm relative">
+                <div className="flex flex-col items-center w-full max-w-[280px] relative">
                   {data.signature === 'govbr' ? (
                     <div className="absolute -top-12 border-2 border-[#005A9C] px-4 py-1 rounded bg-white print:border-[#005A9C] print:bg-white print:shadow-none z-10">
                       <span className="text-[11px] font-black text-[#005A9C] print:text-[#005A9C] tracking-widest block">
@@ -576,41 +577,39 @@ export default function CertificateEditor() {
                   ) : data.signature ? (
                     <img
                       src={data.signature}
-                      className="absolute -top-12 h-16 mix-blend-multiply print:mix-blend-normal z-10"
+                      className="absolute -top-16 h-20 mix-blend-multiply print:mix-blend-normal z-10"
                       alt="Assinatura"
                     />
                   ) : null}
 
                   <div className="w-full border-t border-black mb-2"></div>
-                  <p className="font-bold text-base md:text-lg text-gray-900">{data.signerName}</p>
-                  <p className="text-xs md:text-sm font-semibold text-gray-700">
-                    {data.signerRole}
-                  </p>
-                  <p className="text-xs md:text-sm font-bold text-gray-800 mt-1">
+                  <p className="font-bold text-sm text-gray-900">{data.signerName}</p>
+                  <p className="text-xs font-semibold text-gray-700">{data.signerRole}</p>
+                  <p className="text-[10px] font-bold text-gray-800 mt-1">
                     MTE/SP: {data.signerMte}
                   </p>
-                  <p className="text-xs md:text-sm font-bold text-gray-800">
-                    CREA: {data.signerCrea}
-                  </p>
+                  <p className="text-[10px] font-bold text-gray-800">CREA: {data.signerCrea}</p>
                 </div>
               </div>
             </div>
 
             {/* Back Page */}
-            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-12 md:p-20 select-none flex flex-col print:pt-16">
-              <div className="flex items-center justify-between mb-8 border-b-2 border-[#005A9C] pb-4">
+            <div className="relative bg-white w-[1040px] h-[735px] shrink-0 shadow-2xl print:shadow-none print:w-[297mm] print:h-[209.5mm] print:overflow-hidden p-16 md:p-24 select-none flex flex-col print:p-24">
+              <div className="flex items-center justify-between mb-10 border-b-2 border-[#005A9C] pb-6">
                 <div>
-                  <h2 className="text-2xl font-black text-[#005A9C] tracking-wide">
+                  <h2 className="text-2xl font-black text-[#005A9C] tracking-wide uppercase">
                     CONTEÚDO PROGRAMÁTICO
                   </h2>
-                  <p className="text-gray-600 font-semibold mt-1">{data.courseName}</p>
+                  <p className="text-sm text-[#005A9C] font-bold mt-1 uppercase">
+                    {data.courseName}
+                  </p>
                 </div>
-                <img src={logo} alt="JT Obras" className="h-12 object-contain" />
+                <img src={logo} alt="JT Obras" className="h-16 object-contain" />
               </div>
 
               <div className="flex-1 w-full text-gray-800 overflow-hidden print:overflow-visible">
                 <div
-                  className="prose prose-blue max-w-none text-justify prose-headings:text-[#005A9C] prose-li:my-1 prose-ul:my-2 prose-p:my-2"
+                  className="prose prose-blue max-w-none text-sm md:text-base leading-relaxed prose-li:my-1.5 prose-ul:list-disc prose-ul:pl-5"
                   dangerouslySetInnerHTML={{ __html: data.syllabus }}
                 />
               </div>
@@ -629,7 +628,9 @@ export default function CertificateEditor() {
                 )}
                 <p>
                   Carga Horária:{' '}
-                  <span className="font-bold text-gray-700">{data.workload} horas</span>
+                  <span className="font-bold text-gray-700">
+                    {String(data.workload).padStart(2, '0')} horas
+                  </span>
                 </p>
               </div>
             </div>
