@@ -45,6 +45,7 @@ export default function Contracts() {
       console.error(e)
     }
   }
+
   useEffect(() => {
     fetchContracts()
   }, [])
@@ -82,7 +83,7 @@ export default function Contracts() {
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  const handleSave = async () => {
+  const handleSave = async (shouldSend: boolean = false) => {
     setFieldErrors({})
     if (!clientName) {
       setFieldErrors({ client_name: 'Campo obrigatório.' })
@@ -107,6 +108,12 @@ export default function Contracts() {
       await pb.send(`/backend/v1/documents/contracts/${record.id}/generate-pdf`, { method: 'POST' })
 
       toast({ title: 'Sucesso', description: 'Contrato salvo no sistema e PDF gerado.' })
+
+      if (shouldSend) {
+        setSelectedDoc(record)
+        setEmailOpen(true)
+      }
+
       fetchContracts()
       resetForm()
       setActiveTab('list')
@@ -143,19 +150,19 @@ export default function Contracts() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Editor de Contratos</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-white">Editor de Contratos</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-slate-800">
+        <TabsList className="bg-slate-800 w-full sm:w-auto grid grid-cols-2 sm:block h-auto">
           <TabsTrigger
             value="list"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
           >
             Contratos Salvos
           </TabsTrigger>
           <TabsTrigger
             value="editor"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
             onClick={resetForm}
           >
             {editingId ? 'Editar Contrato' : 'Novo Contrato'}
@@ -163,7 +170,8 @@ export default function Contracts() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
             <Table className="min-w-[600px]">
               <TableHeader className="bg-slate-800/50">
                 <TableRow className="border-slate-800">
@@ -243,17 +251,84 @@ export default function Contracts() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {contracts.map((c) => (
+              <div
+                key={c.id}
+                className="bg-[#1e293b] p-5 rounded-xl border border-slate-800 flex flex-col gap-4 shadow-sm"
+              >
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h3 className="font-semibold text-white text-base mb-1">{c.client_name}</h3>
+                    <p className="text-sm text-slate-400">
+                      {new Date(c.created).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold uppercase whitespace-nowrap">
+                    {c.status}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800/50">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleEdit(c)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Edit className="h-4 w-4 sm:mr-2" />{' '}
+                    <span className="hidden sm:inline">Editar</span>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleGeneratePdf(c.id)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Eye className="h-4 w-4 sm:mr-2" />{' '}
+                    <span className="hidden sm:inline">PDF</span>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedDoc(c)
+                      setEmailOpen(true)
+                    }}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Mail className="h-4 w-4 sm:mr-2" />{' '}
+                    <span className="hidden sm:inline">Email</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(c.id)}
+                    className="flex-none text-red-400 hover:text-red-300 hover:bg-red-950/50 px-3 min-h-[40px]"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {contracts.length === 0 && (
+              <div className="text-center py-10 bg-[#1e293b] rounded-xl border border-slate-800 text-slate-500">
+                Nenhum contrato gerado.
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="editor" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-6 space-y-6">
+          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 space-y-6">
             <div className="flex flex-col md:flex-row gap-4 items-end bg-slate-800/50 p-4 rounded-lg border border-slate-700">
               <div className="flex-1 w-full space-y-2">
                 <Label className="text-slate-300">Nome do Cliente ou Empresa Contratante</Label>
                 <Input
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                  className="bg-slate-800 border-slate-700 text-white"
+                  className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                 />
                 {fieldErrors.client_name && (
                   <p className="text-xs text-red-400">{fieldErrors.client_name}</p>
@@ -282,12 +357,19 @@ export default function Contracts() {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-6 border-t border-slate-700 flex flex-col sm:flex-row justify-end gap-3">
               <Button
-                onClick={handleSave}
-                className="w-full sm:w-auto bg-[#3498db] text-white hover:bg-[#2980b9] px-8 min-h-[48px] text-lg"
+                onClick={() => handleSave(false)}
+                variant="outline"
+                className="w-full sm:w-auto border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 min-h-[48px]"
               >
                 Salvar e Gerar PDF
+              </Button>
+              <Button
+                onClick={() => handleSave(true)}
+                className="w-full sm:w-auto bg-[#3498db] text-white hover:bg-[#2980b9] px-8 min-h-[48px]"
+              >
+                Salvar e Enviar Email
               </Button>
             </div>
           </div>

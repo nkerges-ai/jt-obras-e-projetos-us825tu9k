@@ -67,7 +67,10 @@ export default function Budgets() {
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  const handleSave = async (status: 'draft' | 'approved' = 'draft') => {
+  const handleSave = async (
+    status: 'draft' | 'approved' = 'draft',
+    shouldSend: boolean = false,
+  ) => {
     setFieldErrors({})
     if (!clientName) {
       setFieldErrors({ client_name: 'Campo obrigatório.' })
@@ -93,6 +96,12 @@ export default function Budgets() {
       await pb.send(`/backend/v1/documents/budgets/${record.id}/generate-pdf`, { method: 'POST' })
 
       toast({ title: 'Sucesso', description: 'Orçamento salvo e PDF gerado.' })
+
+      if (shouldSend) {
+        setSelectedDoc(record)
+        setEmailOpen(true)
+      }
+
       fetchBudgets()
       resetForm()
       setActiveTab('list')
@@ -135,19 +144,19 @@ export default function Budgets() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Orçamentos</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-white">Orçamentos</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-slate-800">
+        <TabsList className="bg-slate-800 w-full sm:w-auto grid grid-cols-2 sm:block h-auto">
           <TabsTrigger
             value="list"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
           >
             Orçamentos Salvos
           </TabsTrigger>
           <TabsTrigger
             value="editor"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
             onClick={resetForm}
           >
             {editingId ? 'Editar Orçamento' : 'Novo Orçamento'}
@@ -155,7 +164,8 @@ export default function Budgets() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
             <Table className="min-w-[600px]">
               <TableHeader className="bg-slate-800/50">
                 <TableRow className="border-slate-800">
@@ -173,7 +183,7 @@ export default function Budgets() {
                     <TableCell className="text-slate-300">R$ {b.total_value.toFixed(2)}</TableCell>
                     <TableCell>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${b.status === 'approved' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold uppercase whitespace-nowrap ${b.status === 'approved' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}
                       >
                         {b.status}
                       </span>
@@ -239,10 +249,80 @@ export default function Budgets() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {budgets.map((b) => (
+              <div
+                key={b.id}
+                className="bg-[#1e293b] p-5 rounded-xl border border-slate-800 flex flex-col gap-4 shadow-sm"
+              >
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h3 className="font-semibold text-white text-base mb-1">{b.client_name}</h3>
+                    <p className="text-sm text-[#3498db] font-bold">
+                      R$ {b.total_value.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {new Date(b.created).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase whitespace-nowrap ${b.status === 'approved' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}
+                  >
+                    {b.status}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800/50">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleEdit(b)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleGeneratePdf(b.id)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedDoc(b)
+                      setEmailOpen(true)
+                    }}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(b.id)}
+                    className="flex-none text-red-400 hover:text-red-300 hover:bg-red-950/50 px-3 min-h-[40px]"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {budgets.length === 0 && (
+              <div className="text-center py-10 bg-[#1e293b] rounded-xl border border-slate-800 text-slate-500">
+                Nenhum orçamento gerado.
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="editor" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-6 space-y-6">
+          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 space-y-6">
             <div className="flex items-center gap-2 border-b border-slate-700 pb-4">
               <FileSpreadsheet className="h-6 w-6 text-[#3498db]" />
               <h2 className="text-xl font-bold text-white">Planilha do Orçamento</h2>
@@ -266,77 +346,114 @@ export default function Budgets() {
                 Itens de Serviço e Materiais
               </Label>
 
-              <div className="overflow-x-auto pb-4">
-                <div className="min-w-[700px] space-y-3">
-                  <div className="flex gap-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    <div className="flex-1">Descrição</div>
-                    <div className="w-20 text-center">Qtd</div>
-                    <div className="w-32 text-center">Preço Unit.</div>
-                    <div className="w-28 text-right">Subtotal</div>
-                    <div className="w-10"></div>
-                  </div>
+              <div className="space-y-4 sm:space-y-3">
+                {/* Desktop Header */}
+                <div className="hidden sm:flex gap-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <div className="flex-1">Descrição</div>
+                  <div className="w-20 text-center">Qtd</div>
+                  <div className="w-32 text-center">Preço Unit.</div>
+                  <div className="w-28 text-right">Subtotal</div>
+                  <div className="w-10"></div>
+                </div>
 
-                  {items.map((item, i) => (
-                    <div key={i} className="flex gap-2 items-center group">
+                {items.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-start sm:items-center bg-slate-800/40 sm:bg-transparent p-4 sm:p-0 rounded-lg border border-slate-700 sm:border-none group"
+                  >
+                    <div className="w-full flex-1">
+                      <Label className="sm:hidden text-xs text-slate-400 mb-1 block">
+                        Descrição
+                      </Label>
                       <Input
                         value={item.desc}
                         onChange={(e) => updateItem(i, 'desc', e.target.value)}
                         placeholder="Descreva o serviço/material"
-                        className="flex-1 bg-slate-800 border-slate-700 text-white"
+                        className="w-full bg-slate-800 border-slate-700 text-white min-h-[44px]"
                       />
-                      <Input
-                        type="number"
-                        min="1"
-                        value={item.qty || ''}
-                        onChange={(e) => updateItem(i, 'qty', Number(e.target.value))}
-                        placeholder="Qtd"
-                        className="w-20 text-center bg-slate-800 border-slate-700 text-white"
-                      />
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.price || ''}
-                        onChange={(e) => updateItem(i, 'price', Number(e.target.value))}
-                        placeholder="0.00"
-                        className="w-32 text-right bg-slate-800 border-slate-700 text-white"
-                      />
-                      <div className="w-28 text-right font-semibold text-slate-300 bg-slate-800 px-3 py-2 rounded border border-slate-700">
-                        R$ {(item.qty * item.price).toFixed(2)}
+                    </div>
+                    <div className="flex flex-wrap sm:flex-nowrap gap-3 w-full sm:w-auto items-end sm:items-center">
+                      <div className="w-24">
+                        <Label className="sm:hidden text-xs text-slate-400 mb-1 block">Qtd</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={item.qty || ''}
+                          onChange={(e) => updateItem(i, 'qty', Number(e.target.value))}
+                          placeholder="Qtd"
+                          className="w-full text-center bg-slate-800 border-slate-700 text-white min-h-[44px]"
+                        />
+                      </div>
+                      <div className="flex-1 sm:w-32">
+                        <Label className="sm:hidden text-xs text-slate-400 mb-1 block">
+                          Preço Unit.
+                        </Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={item.price || ''}
+                          onChange={(e) => updateItem(i, 'price', Number(e.target.value))}
+                          placeholder="0.00"
+                          className="w-full text-right bg-slate-800 border-slate-700 text-white min-h-[44px]"
+                        />
+                      </div>
+                      <div className="w-full sm:w-28 text-right flex flex-row justify-between sm:flex-col sm:justify-end h-full">
+                        <Label className="sm:hidden text-xs text-slate-400 mt-2 sm:mt-0 block text-left sm:text-right w-auto my-auto">
+                          Subtotal
+                        </Label>
+                        <div className="font-semibold text-[#3498db] sm:text-slate-300 sm:bg-slate-800 px-3 py-2 rounded sm:border border-slate-700 h-[44px] flex items-center justify-end">
+                          R$ {(item.qty * item.price).toFixed(2)}
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setItems(items.filter((_, idx) => idx !== i))}
-                        className="w-11 h-11 sm:w-10 sm:h-10 text-slate-400 hover:text-red-400 hover:bg-red-950/50 shrink-0"
+                        className="w-full sm:w-10 h-11 sm:h-[44px] text-slate-400 hover:text-red-400 hover:bg-red-950/50 shrink-0 border border-slate-700 sm:border-none mt-2 sm:mt-0"
                       >
-                        <Trash className="h-4 w-4" />
+                        <Trash className="h-4 w-4 mr-2 sm:mr-0" />
+                        <span className="sm:hidden">Remover Item</span>
                       </Button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
 
               <Button
                 variant="outline"
-                className="mt-4 border-dashed border-2 border-slate-700 hover:border-[#3498db] hover:text-[#3498db] text-slate-300 hover:bg-slate-800 bg-transparent w-full min-h-[44px]"
+                className="mt-4 border-dashed border-2 border-slate-700 hover:border-[#3498db] hover:text-[#3498db] text-slate-300 hover:bg-slate-800 bg-transparent w-full min-h-[48px]"
                 onClick={() => setItems([...items, { desc: '', qty: 1, price: 0 }])}
               >
                 <Plus className="h-4 w-4 mr-2" /> Adicionar Nova Linha
               </Button>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-slate-700 mt-4 gap-4">
-              <div className="text-sm text-slate-400 w-full sm:w-auto text-center sm:text-left">
-                Total calculado automaticamente
+            <div className="flex flex-col items-center pt-6 border-t border-slate-700 mt-4 gap-6">
+              <div className="flex flex-col items-center gap-1 w-full text-center">
+                <div className="text-sm text-slate-400">Total do Orçamento</div>
+                <div className="text-3xl font-black text-[#3498db]">R$ {total.toFixed(2)}</div>
               </div>
-              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                <div className="text-2xl font-black text-[#3498db]">R$ {total.toFixed(2)}</div>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <Button
-                  onClick={() => handleSave('draft')}
-                  className="w-full sm:w-auto bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[48px] px-8"
+                  onClick={() => handleSave('draft', false)}
+                  variant="outline"
+                  className="flex-1 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 min-h-[48px]"
                 >
-                  Salvar e Exportar PDF
+                  Salvar Rascunho
+                </Button>
+                <Button
+                  onClick={() => handleSave('approved', false)}
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white min-h-[48px]"
+                >
+                  Salvar e Gerar PDF
+                </Button>
+                <Button
+                  onClick={() => handleSave('approved', true)}
+                  className="flex-1 bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[48px]"
+                >
+                  Salvar e Enviar Email
                 </Button>
               </div>
             </div>

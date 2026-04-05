@@ -79,15 +79,32 @@ export default function Certificates() {
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  const handleSave = async (status: 'draft' | 'completed') => {
+  const handleSave = async (status: 'draft' | 'completed', shouldSend: boolean = false) => {
     setLoading(true)
-    setFieldErrors({})
+    const errs: Record<string, string> = {}
 
     if (!formData.collaborator_cpf || formData.collaborator_cpf.length < 14) {
-      setFieldErrors((prev) => ({ ...prev, collaborator_cpf: 'CPF inválido.' }))
+      errs.collaborator_cpf = 'CPF inválido ou não informado.'
+    }
+    if (!formData.technician_cpf || formData.technician_cpf.length < 14) {
+      errs.technician_cpf = 'CPF do responsável técnico é obrigatório.'
+    }
+    if (!formData.collaborator_name) {
+      errs.collaborator_name = 'Nome do colaborador é obrigatório.'
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
       setLoading(false)
+      toast({
+        title: 'Atenção',
+        description: 'Preencha todos os campos obrigatórios corretamente.',
+        variant: 'destructive',
+      })
       return
     }
+
+    setFieldErrors({})
 
     try {
       const payload = {
@@ -103,7 +120,7 @@ export default function Certificates() {
         record = await pb.collection('certificates').create(payload)
       }
 
-      if (status === 'completed') {
+      if (status === 'completed' || shouldSend) {
         await pb.send(`/backend/v1/documents/certificates/${record.id}/generate-pdf`, {
           method: 'POST',
         })
@@ -113,6 +130,12 @@ export default function Certificates() {
         title: 'Sucesso',
         description: `Certificado salvo como ${status === 'draft' ? 'rascunho' : 'concluído'}.`,
       })
+
+      if (shouldSend) {
+        setSelectedDoc(record)
+        setEmailOpen(true)
+      }
+
       fetchCertificates()
       resetForm()
       setActiveTab('list')
@@ -123,7 +146,7 @@ export default function Certificates() {
       setFieldErrors(extracted)
       toast({
         title: 'Erro',
-        description: 'Verifique os campos obrigatórios.',
+        description: 'Falha ao salvar certificado.',
         variant: 'destructive',
       })
     }
@@ -133,6 +156,7 @@ export default function Certificates() {
   const resetForm = () => {
     setFormData({ ...initialForm, technician_cpf: user?.cpf || '' })
     setEditingId(null)
+    setFieldErrors({})
   }
 
   const handleEdit = (cert: any) => {
@@ -178,20 +202,20 @@ export default function Certificates() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Certificados NR</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Certificados NR</h1>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-slate-800">
+        <TabsList className="bg-slate-800 w-full sm:w-auto grid grid-cols-2 sm:block h-auto">
           <TabsTrigger
             value="list"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
           >
             Lista de Certificados
           </TabsTrigger>
           <TabsTrigger
             value="new"
-            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400 py-3 sm:py-1.5"
             onClick={resetForm}
           >
             {editingId ? 'Editar Certificado' : 'Novo Certificado'}
@@ -199,7 +223,8 @@ export default function Certificates() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 overflow-x-auto">
             <Table className="min-w-[700px]">
               <TableHeader className="bg-slate-800/50">
                 <TableRow className="border-slate-800">
@@ -226,7 +251,7 @@ export default function Certificates() {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${cert.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${cert.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}
                       >
                         {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
                       </span>
@@ -288,10 +313,88 @@ export default function Certificates() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {certificates.map((cert) => (
+              <div
+                key={cert.id}
+                className="bg-[#1e293b] p-5 rounded-xl border border-slate-800 flex flex-col gap-4 shadow-sm"
+              >
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h3 className="font-semibold text-white text-base mb-1">
+                      {cert.collaborator_name}
+                    </h3>
+                    <p className="text-sm text-slate-400 mb-1">
+                      CPF: {cert.collaborator_cpf || 'Não informado'}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <span className="bg-slate-800 px-2 py-0.5 rounded text-slate-300">
+                        {cert.nr_type}
+                      </span>
+                      <span>
+                        {new Date(cert.training_date).toLocaleDateString('pt-BR', {
+                          timeZone: 'UTC',
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase whitespace-nowrap ${cert.status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}
+                  >
+                    {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800/50">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleEdit(cert)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleGeneratePdf(cert.id)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  {cert.status === 'completed' && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleSendEmail(cert)}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 min-h-[40px]"
+                    >
+                      <Mail className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(cert.id)}
+                    className="flex-none text-red-400 hover:text-red-300 hover:bg-red-950/50 px-3 min-h-[40px]"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {certificates.length === 0 && (
+              <div className="text-center py-10 bg-[#1e293b] rounded-xl border border-slate-800 text-slate-500">
+                Nenhum certificado registrado no momento.
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="new" className="mt-6">
-          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 max-w-3xl">
+          <div className="bg-[#1e293b] rounded-lg shadow-sm border border-slate-800 p-4 sm:p-6 max-w-3xl mx-auto">
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -300,7 +403,7 @@ export default function Certificates() {
                     value={formData.nr_type}
                     onValueChange={(v) => setFormData({ ...formData, nr_type: v })}
                   >
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white min-h-[44px]">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-slate-700 text-white">
@@ -317,7 +420,7 @@ export default function Certificates() {
                     type="number"
                     value={formData.hours}
                     onChange={(e) => setFormData({ ...formData, hours: Number(e.target.value) })}
-                    className="bg-slate-800 border-slate-700 text-white"
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                 </div>
               </div>
@@ -331,21 +434,24 @@ export default function Certificates() {
                       setFormData({ ...formData, collaborator_name: e.target.value })
                     }
                     placeholder="Nome completo"
-                    className="bg-slate-800 border-slate-700 text-white"
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                   {fieldErrors.collaborator_name && (
                     <p className="text-xs text-red-400">{fieldErrors.collaborator_name}</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">CPF do Colaborador</Label>
+                  <Label className="text-slate-300">
+                    CPF do Colaborador <span className="text-red-400">*</span>
+                  </Label>
                   <Input
                     value={formData.collaborator_cpf}
                     onChange={(e) =>
                       setFormData({ ...formData, collaborator_cpf: formatCpf(e.target.value) })
                     }
                     placeholder="000.000.000-00"
-                    className="bg-slate-800 border-slate-700 text-white"
+                    maxLength={14}
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
                   {fieldErrors.collaborator_cpf && (
                     <p className="text-xs text-red-400">{fieldErrors.collaborator_cpf}</p>
@@ -360,39 +466,53 @@ export default function Certificates() {
                     type="date"
                     value={formData.training_date}
                     onChange={(e) => setFormData({ ...formData, training_date: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white"
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px] appearance-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">CPF do Responsável Técnico</Label>
+                  <Label className="text-slate-300">
+                    CPF do Responsável Técnico <span className="text-red-400">*</span>
+                  </Label>
                   <Input
                     value={formData.technician_cpf}
                     onChange={(e) =>
                       setFormData({ ...formData, technician_cpf: formatCpf(e.target.value) })
                     }
                     placeholder="000.000.000-00"
-                    className="bg-slate-800 border-slate-700 text-white"
+                    maxLength={14}
+                    className="bg-slate-800 border-slate-700 text-white min-h-[44px]"
                   />
+                  {fieldErrors.technician_cpf && (
+                    <p className="text-xs text-red-400">{fieldErrors.technician_cpf}</p>
+                  )}
                 </div>
               </div>
 
-              <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 border-t border-slate-800 mt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-800 mt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-[44px] bg-transparent border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800"
-                  onClick={() => handleSave('draft')}
+                  className="min-h-[48px] w-full sm:w-auto bg-transparent border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800"
+                  onClick={() => handleSave('draft', false)}
                   disabled={loading}
                 >
-                  {editingId ? 'Atualizar Rascunho' : 'Salvar Rascunho'}
+                  Salvar Rascunho
                 </Button>
                 <Button
                   type="button"
-                  className="bg-[#3498db] hover:bg-[#2980b9] text-white flex-1 min-h-[44px]"
-                  onClick={() => handleSave('completed')}
+                  className="bg-slate-700 hover:bg-slate-600 text-white min-h-[48px] w-full sm:w-auto"
+                  onClick={() => handleSave('completed', false)}
                   disabled={loading}
                 >
-                  {editingId ? 'Atualizar e Gerar PDF' : 'Salvar e Gerar PDF'}
+                  Salvar e Gerar PDF
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[48px] w-full sm:w-auto sm:ml-auto"
+                  onClick={() => handleSave('completed', true)}
+                  disabled={loading}
+                >
+                  Salvar e Enviar Email
                 </Button>
               </div>
             </form>

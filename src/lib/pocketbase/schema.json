@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-05T01:23:25.214Z",
+  "generatedAt": "2026-04-05T01:31:18.098Z",
   "collections": [
     {
       "name": "users",
@@ -477,6 +477,18 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "collaborator_cpf",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "technician_cpf",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
@@ -543,6 +555,18 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "collaborator_cpf",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "technician_cpf",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
