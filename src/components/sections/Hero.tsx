@@ -7,12 +7,12 @@ import heroImage from '@/assets/whatsapp-image-2026-03-17-at-19.27.50-91cc3.jpeg
 export function Hero() {
   return (
     <section className="relative min-h-[100svh] lg:min-h-[70vh] w-full flex items-center pt-32 lg:pt-40 pb-16 overflow-hidden bg-brand-navy">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-brand-navy/90 z-10 mix-blend-multiply" />
+      <div className="absolute inset-0 z-0 bg-brand-navy">
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/95 via-brand-navy/80 to-brand-navy/60 z-10" />
         <img
           src={heroImage}
           alt="Obra em andamento"
-          className="w-full h-full object-cover object-center opacity-40"
+          className="w-full h-full object-cover object-center opacity-30"
         />
       </div>
 
@@ -26,10 +26,10 @@ export function Hero() {
               </span>
               Especialistas em Manutenção Predial e Industrial
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight drop-shadow-md">
               A base sólida para o <span className="text-brand-orange">sucesso</span> da sua obra.
             </h1>
-            <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl leading-relaxed font-light">
+            <p className="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed font-light drop-shadow-md">
               Transformamos desafios complexos de engenharia em soluções seguras e eficientes para o
               setor corporativo.
             </p>
@@ -51,7 +51,7 @@ export function Hero() {
                 onClick={() => {
                   document.getElementById('clientes')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="h-14 px-8 text-base font-bold rounded-full bg-transparent text-white border-white/40 hover:bg-white hover:text-brand-navy transition-colors"
+                className="h-14 px-8 text-base font-bold rounded-full bg-white/10 text-white border-white hover:bg-white hover:text-brand-navy transition-colors backdrop-blur-sm"
               >
                 Veja Nossos Clientes de Confiança
               </Button>

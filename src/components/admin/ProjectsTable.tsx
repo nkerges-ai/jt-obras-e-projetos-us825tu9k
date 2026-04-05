@@ -25,9 +25,9 @@ interface ProjectsTableProps {
 
 export function ProjectsTable({ projects, onEdit, onDelete }: ProjectsTableProps) {
   return (
-    <div className="bg-[#1e293b] rounded-xl shadow-sm border border-slate-800 overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table className="w-full min-w-max md:min-w-0">
+    <div className="bg-[#1e293b] rounded-xl shadow-sm border border-slate-800 overflow-hidden w-full">
+      <div className="overflow-x-auto w-full">
+        <Table className="w-full min-w-[600px] md:min-w-full">
           <TableHeader className="bg-slate-800/50">
             <TableRow className="border-slate-800">
               <TableHead className="text-slate-300">Obra</TableHead>

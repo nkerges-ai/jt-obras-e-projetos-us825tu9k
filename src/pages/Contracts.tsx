@@ -143,44 +143,46 @@ export default function Contracts() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
-            <Table className="min-w-[800px]">
-              <TableHeader className="bg-slate-50">
-                <TableRow>
-                  <TableHead>Cliente/Contratante</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Data de Criação</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {contracts.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.client_name}</TableCell>
-                    <TableCell>
-                      <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold uppercase">
-                        {c.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{new Date(c.created).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => setPrintDoc(c)}>
-                          <Printer className="h-4 w-4 text-[#3498db]" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {contracts.length === 0 && (
+          <div className="bg-white rounded-lg shadow-sm border w-full overflow-hidden">
+            <div className="overflow-x-auto w-full">
+              <Table className="w-full min-w-[600px] md:min-w-full">
+                <TableHeader className="bg-slate-50">
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8 text-slate-500">
-                      Nenhum contrato gerado.
-                    </TableCell>
+                    <TableHead>Cliente/Contratante</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Data de Criação</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {contracts.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell className="font-medium">{c.client_name}</TableCell>
+                      <TableCell>
+                        <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-semibold uppercase">
+                          {c.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{new Date(c.created).toLocaleDateString()}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => setPrintDoc(c)}>
+                            <Printer className="h-4 w-4 text-[#3498db]" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {contracts.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-slate-500">
+                        Nenhum contrato gerado.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </TabsContent>
 
@@ -218,10 +220,10 @@ export default function Contracts() {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-4 flex justify-end w-full">
               <Button
                 onClick={handleSave}
-                className="w-full sm:w-auto bg-[#3498db] text-white hover:bg-[#2980b9] px-8 min-h-[48px] text-lg"
+                className="w-full sm:w-auto bg-[#3498db] text-white hover:bg-[#2980b9] px-8 min-h-[48px] text-lg shrink-0"
               >
                 Salvar e Gerar PDF
               </Button>

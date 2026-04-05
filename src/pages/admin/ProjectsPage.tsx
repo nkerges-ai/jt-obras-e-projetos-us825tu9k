@@ -94,17 +94,17 @@ export default function ProjectsPage() {
 
       <ProgressCards projects={projects} />
 
-      <div className="bg-[#1e293b] p-5 rounded-xl shadow-sm border border-slate-800 flex flex-col md:flex-row gap-4 items-center">
+      <div className="bg-[#1e293b] p-5 rounded-xl shadow-sm border border-slate-800 flex flex-col md:flex-row gap-4 items-center w-full">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Buscar por nome da obra..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-slate-800 border-slate-700 text-white"
+            className="pl-9 bg-slate-800 border-slate-700 text-white w-full"
           />
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto shrink-0">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full md:w-[200px] bg-slate-800 border-slate-700 text-white">
               <SelectValue placeholder="Status" />

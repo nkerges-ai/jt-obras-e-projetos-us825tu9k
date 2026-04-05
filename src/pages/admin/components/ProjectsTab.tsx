@@ -153,77 +153,79 @@ export function ProjectsTab() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-secondary/50">
-            <TableRow>
-              <TableHead>Projeto</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {projects.length === 0 && (
+      <div className="bg-white rounded-xl border shadow-sm w-full overflow-hidden">
+        <div className="overflow-x-auto w-full">
+          <Table className="w-full min-w-[600px] md:min-w-full">
+            <TableHeader className="bg-secondary/50">
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  Nenhum projeto encontrado.
-                </TableCell>
+                <TableHead>Projeto</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
-            )}
-            {projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell className="font-medium">{project.name}</TableCell>
-                <TableCell>{project.client}</TableCell>
-                <TableCell>
-                  <Select
-                    defaultValue={project.status}
-                    onValueChange={(val) => handleStatusChange(project.id, val as ProjectStatus)}
-                  >
-                    <SelectTrigger
-                      className={`w-[150px] h-8 text-xs font-semibold rounded-full border ${getStatusColor(project.status)}`}
+            </TableHeader>
+            <TableBody>
+              {projects.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    Nenhum projeto encontrado.
+                  </TableCell>
+                </TableRow>
+              )}
+              {projects.map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell className="font-medium">{project.name}</TableCell>
+                  <TableCell>{project.client}</TableCell>
+                  <TableCell>
+                    <Select
+                      defaultValue={project.status}
+                      onValueChange={(val) => handleStatusChange(project.id, val as ProjectStatus)}
                     >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Em orçamento">Em orçamento</SelectItem>
-                      <SelectItem value="Em andamento">Em andamento</SelectItem>
-                      <SelectItem value="Concluído">Concluído</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2 items-center">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 text-blue-600 border-blue-200 hover:bg-blue-50"
-                      onClick={() => {
-                        const link = `${window.location.origin}/projeto/${project.id}/galeria`
-                        navigator.clipboard.writeText(link)
-                        toast({
-                          title: 'Link Copiado',
-                          description: 'O link de Atualização da Obra foi copiado.',
-                        })
-                      }}
-                      title="Copiar Link de Atualização da Obra"
-                    >
-                      <LinkIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedProject(project)}
-                      className="text-primary gap-1 px-2"
-                    >
-                      Gerenciar <ExternalLink className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      <SelectTrigger
+                        className={`w-[150px] h-8 text-xs font-semibold rounded-full border ${getStatusColor(project.status)}`}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Em orçamento">Em orçamento</SelectItem>
+                        <SelectItem value="Em andamento">Em andamento</SelectItem>
+                        <SelectItem value="Concluído">Concluído</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2 items-center">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 text-blue-600 border-blue-200 hover:bg-blue-50"
+                        onClick={() => {
+                          const link = `${window.location.origin}/projeto/${project.id}/galeria`
+                          navigator.clipboard.writeText(link)
+                          toast({
+                            title: 'Link Copiado',
+                            description: 'O link de Atualização da Obra foi copiado.',
+                          })
+                        }}
+                        title="Copiar Link de Atualização da Obra"
+                      >
+                        <LinkIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedProject(project)}
+                        className="text-primary gap-1 px-2"
+                      >
+                        Gerenciar <ExternalLink className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <ProjectDetailsDialog

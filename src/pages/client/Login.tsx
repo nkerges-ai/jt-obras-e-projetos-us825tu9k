@@ -12,8 +12,12 @@ export default function ClientLogin() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (sessionStorage.getItem('client_project_id')) {
+    let mounted = true
+    if (sessionStorage.getItem('client_project_id') && mounted) {
       navigate('/cliente/dashboard', { replace: true })
+    }
+    return () => {
+      mounted = false
     }
   }, [navigate])
 
@@ -23,7 +27,7 @@ export default function ClientLogin() {
     const project = projects.find((p) => p.id === accessCode)
     if (project) {
       sessionStorage.setItem('client_project_id', project.id)
-      navigate('/cliente/dashboard')
+      navigate('/cliente/dashboard', { replace: true })
     } else {
       setError(true)
       setAccessCode('')
@@ -31,8 +35,8 @@ export default function ClientLogin() {
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4 bg-secondary/30">
-      <Card className="w-full max-w-md shadow-xl border-none">
+    <div className="min-h-[100svh] flex items-center justify-center p-4 bg-secondary/30 overflow-hidden">
+      <Card className="w-full max-w-md shadow-xl border-none shrink-0 my-auto">
         <CardHeader className="space-y-3 pb-6 text-center">
           <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-2">
             <UserCircle className="h-8 w-8 text-primary" />

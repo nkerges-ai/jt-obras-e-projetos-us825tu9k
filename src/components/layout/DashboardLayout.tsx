@@ -66,11 +66,12 @@ export function DashboardLayout() {
           <p className="text-xs text-slate-400 truncate w-32">{user?.email}</p>
         </div>
       </div>
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
         {links.map((link) => (
           <Link
             key={link.to}
             to={link.to}
+            onClick={() => setIsMobileMenuOpen(false)}
             className={cn(
               'flex items-center gap-3 px-3 py-3 md:py-2 rounded-md transition-colors text-sm font-medium min-h-[44px]',
               location.pathname === link.to
@@ -103,20 +104,21 @@ export function DashboardLayout() {
       </div>
 
       <div className="flex-1 flex flex-col md:pl-64">
-        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden">
+        <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:hidden sticky top-0 z-40">
           <img src={logoUrl} alt="JT Obras" className="max-h-10 w-auto object-contain" />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-11 w-11">
+              <Button variant="ghost" size="icon" className="h-11 w-11 shrink-0 relative z-50">
                 <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 border-none">
+            <SheetContent side="left" className="p-0 w-64 border-none pt-10">
               <SidebarContent />
             </SheetContent>
           </Sheet>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 w-full">
           <Outlet />
         </main>
       </div>

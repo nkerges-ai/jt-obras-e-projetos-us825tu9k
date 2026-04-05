@@ -15,32 +15,49 @@ export default function Login() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
+  const isMounted = useRef(true)
+
   useEffect(() => {
-    if (!authLoading && user?.id) {
+    isMounted.current = true
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isMounted.current && !authLoading && user?.id) {
       navigate('/dashboard', { replace: true })
     }
-  }, [authLoading, user, navigate])
+  }, [authLoading, user?.id, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!email || !password) return
+
     setLoading(true)
-    const { error } = await signIn(email, password)
-    if (error) {
-      toast({
-        title: 'Erro no login',
-        description: 'Credenciais inválidas.',
-        variant: 'destructive',
-      })
-    } else {
-      navigate('/dashboard')
+    try {
+      const { error } = await signIn(email, password)
+      if (error) {
+        toast({
+          title: 'Erro no login',
+          description: 'Credenciais inválidas.',
+          variant: 'destructive',
+        })
+        if (isMounted.current) setLoading(false)
+      } else {
+        if (isMounted.current) {
+          navigate('/dashboard', { replace: true })
+        }
+      }
+    } catch (err) {
+      if (isMounted.current) setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
-    <div className="min-h-screen flex bg-[#0f172a] text-white">
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-96">
+    <div className="min-h-[100svh] flex bg-[#0f172a] text-white overflow-hidden">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 w-full">
+        <div className="mx-auto w-full max-w-sm lg:w-96 shrink-0">
           <div className="bg-white p-5 rounded-2xl mb-8 flex justify-center shadow-lg border border-slate-200">
             <img src={logo} alt="JT Obras" className="max-h-16 w-auto object-contain" />
           </div>

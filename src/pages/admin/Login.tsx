@@ -13,8 +13,12 @@ export default function AdminLogin() {
   const { toast } = useToast()
 
   useEffect(() => {
-    if (sessionStorage.getItem('admin_auth') === 'true') {
+    let mounted = true
+    if (sessionStorage.getItem('admin_auth') === 'true' && mounted) {
       navigate('/admin', { replace: true })
+    }
+    return () => {
+      mounted = false
     }
   }, [navigate])
 
@@ -22,7 +26,7 @@ export default function AdminLogin() {
     e.preventDefault()
     if (password === 'JOELTATIANA') {
       sessionStorage.setItem('admin_auth', 'true')
-      navigate('/admin')
+      navigate('/admin', { replace: true })
     } else {
       setError(true)
       setPassword('')
@@ -37,8 +41,8 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4 bg-secondary/30">
-      <Card className="w-full max-w-md shadow-xl border-none">
+    <div className="min-h-[100svh] flex items-center justify-center p-4 bg-secondary/30 overflow-hidden">
+      <Card className="w-full max-w-md shadow-xl border-none shrink-0 my-auto">
         <CardHeader className="space-y-3 pb-6 text-center">
           <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-2">
             <Lock className="h-8 w-8 text-primary" />

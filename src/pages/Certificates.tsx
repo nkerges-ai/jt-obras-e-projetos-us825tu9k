@@ -96,65 +96,67 @@ export default function Certificates() {
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
-          <div className="bg-white rounded-lg shadow-sm border overflow-x-auto">
-            <Table className="min-w-[800px]">
-              <TableHeader className="bg-slate-50">
-                <TableRow>
-                  <TableHead>Colaborador</TableHead>
-                  <TableHead>Tipo (NR)</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {certificates.map((cert) => (
-                  <TableRow key={cert.id}>
-                    <TableCell className="font-medium">{cert.collaborator_name}</TableCell>
-                    <TableCell>{cert.nr_type}</TableCell>
-                    <TableCell>
-                      {new Date(cert.training_date).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${cert.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
-                      >
-                        {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        {cert.status === 'completed' && (
+          <div className="bg-white rounded-lg shadow-sm border w-full overflow-hidden">
+            <div className="overflow-x-auto w-full">
+              <Table className="w-full min-w-[700px] md:min-w-full">
+                <TableHeader className="bg-slate-50">
+                  <TableRow>
+                    <TableHead>Colaborador</TableHead>
+                    <TableHead>Tipo (NR)</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {certificates.map((cert) => (
+                    <TableRow key={cert.id}>
+                      <TableCell className="font-medium">{cert.collaborator_name}</TableCell>
+                      <TableCell>{cert.nr_type}</TableCell>
+                      <TableCell>
+                        {new Date(cert.training_date).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${cert.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
+                        >
+                          {cert.status === 'completed' ? 'Concluído' : 'Rascunho'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          {cert.status === 'completed' && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-11 w-11 sm:h-10 sm:w-10"
+                              onClick={() => setPrintDoc(cert)}
+                            >
+                              <Printer className="h-4 w-4 text-[#3498db]" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
                             className="h-11 w-11 sm:h-10 sm:w-10"
-                            onClick={() => setPrintDoc(cert)}
+                            onClick={() => handleDelete(cert.id)}
                           >
-                            <Printer className="h-4 w-4 text-[#3498db]" />
+                            <Trash className="h-4 w-4 text-red-500" />
                           </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-11 w-11 sm:h-10 sm:w-10"
-                          onClick={() => handleDelete(cert.id)}
-                        >
-                          <Trash className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {certificates.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-slate-500">
-                      Nenhum certificado registrado no momento.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {certificates.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                        Nenhum certificado registrado no momento.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </TabsContent>
 
@@ -207,11 +209,11 @@ export default function Certificates() {
                 />
               </div>
 
-              <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 border-t mt-4">
+              <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 border-t mt-4 w-full">
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full sm:w-auto min-h-[44px]"
+                  className="w-full sm:w-auto min-h-[44px] shrink-0"
                   onClick={() => handleSave('draft')}
                   disabled={loading}
                 >
@@ -219,7 +221,7 @@ export default function Certificates() {
                 </Button>
                 <Button
                   type="button"
-                  className="w-full sm:flex-1 bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[44px]"
+                  className="w-full sm:flex-1 bg-[#3498db] hover:bg-[#2980b9] text-white min-h-[44px] shrink-0"
                   onClick={() => handleSave('completed')}
                   disabled={loading}
                 >

@@ -102,8 +102,10 @@ export function Header() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="lg:hidden p-2 text-brand-navy ml-1"
+            className="lg:hidden p-2 text-brand-navy ml-1 relative z-50 focus:outline-none focus:ring-2 focus:ring-brand-orange rounded-md"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Alternar menu"
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -112,7 +114,7 @@ export function Header() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg animate-in slide-in-from-top-2">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg animate-in slide-in-from-top-2 max-h-[calc(100vh-80px)] overflow-y-auto">
           <nav className="flex flex-col p-4 space-y-4">
             <button
               onClick={() => scrollToSection('servicos')}
