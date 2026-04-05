@@ -24,6 +24,7 @@ import { useAuth } from '@/hooks/use-auth'
 import pb from '@/lib/pocketbase/client'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import { Download, Trash, Edit, Plus, X, FileText } from 'lucide-react'
+import { useRealtime } from '@/hooks/use-realtime'
 
 const formatCPF = (val: string) => {
   let v = val.replace(/\D/g, '')
@@ -75,6 +76,8 @@ export function CertificatesTab() {
   useEffect(() => {
     fetchCertificates()
   }, [])
+
+  useRealtime('certificates', fetchCertificates)
 
   const resetForm = () => {
     setFormData({
@@ -330,7 +333,10 @@ export function CertificatesTab() {
                     <TableRow>
                       <TableCell colSpan={5} className="text-center py-12 text-slate-500">
                         <FileText className="h-8 w-8 mx-auto text-slate-300 mb-3" />
-                        Nenhum certificado registrado.
+                        <p className="mb-4">Nenhum certificado registrado.</p>
+                        <Button variant="outline" onClick={() => setActiveTab('new')}>
+                          <Plus className="h-4 w-4 mr-2" /> Criar Novo Certificado
+                        </Button>
                       </TableCell>
                     </TableRow>
                   )}

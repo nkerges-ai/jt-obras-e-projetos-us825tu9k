@@ -215,7 +215,7 @@ export default function CertificateEditor() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20 print:bg-gray-100 print:pb-0">
+    <div className="bg-gray-50 min-h-screen pb-28 print:bg-gray-100 print:pb-0">
       <style>{`
         @media print {
           @page { size: A4 landscape !important; margin: 0 !important; }

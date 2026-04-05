@@ -70,7 +70,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8 animate-fade-in-up bg-[#0f172a] min-h-screen text-slate-200">
+    <div className="container mx-auto p-6 pb-28 space-y-8 animate-fade-in-up bg-[#0f172a] min-h-screen text-slate-200">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">

@@ -103,7 +103,7 @@ export default function BudgetEditor() {
   const total = data.items.reduce((acc, curr) => acc + curr.qty * curr.price, 0)
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20 print:bg-white print:pb-0">
+    <div className="bg-gray-50 min-h-screen pb-28 print:bg-white print:pb-0">
       <div className="bg-white border-b sticky top-[72px] z-30 print:hidden shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
