@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -9,463 +9,270 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import {
-  Upload,
   FileText,
   File as FileIcon,
-  Trash2,
   FolderOpen,
-  History,
-  Eye,
-  RotateCcw,
-  MoreVertical,
-  Mail,
+  Edit,
+  Trash2,
+  ShieldCheck,
+  FileSignature,
+  Receipt,
 } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
-import {
-  DocumentoArmazenado,
-  getDocumentosArmazenados,
-  addDocumentoArmazenado,
-  updateDocumentoArmazenado,
-  getHistoricoDocumentos,
-  HistoricoDocumento,
-  addAuditLog,
-  restoreDocumentoArmazenado,
-} from '@/lib/storage'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import pb from '@/lib/pocketbase/client'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 import { Badge } from '@/components/ui/badge'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
+import { Link } from 'react-router-dom'
+import { useRealtime } from '@/hooks/use-realtime'
+
+type UnifiedDoc = {
+  id: string
+  collection: 'certificates' | 'contracts' | 'budgets'
+  title: string
+  subtitle: string
+  status: string
+  updated: string
+  pdf_url?: string
+}
 
 export function DocumentsTab() {
   const { toast } = useToast()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [docs, setDocs] = useState<UnifiedDoc[]>([])
+  const [filter, setFilter] = useState<'all' | 'certificates' | 'contracts' | 'budgets'>('all')
+  const [loading, setLoading] = useState(true)
 
-  const [files, setFiles] = useState<DocumentoArmazenado[]>([])
-  const [currentFolder, setCurrentFolder] = useState('todos')
+  const loadData = async () => {
+    try {
+      const [certs, conts, buds] = await Promise.all([
+        pb.collection('certificates').getFullList({ sort: '-updated' }),
+        pb.collection('contracts').getFullList({ sort: '-updated' }),
+        pb.collection('budgets').getFullList({ sort: '-updated' }),
+      ])
 
-  const [isShareOpen, setIsShareOpen] = useState(false)
-  const [shareToken, setShareToken] = useState('')
+      const unified: UnifiedDoc[] = [
+        ...certs.map((c) => ({
+          id: c.id,
+          collection: 'certificates' as const,
+          title: `Certificado ${c.nr_type}`,
+          subtitle: c.collaborator_name,
+          status: c.status,
+          updated: c.updated,
+          pdf_url: c.pdf_url ? pb.files.getUrl(c, c.pdf_url) : undefined,
+        })),
+        ...conts.map((c) => ({
+          id: c.id,
+          collection: 'contracts' as const,
+          title: `Contrato`,
+          subtitle: c.client_name,
+          status: c.status,
+          updated: c.updated,
+          pdf_url: c.pdf_url ? pb.files.getUrl(c, c.pdf_url) : undefined,
+        })),
+        ...buds.map((b) => ({
+          id: b.id,
+          collection: 'budgets' as const,
+          title: `Orçamento`,
+          subtitle: b.client_name,
+          status: b.status,
+          updated: b.updated,
+          pdf_url: b.pdf_url ? pb.files.getUrl(b, b.pdf_url) : undefined,
+        })),
+      ].sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
 
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
-  const [currentHistory, setCurrentHistory] = useState<HistoricoDocumento[]>([])
-  const [selectedDocName, setSelectedDocName] = useState('')
-
-  const [isPdfOpen, setIsPdfOpen] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState('')
-
-  useEffect(() => {
-    loadFiles()
-  }, [])
-
-  const loadFiles = () => {
-    const docs = getDocumentosArmazenados().filter((d) => d.status !== 'deletado')
-    setFiles(docs)
-  }
-
-  const handleUploadClick = () => fileInputRef.current?.click()
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFile = e.target.files[0]
-      const reader = new FileReader()
-      reader.onload = () => {
-        const doc = addDocumentoArmazenado({
-          projeto_id: 'global',
-          tipo_documento: currentFolder === 'todos' ? 'acervo' : (currentFolder as any),
-          nome_arquivo: newFile.name,
-          descricao: 'Arquivo enviado manualmente',
-          url_storage: reader.result as string,
-          tamanho_arquivo: newFile.size,
-          usuario_id: 'admin_user',
-          status: 'ativo',
-        })
-        loadFiles()
-        addAuditLog({
-          userId: 'admin_user',
-          action: 'Upload',
-          table: 'documentos_armazenados',
-          newData: JSON.stringify(doc),
-        })
-        toast({
-          title: 'Arquivo salvo',
-          description: `${newFile.name} salvo na pasta /${currentFolder === 'todos' ? 'acervo' : currentFolder}.`,
-        })
-      }
-      reader.readAsDataURL(newFile)
-      e.target.value = ''
+      setDocs(unified)
+    } catch (error) {
+      toast({ title: 'Erro', description: getErrorMessage(error), variant: 'destructive' })
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleDelete = (doc: DocumentoArmazenado) => {
-    updateDocumentoArmazenado(doc.id, { status: 'deletado' }, 'admin_user')
-    loadFiles()
-    addAuditLog({
-      userId: 'admin_user',
-      action: 'Delete',
-      table: 'documentos_armazenados',
-      previousData: JSON.stringify(doc),
-    })
-    toast({ title: 'Movido para Lixeira' })
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('certificates', loadData)
+  useRealtime('contracts', loadData)
+  useRealtime('budgets', loadData)
+
+  const handleDelete = async (doc: UnifiedDoc) => {
+    if (!confirm('Deseja realmente excluir este documento?')) return
+    try {
+      await pb.collection(doc.collection).delete(doc.id)
+      toast({ title: 'Sucesso', description: 'Documento excluído.' })
+    } catch (err) {
+      toast({ title: 'Erro', description: getErrorMessage(err), variant: 'destructive' })
+    }
   }
 
-  const handleShare = (docId: string) => {
-    const token = btoa(docId).replace(/=/g, '')
-    setShareToken(`${window.location.origin}/publico/documento/${token}`)
-    setIsShareOpen(true)
+  const filteredDocs = docs.filter((d) => filter === 'all' || d.collection === filter)
+
+  const getIcon = (collection: string) => {
+    switch (collection) {
+      case 'certificates':
+        return <ShieldCheck className="h-5 w-5 text-green-600" />
+      case 'contracts':
+        return <FileSignature className="h-5 w-5 text-blue-600" />
+      case 'budgets':
+        return <Receipt className="h-5 w-5 text-orange-500" />
+      default:
+        return <FileText className="h-5 w-5 text-gray-500" />
+    }
   }
 
-  const viewHistory = (doc: DocumentoArmazenado) => {
-    const allHistory = getHistoricoDocumentos()
-    const docHistory = allHistory
-      .filter((h) => h.documento_id === doc.id)
-      .sort((a, b) => new Date(b.data_acao).getTime() - new Date(a.data_acao).getTime())
-    setCurrentHistory(docHistory)
-    setSelectedDocName(doc.nome_arquivo)
-    setIsHistoryOpen(true)
+  const getEditPath = (doc: UnifiedDoc) => {
+    switch (doc.collection) {
+      case 'certificates':
+        return `/admin/template/certificado/${doc.id}`
+      case 'contracts':
+        return `/admin/template/contrato/${doc.id}`
+      case 'budgets':
+        return `/admin/template/orcamento/${doc.id}`
+      default:
+        return '#'
+    }
   }
 
-  const handleRestore = (historyId: string) => {
-    restoreDocumentoArmazenado(historyId, 'admin_user')
-    loadFiles()
-    setIsHistoryOpen(false)
-    addAuditLog({
-      userId: 'admin_user',
-      action: 'Restaurar Versão',
-      table: 'documentos_armazenados',
-    })
-    toast({
-      title: 'Versão Restaurada',
-      description: 'O documento foi revertido ao estado anterior.',
-    })
+  const translateStatus = (status: string) => {
+    const map: Record<string, string> = {
+      draft: 'Rascunho',
+      active: 'Ativo',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      sent: 'Enviado',
+      approved: 'Aprovado',
+      rejected: 'Rejeitado',
+    }
+    return map[status] || status
   }
-
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
-
-  const filteredFiles = files.filter(
-    (f) => currentFolder === 'todos' || f.tipo_documento === currentFolder,
-  )
-
-  const getFileIcon = (filename: string) => {
-    if (filename.toLowerCase().endsWith('.pdf'))
-      return <FileIcon className="h-6 w-6 text-red-500 shrink-0" />
-    if (filename.toLowerCase().endsWith('.docx') || filename.toLowerCase().endsWith('.doc'))
-      return <FileText className="h-6 w-6 text-blue-600 shrink-0" />
-    return <FileText className="h-6 w-6 text-gray-500 shrink-0" />
-  }
-
-  const folders = ['todos', 'acervo', 'certificado', 'os', 'contrato', 'orçamento', 'evidencia']
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl border shadow-sm gap-4">
         <div>
           <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 text-primary" /> Central de Arquivos
+            <FolderOpen className="h-5 w-5 text-primary" /> Acervo Técnico
           </h3>
           <p className="text-muted-foreground text-sm">
-            Navegue pela estrutura de pastas e acesse todos os documentos gerados e PDFs.
+            Gerencie certificados, contratos e orçamentos da empresa.
           </p>
         </div>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-          accept=".pdf,.doc,.docx"
-        />
-        <Button onClick={handleUploadClick} className="gap-2 font-bold w-full sm:w-auto">
-          <Upload className="h-4 w-4" /> Enviar Arquivo
-        </Button>
       </div>
 
       <div className="bg-white rounded-xl border shadow-sm p-0 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         {/* Sidebar Folder Navigation */}
         <div className="w-full md:w-64 border-r bg-gray-50 p-4 shrink-0 flex flex-col">
           <h4 className="font-bold text-xs text-brand-navy uppercase tracking-wider mb-4 px-2">
-            Repositório
+            Filtros
           </h4>
           <nav className="space-y-1">
-            {folders.map((folder) => (
-              <button
-                key={folder}
-                onClick={() => setCurrentFolder(folder)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentFolder === folder ? 'bg-primary/10 text-primary border-r-2 border-primary rounded-r-none' : 'text-gray-600 hover:bg-gray-200'}`}
-              >
-                <FolderOpen
-                  className={`h-4 w-4 ${currentFolder === folder ? 'fill-primary/20 text-primary' : 'text-gray-400'}`}
-                />
-                <span className="capitalize">
-                  {folder === 'todos'
-                    ? 'Raiz (Todos)'
-                    : folder === 'os'
-                      ? 'Ordens de Serviço (OS)'
-                      : folder + 's'}
-                </span>
-              </button>
-            ))}
+            <button
+              onClick={() => setFilter('all')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'all' ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-200'}`}
+            >
+              <FolderOpen className="h-4 w-4" /> Todos
+            </button>
+            <button
+              onClick={() => setFilter('certificates')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'certificates' ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-200'}`}
+            >
+              <ShieldCheck className="h-4 w-4" /> Certificados
+            </button>
+            <button
+              onClick={() => setFilter('contracts')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'contracts' ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-200'}`}
+            >
+              <FileSignature className="h-4 w-4" /> Contratos
+            </button>
+            <button
+              onClick={() => setFilter('budgets')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${filter === 'budgets' ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-200'}`}
+            >
+              <Receipt className="h-4 w-4" /> Orçamentos
+            </button>
           </nav>
         </div>
 
         {/* Main Content Area */}
         <div className="flex-1 p-4 md:p-6 flex flex-col">
-          <div className="mb-6 flex items-center bg-gray-100/50 p-3 rounded-lg border border-gray-200">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink
-                    onClick={() => setCurrentFolder('todos')}
-                    className="cursor-pointer font-medium text-brand-navy"
-                  >
-                    Supabase Storage
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink className="cursor-pointer text-gray-500">projetos</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbLink className="cursor-pointer text-gray-500">global</BreadcrumbLink>
-                </BreadcrumbItem>
-                {currentFolder !== 'todos' && (
-                  <>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage className="capitalize font-bold text-brand-navy">
-                        {currentFolder}s
-                      </BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </>
-                )}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-
           <div className="overflow-x-auto border rounded-lg flex-1 bg-white shadow-sm">
             <Table>
-              <TableHeader className="bg-secondary/30 sticky top-0 backdrop-blur-sm">
+              <TableHeader className="bg-secondary/30 sticky top-0">
                 <TableRow>
-                  <TableHead className="w-[40%]">Nome do Arquivo</TableHead>
-                  <TableHead>Tamanho</TableHead>
+                  <TableHead>Documento</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Atualizado em</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredFiles.length === 0 && (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-10">
+                      Carregando...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredDocs.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-20 text-muted-foreground">
                       <FolderOpen className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                      Esta pasta está vazia.
+                      Nenhum documento encontrado.
                     </TableCell>
                   </TableRow>
-                )}
-                {filteredFiles.map((file) => (
-                  <TableRow key={file.id} className="group hover:bg-gray-50/70 transition-colors">
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-3">
-                        {getFileIcon(file.nome_arquivo)}
-                        <div>
-                          <span className="truncate max-w-[200px] md:max-w-[300px] block font-semibold text-gray-900 group-hover:text-brand-navy">
-                            {file.nome_arquivo}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground capitalize">
-                            /projetos/global/{file.tipo_documento}s/
-                          </span>
+                ) : (
+                  filteredDocs.map((doc) => (
+                    <TableRow
+                      key={`${doc.collection}-${doc.id}`}
+                      className="group hover:bg-gray-50/70"
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {getIcon(doc.collection)}
+                          <div>
+                            <span className="font-semibold text-gray-900 block">{doc.title}</span>
+                            <span className="text-xs text-muted-foreground">{doc.subtitle}</span>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                      {formatBytes(file.tamanho_arquivo)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                      {new Date(file.data_atualizacao).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-gray-500 hover:text-gray-900 focus-visible:ring-0 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <MoreVertical className="h-4 w-4" />
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
+                          {translateStatus(doc.status)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(doc.updated).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <Button variant="ghost" size="icon" asChild title="Editar">
+                          <Link to={getEditPath(doc)}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        {doc.pdf_url && (
+                          <Button variant="ghost" size="icon" asChild title="Visualizar PDF">
+                            <a href={doc.pdf_url} target="_blank" rel="noopener noreferrer">
+                              <FileIcon className="h-4 w-4 text-red-500" />
+                            </a>
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-[#0f172a] text-slate-200 border-slate-800 w-56 shadow-xl"
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(doc)}
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          title="Excluir"
                         >
-                          {file.nome_arquivo.toLowerCase().endsWith('.pdf') && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setPdfUrl(file.url_storage)
-                                setIsPdfOpen(true)
-                              }}
-                              className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
-                            >
-                              <Eye className="h-4 w-4 mr-2" /> Visualizar PDF
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem
-                            onClick={() => handleShare(file.id)}
-                            className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
-                          >
-                            <Upload className="h-4 w-4 mr-2" /> Compartilhar Link
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => viewHistory(file)}
-                            className="hover:bg-slate-800 hover:text-white cursor-pointer focus:bg-slate-800 focus:text-white"
-                          >
-                            <History className="h-4 w-4 mr-2" /> Histórico de Versões
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(file)}
-                            className="text-red-400 hover:bg-red-950/50 hover:text-red-300 cursor-pointer focus:bg-red-950/50 focus:text-red-300"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" /> Mover para Lixeira
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
         </div>
       </div>
-
-      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <RotateCcw className="h-5 w-5 text-brand-navy" /> Histórico de Versões:{' '}
-              {selectedDocName}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-4 max-h-[60vh] overflow-y-auto">
-            {currentHistory.map((h, i) => (
-              <div
-                key={h.id}
-                className="flex gap-4 p-4 border rounded-lg bg-gray-50 relative items-center justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge
-                      variant={
-                        h.acao === 'restaurado'
-                          ? 'default'
-                          : h.acao === 'editado'
-                            ? 'secondary'
-                            : 'outline'
-                      }
-                      className="capitalize"
-                    >
-                      {h.acao}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(h.data_acao).toLocaleString('pt-BR', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium">Responsável: {h.usuario_id}</p>
-                </div>
-                {i !== 0 && h.dados_anteriores && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-2 text-brand-navy border-brand-navy/30 hover:bg-brand-navy/5"
-                    onClick={() => handleRestore(h.id)}
-                  >
-                    <RotateCcw className="h-4 w-4" /> Restaurar
-                  </Button>
-                )}
-                {i === 0 && (
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-none">
-                    Versão Atual
-                  </Badge>
-                )}
-              </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isPdfOpen} onOpenChange={setIsPdfOpen}>
-        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col rounded-xl bg-gray-900 border-gray-800">
-          <DialogHeader className="px-4 py-3 border-b border-gray-800 bg-gray-950 shrink-0 flex flex-row items-center justify-between">
-            <DialogTitle className="flex items-center gap-2 text-gray-200 text-sm font-normal">
-              <FileIcon className="h-4 w-4 text-red-500" /> Visualizador PDF:{' '}
-              <span className="font-bold text-white">{selectedDocName || 'Documento'}</span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 w-full h-full relative flex items-center justify-center p-0 md:p-4">
-            <iframe
-              src={pdfUrl}
-              className="w-full h-full max-w-4xl bg-white shadow-2xl md:rounded border-none"
-              title="PDF Preview"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Compartilhamento Público de Arquivo</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <Label>Link de Acesso (Token Único Criptografado)</Label>
-            <div className="flex gap-2">
-              <Input
-                readOnly
-                value={shareToken}
-                className="font-mono text-xs text-gray-600 bg-gray-50"
-              />
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(shareToken)
-                  toast({ title: 'Link copiado' })
-                }}
-              >
-                Copiar
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Quem possuir este link poderá visualizar e baixar o documento sem precisar de senha.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

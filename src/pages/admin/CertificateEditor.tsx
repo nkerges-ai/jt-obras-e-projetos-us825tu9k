@@ -212,6 +212,7 @@ export default function CertificateEditor() {
       } else {
         const created = await pb.collection('certificates').create(formData)
         certId = created.id
+        window.history.pushState({}, '', `/admin/template/certificado/${certId}`)
 
         try {
           await pb.collection('attendance_lists').create({
@@ -328,6 +329,36 @@ export default function CertificateEditor() {
               className="gap-2 whitespace-nowrap shrink-0"
             >
               <Download className="h-4 w-4 hidden sm:block" /> Word
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                if (!id) {
+                  toast({
+                    title: 'Atenção',
+                    description: 'Salve o documento antes de gerar o PDF.',
+                    variant: 'destructive',
+                  })
+                  return
+                }
+                try {
+                  const res = await pb.send(
+                    `/backend/v1/documents/certificates/${id}/generate-pdf`,
+                    { method: 'POST' },
+                  )
+                  if (res.url) window.open(res.url, '_blank')
+                } catch (err) {
+                  toast({
+                    title: 'Erro',
+                    description: getErrorMessage(err),
+                    variant: 'destructive',
+                  })
+                }
+              }}
+              className="gap-2 whitespace-nowrap shrink-0"
+            >
+              <Download className="h-4 w-4 hidden sm:block" /> PDF
             </Button>
             <Button
               onClick={() => window.print()}

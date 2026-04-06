@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Printer, Save, FileSignature } from 'lucide-react'
+import { ArrowLeft, Printer, Save, FileSignature, Download } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +13,7 @@ import pb from '@/lib/pocketbase/client'
 import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 export default function ContractEditor() {
+  const { user } = useAuth()
   const { toast } = useToast()
   const { id } = useParams<{ id: string }>()
 
@@ -19,6 +21,7 @@ export default function ContractEditor() {
     clientName: '',
     clientDocument: '',
     clientAddress: '',
+    projectName: '',
     contractObject: '',
     contractValue: '',
     contractConditions:
@@ -35,11 +38,25 @@ export default function ContractEditor() {
       pb.collection('contracts')
         .getOne(id)
         .then((doc) => {
+          let loadedMeta: any = {}
+          try {
+            const match = doc.content_html.match(/data-meta='([^']+)'/)
+            if (match && match[1]) {
+              loadedMeta = JSON.parse(match[1].replace(/&#39;/g, "'"))
+            }
+          } catch (e) {}
+
           setData((prev) => ({
             ...prev,
             clientName: doc.client_name || '',
             clientDocument: doc.collaborator_cpf || '',
-            contractObject: doc.content_html.replace(/<[^>]*>?/gm, '') || prev.contractObject,
+            clientAddress: loadedMeta.clientAddress || '',
+            projectName: loadedMeta.projectName || '',
+            contractObject:
+              loadedMeta.contractObject ||
+              doc.content_html.replace(/<[^>]*>?/gm, '') ||
+              prev.contractObject,
+            contractConditions: loadedMeta.contractConditions || prev.contractConditions,
             date: new Date(doc.created).toLocaleDateString('pt-BR'),
           }))
         })
@@ -48,6 +65,17 @@ export default function ContractEditor() {
         })
     }
   }, [id])
+
+  const renderWithPlaceholders = (text: string) => {
+    return text
+      .replace(/\[client_name\]/g, data.clientName || '_________________________________')
+      .replace(/\[client_tax_id\]/g, data.clientDocument || '___________________')
+      .replace(/\[client_address\]/g, data.clientAddress || '_________________________________')
+      .replace(/\[project_name\]/g, data.projectName || '___________________')
+      .replace(/\[technician_name\]/g, user?.name || '___________________')
+      .replace(/\[technician_cpf\]/g, user?.cpf || '___________________')
+      .replace(/\[current_date\]/g, data.date || '___________________')
+  }
 
   const handleSave = async () => {
     if (!data.clientName) {
@@ -67,18 +95,27 @@ export default function ContractEditor() {
         await pb.collection('users').authWithPassword('admin@jtobras.com.br', 'JOELTATIANA')
       }
 
+      const meta = JSON.stringify({
+        projectName: data.projectName,
+        clientAddress: data.clientAddress,
+        contractObject: data.contractObject,
+        contractConditions: data.contractConditions,
+      })
       const payload = {
         user_id: pb.authStore.record?.id,
         client_name: data.clientName,
-        content_html: `<p><strong>Objeto:</strong> ${data.contractObject}</p><p><strong>Condições:</strong> ${data.contractConditions}</p>`,
+        content_html: `<div data-meta='${meta.replace(/'/g, '&#39;')}'></div><p><strong>Objeto:</strong> ${data.contractObject}</p><p><strong>Condições:</strong> ${data.contractConditions}</p>`,
         status: 'active',
         collaborator_cpf: data.clientDocument,
       }
 
+      let savedId = id
       if (id) {
         await pb.collection('contracts').update(id, payload)
       } else {
-        await pb.collection('contracts').create(payload)
+        const created = await pb.collection('contracts').create(payload)
+        savedId = created.id
+        window.history.pushState({}, '', `/admin/template/contrato/${savedId}`)
       }
       toast({ title: 'Salvo no Acervo', description: 'Contrato salvo com sucesso no PocketBase.' })
     } catch (err) {
@@ -110,10 +147,39 @@ export default function ContractEditor() {
               disabled={isSaving}
               className="gap-2"
             >
-              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
+              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                if (!id) {
+                  toast({
+                    title: 'Atenção',
+                    description: 'Salve o documento antes de gerar o PDF.',
+                    variant: 'destructive',
+                  })
+                  return
+                }
+                try {
+                  const res = await pb.send(`/backend/v1/documents/contracts/${id}/generate-pdf`, {
+                    method: 'POST',
+                  })
+                  if (res.url) window.open(res.url, '_blank')
+                } catch (err) {
+                  toast({
+                    title: 'Erro',
+                    description: getErrorMessage(err),
+                    variant: 'destructive',
+                  })
+                }
+              }}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" /> PDF
             </Button>
             <Button onClick={() => window.print()} size="sm" className="gap-2">
-              <Printer className="h-4 w-4" /> Imprimir (PDF)
+              <Printer className="h-4 w-4" /> Imprimir
             </Button>
           </div>
         </div>
@@ -152,7 +218,17 @@ export default function ContractEditor() {
               />
             </div>
             <div className="space-y-1.5">
+              <Label>Nome do Projeto / Obra</Label>
+              <Input
+                value={data.projectName}
+                onChange={(e) => setData({ ...data, projectName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
               <Label>Objeto do Contrato</Label>
+              <p className="text-xs text-muted-foreground">
+                Use [client_name], [project_name], [technician_name], etc.
+              </p>
               <Textarea
                 value={data.contractObject}
                 onChange={(e) => setData({ ...data, contractObject: e.target.value })}
@@ -214,7 +290,7 @@ export default function ContractEditor() {
               <p className="pl-4">
                 O presente contrato tem por objeto a prestação de serviços de: <br />
                 <span className="font-medium text-gray-800 mt-2 block whitespace-pre-wrap">
-                  {data.contractObject ||
+                  {renderWithPlaceholders(data.contractObject) ||
                     '__________________________________________________________________________________'}
                 </span>
               </p>
@@ -228,7 +304,9 @@ export default function ContractEditor() {
                 <br />
                 <br />
                 <strong>Condições:</strong> <br />
-                <span className="text-gray-800">{data.contractConditions}</span>
+                <span className="text-gray-800 whitespace-pre-wrap">
+                  {renderWithPlaceholders(data.contractConditions)}
+                </span>
               </p>
 
               <h4 className="font-bold uppercase pt-4 text-brand-navy">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Printer, Save, Receipt } from 'lucide-react'
+import { ArrowLeft, Printer, Save, Receipt, Download } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,10 +38,24 @@ export default function BudgetEditor() {
       pb.collection('budgets')
         .getOne(id)
         .then((doc) => {
+          const content = doc.content_json as any
+          let items = prev.items
+          let projectName = ''
+          let notes = prev.notes
+          if (Array.isArray(content)) {
+            items = content
+          } else if (content && content.items) {
+            items = content.items
+            projectName = content.projectName || ''
+            notes = content.notes || prev.notes
+          }
+
           setData((prev) => ({
             ...prev,
             clientName: doc.client_name || '',
-            items: Array.isArray(doc.content_json) ? doc.content_json : prev.items,
+            projectName,
+            notes,
+            items,
             date: new Date(doc.created).toLocaleDateString('pt-BR'),
           }))
         })
@@ -73,15 +87,18 @@ export default function BudgetEditor() {
       const payload = {
         user_id: pb.authStore.record?.id,
         client_name: data.clientName,
-        content_json: data.items,
+        content_json: { items: data.items, projectName: data.projectName, notes: data.notes },
         total_value: total,
         status: 'sent',
       }
 
+      let savedId = id
       if (id) {
         await pb.collection('budgets').update(id, payload)
       } else {
-        await pb.collection('budgets').create(payload)
+        const created = await pb.collection('budgets').create(payload)
+        savedId = created.id
+        window.history.pushState({}, '', `/admin/template/orcamento/${savedId}`)
       }
       toast({ title: 'Salvo no Acervo', description: 'Orçamento salvo com sucesso no PocketBase.' })
     } catch (err) {
@@ -124,10 +141,39 @@ export default function BudgetEditor() {
               disabled={isSaving}
               className="gap-2"
             >
-              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar Acervo'}
+              <Save className="h-4 w-4" /> {isSaving ? 'Salvando...' : 'Salvar'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                if (!id) {
+                  toast({
+                    title: 'Atenção',
+                    description: 'Salve o documento antes de gerar o PDF.',
+                    variant: 'destructive',
+                  })
+                  return
+                }
+                try {
+                  const res = await pb.send(`/backend/v1/documents/budgets/${id}/generate-pdf`, {
+                    method: 'POST',
+                  })
+                  if (res.url) window.open(res.url, '_blank')
+                } catch (err) {
+                  toast({
+                    title: 'Erro',
+                    description: getErrorMessage(err),
+                    variant: 'destructive',
+                  })
+                }
+              }}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" /> PDF
             </Button>
             <Button onClick={() => window.print()} size="sm" className="gap-2">
-              <Printer className="h-4 w-4" /> Imprimir (PDF)
+              <Printer className="h-4 w-4" /> Imprimir
             </Button>
           </div>
         </div>
