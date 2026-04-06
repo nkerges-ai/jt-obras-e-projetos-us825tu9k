@@ -44,7 +44,9 @@ export default function ContractEditor() {
             if (match && match[1]) {
               loadedMeta = JSON.parse(match[1].replace(/&#39;/g, "'"))
             }
-          } catch (e) {}
+          } catch (e) {
+            // ignore parse errors
+          }
 
           setData((prev) => ({
             ...prev,
