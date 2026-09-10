@@ -12,85 +12,164 @@ import {
   Zap,
   ArrowRight,
   ShieldCheck,
+  Paintbrush,
+  Droplets,
+  HardHat,
+  Wind,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-const requestedServices = [
+const allServices = [
+  // 1. Reformas (residencial, comercial e corporativo)
   {
-    title: 'Reformas Corporativas & Comerciais',
-    tag: 'Lajes e Galpões',
+    title: 'Reformas Gerais & Corporativas',
+    tag: 'Residencial e Comercial',
     description:
-      'Adequação de galpões, escritórios e layouts comerciais com acabamento robusto e entrega rápida.',
+      'Adequação de ambientes residenciais, lajes corporativas e galpões com acabamento técnico e prazo rigoroso.',
     icon: Hammer,
     image:
       'https://img.usecurling.com/p/600/400?q=commercial%20building%20interior%20renovation%20office',
     featured: true,
   },
+  // 2. Telhados (coberturas térmicas, montagem e vedação estrutural)
   {
-    title: 'Telhados & Coberturas Industriais',
+    title: 'Telhados & Coberturas',
     tag: 'Metálico e Térmico',
     description:
-      'Montagem de estruturas metálicas, telhas zipadas, isolamento termoacústico e vedação técnica.',
+      'Coberturas térmicas, telhas zipadas, isolamento termoacústico, montagem e vedação estrutural completa.',
     icon: Home,
     image:
       'https://img.usecurling.com/p/600/400?q=industrial%20warehouse%20roof%20steel%20structure',
     featured: true,
   },
+  // 3. Bangalôs (estruturas rústicas e modernas de alta durabilidade)
   {
-    title: 'Bangalôs & Estruturas de Madeira',
-    tag: 'Estrutural e Comercial',
+    title: 'Bangalôs & Estruturas',
+    tag: 'Madeira e Design',
     description:
-      'Montagem estrutural em madeira pesada para áreas de convivência corporativa, hotéis e empreendimentos.',
-    icon: Layers,
+      'Estruturas rústicas e modernas de alta durabilidade para empreendimentos, áreas de lazer e convivência.',
+    icon: Palmtree,
     image:
       'https://img.usecurling.com/p/600/400?q=timber%20framing%20construction%20wooden%20structure',
     featured: true,
   },
+  // 4. Decks de madeira (madeira tratada nobre para áreas externas e piscinas)
   {
-    title: 'Decks de Madeira Comercial',
-    tag: 'Madeira Nobre Tratada',
+    title: 'Decks de Madeira Nobre',
+    tag: 'Madeira Tratada',
     description:
-      'Estruturação reforçada para passarelas, áreas externas de empresas e decks comerciais de alto tráfego.',
+      'Estruturação em madeira nobre tratada para áreas externas, piscinas, passarelas e tráfego intenso.',
     icon: Layers,
     image:
       'https://img.usecurling.com/p/600/400?q=hardwood%20decking%20commercial%20boardwalk%20construction',
     featured: true,
   },
+  // 5. Projetos de engenharia (cálculo estrutural, laudos técnicos e ART/RRT)
   {
     title: 'Projetos de Engenharia & ART',
-    tag: 'Cálculo e Gestão Técnica',
+    tag: 'Cálculo e Laudos',
     description:
-      'Projetos executivos, laudos estruturais, cálculo de cargas e emissão de ART/RRT com responsabilidade técnica.',
+      'Projetos executivos, cálculo estrutural, laudos periciais e emissão de ART/RRT com responsabilidade técnica.',
     icon: Compass,
     image: 'https://img.usecurling.com/p/600/400?q=civil%20engineer%20plans%20industrial%20site',
     featured: true,
   },
+  // 6. Instalação de sistemas de exaustão (dutos, coifas e motores de alto rendimento para comércio e indústria)
   {
     title: 'Sistemas de Exaustão & Ventilação',
     tag: 'Industrial e Comercial',
     description:
-      'Dimensionamento e montagem de redes de dutos industriais, coifas, exaustores centrífugos e filtragem.',
+      'Dutos, coifas e motores de alto rendimento para ventilação e renovação de ar em comércio e indústria.',
     icon: Fan,
     image: 'https://img.usecurling.com/p/600/400?q=industrial%20exhaust%20ventilation%20ductwork',
     featured: true,
   },
+  // 7. Pintura Predial & Industrial (serviço original)
+  {
+    title: 'Pintura Predial & Industrial',
+    tag: 'Fachadas e Galpões',
+    description:
+      'Pintura técnica de fachadas, pisos industriais epóxi e demarcações operacionais com ancoragem de alta durabilidade.',
+    icon: Paintbrush,
+    image:
+      'https://img.usecurling.com/p/600/400?q=industrial%20painting%20building%20facade%20warehouse',
+    featured: false,
+  },
+  // 8. Obras Civis & Estruturais (serviço original)
+  {
+    title: 'Obras Civis & Estruturais',
+    tag: 'Alvenaria e Concreto',
+    description:
+      'Construção civil, alvenaria estrutural, fundações e ampliações com acompanhamento rigoroso de engenharia.',
+    icon: Building2,
+    image:
+      'https://img.usecurling.com/p/600/400?q=commercial%20construction%20concrete%20building%20site',
+    featured: false,
+  },
+  // 9. Instalações Elétricas Industriais & Comerciais (serviço original / NR 10)
+  {
+    title: 'Instalações Elétricas & NR 10',
+    tag: 'Elétrica de Potência',
+    description:
+      'Montagem de quadros elétricos, redes de distribuição, iluminação industrial e conformidade total com a NR 10.',
+    icon: Zap,
+    image:
+      'https://img.usecurling.com/p/600/400?q=industrial%20electrical%20panel%20wiring%20switchboard',
+    featured: false,
+  },
+  // 10. Manutenção Predial & Preventiva (serviço original)
+  {
+    title: 'Manutenção Predial & Industrial',
+    tag: 'Preventiva e Corretiva',
+    description:
+      'Planos contínuos de conservação para galpões, instalações comerciais e condomínios com equipe dedicada.',
+    icon: Wrench,
+    image:
+      'https://img.usecurling.com/p/600/400?q=facility%20management%20maintenance%20technician%20industrial',
+    featured: false,
+  },
+  // 11. Impermeabilização & Vedações (serviço original)
+  {
+    title: 'Impermeabilização Técnica',
+    tag: 'Lajes e Reservatórios',
+    description:
+      'Aplicação de mantas asfálticas, poliuretano e vedações estruturais para eliminação definitiva de infiltrações.',
+    icon: Droplets,
+    image:
+      'https://img.usecurling.com/p/600/400?q=waterproofing%20commercial%20concrete%20roof%20slab',
+    featured: false,
+  },
+  // 12. Climatização & Ar Condicionado (serviço original do portfólio)
+  {
+    title: 'Climatização & HVAC',
+    tag: 'Sistemas Térmicos',
+    description:
+      'Instalação, higienização profunda e manutenção técnica de ar condicionado central e sistemas Split.',
+    icon: Wind,
+    image:
+      'https://img.usecurling.com/p/600/400?q=hvac%20commercial%20air%20conditioning%20industrial%20rooftop',
+    featured: false,
+  },
 ]
 
-const complementaryServices = [
+const complementaryHighlights = [
   {
-    title: 'Obras Corporativas',
-    description: 'Lajes e escritórios entregues no prazo.',
+    title: 'Adequação às Normas Regulamentadoras',
+    description:
+      'Trabalho em Altura (NR 35), Instalações Elétricas (NR 10) e Construção Civil (NR 18).',
+    icon: HardHat,
+  },
+  {
+    title: 'Emissão de ART e Laudos Periciais',
+    description:
+      'Todos os serviços contam com Anotação de Responsabilidade Técnica registrada no CREA.',
+    icon: Compass,
+  },
+  {
+    title: 'Contratos B2B & Gestão de Manutenção',
+    description:
+      'Atendimento corporativo e industrial com relatórios técnicos periódicos e equipe dedicada.',
     icon: Building2,
-  },
-  {
-    title: 'Manutenção Industrial',
-    description: 'Reparos preventivos e corretivos rápidos.',
-    icon: Wrench,
-  },
-  {
-    title: 'Instalações Elétricas',
-    description: 'Quadros, fiação e conformidade NR 10.',
-    icon: Zap,
   },
 ]
 
@@ -113,14 +192,14 @@ export function Services() {
           </FadeIn>
         </div>
 
-        {/* Grid Principal - 6 Serviços Chave com fotos e cards rápidos */}
+        {/* Grid Principal - Todos os Serviços com fotos e padrão visual unificado */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
-          {requestedServices.map((service, index) => {
+          {allServices.map((service, index) => {
             const Icon = service.icon
             return (
-              <FadeIn key={service.title} delay={index * 0.08} direction="up">
+              <FadeIn key={service.title} delay={Math.min(index * 0.05, 0.4)} direction="up">
                 <Card className="overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group h-full bg-white flex flex-col rounded-2xl">
-                  {/* Foto de topo */}
+                  {/* Foto de topo com padrão corporativo/industrial */}
                   <div className="h-44 sm:h-48 overflow-hidden relative bg-slate-100">
                     <img
                       src={service.image}
@@ -130,18 +209,18 @@ export function Services() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/60 via-transparent to-transparent opacity-80" />
 
-                    {/* Badge de categoria rápida */}
+                    {/* Badge de categoria */}
                     <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-brand-navy shadow-sm">
                       {service.tag}
                     </div>
 
-                    {/* Ícone */}
+                    {/* Ícone com destaque laranja da marca */}
                     <div className="absolute bottom-3 left-3 bg-brand-orange text-white p-2.5 rounded-xl shadow-md group-hover:scale-110 transition-transform">
                       <Icon className="h-5 w-5" />
                     </div>
                   </div>
 
-                  {/* Conteúdo textual curto: 1 título + 1 linha */}
+                  {/* Conteúdo: Título em destaque + Descrição concisa */}
                   <CardContent className="p-5 flex-grow flex flex-col justify-between">
                     <div>
                       <h3 className="text-lg md:text-xl font-bold text-brand-navy group-hover:text-brand-orange transition-colors mb-1.5">
@@ -152,7 +231,7 @@ export function Services() {
                       </p>
                     </div>
 
-                    <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between">
+                    <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
                       <span className="text-xs font-semibold text-brand-orange flex items-center gap-1 group-hover:gap-1.5 transition-all">
                         Orçamento rápido <ArrowRight className="h-3.5 w-3.5" />
                       </span>
@@ -173,26 +252,30 @@ export function Services() {
           })}
         </div>
 
-        {/* Faixa complementar em 1 linha para leitura instantânea */}
-        <FadeIn delay={0.3}>
+        {/* Faixa complementar de diferenciais técnicos */}
+        <FadeIn delay={0.25}>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-6 shadow-sm">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center md:text-left">
-              Outras frentes atendidas pela JT Obras:
+              Garantias e padrões técnicos da JT Obras:
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {complementaryServices.map((comp) => {
+              {complementaryHighlights.map((comp) => {
                 const Icon = comp.icon
                 return (
                   <div
                     key={comp.title}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-orange-50/50 transition-colors"
+                    className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 hover:bg-orange-50/50 transition-colors"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-brand-navy text-white flex items-center justify-center shrink-0">
-                      <Icon className="h-5 w-5" />
+                    <div className="h-10 w-10 rounded-lg bg-brand-navy text-white flex items-center justify-center shrink-0 mt-0.5">
+                      <Icon className="h-5 w-5 text-brand-orange" />
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-sm text-brand-navy truncate">{comp.title}</div>
-                      <div className="text-xs text-slate-500 truncate">{comp.description}</div>
+                      <div className="font-bold text-sm text-brand-navy leading-snug">
+                        {comp.title}
+                      </div>
+                      <div className="text-xs text-slate-500 mt-1 leading-relaxed">
+                        {comp.description}
+                      </div>
                     </div>
                   </div>
                 )
