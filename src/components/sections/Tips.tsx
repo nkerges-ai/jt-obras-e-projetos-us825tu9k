@@ -6,41 +6,40 @@ const tips = [
   {
     title: 'Limpeza de Calhas',
     description:
-      'É fundamental limpar as calhas antes do período de chuvas. O acúmulo de folhas e detritos pode causar transbordamento, resultando em infiltrações e danos estruturais graves ao imóvel.',
+      'Evite infiltrações antes das chuvas. Limpeza rápida protege toda a estrutura do imóvel.',
     icon: Droplets,
   },
   {
-    title: 'Filtros de Ar Condicionado',
-    description:
-      'A manutenção e limpeza regular dos filtros não apenas garante a qualidade do ar que você respira, mas também otimiza o funcionamento do aparelho, gerando considerável economia de energia.',
+    title: 'Filtros de Ar',
+    description: 'Limpeza periódica garante ar saudável e reduz a conta de energia do equipamento.',
     icon: ThermometerSnowflake,
   },
   {
-    title: 'Manutenção Preventiva',
-    description:
-      'Realizar pequenos reparos e inspeções constantes evita que problemas simples se tornem grandes reformas emergenciais, poupando tempo e reduzindo drasticamente os custos no futuro.',
+    title: 'Revisão Preventiva',
+    description: 'Pequenos reparos programados evitam gastos emergenciais até 4x maiores.',
     icon: Wrench,
   },
   {
     title: 'Impermeabilização',
-    description:
-      'Manter a impermeabilização de lajes e paredes em dia protege as armaduras de concreto contra oxidação, aumentando a vida útil da edificação e a segurança dos frequentadores.',
+    description: 'Lajes e telhados vedados evitam goteiras e corrosão de ferragens estruturais.',
     icon: ShieldCheck,
   },
 ]
 
 export function Tips() {
   return (
-    <section className="py-20 md:py-32 bg-secondary/30">
+    <section className="py-16 md:py-20 bg-secondary/30">
       <div className="container mx-auto px-4 md:px-6">
         <FadeIn>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-              Dicas de Obras e Reparos
+          <div className="text-center mb-12">
+            <span className="text-brand-orange font-bold uppercase tracking-wider text-xs mb-1 block">
+              Prevenção
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+              Dicas Rápidas de Manutenção
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Curiosidades e informações educativas essenciais para ajudar a manter o seu patrimônio
-              sempre seguro, bem conservado e valorizado.
+            <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
+              Orientações práticas para economizar e conservar seu imóvel sempre seguro.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

@@ -23,26 +23,28 @@ export function Contact() {
     })
 
     toast({
-      title: 'Registro concluído!',
-      description: 'Você receberá um e-mail com as informações de acesso em breve.',
+      title: 'Solicitação recebida!',
+      description: 'Nossa equipe entrará em contato em poucas horas.',
     })
     setForm({ name: '', email: '', phone: '' })
   }
 
   return (
-    <section id="contato" className="py-16 md:py-24 bg-white">
+    <section id="contato" className="py-14 md:py-20 bg-slate-50/60 border-t border-slate-200">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-2xl mx-auto text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl mb-4">
-            Entre em Contato ou Cadastre-se
+        <div className="max-w-2xl mx-auto text-center mb-8">
+          <span className="text-brand-orange font-bold uppercase tracking-wider text-xs mb-1 block">
+            Atendimento Imediato
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-brand-navy mb-2">
+            Solicite um Orçamento Rápido
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Deixe seus dados para receber um orçamento personalizado ou para acessar a área do
-            cliente.
+          <p className="text-sm md:text-base text-muted-foreground">
+            Resposta em poucas horas. Sem compromisso.
           </p>
         </div>
 
-        <div className="max-w-md mx-auto bg-gray-50 p-8 rounded-2xl border shadow-sm">
+        <div className="max-w-md mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2 text-left">
               <Label>Nome Completo</Label>

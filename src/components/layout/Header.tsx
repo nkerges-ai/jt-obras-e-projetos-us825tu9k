@@ -54,6 +54,12 @@ export function Header() {
           >
             Serviços
           </button>
+          <button
+            onClick={() => scrollToSection('videos')}
+            className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
+          >
+            Vídeos de Obras
+          </button>
           <Link
             to="/portfolio"
             className="text-sm font-semibold text-brand-navy hover:text-brand-orange transition-colors"
@@ -121,6 +127,12 @@ export function Header() {
               className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
             >
               Serviços
+            </button>
+            <button
+              onClick={() => scrollToSection('videos')}
+              className="text-left text-base font-semibold text-brand-navy p-2 hover:bg-gray-50 rounded"
+            >
+              Vídeos de Obras
             </button>
             <Link
               to="/portfolio"

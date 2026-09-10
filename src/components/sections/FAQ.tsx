@@ -31,19 +31,18 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="py-24 bg-white border-t border-gray-100">
-      <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-        <div className="text-center mb-16">
+    <section id="faq" className="py-16 md:py-20 bg-white border-t border-gray-100">
+      <div className="container mx-auto px-4 md:px-6 max-w-3xl">
+        <div className="text-center mb-10 md:mb-12">
           <FadeIn>
-            <h2 className="text-brand-orange font-bold tracking-wider uppercase text-sm mb-2">
+            <span className="text-brand-orange font-bold tracking-wider uppercase text-xs mb-1 block">
               Dúvidas Frequentes
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-navy mb-2">
+              Perguntas Frequentes
             </h2>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-brand-navy mb-4">
-              Perguntas Frequentes (FAQ)
-            </h3>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Reunimos as principais dúvidas de nossos clientes para ajudar você a entender melhor
-              nossos processos e garantias.
+            <p className="text-slate-600 text-sm md:text-base max-w-xl mx-auto">
+              Respostas diretas sobre prazos, normas de segurança e orçamento.
             </p>
           </FadeIn>
         </div>

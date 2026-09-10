@@ -1,65 +1,72 @@
 import { FadeIn } from '@/components/animations/FadeIn'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Award, Users, Shield } from 'lucide-react'
 
 export function CompanyProfile() {
-  const values = [
-    'Compromisso com Prazos e Custos',
-    'Transparência Total com o Cliente',
-    'Rigoroso Controle de Qualidade',
-    'Segurança em Primeiro Lugar (NRs)',
-    'Inovação em Processos Construtivos',
-    'Sustentabilidade nos Canteiros',
+  const highlights = [
+    { title: 'Prazos Rigorosos', desc: 'Cronograma monitorado e cumprido.', icon: Award },
+    { title: 'Equipe Uniformizada', desc: 'Identificação e EPIs obrigatórios.', icon: Users },
+    { title: 'Segurança NR 10, 18 e 35', desc: 'Zero improviso no canteiro.', icon: Shield },
+    { title: 'Transparência Total', desc: 'Relatórios e fotos de cada fase.', icon: CheckCircle2 },
   ]
 
   return (
-    <section id="sobre" className="py-24 bg-brand-navy text-white overflow-hidden">
+    <section id="sobre" className="py-16 md:py-24 bg-brand-navy text-white overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          {/* Imagem com selo de experiência */}
           <FadeIn direction="right">
             <div className="relative">
-              <div className="absolute -inset-4 bg-brand-light/20 blur-2xl rounded-full z-0"></div>
-              <img
-                src="https://img.usecurling.com/p/800/600?q=brazilian%20engineers%20ppe%20construction%20site"
-                alt="Equipe JT Obras"
-                className="relative z-10 rounded-2xl shadow-2xl border-4 border-white/10 w-full object-cover"
-              />
-              <div className="absolute -bottom-8 -right-8 bg-brand-orange text-white p-6 rounded-2xl shadow-xl z-20 hidden md:block">
-                <div className="text-4xl font-extrabold mb-1">+10</div>
-                <div className="text-sm font-medium opacity-90">
-                  Anos de Experiência
-                  <br />
-                  no Mercado
-                </div>
+              <div className="overflow-hidden rounded-2xl shadow-2xl border-2 border-white/10">
+                <img
+                  src="https://img.usecurling.com/p/800/600?q=brazilian%20engineers%20ppe%20construction%20site"
+                  alt="Equipe JT Obras uniformizada e com EPIs"
+                  loading="lazy"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-brand-orange text-white p-4 md:p-5 rounded-2xl shadow-xl hidden sm:block">
+                <div className="text-3xl font-black">+10 Anos</div>
+                <div className="text-xs font-semibold opacity-90">Construção & Engenharia</div>
               </div>
             </div>
           </FadeIn>
 
-          <FadeIn direction="left" delay={0.2}>
-            <h2 className="text-brand-orange font-bold tracking-wider uppercase text-sm mb-2">
-              Sobre Nós
+          {/* Texto Ultra-Curto para Leitura Rápida */}
+          <FadeIn direction="left" delay={0.15}>
+            <span className="text-brand-orange font-bold tracking-wider uppercase text-xs mb-2 block">
+              Quem Somos
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-3 text-white">
+              Engenharia Séria, Sem Complicação.
             </h2>
-            <h3 className="text-3xl md:text-4xl font-extrabold mb-6 text-white">
-              Sólida Experiência na Construção Civil
-            </h3>
-
-            <p className="text-gray-300 mb-6 text-lg leading-relaxed">
-              A JT Obras e Manutenções nasceu com o propósito de elevar o padrão de entregas na
-              construção civil e reformas comerciais. Nossa equipe é formada por engenheiros e
-              técnicos altamente capacitados.
-            </p>
-            <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-              Temos orgulho de nosso histórico impecável no cumprimento de normas regulamentadoras,
-              garantindo que cada obra seja um ambiente seguro para nossos colaboradores e para os
-              nossos clientes.
+            <p className="text-slate-300 mb-6 text-base md:text-lg leading-relaxed">
+              A <strong>JT Obras e Projetos</strong> entrega reformas, telhados, estruturas e
+              exaustão com responsabilidade técnica, supervisão de engenheiro e equipe 100%
+              equipada.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-8">
-              {values.map((value, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <CheckCircle2 className="text-brand-light h-5 w-5 shrink-0" />
-                  <span className="text-sm text-gray-200">{value}</span>
-                </div>
-              ))}
+            {/* Grid 2x2 com cards curtos */}
+            <div className="grid sm:grid-cols-2 gap-3.5 mb-6">
+              {highlights.map((item) => {
+                const Icon = item.icon
+                return (
+                  <div
+                    key={item.title}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10"
+                  >
+                    <Icon className="text-brand-orange h-5 w-5 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold text-sm text-white">{item.title}</div>
+                      <div className="text-xs text-slate-300">{item.desc}</div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="inline-flex items-center gap-2 text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+              <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+              Atendimento em toda a Grande São Paulo e Região
             </div>
           </FadeIn>
         </div>

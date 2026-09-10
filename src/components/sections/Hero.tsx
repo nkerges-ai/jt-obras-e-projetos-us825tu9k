@@ -1,4 +1,4 @@
-import { HardHat, ShieldCheck, Ruler } from 'lucide-react'
+import { ShieldCheck, HardHat, Clock, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FadeIn } from '@/components/animations/FadeIn'
 import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon'
@@ -6,85 +6,114 @@ import heroImage from '@/assets/whatsapp-image-2026-03-17-at-19.27.50-91cc3.jpeg
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100svh] lg:min-h-[70vh] w-full flex items-center pt-32 lg:pt-40 pb-16 overflow-hidden bg-brand-navy">
+    <section className="relative min-h-[92svh] lg:min-h-[75vh] w-full flex items-center pt-28 lg:pt-36 pb-12 overflow-hidden bg-brand-navy">
+      {/* Background com imagem e gradiente de alto contraste */}
       <div className="absolute inset-0 z-0 bg-brand-navy">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/95 via-brand-navy/80 to-brand-navy/60 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-navy/98 via-brand-navy/90 to-brand-navy/70 z-10" />
         <img
           src={heroImage}
-          alt="Obra em andamento"
-          className="w-full h-full object-cover object-center opacity-30"
+          alt="Equipe JT Obras em execução"
+          className="w-full h-full object-cover object-center opacity-25"
         />
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="max-w-4xl">
+        <div className="max-w-3xl">
           <FadeIn>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-sm font-bold tracking-wide mb-6 border border-brand-orange/30">
+            {/* Tag curta e direta */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs md:text-sm font-bold tracking-wide mb-4 border border-brand-orange/30">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
               </span>
-              Especialistas em Manutenção Predial e Industrial
+              Engenharia, Reformas & Manutenção
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight drop-shadow-md">
-              A base sólida para o <span className="text-brand-orange">sucesso</span> da sua obra.
+
+            {/* Headline curta de 4 palavras-chave de impacto */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-4 tracking-tight drop-shadow-md">
+              Sua Obra Pronta, <span className="text-brand-orange">Sem Dor de Cabeça</span>.
             </h1>
-            <p className="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl leading-relaxed font-light drop-shadow-md">
-              Transformamos desafios complexos de engenharia em soluções seguras e eficientes para o
-              setor corporativo.
+
+            {/* Subtítulo de 1 linha */}
+            <p className="text-base sm:text-xl text-slate-200 mb-6 max-w-xl leading-snug font-normal drop-shadow">
+              Reformas completas, telhados, bangalôs, decks, exaustão e projetos com equipe
+              uniformizada e EPIs.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-16">
+            {/* Bullets ultracurtos para leitura em 3 segundos */}
+            <div className="flex flex-wrap gap-x-4 gap-y-2 mb-8 text-xs sm:text-sm text-slate-200">
+              <span className="inline-flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Prazos rigorosos
+              </span>
+              <span className="inline-flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Equipe com EPI e
+                uniforme
+              </span>
+              <span className="inline-flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> ART e engenharia
+                técnica
+              </span>
+            </div>
+
+            {/* CTA Imediato WhatsApp / Orçamento */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-10">
               <Button
                 size="lg"
                 asChild
-                className="bg-[#25D366] hover:bg-[#20b858] text-white h-14 px-8 text-base font-bold rounded-full group gap-2"
+                className="bg-[#25D366] hover:bg-[#20b858] text-white h-13 sm:h-14 px-6 sm:px-8 text-base font-bold rounded-full group shadow-lg gap-2"
               >
-                <a href="https://wa.me/5511940037545" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://wa.me/5511940037545?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20or%C3%A7amento%20r%C3%A1pido."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <WhatsAppIcon className="h-5 w-5" />
-                  Fale com um Especialista
+                  Orçamento no WhatsApp
                 </a>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 onClick={() => {
-                  document.getElementById('clientes')?.scrollIntoView({ behavior: 'smooth' })
+                  document.getElementById('servicos')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="h-14 px-8 text-base font-bold rounded-full bg-white/10 text-white border-white hover:bg-white hover:text-brand-navy transition-colors backdrop-blur-sm"
+                className="h-13 sm:h-14 px-6 sm:px-8 text-base font-bold rounded-full bg-white/10 text-white border-white/40 hover:bg-white hover:text-brand-navy transition-all backdrop-blur-sm"
               >
-                Veja Nossos Clientes de Confiança
+                Ver Nossos Serviços <ArrowRight className="h-4 w-4 ml-1.5" />
               </Button>
             </div>
           </FadeIn>
 
+          {/* Cards em 3 pilares rápidos: 2 palavras de título + 1 linha */}
           <FadeIn delay={0.2}>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-white/10">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-brand-orange">
-                  <ShieldCheck className="h-6 w-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-6 border-t border-white/15">
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-orange text-white shrink-0">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">Segurança Total</h3>
-                  <p className="text-gray-400 text-sm">Normas NRs rigorosas</p>
+                  <h3 className="text-white font-bold text-sm">Segurança Total</h3>
+                  <p className="text-slate-300 text-xs">EPIs e normas NRs</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-brand-orange">
-                  <HardHat className="h-6 w-6" />
+
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-orange text-white shrink-0">
+                  <HardHat className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">Equipe Qualificada</h3>
-                  <p className="text-gray-400 text-sm">Profissionais certificados</p>
+                  <h3 className="text-white font-bold text-sm">Time Próprio</h3>
+                  <p className="text-slate-300 text-xs">Uniformizado e treinado</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-brand-orange">
-                  <Ruler className="h-6 w-6" />
+
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-orange text-white shrink-0">
+                  <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">Projetos Precisos</h3>
-                  <p className="text-gray-400 text-sm">Execução dentro do prazo</p>
+                  <h3 className="text-white font-bold text-sm">Prazo Garantido</h3>
+                  <p className="text-slate-300 text-xs">Cronograma à risca</p>
                 </div>
               </div>
             </div>

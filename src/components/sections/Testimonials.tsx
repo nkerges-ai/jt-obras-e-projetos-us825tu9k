@@ -25,36 +25,40 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 md:py-32 bg-background">
+    <section className="py-16 md:py-24 bg-white border-t border-slate-100">
       <div className="container mx-auto px-4 md:px-6">
         <FadeIn>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-              O que nossos clientes dizem
+          <div className="text-center mb-12">
+            <span className="text-brand-orange font-bold uppercase tracking-wider text-xs mb-1 block">
+              Avaliações
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+              Quem Contratou, Recomenda
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A satisfação dos nossos parceiros é o maior reflexo da qualidade, segurança e do
-              compromisso que entregamos em cada projeto.
+            <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
+              Compromisso, pontualidade e segurança comprovados por nossos clientes.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
-                className="bg-secondary/20 border-none shadow-sm transition-all hover:shadow-lg hover:-translate-y-1"
+                className="bg-slate-50 border border-slate-200/80 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 rounded-2xl"
               >
-                <CardContent className="pt-10 px-8 pb-10 flex flex-col items-center text-center gap-6">
-                  <div className="flex gap-1 text-yellow-400">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="h-6 w-6 fill-current" />
-                    ))}
+                <CardContent className="p-6 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex gap-1 text-amber-500 mb-3">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                      "{testimonial.text}"
+                    </p>
                   </div>
-                  <p className="text-muted-foreground italic leading-relaxed text-lg">
-                    "{testimonial.text}"
-                  </p>
-                  <div className="mt-auto pt-4">
-                    <p className="font-bold text-foreground text-lg">{testimonial.name}</p>
-                    <p className="text-sm font-medium text-primary mt-1">{testimonial.role}</p>
+                  <div className="pt-3 border-t border-slate-200/60">
+                    <p className="font-bold text-brand-navy text-sm">{testimonial.name}</p>
+                    <p className="text-xs text-slate-500">{testimonial.role}</p>
                   </div>
                 </CardContent>
               </Card>
