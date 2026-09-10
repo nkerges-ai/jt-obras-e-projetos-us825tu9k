@@ -17,51 +17,61 @@ import { Button } from '@/components/ui/button'
 
 const requestedServices = [
   {
-    title: 'Reformas Gerais',
-    tag: 'Qualquer Ambiente',
-    description: 'Residencial, comercial e corporativo com acabamento de alto padrão.',
+    title: 'Reformas Corporativas & Comerciais',
+    tag: 'Lajes e Galpões',
+    description:
+      'Adequação de galpões, escritórios e layouts comerciais com acabamento robusto e entrega rápida.',
     icon: Hammer,
-    image: 'https://img.usecurling.com/p/600/400?q=home%20renovation%20interior%20construction',
+    image:
+      'https://img.usecurling.com/p/600/400?q=commercial%20building%20interior%20renovation%20office',
     featured: true,
   },
   {
-    title: 'Telhados e Coberturas',
-    tag: 'Térmico e Estrutural',
-    description: 'Montagem, reparo e vedação completa contra vazamentos.',
+    title: 'Telhados & Coberturas Industriais',
+    tag: 'Metálico e Térmico',
+    description:
+      'Montagem de estruturas metálicas, telhas zipadas, isolamento termoacústico e vedação técnica.',
     icon: Home,
-    image: 'https://img.usecurling.com/p/600/400?q=roof%20tiles%20construction%20worker',
+    image:
+      'https://img.usecurling.com/p/600/400?q=industrial%20warehouse%20roof%20steel%20structure',
     featured: true,
   },
   {
-    title: 'Bangalôs',
-    tag: 'Design Rústico e Moderno',
-    description: 'Construção charmosa com estrutura reforçada e alta durabilidade.',
-    icon: Palmtree,
-    image: 'https://img.usecurling.com/p/600/400?q=wooden%20bungalow%20resort%20architecture',
-    featured: true,
-  },
-  {
-    title: 'Decks de Madeira',
-    tag: 'Áreas Externas e Piscinas',
-    description: 'Madeira nobre tratada, visual sofisticado e longa vida útil.',
+    title: 'Bangalôs & Estruturas de Madeira',
+    tag: 'Estrutural e Comercial',
+    description:
+      'Montagem estrutural em madeira pesada para áreas de convivência corporativa, hotéis e empreendimentos.',
     icon: Layers,
-    image: 'https://img.usecurling.com/p/600/400?q=wood%20deck%20pool%20patio',
+    image:
+      'https://img.usecurling.com/p/600/400?q=timber%20framing%20construction%20wooden%20structure',
     featured: true,
   },
   {
-    title: 'Projetos de Engenharia',
-    tag: 'Cálculo e ART/RRT',
-    description: 'Planejamento técnico, laudos estruturais e gestão completa.',
+    title: 'Decks de Madeira Comercial',
+    tag: 'Madeira Nobre Tratada',
+    description:
+      'Estruturação reforçada para passarelas, áreas externas de empresas e decks comerciais de alto tráfego.',
+    icon: Layers,
+    image:
+      'https://img.usecurling.com/p/600/400?q=hardwood%20decking%20commercial%20boardwalk%20construction',
+    featured: true,
+  },
+  {
+    title: 'Projetos de Engenharia & ART',
+    tag: 'Cálculo e Gestão Técnica',
+    description:
+      'Projetos executivos, laudos estruturais, cálculo de cargas e emissão de ART/RRT com responsabilidade técnica.',
     icon: Compass,
-    image: 'https://img.usecurling.com/p/600/400?q=civil%20engineer%20blueprints%20site',
+    image: 'https://img.usecurling.com/p/600/400?q=civil%20engineer%20plans%20industrial%20site',
     featured: true,
   },
   {
-    title: 'Sistemas de Exaustão',
+    title: 'Sistemas de Exaustão & Ventilação',
     tag: 'Industrial e Comercial',
-    description: 'Instalação de coifas, dutos e exaustores com alto rendimento.',
+    description:
+      'Dimensionamento e montagem de redes de dutos industriais, coifas, exaustores centrífugos e filtragem.',
     icon: Fan,
-    image: 'https://img.usecurling.com/p/600/400?q=ventilation%20exhaust%20ducts%20industrial',
+    image: 'https://img.usecurling.com/p/600/400?q=industrial%20exhaust%20ventilation%20ductwork',
     featured: true,
   },
 ]
@@ -92,13 +102,13 @@ export function Services() {
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
           <FadeIn>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/10 text-brand-orange text-xs md:text-sm font-bold tracking-wide mb-3">
-              <ShieldCheck className="h-4 w-4" /> Soluções Completas
+              <ShieldCheck className="h-4 w-4" /> Soluções para Empresas e Indústrias
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-navy tracking-tight mb-3">
               O Que Fazemos
             </h2>
             <p className="text-slate-600 text-base md:text-lg">
-              Execução ágil, equipe uniformizada com EPIs e garantia total.
+              Execução técnica, controle de cronograma e conformidade com normas de engenharia.
             </p>
           </FadeIn>
         </div>

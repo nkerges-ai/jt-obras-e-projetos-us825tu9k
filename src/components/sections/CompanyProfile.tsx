@@ -4,7 +4,7 @@ import { CheckCircle2, Award, Users, Shield } from 'lucide-react'
 export function CompanyProfile() {
   const highlights = [
     { title: 'Prazos Rigorosos', desc: 'Cronograma monitorado e cumprido.', icon: Award },
-    { title: 'Equipe Uniformizada', desc: 'Identificação e EPIs obrigatórios.', icon: Users },
+    { title: 'Corpo Técnico Próprio', desc: 'Profissionais qualificados em campo.', icon: Users },
     { title: 'Segurança NR 10, 18 e 35', desc: 'Zero improviso no canteiro.', icon: Shield },
     { title: 'Transparência Total', desc: 'Relatórios e fotos de cada fase.', icon: CheckCircle2 },
   ]
@@ -18,8 +18,8 @@ export function CompanyProfile() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl shadow-2xl border-2 border-white/10">
                 <img
-                  src="https://img.usecurling.com/p/800/600?q=brazilian%20engineers%20ppe%20construction%20site"
-                  alt="Equipe JT Obras uniformizada e com EPIs"
+                  src="https://img.usecurling.com/p/800/600?q=civil%20engineers%20industrial%20construction%20site"
+                  alt="Engenheiros e supervisão técnica em canteiro industrial"
                   loading="lazy"
                   className="w-full h-auto object-cover"
                 />
@@ -40,9 +40,9 @@ export function CompanyProfile() {
               Engenharia Séria, Sem Complicação.
             </h2>
             <p className="text-slate-300 mb-6 text-base md:text-lg leading-relaxed">
-              A <strong>JT Obras e Projetos</strong> entrega reformas, telhados, estruturas e
-              exaustão com responsabilidade técnica, supervisão de engenheiro e equipe 100%
-              equipada.
+              A <strong>JT Obras e Projetos</strong> entrega obras industriais, coberturas
+              metálicas, galpões, reformas corporativas e sistemas de exaustão com responsabilidade
+              técnica, supervisão de engenharia e conformidade rigorosa com normas vigentes.
             </p>
 
             {/* Grid 2x2 com cards curtos */}

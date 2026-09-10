@@ -4,21 +4,21 @@ import { Card, CardContent } from '@/components/ui/card'
 
 const testimonials = [
   {
-    name: 'Carlos Silva',
-    role: 'Síndico Comercial',
-    text: 'A JT Obras resolveu nosso problema crônico de infiltração na fachada. Trabalho impecável, equipe extremamente profissional e entrega rigorosamente dentro do prazo estipulado.',
+    name: 'Eng. Carlos Mendonça',
+    role: 'Gerente de Operações Industriais',
+    text: 'A JT Obras executou a reforma completa da cobertura do nosso centro de distribuição. Montagem ágil, excelente isolamento e entrega dentro da janela programada sem parar a operação.',
     rating: 5,
   },
   {
-    name: 'Mariana Costa',
-    role: 'Diretora Escolar',
-    text: 'Contratamos a manutenção preventiva para os aparelhos de ar condicionado da unidade. O serviço foi rápido, limpo e não atrapalhou a rotina das aulas. Excelente atendimento!',
+    name: 'Mariana Esteves',
+    role: 'Coordenadora de Facilities & Infraestrutura',
+    text: 'Contratamos a reforma corporativa de dois pavimentos de escritórios. Projeto executivo cumprido à risca, laudos com ART emitidos com rapidez e acabamento impecável.',
     rating: 5,
   },
   {
-    name: 'Roberto Almeida',
-    role: 'Gerente de Facilities',
-    text: 'A pintura externa do nosso prédio ficou perfeita. A atenção às normas de segurança para trabalho em altura nos deu muita tranquilidade durante toda a execução da obra.',
+    name: 'Roberto Viana',
+    role: 'Diretor de Logística',
+    text: 'Instalação completa do sistema de exaustão e ventilação em nosso galpão fabril. Atendimento rigoroso às normas NR 10 e NR 35 e postura extremamente séria da equipe.',
     rating: 5,
   },
 ]

@@ -12,8 +12,8 @@ export function Footer() {
               <img src={logo} alt="JT Obras" className="h-12 object-contain" />
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Especialistas em manutenção predial e obras complexas. Segurança, qualidade e
-              conformidade técnica para o seu projeto.
+              Engenharia, galpões, reformas corporativas, estruturas industriais e exaustão técnica.
+              Prazos rigorosos e ART garantida.
             </p>
             <div className="flex gap-4">
               <a
@@ -89,11 +89,11 @@ export function Footer() {
               Serviços
             </h4>
             <ul className="space-y-3">
-              <li className="text-gray-300">Manutenção de Fachadas</li>
-              <li className="text-gray-300">Limpeza e Manutenção de Ar Condicionado</li>
-              <li className="text-gray-300">Elétrica e Hidráulica Comercial</li>
-              <li className="text-gray-300">Alvenaria e Reformas Estruturais</li>
-              <li className="text-gray-300">Gestão de NRs (PGR, OS)</li>
+              <li className="text-gray-300">Reformas Corporativas & Comerciais</li>
+              <li className="text-gray-300">Telhados & Coberturas Industriais</li>
+              <li className="text-gray-300">Estruturas Metálicas e de Madeira</li>
+              <li className="text-gray-300">Sistemas de Exaustão e Ventilação</li>
+              <li className="text-gray-300">Projetos Executivos & Emissão de ART</li>
             </ul>
           </div>
 

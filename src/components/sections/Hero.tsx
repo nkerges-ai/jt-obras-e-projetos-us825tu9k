@@ -34,24 +34,25 @@ export function Hero() {
               Sua Obra Pronta, <span className="text-brand-orange">Sem Dor de Cabeça</span>.
             </h1>
 
-            {/* Subtítulo de 1 linha */}
+            {/* Subtítulo direto para empresas e indústrias */}
             <p className="text-base sm:text-xl text-slate-200 mb-6 max-w-xl leading-snug font-normal drop-shadow">
-              Reformas completas, telhados, bangalôs, decks, exaustão e projetos com equipe
-              uniformizada e EPIs.
+              Galpões industriais, reformas corporativas, coberturas metálicas, decks comerciais e
+              exaustão industrial com ART e conformidade técnica.
             </p>
 
             {/* Bullets ultracurtos para leitura em 3 segundos */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 mb-8 text-xs sm:text-sm text-slate-200">
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Prazos rigorosos
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Prazos e cronograma
+                rigorosos
               </span>
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Equipe com EPI e
-                uniforme
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Equipe qualificada e
+                NRs
               </span>
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> ART e engenharia
-                técnica
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" /> Responsabilidade
+                técnica & ART
               </span>
             </div>
 
@@ -102,8 +103,8 @@ export function Hero() {
                   <HardHat className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Time Próprio</h3>
-                  <p className="text-slate-300 text-xs">Uniformizado e treinado</p>
+                  <h3 className="text-white font-bold text-sm">Corpo Técnico</h3>
+                  <p className="text-slate-300 text-xs">Treinado e certificado</p>
                 </div>
               </div>
 

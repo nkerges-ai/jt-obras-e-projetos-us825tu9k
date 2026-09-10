@@ -4,24 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const tips = [
   {
-    title: 'Limpeza de Calhas',
+    title: 'Calhas & Drenagem Industrial',
     description:
-      'Evite infiltrações antes das chuvas. Limpeza rápida protege toda a estrutura do imóvel.',
+      'Dimensionamento e limpeza técnica evitam transbordamento e danos a estoques em galpões.',
     icon: Droplets,
   },
   {
-    title: 'Filtros de Ar',
-    description: 'Limpeza periódica garante ar saudável e reduz a conta de energia do equipamento.',
+    title: 'Exaustão & Qualidade do Ar',
+    description:
+      'Revisão periódica de dutos e motores industriais mantém o conforto térmico e conformidade legal.',
     icon: ThermometerSnowflake,
   },
   {
-    title: 'Revisão Preventiva',
-    description: 'Pequenos reparos programados evitam gastos emergenciais até 4x maiores.',
+    title: 'Manutenção Preventiva Fabril',
+    description:
+      'Inspeções estruturais programadas evitam paradas na operação e custos emergenciais.',
     icon: Wrench,
   },
   {
-    title: 'Impermeabilização',
-    description: 'Lajes e telhados vedados evitam goteiras e corrosão de ferragens estruturais.',
+    title: 'Impermeabilização de Lajes',
+    description:
+      'Vedação técnica de coberturas industriais previne corrosão em armaduras e infiltrações.',
     icon: ShieldCheck,
   },
 ]
@@ -36,10 +39,11 @@ export function Tips() {
               Prevenção
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
-              Dicas Rápidas de Manutenção
+              Boas Práticas de Engenharia e Manutenção
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-              Orientações práticas para economizar e conservar seu imóvel sempre seguro.
+              Diretrizes técnicas para preservar instalações prediais, galpões e ativos
+              corporativos.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
