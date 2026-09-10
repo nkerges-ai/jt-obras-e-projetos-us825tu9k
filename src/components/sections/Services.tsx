@@ -79,7 +79,7 @@ const allServices = [
     title: 'Sistemas de Exaustão & Ventilação',
     tag: 'Industrial e Comercial',
     description:
-      'Dutos, coifas e motores de alto rendimento para ventilação e renovação de ar em comércio e indústria.',
+      'Dutos, coifas e motores de alto rendimento para renovação técnica de ar em cozinhas e indústrias.',
     icon: Fan,
     image: 'https://img.usecurling.com/p/600/400?q=industrial%20exhaust%20ventilation%20ductwork',
     featured: true,
