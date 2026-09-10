@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-10T21:30:31.619Z",
+  "generatedAt": "2026-09-10T21:36:50.843Z",
   "collections": [
     {
       "name": "users",
@@ -29,14 +29,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "phone",
@@ -132,7 +137,10 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["PF", "PJ"]
+          "selectValues": [
+            "PF",
+            "PJ"
+          ]
         },
         {
           "name": "address_street",
@@ -175,14 +183,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -240,21 +253,31 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["Planning", "In Execution", "Paused", "Completed"]
+          "selectValues": [
+            "Planning",
+            "In Execution",
+            "Paused",
+            "Completed"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "address_street",
@@ -318,7 +341,12 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["NR-06", "NR-10", "NR-18", "NR-35"]
+          "selectValues": [
+            "NR-06",
+            "NR-10",
+            "NR-18",
+            "NR-35"
+          ]
         },
         {
           "name": "collaborator_name",
@@ -349,7 +377,10 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["draft", "completed"]
+          "selectValues": [
+            "draft",
+            "completed"
+          ]
         },
         {
           "name": "pdf_url",
@@ -362,14 +393,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "collaborator_cpf",
@@ -433,14 +469,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "cpf",
@@ -486,7 +527,12 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["draft", "active", "completed", "cancelled"]
+          "selectValues": [
+            "draft",
+            "active",
+            "completed",
+            "cancelled"
+          ]
         },
         {
           "name": "pdf_url",
@@ -499,14 +545,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "collaborator_cpf",
@@ -570,21 +621,31 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["draft", "sent", "approved", "rejected"]
+          "selectValues": [
+            "draft",
+            "sent",
+            "approved",
+            "rejected"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "collaborator_cpf",
@@ -623,7 +684,11 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["photo", "video", "doc"]
+          "selectValues": [
+            "photo",
+            "video",
+            "doc"
+          ]
         },
         {
           "name": "file",
@@ -642,14 +707,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -718,14 +788,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
